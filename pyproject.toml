@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "httk.github.io"
+version = "2.0.0"
+description = "httk2 docs website"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Rickard Armiento", email = "rickard-gpg@armiento.net" }]
+
+dependencies = [
+  "sphinx",
+  "furo",
+  "myst-parser",
+  "myst-nb",
+  "sphinx-autodoc-typehints",
+  "sphinx-copybutton",
+  "sphinx-autoapi"
+]
+
+[tool.setuptools]
+py-modules = []
+packages = []
+
+[project.optional-dependencies]
+docs = [
+  "sphinx",
+  "furo",
+  "myst-parser",
+  "myst-nb",
+  "sphinx-autodoc-typehints",
+  "sphinx-copybutton",
+  "sphinx-autoapi"
+]
