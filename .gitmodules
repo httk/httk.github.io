@@ -1,0 +1,3 @@
+[submodule "submodules/httk-core"]
+	path = submodules/httk-core
+	url = https://github.com/httk/httk-core
