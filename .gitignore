@@ -1,7 +1,9 @@
 *~
 \#*\#
 .\#*
-docs/reference/autoapi
+# AutoAPI output is generated at build time from the submodule sources; the src/
+# symlinks and the submodules/ checkouts themselves are tracked and must NOT be ignored.
+docs/reference/autoapi/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -7,4 +7,5 @@ This section documents the supported public API.
 :maxdepth: 2
 
 autoapi/httk/core/index
+autoapi/httk/atomistic/index
 ```

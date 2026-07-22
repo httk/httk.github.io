@@ -7,18 +7,10 @@ name = "httk.github.io"
 version = "2.0.0"
 description = "httk2 docs website"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 authors = [{ name = "Rickard Armiento", email = "rickard-gpg@armiento.net" }]
 
-dependencies = [
-  "sphinx",
-  "furo",
-  "myst-parser",
-  "myst-nb",
-  "sphinx-autodoc-typehints",
-  "sphinx-copybutton",
-  "sphinx-autoapi"
-]
+dependencies = []
 
 [tool.setuptools]
 py-modules = []
@@ -30,7 +22,12 @@ docs = [
   "furo",
   "myst-parser",
   "myst-nb",
-  "sphinx-autodoc-typehints",
   "sphinx-copybutton",
-  "sphinx-autoapi"
+  "sphinx-autoapi",
+  "sphinx-autodoc-typehints",
 ]
+
+# The httk modules themselves are not listed here: the aggregate reference is built
+# from the git submodules under submodules/, which CI installs editable
+# (pip install -e submodules/httk-core -e submodules/httk-atomistic) so notebooks
+# execute against the exact pinned submodule revisions.
