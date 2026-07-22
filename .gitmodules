@@ -1,3 +1,6 @@
 [submodule "submodules/httk-core"]
 	path = submodules/httk-core
 	url = https://github.com/httk/httk-core
+[submodule "submodules/httk-atomistic"]
+	path = submodules/httk-atomistic
+	url = https://github.com/httk/httk-atomistic

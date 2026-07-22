@@ -28,7 +28,7 @@ jobs:
 
       - name: Install project + docs deps
         run: |
-          pip install -e .[docs]
+          pip install -e .[docs] -e submodules/httk-core -e submodules/httk-atomistic
 
       - name: Build docs
         run: make docs
