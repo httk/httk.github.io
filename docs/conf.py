@@ -97,8 +97,11 @@ html_theme_options = {
 # working.
 _docs_base_url = os.environ.get("HTTK_DOCS_BASE_URL", "https://docs.httk.org")
 
+# The inventory is vendored in docs/_inventories/ so docs builds need no network
+# access; link targets still point at the live site. Refresh the committed
+# inventory with `make docs-inventories`.
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/3", None),
+    "python": ("https://docs.python.org/3", "_inventories/python.inv"),
 }
 
 # Plain "go to the module's docs" links, e.g. {moduledocs}`httk-core`.
