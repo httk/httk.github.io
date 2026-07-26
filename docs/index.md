@@ -20,6 +20,8 @@ publishes its own subsite under [docs.httk.org](https://docs.httk.org); the
 
 - **Module directory**: {doc}`modules` — every *httk₂* module and where its docs live.
 - **API reference**: {doc}`reference/index` — the aggregate reference for the published modules on this site.
+- **The v1 presentation, in v2**: {doc}`presentation/index` — the original short
+  example sequence translated to current APIs, including the remaining gaps.
 - **Example notebooks**: {doc}`notebooks/index` — runnable tours of the core and cross-module APIs.
 ```
 
@@ -60,6 +62,7 @@ print(subpackages)
 :hidden:
 
 modules
+presentation/index
 reference/index
 notebooks/index
 ```
