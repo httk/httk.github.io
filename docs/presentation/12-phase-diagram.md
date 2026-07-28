@@ -1,15 +1,54 @@
 # Draw a phase diagram
 
-```{admonition} Porting gap
-:class: warning
+`PhaseDiagram` accepts the compositions and total formula-unit energies that a
+query or stored calculation record produced. Counts and energies are normalized
+to per-atom values before the convex hull is built.
 
-There is currently no v2 equivalent of `StructurePhaseDiagram.create(...)` or
-its visualization plugin. *httk-data* can store and query the structures,
-compositions, and energies needed to build a convex hull, but the atomistic
-phase-diagram model and renderer have not been ported.
+```python
+from httk.atomistic import PhaseDiagram
+
+# These could equally be assembled from queried httk-data records.
+compositions = [
+    {"Li": 1},
+    {"O": 1},
+    {"Li": 1, "O": 1},
+    {"Li": 1, "O": 3},
+]
+total_energies = [0.0, 0.0, -2.0, -1.0]
+
+pd = PhaseDiagram.from_compositions(
+    compositions,
+    total_energies,
+    ids=["Li", "O", "LiO", "LiO3"],
+)
+
+print(pd.hull_indices)
+print(pd.energy_above_hull)
+print(pd.phase_lines)
 ```
 
-Keeping this step explicit prevents database storage from being mistaken for
-the scientific analysis that consumes it. A future phase-diagram capability
-should live in a domain module, consume neutral stored records, and keep
-plotting as a presentation boundary.
+When structures themselves are already in hand, the equivalent constructor
+derives each composition from `species_at_sites`. Disordered species are
+weighted by concentration and vacancies do not contribute atoms.
+
+```python
+pd = PhaseDiagram.from_structures(structures, total_cell_energies)
+```
+
+Plotting is an explicit presentation boundary and needs matplotlib:
+
+```python
+ax = pd.plot()
+```
+
+Binary systems are drawn as composition--energy hulls (formation energies when
+both pure endpoints exist). Systems with three or more elements use a regular
+composition polygon.
+
+The solver deliberately uses numpy `float64` linear programming for speed; the
+exact arithmetic model remains in the structure layer. The equality-constrained
+simplex enforces both composition and sum-of-weights normalization. Its
+`phase_lines` are the complete midpoint-supported stable tie-lines, fixing the
+acknowledged missing-neighbor gap in the v1 renderer. With four or more exactly
+coplanar stable phases, all supported pairs are reported, so crossing diagonals
+may represent more than one equally valid triangulation.

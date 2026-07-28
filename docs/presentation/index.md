@@ -35,7 +35,7 @@ python -m pip install httk2 "httk-data[db]" ase
 | 9 | Generate a batch | Available as explicit job payloads | `httk-workflow` |
 | 10 | Send and run remotely | Available through computer adapters | `httk-workflow` |
 | 11 | Read results into the database | Available as explicit extraction + record storage | `httk-workflow` + `httk-data` |
-| 12 | Draw a phase diagram | Gap | — |
+| 12 | Draw a phase diagram | Available | `httk-atomistic` |
 | 13 | Store custom data | Available with frozen dataclasses | `httk-data` |
 | 14 | Publish a project centrally | Gap; signed local manifests are available | `httk-workflow` |
 | 15 | Query OMDB directly | Gap; v2 currently provides OPTIMADE serving | `httk-optimade` |
