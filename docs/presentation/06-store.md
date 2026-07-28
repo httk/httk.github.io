@@ -1,42 +1,23 @@
 # Store data in SQLite
 
-```{admonition} Status
-:class: caution
-
-The SQL capability is ported, but `httk.atomistic.Structure` is not itself a
-storable frozen dataclass. Define the persistent record your application needs.
-The example below stores a searchable structure summary; a lossless,
-first-class storage mapping for the complete atomistic model remains a gap.
-```
-
 ```python
-from dataclasses import dataclass
-
-from httk.atomistic import StructureEntryProvider, load_structure
+from httk.atomistic import StructureRecord, load_structure
 from httk.data.db import Database, SqlStore
 
-
-@dataclass(frozen=True)
-class StructureSummary:
-    formula: str
-    nsites: int
-    elements: list[str]
-
-
 structure = load_structure("example.cif")
-record = next(iter(StructureEntryProvider({"example": structure}).records("structures")))
-summary = StructureSummary(
-    record["chemical_formula_reduced"],
-    record["nsites"],
-    record["elements"],
-)
+record = StructureRecord.from_structure(structure)
 
 store = SqlStore(Database.sqlite("presentation.sqlite"))
-sid = store.save(summary)
+sid = store.save(record)
+fetched = store.fetch(StructureRecord, sid)
+restored = fetched.to_structure()
 print("Saved row", sid)
 ```
 
-`Database.sqlite()` without a filename creates an in-memory database. Storage
-is exact for supported rational scalar and `FracVector` fields.
+`Database.sqlite()` without a filename creates an in-memory database. Rationals,
+surd bases, precisions, and periodicity are stored exactly. Species float fields
+round-trip at IEEE-double fidelity; the SQL layer may normalize `-0.0` to `+0.0`.
+`StructureRecord` is a snapshot; user-defined frozen dataclasses remain the model
+for custom data.
 
 See the [database guide](https://docs.httk.org/httk-data/db.html).
