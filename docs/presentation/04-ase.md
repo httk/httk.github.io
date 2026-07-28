@@ -1,26 +1,29 @@
 # Build with ASE and convert to *httk₂*
 
-The v1-specific `Structure.ase.from_Atoms` glue is gone. ASE already exposes the
-three values understood by `UnitcellStructureView`, so no pairwise adapter is
-needed:
+ASE `Atoms` objects are directly accepted anywhere a `StructureLike` is expected.
+The interoperability layer uses a small runtime-checkable protocol, so any
+Atoms-like object with the same four methods works too:
 
 ```python
 from ase.build import fcc111
 from httk.atomistic import UnitcellStructureView
 
-slab = fcc111("Al", size=(2, 2, 10), vacuum=10.0)
-structure = UnitcellStructureView(
-    (
-        slab.cell.array.tolist(),
-        slab.get_scaled_positions().tolist(),
-        slab.numbers.tolist(),
-    )
-)
+slab = fcc111("Al", size=(2, 2, 3), vacuum=10.0)
+structure = UnitcellStructureView(slab)
 ```
 
-The primitive triple contains only the lattice, reduced coordinates, and atomic
-numbers. ASE constraints, calculators, tags, and other `Atoms` metadata are not
-part of this conversion.
+The conversion carries the cell, reduced coordinates, atomic numbers, and periodicity.
+ASE constraints, calculators, tags, and other `Atoms` metadata are not part of the
+conversion.
 
-Conversion in the other direction is shown in the
+The reverse direction presents any httk structure as an ASE `Atoms` object (and
+requires ASE to be installed):
+
+```python
+from httk.atomistic import ASEAtomsView
+
+atoms = ASEAtomsView(structure)
+```
+
+For a visualization workflow, see the
 {doc}`visualization step <03-visualize>`.
