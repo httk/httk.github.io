@@ -1,15 +1,15 @@
 # Build with ASE and convert to *httk₂*
 
 The v1-specific `Structure.ase.from_Atoms` glue is gone. ASE already exposes the
-three values understood by `StructureSimpleView`, so no pairwise adapter is
+three values understood by `UnitcellStructureView`, so no pairwise adapter is
 needed:
 
 ```python
 from ase.build import fcc111
-from httk.atomistic import StructureSimpleView
+from httk.atomistic import UnitcellStructureView
 
 slab = fcc111("Al", size=(2, 2, 10), vacuum=10.0)
-structure = StructureSimpleView(
+structure = UnitcellStructureView(
     (
         slab.cell.array.tolist(),
         slab.get_scaled_positions().tolist(),
