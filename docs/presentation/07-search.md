@@ -1,18 +1,19 @@
 # Search the local database
 
-Continuing with the `StructureSummary` class and `store` from the previous
+Continuing with the `StructureRecord` class and `store` from the previous
 step, the v2 search DSL keeps the v1 shape: bind a variable, add conditions,
 declare outputs, and iterate.
 
 ```python
+from httk.atomistic import StructureRecord
+
 search = store.searcher()
-structure = search.variable(StructureSummary)
-search.add(structure.nsites < 40)
-search.add(structure.elements.has_any("O"))
+structure = search.variable(StructureRecord)
+search.add(structure.species_at_sites.has_any("O"))
 search.output(structure, "structure")
 
 for values, names in search:
-    print("Found:", values[0].formula)
+    print("Found:", len(values[0].species_at_sites), "sites")
 ```
 
 List fields have explicit set operations: `has_any`, `has_only`, and `is_in`.

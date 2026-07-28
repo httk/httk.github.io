@@ -10,7 +10,7 @@ one-call path from `Structure` to a complete run directory. In particular,
 ```
 
 ```python
-from httk.workflow import VaspPreparationOptions, prepare_vasp_inputs
+from httk.workflow.vasp import VaspPreparationOptions, prepare_vasp_inputs
 
 choices = prepare_vasp_inputs(
     VaspPreparationOptions(

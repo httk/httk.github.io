@@ -7,7 +7,7 @@ modules. A frozen record makes the relationship searchable:
 from dataclasses import dataclass
 
 from httk.data.db import Database, SqlStore
-from httk.workflow import last_oszicar_energy
+from httk.workflow.vasp import last_oszicar_energy
 
 
 @dataclass(frozen=True)

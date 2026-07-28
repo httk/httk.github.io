@@ -6,9 +6,10 @@ This small example creates and submits one payload per name:
 ```python
 from pathlib import Path
 
-from httk.workflow import JobSpec, WorkflowWorkspace, prepare_job_payload
+from httk.workflow import Workspace
+from httk.workflow.runtime_builders import JobSpec, prepare_job_payload
 
-workspace = WorkflowWorkspace.initialize("Runs")
+workspace = Workspace.initialize("Runs")
 
 for name in ("CaTiO3", "TiO2", "CaO"):
     payload = Path("payloads") / name

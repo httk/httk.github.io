@@ -137,6 +137,13 @@ nitpick_ignore = [
     ("py:class", "typing.Optional"),
     ("py:class", "typing.Union"),
     ("py:class", "Ellipsis"),
+    # numpy and ase are optional dependencies surfaced by the numeric and compat layers;
+    # these are the sanctioned targeted entries for those external types (mirroring the
+    # module repos' conf.py).
+    ("py:class", "numpy.ndarray"),
+    ("py:obj", "numpy.ndarray"),
+    ("py:class", "ase.Atoms"),
+    ("py:obj", "ase.Atoms"),
 ]
 copybutton_prompt_text = r">>> |\.\.\. |\$ "
 copybutton_prompt_is_regexp = True
