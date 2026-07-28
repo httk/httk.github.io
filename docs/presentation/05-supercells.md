@@ -18,9 +18,12 @@ print(orthogonal.orthogonality_score)
 print(cubic.cubicity_score)
 ```
 
-The automatic search takes an exact site/cell multiplier instead of v1's
-loosely defined `tolerance`. It is deterministic and bounded; coordinates and
-cell algebra remain exact.
+The automatic search accepts either an exact site/cell multiplier or a shape
+`tolerance`: it scales up until the cell is at least that close to the target
+shape. For example, `structure.orthogonal_supercell(tolerance="1/100")`
+bounds the exact sum of squared pairwise cosines between the cell vectors. The
+search is deterministic and bounded; coordinates and cell algebra remain
+exact.
 
 See [the full supercell
 example](https://docs.httk.org/httk-atomistic/examples/build_a_supercell.html).
