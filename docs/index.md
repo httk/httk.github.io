@@ -4,10 +4,10 @@
 It is not a single package: the `httk.*` import namespace is a PEP 420 native
 namespace shared by a set of independently developed and released module repositories.
 Installing the `httk` namespace by itself provides no functionality; you install the
-modules you need — starting with {moduledocs}`httk-core <httk-core>`, which supplies
-the shared primitives (type dispatch, datastreams, the `DataLoader`), and adding domain
-modules such as {moduledocs}`httk-atomistic <httk-atomistic>` for crystal-structure
-representations.
+modules you need — starting with `httk-core`, which supplies the shared primitives
+(type dispatch, datastreams, the `DataLoader`), and adding domain modules such as
+`httk-atomistic` for crystal-structure representations. See the
+{doc}`versioned module directory <modules>` for snapshot-specific documentation links.
 
 ## Core design decisions
 
@@ -72,8 +72,8 @@ publishes its own subsite under [docs.httk.org](https://docs.httk.org); the
 
 ## Install
 
-Preferably work in a Python virtual environment. Install {moduledocs}`httk-core <httk-core>`
-first — it brings in the `httk` namespace and the shared primitives:
+Preferably work in a Python virtual environment. Install `httk-core` first — it
+brings in the `httk` namespace and the shared primitives:
 
 ```bash
 git clone https://github.com/httk/httk-core
@@ -82,7 +82,7 @@ python -m pip install -e .
 ```
 
 Then add whichever further modules you need, each the same way. For example, to add
-crystal-structure support from {moduledocs}`httk-atomistic <httk-atomistic>`:
+crystal-structure support from `httk-atomistic`:
 
 ```bash
 git clone https://github.com/httk/httk-atomistic
@@ -107,6 +107,8 @@ print(subpackages)
 :hidden:
 
 modules
+architecture
+authoring
 presentation/index
 reference/index
 notebooks/index

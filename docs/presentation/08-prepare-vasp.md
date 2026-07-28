@@ -26,4 +26,5 @@ This normalizes POSCAR handedness, assembles POTCAR, writes KPOINTS, and updates
 INCAR with recorded choices. Execution is separately available through
 `run_vasp` or the native workflow runner API.
 
-See the [workflow runner helpers](https://docs.httk.org/httk-workflow/runtime_helpers.html).
+See the workflow runner helpers in the versioned *httk-workflow* documentation
+listed by the {doc}`module directory <../modules>`.

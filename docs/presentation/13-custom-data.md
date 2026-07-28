@@ -24,5 +24,5 @@ No ORM base class, decorator, or plugin property is required. Nested frozen
 dataclasses become references; `Annotated` storage markers add indexes,
 uniqueness, skipped fields, and fixed tensor shapes.
 
-See the [complete storable-record
-example](https://docs.httk.org/httk-data/examples/storable_records.html).
+See the complete storable-record example in the versioned *httk-data*
+documentation listed by the {doc}`module directory <../modules>`.

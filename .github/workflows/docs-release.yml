@@ -1,0 +1,81 @@
+name: Deploy release docs
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: docs-build-release-${{ github.repository }}-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      SITE_DIR: ${{ runner.temp }}/httk-docs-site
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+          submodules: recursive
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Preflight release inputs
+        run: |
+          python - <<'PY'
+          import os
+          import tomllib
+          from pathlib import Path
+
+          with Path("pyproject.toml").open("rb") as stream:
+              version = tomllib.load(stream)["project"]["version"]
+          tag = os.environ["GITHUB_REF_NAME"]
+          if tag != f"v{version}":
+              raise SystemExit(f"tag {tag!r} does not match project.version {version!r}")
+          lock = Path("docs/requirements.lock")
+          if not lock.is_file() or not lock.read_text(encoding="utf-8").startswith("# httk-docs-lock-schema: 1\n"):
+              raise SystemExit(f"valid documentation lock is missing: {lock}")
+          PY
+      - name: Install locked environment and module checkouts
+        run: |
+          pip install -r docs/requirements.lock
+          pip install -e submodules/httk-core --no-deps
+          pip install -e submodules/httk-atomistic --no-deps
+          pip install -e submodules/httk-io --no-deps
+          pip install -e submodules/httk-data --no-deps
+          pip install -e submodules/httk-optimade --no-deps
+          pip install -e submodules/httk-web --no-deps
+          pip install -e submodules/httk-workflow --no-deps
+          pip install -e ".[docs]" --no-deps
+          pip check
+      - name: Verify release pins and top-site release
+        run: |
+          PYTHONPATH=submodules/httk-core/src python -m httk.core.docs ecosystem-manifest --submodules-dir submodules --verify docs/ecosystem.json --require-release-tags
+      - name: Verify aggregate source topology
+        run: python scripts/verify_topology.py
+      - name: Check release version
+        run: |
+          PYTHONPATH=submodules/httk-core/src python -m httk.core.docs check-release --tag "$GITHUB_REF_NAME"
+      - name: Build release docs
+        run: HTTK_DOCS_VERSION="$GITHUB_REF_NAME" HTTK_DOCS_BASE_URL=https://docs.httk.org make docs
+      - name: Compose and publish release docs-site
+        env:
+          SOURCE_COMMIT: ${{ github.sha }}
+        run: |
+          remote_site_exists=false
+          if git ls-remote --exit-code origin docs-site >/dev/null 2>&1; then remote_site_exists=true; git fetch origin docs-site; else status=$?; if [ "$status" -ne 2 ]; then exit 1; fi; fi
+          for attempt in 1 2 3 4 5 6 7 8; do
+            if [ "$remote_site_exists" = true ]; then lease_sha=$(git rev-parse origin/docs-site 2>/dev/null || echo ""); else lease_sha=""; fi
+            rm -rf "$SITE_DIR"; mkdir -p "$SITE_DIR"
+            if git show-ref --verify --quiet refs/remotes/origin/docs-site; then git archive origin/docs-site | tar -x -C "$SITE_DIR"; fi
+            PYTHONPATH=submodules/httk-core/src python -m httk.core.docs compose --site "$SITE_DIR" --build docs/_build/html --release "$GITHUB_REF_NAME" --slug "" --url https://docs.httk.org --source-commit "$SOURCE_COMMIT"
+            PYTHONPATH=submodules/httk-core/src python -m httk.core.docs commit-site --site "$SITE_DIR" --repo "$GITHUB_WORKSPACE" --branch docs-site --message "release: $GITHUB_REF_NAME"
+            if git push --force-with-lease=refs/heads/docs-site:$lease_sha origin docs-site; then break; fi
+            if [ "$attempt" -eq 8 ]; then echo "docs-site push was rejected after 8 attempts" >&2; exit 1; fi
+            sleep $((RANDOM % 5 + attempt * 3)); git fetch origin docs-site; remote_site_exists=true
+          done

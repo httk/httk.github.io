@@ -25,5 +25,5 @@ bounds the exact sum of squared pairwise cosines between the cell vectors. The
 search is deterministic and bounded; coordinates and cell algebra remain
 exact.
 
-See [the full supercell
-example](https://docs.httk.org/httk-atomistic/examples/build_a_supercell.html).
+See the full supercell example in the versioned *httk-atomistic* documentation
+listed by the {doc}`module directory <../modules>`.

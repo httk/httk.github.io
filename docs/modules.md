@@ -1,78 +1,71 @@
 # Module directory
 
-*httk₂* is delivered as a set of independent module repositories that share the
-`httk.*` namespace. Published modules are documented both here — in this site's
-aggregate {doc}`API reference <reference/index>`, pinned to the submodule revisions
-this site is built against — and on their own documentation subsite (both linked
-below); the remaining modules are under active development and do not yet publish
-docs.
+The seven runtime modules share the `httk.*` namespace. Their aggregate API
+reference is pinned to this site's submodule revisions; each module also has a
+separate documentation subsite.
 
-## Published modules
+## Runtime modules
 
 ### httk-core
 
-Shared core primitives for *httk₂*: type dispatch and the view/backend pattern,
-datastreams, and the `DataLoader` for reading httk dataset files. Every other module
-builds on it. Import path: `httk.core`.
+Shared contracts, exact vector and datastream models, OPTIMADE definitions,
+registries, and dependency-free record models. Import path: `httk.core`.
 
-- API reference on this site: {doc}`httk.core </reference/autoapi/httk/core/index>`
-- Documentation subsite: {moduledocs}`httk-core`
+- API reference: {doc}`httk.core </reference/autoapi/httk/core/index>`
 - Repository: <https://github.com/httk/httk-core>
 
 ### httk-atomistic
 
-Crystal-structure representations — the `Structure` domain (Simple and primitive
-views, `Species`) built on the httk-core view/backend pattern. Import path:
+Exact crystal-structure and symmetry representations. Import path:
 `httk.atomistic`.
 
-- API reference on this site: {doc}`httk.atomistic </reference/autoapi/httk/atomistic/index>`
-- Documentation subsite: {moduledocs}`httk-atomistic`
+- API reference: {doc}`httk.atomistic </reference/autoapi/httk/atomistic/index>`
 - Repository: <https://github.com/httk/httk-atomistic>
-
-## In development
-
-These modules are planned or in progress; their APIs and documentation are not yet
-published.
 
 ### httk-io
 
-File I/O for *httk₂*, including the CIF reader/writer stack, registered as httk-core
-loaders. Import path: `httk.io`.
+File-format parsing and writing capabilities, including CIF and POSCAR. Import
+path: `httk.io`.
 
+- API reference: {doc}`httk.io </reference/autoapi/httk/io/index>`
 - Repository: <https://github.com/httk/httk-io>
-- Status: in development.
 
-### httk-symgen
+### httk-data
 
-Symmetry-based crystal-structure generation. Import path: `httk.symgen`.
+Data-management capabilities and validation over core's provider and definition
+contracts. Import path: `httk.data`.
 
-- Repository: <https://github.com/httk/httk-symgen>
-- Status: in development.
-
-### httk-ml
-
-Tooling for machine-learned interatomic potentials. Import path: `httk.ml`.
-
-- Repository: <https://github.com/httk/httk-ml>
-- Status: in development.
+- API reference: {doc}`httk.data </reference/autoapi/httk/data/index>`
+- Repository: <https://github.com/httk/httk-data>
 
 ### httk-optimade
 
-OPTIMADE serving and client tooling. Import path: `httk.optimade`.
+OPTIMADE protocol serving and adaptation capabilities. Import path:
+`httk.optimade`.
 
+- API reference: {doc}`httk.optimade </reference/autoapi/httk/optimade/index>`
 - Repository: <https://github.com/httk/httk-optimade>
-- Status: in development.
 
 ### httk-web
 
-The web and OPTIMADE serving stack. Import path: `httk.web`.
+Web-facing application capabilities built around the httk module ecosystem.
+Import path: `httk.web`.
 
+- API reference: {doc}`httk.web </reference/autoapi/httk/web/index>`
 - Repository: <https://github.com/httk/httk-web>
-- Status: in development.
 
-### httk-magnetism
+### httk-workflow
 
-Magnetism workflows. Import path: `httk.magnetism`.
+Workflow and calculation orchestration capabilities. Import path:
+`httk.workflow`.
 
-- Repository: <https://github.com/httk/httk-magnetism>
-- Status: in development.
+- API reference: {doc}`httk.workflow </reference/autoapi/httk/workflow/index>`
+- Repository: <https://github.com/httk/httk-workflow>
+
+## Selected snapshot versions
+
+The manifest-derived table below is the authoritative documentation link for
+the exact snapshot represented by this site.
+
+```{include} _generated/module_versions.md
+```

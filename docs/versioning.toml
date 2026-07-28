@@ -1,0 +1,7 @@
+[site]
+# The aggregate site resolves cross-module references in its own AutoAPI inventory;
+# module documentation links are derived from docs/ecosystem.json instead.
+slug = ""
+repository-url = "https://github.com/httk/httk.github.io"
+main-branch = "main"
+import-roots = ["httk"]

@@ -1,6 +1,9 @@
+import json
+import importlib
 import os
 import warnings
 from datetime import date
+from pathlib import Path
 
 from sphinx.deprecation import RemovedInSphinx10Warning
 warnings.filterwarnings("ignore", category=RemovedInSphinx10Warning)
@@ -32,7 +35,6 @@ extensions = [
     "sphinx.ext.napoleon",       # Google/NumPy docstrings
     "sphinx.ext.viewcode",
     "sphinx.ext.intersphinx",
-    "sphinx.ext.extlinks",
     "sphinx.ext.mathjax",        # math rendering via MathJax
 
     # Nice-to-haves
@@ -43,6 +45,7 @@ extensions = [
     "myst_nb",                   # .ipynb support
 
     "autoapi.extension",
+    "httk.core.docs.sphinx_ext",
 ]
 
 templates_path = ["_templates"]
@@ -92,24 +95,14 @@ html_theme_options = {
     "navigation_with_keys": True,
 }
 
-# This top-level site now carries a full aggregate API reference built from the
-# submodule sources (see autoapi settings below), so cross-module references resolve
-# inside this site's own inventory rather than against the per-module subsites. The
-# DOCS_BASE_URL plumbing remains for the module directory's "go to the module's own
-# subsite" links. The base URL comes from the DOCS_BASE_URL Makefile variable
-# (exported as HTTK_DOCS_BASE_URL); the default below keeps bare sphinx invocations
-# working.
-_docs_base_url = os.environ.get("HTTK_DOCS_BASE_URL", "https://docs.httk.org")
-
 # The inventory is vendored in docs/_inventories/ so docs builds need no network
 # access; link targets still point at the live site. Refresh the committed
 # inventory with `make docs-inventories`.
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", "_inventories/python.inv"),
+    # Public Starlette types use the vendored inventory copied from httk-web.
+    "starlette": ("https://www.starlette.io/", "_inventories/starlette.inv"),
 }
-
-# Plain "go to the module's docs" links, e.g. {moduledocs}`httk-core`.
-extlinks = {"moduledocs": (f"{_docs_base_url}/%s/", "%s documentation")}
 
 autoapi_options = [
        "members",
@@ -122,10 +115,9 @@ autoapi_root = "reference/autoapi"
 autoapi_ignore = []  # include everything
 
 autoapi_type = "python"
-# The merged httk namespace tree: src/httk/core and src/httk/atomistic are committed
-# symlinks into the two submodule checkouts, so AutoAPI parses both distributions as
-# a single PEP 420 httk root and cross-module references (httk.atomistic subclassing
-# httk.core objects) resolve internally.
+# The merged httk namespace tree is made from committed symlinks into all seven
+# submodule checkouts, so AutoAPI parses the runtime distributions as one PEP 420
+# httk root and cross-module references resolve in the aggregate inventory.
 autoapi_dirs = ["../src/httk"]
 autoapi_add_toctree_entry = True
 autoapi_keep_files = True
@@ -148,17 +140,195 @@ nitpick_ignore = [
     ("py:obj", "numpy.ndarray"),
     ("py:class", "ase.Atoms"),
     ("py:obj", "ase.Atoms"),
+    # Inherited verbatim from httk-workflow/docs/conf.py.
+    ("py:class", "argparse._SubParsersAction"),
+    # The following entries are inherited verbatim from httk-data/docs/conf.py.
+    # SQLAlchemy is optional there, and these internal-facing signatures have no
+    # vendored external inventory.
+    ("py:class", "sqlalchemy.Engine"),
+    ("py:class", "sqlalchemy.MetaData"),
+    ("py:class", "sqlalchemy.Table"),
+    ("py:class", "sqlalchemy.ColumnElement"),
+    ("py:class", "sqlalchemy.FromClause"),
+    # PEP 695 method type parameters are not classes.
+    ("py:class", "T"),
+    # Inherited verbatim from httk-data/docs/conf.py for the bare alias xref.
+    ("py:class", "FilterAst"),
 ]
 copybutton_prompt_text = r">>> |\.\.\. |\$ "
 copybutton_prompt_is_regexp = True
 
-suppress_warnings = ["myst.xref_missing"]
+# Inherited from the member modules' sanctioned configurations, including
+# httk-workflow/docs/conf.py.
+# Aggregate-only: Sphinx's Python domain emits duplicate targets as ref.python
+# after merging the modules' inventories. The installed Sphinx tags missing
+# Python references by their distinct role subtypes (ref.class, ref.meth,
+# ref.func, ref.exc, and ref.attr), so those nitpicky warnings remain fatal.
+suppress_warnings = ["myst.xref_missing", "autoapi.python_import_resolution", "ref.python"]
+
+
+# The following workflow-specific rules are copied verbatim from
+# httk-workflow/docs/conf.py. They document the same deliberate public-surface
+# omissions and bare-name aliases sanctioned by that member module.
+_INTERNAL_MODULES = (
+    "models",
+    "journal",
+    "transactions",
+    "runtime_builders",
+    "workspace",
+    "manager",
+    "introspection",
+    "gc",
+    "fsck",
+    "adapter_runtime",
+    "cli",
+    "workflow_cli",
+    # Compatibility internals: the engines are public, their runners and the
+    # v1 CLI alias and shared import tail are not.
+    "compat._integration",
+    "compat.cwl.cwl_runner",
+    "compat.pwd.pwd_runner",
+    "compat.v1._runner",
+    "compat.v1.cli",
+    # The VASP facade is public; the cohesive modules it re-exports are not.
+    "vasp.inputs",
+    "vasp.diagnostics",
+    "vasp.remedies",
+    "vasp.reports",
+    "vasp.templates",
+)
+nitpick_ignore_regex = [
+    # Aggregate adaptation of the workflow rule above: AutoAPI renders these
+    # imported helper names as bare _common.* targets in the merged tree.
+    (r"py:.*", r"_common\.(CLIContext|Sequence|argparse\..+)"),
+    (r"py:.*", r"httk\.workflow\.(" + "|".join(_INTERNAL_MODULES) + r")(\..+)?"),
+    (r"py:.*", r"httk\.workflow\.vasp\.runners(\..+)?"),
+    (
+        r"py:.*",
+        r"(DataMode|WorkdirMode|PublishMode|RunnerSource|StepHandler|JoinCondition"
+        r"|DiagnosticSeverity|EventMonitor|RemedyChange|RemedySequence|MarkerFault|V1Materializer)",
+    ),
+]
+
+
+_module_names = ("httk-core", "httk-atomistic", "httk-io", "httk-data", "httk-optimade", "httk-web", "httk-workflow")
+
+
+# Aggregate-only AutoAPI artifact: workflow_cli imports CLIContext (and its
+# program/cwd members) through two source paths, so the merged site renders
+# the same objects on the workflow_cli page and on their canonical core page.
+# Skip only the redundant workflow_cli entries; the core page remains indexed.
+_DUPLICATE_WORKFLOW_CLI_MEMBERS = frozenset(
+    {
+        "httk.workflow.workflow_cli.CLIContext",
+        "httk.workflow.workflow_cli.CLIContext.program",
+        "httk.workflow.workflow_cli.CLIContext.cwd",
+    }
+)
+
+
+# Inherited from httk-workflow/docs/conf.py. The aggregate keeps the member's
+# deliberate public surface: internal workflow modules are scanned for names
+# re-exported by public pages, but do not receive pages of their own.
+_PUBLIC_WORKFLOW_MODULES = frozenset(
+    {
+        "httk.workflow",
+        "httk.workflow.protocol",
+        "httk.workflow.errors",
+        "httk.workflow.sdk",
+        "httk.workflow.runtime",
+        "httk.workflow.runtime_utils",
+        "httk.workflow.scaffold",
+        "httk.workflow.backends",
+        "httk.workflow.shell_bridge",
+        "httk.workflow.harvesting",
+        "httk.workflow.supervision",
+        "httk.workflow.transfers",
+        "httk.workflow.manifests",
+        "httk.workflow.hygiene",
+        "httk.workflow.adapters",
+        "httk.workflow.adapter_protocol",
+        "httk.workflow.configuration",
+        "httk.workflow.projects",
+        "httk.workflow.vasp",
+        "httk.workflow.compat",
+        "httk.workflow.compat.v1",
+        "httk.workflow.compat.cwl",
+        "httk.workflow.compat.pwd",
+    }
+)
+_workflow_exports_cache: dict[str, frozenset[str] | None] = {}
+
+
+def _workflow_module_exports(module_name: str) -> frozenset[str] | None:
+    if module_name not in _workflow_exports_cache:
+        try:
+            module = importlib.import_module(module_name)
+        except Exception:  # pragma: no cover - unavailable optional module
+            _workflow_exports_cache[module_name] = None
+        else:
+            names = getattr(module, "__all__", None)
+            _workflow_exports_cache[module_name] = None if names is None else frozenset(names)
+    return _workflow_exports_cache[module_name]
+
+
+def _module_version_rows(srcdir: Path) -> list[tuple[str, str, str]]:
+    manifest_path = srcdir / "ecosystem.json"
+    if manifest_path.is_file():
+        try:
+            document = json.loads(manifest_path.read_text(encoding="utf-8"))
+            modules = document["modules"]
+            if isinstance(modules, dict):
+                rows = []
+                for name in sorted(modules):
+                    entry = modules[name]
+                    version = entry.get("version") if isinstance(entry, dict) else None
+                    if not isinstance(version, str) or not version:
+                        version = "dev:main"
+                    link = (
+                        f"https://docs.httk.org/{name}/{version}/"
+                        if version.startswith("v")
+                        else f"https://docs.httk.org/{name}/dev/main/"
+                    )
+                    rows.append((name, version, link))
+                return rows
+        except (KeyError, OSError, json.JSONDecodeError, TypeError):
+            warnings.warn(f"ignoring malformed ecosystem manifest: {manifest_path}", stacklevel=1)
+    submodules = srcdir.parent / "submodules"
+    return [(name, "development", f"https://docs.httk.org/{name}/") for name in _module_names if (submodules / name).is_dir()]
+
+
+def _write_module_versions(app):
+    srcdir = Path(app.srcdir)
+    output = srcdir / "_generated" / "module_versions.md"
+    output.parent.mkdir(parents=True, exist_ok=True)
+    lines = [
+        "| Module | Version | Documentation |",
+        "| --- | --- | --- |",
+    ]
+    lines.extend(f"| {name} | {version} | [{link}]({link}) |" for name, version, link in _module_version_rows(srcdir))
+    output.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
 
 def skip_member(app, what, name, obj, skip, options):
+    obj_id = str(getattr(obj, "id", None) or name)
+    if obj_id in _DUPLICATE_WORKFLOW_CLI_MEMBERS:
+        return True
+    if obj_id == "httk.workflow" or obj_id.startswith("httk.workflow."):
+        if what in {"module", "package"}:
+            return obj_id not in _PUBLIC_WORKFLOW_MODULES
+        if name.startswith('_'):
+            return True
+        owner, _, short = obj_id.rpartition(".")
+        exports = _workflow_module_exports(owner)
+        if exports is not None and short not in exports:
+            return True
     # Skip private members (those starting with _)
     if name.startswith('_'):
         return True
     return skip
 
+
 def setup(sphinx):
     sphinx.connect('autoapi-skip-member', skip_member)
+    sphinx.connect('builder-inited', _write_module_versions)

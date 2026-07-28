@@ -24,5 +24,5 @@ Both named workspaces must already exist with the `detached-transfer-v1`
 extension. Transfers preserve the job UUID, seal and validate payload digests,
 and retire the source only after acknowledgement.
 
-See the [project and workflow CLI
-guide](https://docs.httk.org/httk-workflow/workflow_cli.html).
+See the project and workflow CLI guide in the versioned *httk-workflow*
+documentation listed by the {doc}`module directory <../modules>`.

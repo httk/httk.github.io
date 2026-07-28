@@ -20,4 +20,5 @@ round-trip at IEEE-double fidelity; the SQL layer may normalize `-0.0` to `+0.0`
 `StructureRecord` is a snapshot; user-defined frozen dataclasses remain the model
 for custom data.
 
-See the [database guide](https://docs.httk.org/httk-data/db.html).
+See the database guide in the versioned *httk-data* documentation listed by the
+{doc}`module directory <../modules>`.

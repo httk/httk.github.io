@@ -25,9 +25,36 @@ docs = [
   "sphinx-copybutton",
   "sphinx-autoapi",
   "sphinx-autodoc-typehints",
+  # httk-data runtime
+  "jsonschema>=4",
+  # httk-optimade runtime
+  "starlette>=0.37",
+  # httk-optimade runtime
+  "uvicorn>=0.30",
+  # httk-web runtime
+  "jinja2>=3.1",
+  # httk-web runtime
+  "markdown>=3.5",
+  # httk-web runtime
+  "PyYAML>=6.0",
+  # httk-web runtime
+  "docutils>=0.20",
+  # httk-web runtime
+  "python-multipart>=0.0.9",
+  # httk-core[default] and httk-atomistic[default] / docs import
+  "numpy>=1.26",
+  # httk-core[default]
+  "cryptography>=42",
+  # httk-atomistic[default]
+  "spglib>=2.0",
+  # httk-io[default]
+  "ase",
+  # httk-data[default] -> [db]
+  "sqlalchemy>=2.0,<3",
+  # httk-optimade[docs]
+  "httpx>=0.27",
 ]
 
-# The httk modules themselves are not listed here: the aggregate reference is built
-# from the git submodules under submodules/, which CI installs editable
-# (pip install -e submodules/httk-core -e submodules/httk-atomistic) so notebooks
-# execute against the exact pinned submodule revisions.
+# The httk distributions themselves are not listed here: CI installs all seven
+# editable with --no-deps, so this extra carries their external runtime and
+# docs-relevant default dependencies as well as the Sphinx tooling.

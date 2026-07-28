@@ -32,5 +32,5 @@ for name in ("CaTiO3", "TiO2", "CaO"):
 
 A real payload also carries immutable POSCAR, INCAR, and other inputs. The
 runner should publish a structured success, failure, retry, or next-step
-outcome; see the
-[*httk-workflow* native APIs](https://docs.httk.org/httk-workflow/native_bash_api.html).
+outcome; see the *httk-workflow* native APIs in the versioned documentation
+listed by the {doc}`module directory <../modules>`.

@@ -20,5 +20,5 @@ List fields have explicit set operations: `has_any`, `has_only`, and `is_in`.
 References chain into automatic joins, and two variables of the same class form
 a self-join.
 
-See the [complete query DSL
-example](https://docs.httk.org/httk-data/examples/searching.html).
+See the complete query DSL example in the versioned *httk-data* documentation
+listed by the {doc}`module directory <../modules>`.

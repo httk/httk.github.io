@@ -58,5 +58,5 @@ Rational strings such as `"1/2"` are exact. Cell parameters can be supplied as
 `(a, b, c, alpha, beta, gamma)` instead of a matrix when orientation is not
 important.
 
-See [the complete construction
-example](https://docs.httk.org/httk-atomistic/examples/build_a_structure.html).
+See the complete construction example in the versioned *httk-atomistic*
+documentation listed by the {doc}`module directory <../modules>`.

@@ -27,5 +27,5 @@ Composition fields live at the OPTIMADE/provider boundary, which is why the
 short formula is obtained from `StructureEntryProvider`. Geometry remains exact
 until the explicit `float(...)` used for display.
 
-See the full
-[*httk-atomistic* loading example](https://docs.httk.org/httk-atomistic/examples/load_from_poscar.html).
+See the full *httk-atomistic* loading example in the versioned module
+documentation listed by the {doc}`module directory <../modules>`.
