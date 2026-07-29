@@ -5,7 +5,7 @@
 
 V2 has dependency-free VASP work-directory preparation, but not yet the v1
 one-call path from `Structure` to a complete run directory. In particular,
-*httk-io* currently reads POSCAR but does not write it. Supply `Run/POSCAR` and
+*httk-io* reads POSCAR but does not write it. Supply `Run/POSCAR` and
 `Run/INCAR`, then prepare the remaining inputs explicitly.
 ```
 

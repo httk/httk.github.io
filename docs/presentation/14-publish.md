@@ -3,7 +3,7 @@
 ```{admonition} Porting gap
 :class: warning
 
-V2 does not currently submit a project to a central httk/OMDB service, update a
+V2 does not submit a project to a central httk/OMDB service, update a
 published record, or withdraw one. Do not interpret the commands below as
 publication.
 ```
@@ -19,5 +19,5 @@ httk workflow project manifest verify
 ```
 
 The manifest records paths, sizes, hashes, empty directories, and symlink
-targets, then signs the canonical body with the project's Ed25519 key. A future
-publisher can consume this artifact without redefining project identity.
+targets, then signs the canonical body with the project's Ed25519 key. It is
+suitable as publisher input without redefining project identity.

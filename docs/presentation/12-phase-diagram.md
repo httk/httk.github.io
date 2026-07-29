@@ -45,10 +45,10 @@ Binary systems are drawn as composition--energy hulls (formation energies when
 both pure endpoints exist). Systems with three or more elements use a regular
 composition polygon.
 
-The solver deliberately uses numpy `float64` linear programming for speed; the
+The solver uses numpy `float64` linear programming for speed; the
 exact arithmetic model remains in the structure layer. The equality-constrained
 simplex enforces both composition and sum-of-weights normalization. Its
-`phase_lines` are the complete midpoint-supported stable tie-lines, fixing the
-acknowledged missing-neighbor gap in the v1 renderer. With four or more exactly
-coplanar stable phases, all supported pairs are reported, so crossing diagonals
-may represent more than one equally valid triangulation.
+`phase_lines` are the complete midpoint-supported stable tie-lines, which the
+v1 renderer could omit. With four or more exactly coplanar stable phases, all
+supported pairs are reported, so crossing diagonals may represent more than one
+equally valid triangulation.

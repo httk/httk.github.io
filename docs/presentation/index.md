@@ -1,13 +1,12 @@
 # The *httk* v1 presentation, in *httk₂*
 
-The old `old/httk/Presentation/presentation.tex` introduced *httk* through a
-sequence of deliberately tiny examples. This tour keeps the same order and
-translates each example to the current modular *httk₂* APIs.
+The original *httk* v1 presentation introduced the toolkit through a sequence
+of short examples. This tour keeps the same order and translates each example
+to the current modular *httk₂* APIs.
 
-The translation is intentionally honest. “Available” means the result has a
-current v2 route. “Partial” means useful lower-level pieces exist but the
-one-call v1 integration does not. “Gap” means there is no v2 replacement yet.
-Gap pages are kept in the sequence because they are a useful, concrete porting
+“Available” means the result has a current v2 route. “Partial” means useful
+lower-level pieces exist but the one-call v1 integration does not. “Gap” means
+there is no v2 replacement yet. Together, the gap pages form a concrete porting
 checklist.
 
 ## Install the pieces used by the tour

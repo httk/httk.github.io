@@ -80,9 +80,8 @@ myst_enable_extensions = [
 ]
 myst_heading_anchors = 3
 
-# Execute the example notebooks as part of the (strict) docs build, so that an
-# example that no longer matches the current httk-core / httk-atomistic API fails
-# the build instead of silently going stale.
+# Execute the example notebooks as part of the strict docs build, so that an
+# example incompatible with the httk-core / httk-atomistic API fails the build.
 nb_execution_mode = "force"
 # Cells default to myst-nb's 30 s timeout, which sits too close to the legitimate
 # runtime of the heavier example notebooks under machine load; the timeout's job
@@ -100,7 +99,7 @@ html_theme_options = {
 # inventory with `make docs-inventories`.
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", "_inventories/python.inv"),
-    # Public Starlette types use the vendored inventory copied from httk-web.
+    # Public Starlette types use the vendored Starlette inventory.
     "starlette": ("https://www.starlette.io/", "_inventories/starlette.inv"),
 }
 
@@ -133,18 +132,16 @@ nitpick_ignore = [
     ("py:class", "typing.Optional"),
     ("py:class", "typing.Union"),
     ("py:class", "Ellipsis"),
-    # numpy and ase are optional dependencies surfaced by the numeric and compat layers;
-    # these are the sanctioned targeted entries for those external types (mirroring the
-    # module repos' conf.py).
+    # numpy and ASE are optional dependencies surfaced by the numeric and compatibility
+    # layers; these targeted entries cover their external types.
     ("py:class", "numpy.ndarray"),
     ("py:obj", "numpy.ndarray"),
     ("py:class", "ase.Atoms"),
     ("py:obj", "ase.Atoms"),
-    # Inherited verbatim from httk-workflow/docs/conf.py.
+    # The workflow CLI exposes argparse's private parser-action type.
     ("py:class", "argparse._SubParsersAction"),
-    # The following entries are inherited verbatim from httk-data/docs/conf.py.
-    # SQLAlchemy is optional there, and these internal-facing signatures have no
-    # vendored external inventory.
+    # SQLAlchemy is optional, and these internal-facing signatures have no vendored
+    # external inventory.
     ("py:class", "sqlalchemy.Engine"),
     ("py:class", "sqlalchemy.MetaData"),
     ("py:class", "sqlalchemy.Table"),
@@ -152,14 +149,13 @@ nitpick_ignore = [
     ("py:class", "sqlalchemy.FromClause"),
     # PEP 695 method type parameters are not classes.
     ("py:class", "T"),
-    # Inherited verbatim from httk-data/docs/conf.py for the bare alias xref.
+    # The data query API exposes this bare alias.
     ("py:class", "FilterAst"),
 ]
 copybutton_prompt_text = r">>> |\.\.\. |\$ "
 copybutton_prompt_is_regexp = True
 
-# Inherited from the member modules' sanctioned configurations, including
-# httk-workflow/docs/conf.py.
+# Apply the member modules' warning suppressions to the aggregate build.
 # Aggregate-only: Sphinx's Python domain emits duplicate targets as ref.python
 # after merging the modules' inventories. The installed Sphinx tags missing
 # Python references by their distinct role subtypes (ref.class, ref.meth,
@@ -167,9 +163,8 @@ copybutton_prompt_is_regexp = True
 suppress_warnings = ["myst.xref_missing", "autoapi.python_import_resolution", "ref.python"]
 
 
-# The following workflow-specific rules are copied verbatim from
-# httk-workflow/docs/conf.py. They document the same deliberate public-surface
-# omissions and bare-name aliases sanctioned by that member module.
+# Workflow-specific rules omit internal modules and resolve public bare-name
+# aliases in the aggregate reference.
 _INTERNAL_MODULES = (
     "models",
     "journal",
@@ -198,8 +193,8 @@ _INTERNAL_MODULES = (
     "vasp.templates",
 )
 nitpick_ignore_regex = [
-    # Aggregate adaptation of the workflow rule above: AutoAPI renders these
-    # imported helper names as bare _common.* targets in the merged tree.
+    # AutoAPI renders these imported helper names as bare _common.* targets in
+    # the merged tree.
     (r"py:.*", r"_common\.(CLIContext|Sequence|argparse\..+)"),
     (r"py:.*", r"httk\.workflow\.(" + "|".join(_INTERNAL_MODULES) + r")(\..+)?"),
     (r"py:.*", r"httk\.workflow\.vasp\.runners(\..+)?"),
@@ -227,9 +222,8 @@ _DUPLICATE_WORKFLOW_CLI_MEMBERS = frozenset(
 )
 
 
-# Inherited from httk-workflow/docs/conf.py. The aggregate keeps the member's
-# deliberate public surface: internal workflow modules are scanned for names
-# re-exported by public pages, but do not receive pages of their own.
+# Internal workflow modules are scanned for names re-exported by public pages,
+# but do not receive pages of their own.
 _PUBLIC_WORKFLOW_MODULES = frozenset(
     {
         "httk.workflow",

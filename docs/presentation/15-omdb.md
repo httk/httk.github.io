@@ -21,5 +21,5 @@ provider = StructureEntryProvider({"example": structure})
 serve(adapter_from_providers([provider]), OptimadeConfig(), port=8080)
 ```
 
-A future remote-data example should use a generic OPTIMADE client rather than
-reintroducing a database-specific store singleton.
+Generic OPTIMADE clients are the interoperability path for remote data; v2 does
+not provide a database-specific store singleton.

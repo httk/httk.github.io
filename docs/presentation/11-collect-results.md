@@ -24,6 +24,6 @@ store = SqlStore(Database.sqlite("presentation.sqlite"))
 store.save(TotalEnergyResult("CaTiO3", energy))
 ```
 
-`last_oszicar_energy` is deliberately a small file extractor. A workflow can
+`last_oszicar_energy` is a small file extractor. A workflow can
 also publish OUTCAR, OSZICAR, and other artifacts transactionally before this
 ingestion step.
