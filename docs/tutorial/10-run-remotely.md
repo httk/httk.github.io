@@ -5,7 +5,7 @@ Remote setup and transfer remain command-line operations, now under the
 versioned bundles.
 
 ```console
-httk workflow project init . --name presentation --default-queue default
+httk workflow project init . --name tutorial --default-queue default
 httk workflow remote add kappa --template ssh-slurm --non-interactive
 httk workflow remote configure kappa:default \
   --set workspace=/remote/path/to/Runs

@@ -1,7 +1,7 @@
-# The *httk* v1 presentation, in *httk₂*
+# The *httk₂* tutorial, based on the original *httk* v1 presentation
 
 The original *httk* v1 presentation introduced the toolkit through a sequence
-of short examples. This tour keeps the same order and translates each example
+of short examples. This tutorial keeps the same order and translates each example
 to the current modular *httk₂* APIs.
 
 “Available” means the result has a current v2 route. “Partial” means useful
@@ -9,7 +9,7 @@ lower-level pieces exist but the one-call v1 integration does not. “Gap” mea
 there is no v2 replacement yet. Together, the gap pages form a concrete porting
 checklist.
 
-## Install the pieces used by the tour
+## Install the pieces used by the tutorial
 
 The `httk2` metapackage installs the core, I/O, atomistic, and workflow modules.
 Database examples additionally need *httk-data*'s SQL extra; ASE is used only
