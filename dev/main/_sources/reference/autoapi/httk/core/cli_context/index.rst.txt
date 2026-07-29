@@ -1,0 +1,35 @@
+httk.core.cli_context
+=====================
+
+.. py:module:: httk.core.cli_context
+
+.. autoapi-nested-parse::
+
+   Shared command-line handler context.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.cli_context.CLIContext
+
+
+Module Contents
+---------------
+
+.. py:class:: CLIContext
+
+   Invocation context passed to a registered top-level command.
+
+
+   .. py:attribute:: program
+      :type:  str
+
+
+   .. py:attribute:: cwd
+      :type:  pathlib.Path
+
+

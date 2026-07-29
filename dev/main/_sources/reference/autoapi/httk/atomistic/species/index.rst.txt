@@ -1,0 +1,94 @@
+httk.atomistic.species
+======================
+
+.. py:module:: httk.atomistic.species
+
+.. autoapi-nested-parse::
+
+   Species definition for httk-atomistic, mirroring the OPTIMADE ``species`` entry.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.species.Species
+
+
+Module Contents
+---------------
+
+.. py:class:: Species
+
+   A chemical species occupying one or more sites, mirroring the OPTIMADE ``species`` object.
+
+   A species has a ``name`` (unique within a structure; it need not be a chemical
+   symbol), a list of ``chemical_symbols`` composing it, and a matching list of
+   ``concentration`` values. Each chemical symbol is an element symbol, or one of
+   the pseudo-symbols ``"X"`` (unknown) or ``"vacancy"``. The optional ``mass``,
+   ``attached``, ``nattached``, and ``original_name`` fields carry the remaining
+   OPTIMADE species information; ``attached`` and ``nattached`` must be given
+   together and share their length.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: chemical_symbols
+      :type:  tuple[str, Ellipsis]
+
+
+   .. py:attribute:: concentration
+      :type:  tuple[float, Ellipsis]
+
+
+   .. py:attribute:: mass
+      :type:  tuple[float, Ellipsis] | None
+      :value: None
+
+
+
+   .. py:attribute:: original_name
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: attached
+      :type:  tuple[str, Ellipsis] | None
+      :value: None
+
+
+
+   .. py:attribute:: nattached
+      :type:  tuple[int, Ellipsis] | None
+      :value: None
+
+
+
+   .. py:property:: is_single_element
+      :type: bool
+
+
+      Whether this species is a single, unattached, real chemical element.
+
+      True only for a species composed of exactly one element symbol (not ``"X"``
+      or ``"vacancy"``) with no attached particles. Such species are the ones that
+      can be represented as a bare atomic number in the primitive representation.
+
+
+   .. py:method:: create(obj: Species | dict[str, Any] | str | int) -> Species
+      :classmethod:
+
+
+      Return a Species from an existing Species, bare symbol or atomic number, or
+      OPTIMADE species dict.
+
+      A bare element symbol, ``"X"``, or ``"vacancy"`` denotes a fully occupied
+      single-symbol species. A bare atomic number denotes the corresponding element.
+
+
+

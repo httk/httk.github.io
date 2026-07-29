@@ -1,0 +1,78 @@
+httk.data.db.engine
+===================
+
+.. py:module:: httk.data.db.engine
+
+.. autoapi-nested-parse::
+
+   Database engine lifecycle: :class:`Database` wraps a SQLAlchemy engine behind an httk-facing API.
+
+   A :class:`Database` names *where* data lives — an SQLite file, an in-memory
+   SQLite database, a DuckDB file — and owns the connection pool that reaches it.
+   It deliberately exposes no SQL surface of its own: the store layer
+   (:class:`~httk.data.db.store.SqlStore`) asks it for connections internally, and
+   user code only constructs one (usually via :meth:`Database.sqlite` or
+   :meth:`Database.duckdb`) and passes it on. There is no global engine registry
+   and no interpreter-exit hook; dispose of a database explicitly with
+   :meth:`Database.dispose` or use it as a context manager.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.data.db.engine.Database
+
+
+Module Contents
+---------------
+
+.. py:class:: Database(engine: sqlalchemy.Engine)
+
+   A relational database reachable through a wrapped SQLAlchemy engine.
+
+   Construct one with :meth:`sqlite` or :meth:`duckdb` (or, for other
+   SQLAlchemy-supported backends, by passing a preconfigured engine directly).
+   The instance is a context manager; leaving the ``with`` block disposes the
+   engine's connection pool.
+
+
+   .. py:method:: sqlite(path: str | os.PathLike[str] | None = None) -> Self
+      :classmethod:
+
+
+      An SQLite database stored in the file at ``path``, or in memory when ``path`` is None.
+
+      The in-memory variant is configured (via a static connection pool with a
+      shared, thread-unrestricted connection) so that every connection drawn
+      from the engine sees the one and same database; file-backed databases
+      use SQLAlchemy's default pooling.
+
+
+
+   .. py:method:: duckdb(path: str | os.PathLike[str] | None = None) -> Self
+      :classmethod:
+
+
+      A DuckDB database stored in the file at ``path``, or in memory when ``path`` is None.
+
+      :raises ImportError: If the ``duckdb_engine`` SQLAlchemy dialect is not
+          installed; install the ``httk-data[duckdb]`` extra to get it.
+
+
+
+   .. py:property:: engine
+      :type: sqlalchemy.Engine
+
+
+      The underlying SQLAlchemy engine (for use by the storage layer itself).
+
+
+   .. py:method:: dispose() -> None
+
+      Close the engine's connection pool; the database can no longer be used after this.
+
+
+

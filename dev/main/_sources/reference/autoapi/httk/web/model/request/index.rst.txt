@@ -1,0 +1,37 @@
+httk.web.model.request
+======================
+
+.. py:module:: httk.web.model.request
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.web.model.request.HttpRequestContext
+
+
+Module Contents
+---------------
+
+.. py:class:: HttpRequestContext
+
+   .. py:attribute:: method
+      :type:  str
+      :value: 'GET'
+
+
+
+   .. py:attribute:: query
+      :type:  dict[str, str]
+
+
+   .. py:attribute:: postvars
+      :type:  dict[str, str]
+
+
+   .. py:attribute:: headers
+      :type:  dict[str, str]
+
+

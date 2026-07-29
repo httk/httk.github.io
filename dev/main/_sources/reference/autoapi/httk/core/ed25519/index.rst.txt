@@ -1,0 +1,74 @@
+httk.core.ed25519
+=================
+
+.. py:module:: httk.core.ed25519
+
+.. autoapi-nested-parse::
+
+   Ed25519 signing with an optional accelerated backend.
+
+   All private keys accepted and returned by this module are standard 32-byte
+   Ed25519 seeds. The stdlib implementation follows RFC 8032 and is kept as a
+   portable fallback; ``cryptography`` is used automatically when installed.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.core.ed25519.generate_ed25519_seed
+   httk.core.ed25519.derive_ed25519_public_key
+   httk.core.ed25519.sign_ed25519
+   httk.core.ed25519.verify_ed25519
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.ed25519.ed25519_backend_available
+   httk.core.ed25519.ed25519_generate_seed
+   httk.core.ed25519.ed25519_public_key
+   httk.core.ed25519.ed25519_sign
+   httk.core.ed25519.ed25519_verify
+
+
+Module Contents
+---------------
+
+.. py:function:: ed25519_backend_available(backend: str = 'cryptography') -> bool
+
+   Return whether *backend* can perform Ed25519 operations.
+
+
+.. py:function:: ed25519_generate_seed() -> bytes
+
+   Generate a standard 32-byte Ed25519 private seed.
+
+
+.. py:function:: ed25519_public_key(seed: bytes, *, backend: str | None = None) -> bytes
+
+   Derive the 32-byte public key for a 32-byte private *seed*.
+
+
+.. py:function:: ed25519_sign(seed: bytes, message: bytes, *, backend: str | None = None) -> bytes
+
+   Return an RFC 8032 Ed25519 signature for *message*.
+
+
+.. py:function:: ed25519_verify(public_key: bytes, message: bytes, signature: bytes, *, backend: str | None = None) -> bool
+
+   Return whether *signature* is valid, treating malformed input as false.
+
+
+.. py:data:: generate_ed25519_seed
+
+.. py:data:: derive_ed25519_public_key
+
+.. py:data:: sign_ed25519
+
+.. py:data:: verify_ed25519
+

@@ -1,0 +1,552 @@
+httk.optimade.backend
+=====================
+
+.. py:module:: httk.optimade.backend
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/optimade/backend/adapter/index
+   /reference/autoapi/httk/optimade/backend/execution/index
+   /reference/autoapi/httk/optimade/backend/handlers/index
+   /reference/autoapi/httk/optimade/backend/memory_store/index
+   /reference/autoapi/httk/optimade/backend/partial/index
+   /reference/autoapi/httk/optimade/backend/protocols/index
+   /reference/autoapi/httk/optimade/backend/providers/index
+   /reference/autoapi/httk/optimade/backend/translation/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.optimade.backend.Searcher
+   httk.optimade.backend.SearchExpression
+   httk.optimade.backend.SearchField
+   httk.optimade.backend.SearchResult
+   httk.optimade.backend.SearchVariable
+   httk.optimade.backend.Store
+   httk.optimade.backend.BackendAdapter
+   httk.optimade.backend.EntrySource
+   httk.optimade.backend.StoreResults
+   httk.optimade.backend.InMemoryStore
+   httk.optimade.backend.PartialDimension
+   httk.optimade.backend.PartialValue
+   httk.optimade.backend.QueryFunction
+   httk.optimade.backend.QueryResults
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.optimade.backend.execute_query
+   httk.optimade.backend.simple_property_handlers
+   httk.optimade.backend.adapter_from_providers
+   httk.optimade.backend.providers_from_registry
+   httk.optimade.backend.translate_filter
+   httk.optimade.backend.translate_filter_node
+
+
+Package Contents
+----------------
+
+.. py:class:: Searcher
+
+   Bases: :py:obj:`Protocol`
+
+
+   A single query under construction, and its results once iterated.
+
+   Iteration yields one :class:`SearchResult` per match, so ``item[0][0]`` is
+   the first declared output of the match (typically the matched row object).
+   The expressions received by ``add`` are always ones produced by this same
+   backend's search variables, so implementations may type them as their own
+   expression class; a backend that needs a second (post-filter) evaluation
+   position decides that from the expression itself, not from the caller.
+
+
+   .. py:attribute:: offset
+      :type:  int
+
+
+   .. py:method:: variable(target: Any) -> Any
+
+
+   .. py:method:: output(variable: Any, name: str) -> None
+
+
+   .. py:method:: add(expression: Any) -> None
+
+
+   .. py:method:: count() -> int
+
+
+   .. py:method:: set_limit(limit: int) -> None
+
+
+   .. py:method:: add_offset(offset: int) -> None
+
+
+   .. py:method:: add_sort(field: Any, descending: bool) -> None
+
+
+.. py:class:: SearchExpression
+
+   Bases: :py:obj:`Protocol`
+
+
+   Base class for protocol classes.
+
+   Protocol classes are defined as::
+
+       class Proto(Protocol):
+           def meth(self) -> int:
+               ...
+
+   Such classes are primarily used with static type checkers that recognize
+   structural subtyping (static duck-typing).
+
+   For example::
+
+       class C:
+           def meth(self) -> int:
+               return 0
+
+       def func(x: Proto) -> int:
+           return x.meth()
+
+       func(C())  # Passes static type check
+
+   See PEP 544 for details. Protocol classes decorated with
+   @typing.runtime_checkable act as simple-minded runtime protocols that check
+   only the presence of given attributes, ignoring their type signatures.
+   Protocol classes can be generic, they are defined as::
+
+       class GenProto[T](Protocol):
+           def meth(self) -> T:
+               ...
+
+
+.. py:class:: SearchField
+
+   Bases: :py:obj:`Protocol`
+
+
+   A queryable field of a search variable.
+
+   In addition to the methods below, fields support the rich comparison
+   operators (``==``, ``!=``, ``<``, ``<=``, ``>``, ``>=``), returning
+   :class:`SearchExpression`. The handlers invoke those via
+   ``getattr(field, '__eq__')(value)`` since the comparison dunders cannot be
+   typed as expression-returning.
+
+   The three string-matching methods take **literal** text: no wildcard or
+   pattern syntax whatsoever crosses this contract, so ``%`` and ``_`` (and
+   any other metacharacter) match themselves. A backend is therefore free to
+   implement them with SQL ``LIKE`` over an escaped pattern, with a regular
+   expression, or with a full-text index — the choice is invisible here.
+
+
+   .. py:method:: has_any(*values: Any) -> SearchExpression
+
+
+   .. py:method:: has_only(*values: Any) -> SearchExpression
+
+
+   .. py:method:: contains(text: str) -> SearchExpression
+
+      Match values containing ``text`` as a literal substring.
+
+
+
+   .. py:method:: startswith(prefix: str) -> SearchExpression
+
+      Match values beginning with the literal ``prefix``.
+
+
+
+   .. py:method:: endswith(suffix: str) -> SearchExpression
+
+      Match values ending with the literal ``suffix``.
+
+
+
+.. py:class:: SearchResult
+
+   Bases: :py:obj:`NamedTuple`
+
+
+   One match: the declared output values, and the names they were declared under.
+
+   ``values`` holds one entry per :meth:`Searcher.output` call in declaration
+   order; it is a tuple, so ``values, names = result`` and ``result[0][0]``
+   both work.
+
+
+   .. py:attribute:: values
+      :type:  tuple[Any, Ellipsis]
+
+
+   .. py:attribute:: names
+      :type:  tuple[str, Ellipsis]
+
+
+.. py:class:: SearchVariable
+
+   Bases: :py:obj:`Protocol`
+
+
+   A query variable bound to a target type; attribute access yields fields.
+
+   ``always_true``/``always_false`` are reserved names: they are real methods
+   of the variable, never stored fields resolved through ``__getattr__``.
+   They exist so a translation layer can express a constant truth value
+   without inventing a probe field. A ``field == field`` probe is NULL-unsound,
+   since it yields NULL (not true) for a NULL field.
+
+
+   .. py:method:: always_true() -> SearchExpression
+
+      An expression that matches every row.
+
+
+
+   .. py:method:: always_false() -> SearchExpression
+
+      An expression that matches no row.
+
+
+
+.. py:class:: Store
+
+   Bases: :py:obj:`Protocol`
+
+
+   Base class for protocol classes.
+
+   Protocol classes are defined as::
+
+       class Proto(Protocol):
+           def meth(self) -> int:
+               ...
+
+   Such classes are primarily used with static type checkers that recognize
+   structural subtyping (static duck-typing).
+
+   For example::
+
+       class C:
+           def meth(self) -> int:
+               return 0
+
+       def func(x: Proto) -> int:
+           return x.meth()
+
+       func(C())  # Passes static type check
+
+   See PEP 544 for details. Protocol classes decorated with
+   @typing.runtime_checkable act as simple-minded runtime protocols that check
+   only the presence of given attributes, ignoring their type signatures.
+   Protocol classes can be generic, they are defined as::
+
+       class GenProto[T](Protocol):
+           def meth(self) -> T:
+               ...
+
+
+   .. py:method:: searcher() -> Searcher
+
+
+.. py:class:: BackendAdapter
+
+   Binds a store to the OPTIMADE entry endpoints it serves.
+
+   ``sources`` maps entry endpoint names (e.g. ``'structures'``) to the
+   sources queried for that endpoint; an endpoint with several sources (e.g.
+   several calculation result types) is queried across all of them.
+
+   ``schema`` is required: it declares the served entry types and properties.
+   ``field_handlers`` maps each entry type to its filter-handler table. When
+   omitted (left empty) it is derived from ``schema`` via
+   :func:`~httk.data.optimade_query.simple_property_handlers`, using an
+   identity property-key map (each property is filtered against a backend field
+   of the same name); a backend whose field names differ, or that wants finer
+   control, supplies its own tables instead.
+
+
+   .. py:attribute:: store
+      :type:  httk.data.query.Store
+
+
+   .. py:attribute:: sources
+      :type:  collections.abc.Mapping[str, collections.abc.Sequence[EntrySource]]
+
+
+   .. py:attribute:: schema
+      :type:  httk.optimade.schema.served.ServedSchema
+
+
+   .. py:attribute:: field_handlers
+      :type:  collections.abc.Mapping[str, httk.data.optimade_query.HandlerTable]
+
+
+   .. py:method:: query_function() -> httk.optimade.model.results.QueryFunction
+
+
+.. py:class:: EntrySource
+
+   One queryable source (table/type) behind an OPTIMADE entry endpoint.
+
+   ``target`` is what gets passed to ``searcher.variable()``; ``fields`` maps
+   OPTIMADE response-field names to extractors applied to matched row objects.
+   ``relationships``, when set, is an extractor mapping a matched row to a
+   dictionary keyed by related entry type, each value a list of
+   ``{'id': str, 'description': str?, 'role': str?}`` dictionaries.
+   ``sort_keys`` maps response-field names to the backend field names to sort
+   on. ``property_metadata`` maps response-field names to extractors returning
+   the per-property metadata dictionary for a matched row (or ``None`` when
+   there is no metadata for that row).
+
+
+   .. py:attribute:: target
+      :type:  Any
+
+
+   .. py:attribute:: fields
+      :type:  collections.abc.Mapping[str, FieldExtractor]
+
+
+   .. py:attribute:: sort_keys
+      :type:  collections.abc.Mapping[str, str]
+
+
+   .. py:attribute:: relationships
+      :type:  FieldExtractor | None
+      :value: None
+
+
+
+   .. py:attribute:: property_metadata
+      :type:  collections.abc.Mapping[str, FieldExtractor]
+
+
+.. py:class:: StoreResults(pairs: list[tuple[httk.optimade.backend.adapter.EntrySource, httk.data.query.Searcher]], response_fields: list[str], unknown_response_fields: list[str], limit: int | None, offset: int, recognized_prefixes: tuple[str, Ellipsis])
+
+   Results of a query over one or more searchers.
+
+   Implements the :class:`~httk.optimade.model.results.QueryResults`
+   protocol. Iteration yields one
+   :class:`~httk.optimade.model.results.ResultRow` per entry, whose values
+   map response-field names to values extracted from the matched row objects.
+
+
+   .. py:attribute:: pairs
+
+
+   .. py:attribute:: recognized_prefixes
+
+
+   .. py:attribute:: cur
+      :type:  collections.abc.Iterator[tuple[httk.optimade.backend.adapter.EntrySource, Any]] | None
+
+
+   .. py:attribute:: limit
+
+
+   .. py:attribute:: response_fields
+
+
+   .. py:attribute:: unknown_response_fields
+
+
+   .. py:attribute:: offset
+
+
+   .. py:attribute:: more_data_available
+      :value: True
+
+
+
+   .. py:method:: count() -> int
+
+
+.. py:function:: execute_query(adapter: httk.optimade.backend.adapter.BackendAdapter, entries: list[str], response_fields: list[str], unknown_response_fields: list[str], response_limit: int | None, response_offset: int | None, filter_ast: httk.core.FilterAst | None = None, *, sort: collections.abc.Sequence[tuple[str, bool]] | None = None, debug: bool = False) -> StoreResults
+
+.. py:function:: simple_property_handlers(entry_type: str, property_keys: collections.abc.Mapping[str, str], property_fulltypes: collections.abc.Mapping[str, str]) -> dict[str, collections.abc.Mapping[str, collections.abc.Callable[Ellipsis, Any]]]
+
+   Build a filter handler table for an entry type from a property-key map.
+
+   Always provides the standard ``id`` (matched against the ``__id`` field)
+   and ``type`` (a constant equal to ``entry_type``) handlers. For every
+   property named in ``property_keys`` (which maps property names to backend
+   field names), handlers are generated from the property's fulltype in
+   ``property_fulltypes`` (default ``"string"``): string properties get
+   comparison and stringmatching handlers; integer and float properties get a
+   numeric comparison handler; ``list of ...`` properties get a HAS (set
+   membership) handler. Every generated property also gets a ``known``
+   unknown handler.
+
+
+.. py:class:: InMemoryStore(tables: dict[str, list[Row]])
+
+   A store over dict rows: ``InMemoryStore({'structures': [ {...}, ... ]})``.
+
+
+   .. py:attribute:: tables
+
+
+   .. py:method:: searcher() -> MemorySearcher
+
+
+.. py:class:: PartialDimension
+
+   One list axis of a :class:`PartialValue`.
+
+   ``length`` is the number of items along the axis (``None`` when unknown or
+   entry-dependent and not declared). ``sliceable`` indicates whether the
+   server can honour a slice request for this axis.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: length
+      :type:  int | None
+      :value: None
+
+
+
+   .. py:attribute:: sliceable
+      :type:  bool
+      :value: False
+
+
+
+.. py:class:: PartialValue
+
+   A property value provided lazily, one slice at a time.
+
+   ``fetch`` takes a tuple of Python slices (one per dimension, with the usual
+   *exclusive* stop) and returns the corresponding nested lists.
+
+
+   .. py:attribute:: dimensions
+      :type:  tuple[PartialDimension, Ellipsis]
+
+
+   .. py:attribute:: fetch
+      :type:  collections.abc.Callable[[tuple[slice, Ellipsis]], Any]
+
+
+.. py:class:: QueryFunction
+
+   Bases: :py:obj:`Protocol`
+
+
+   The callback seam through which the request engine runs queries on a backend.
+
+
+.. py:class:: QueryResults
+
+   Bases: :py:obj:`Protocol`
+
+
+   The results of a query against a backend, as consumed by the entry endpoints.
+
+   Iteration yields one :class:`~httk.optimade.model.results.ResultRow` per entry; its ``values`` map
+   OPTIMADE response-field names to values, and the ``id`` and ``type`` keys
+   are always present.
+
+
+   .. py:attribute:: more_data_available
+      :type:  bool
+
+
+   .. py:method:: count() -> int
+
+
+.. py:function:: adapter_from_providers(providers: collections.abc.Iterable[httk.core.EntryProvider], **options: Any) -> httk.optimade.backend.adapter.BackendAdapter
+
+   Build a :class:`~httk.optimade.backend.adapter.BackendAdapter` serving the given entry providers.
+
+   Every provider's :meth:`~httk.core.EntryProvider.entry_types` become served
+   entry types (described by their :class:`~httk.core.EntryTypeDefinition`), its
+   :meth:`~httk.core.EntryProvider.property_keys` name the served subset and drive
+   both the filter handlers (via
+   :func:`~httk.data.optimade_query.simple_property_handlers`) and the
+   response-field extractors, and its
+   :meth:`~httk.core.EntryProvider.records` are loaded into an
+   :class:`~httk.optimade.backend.memory_store.InMemoryStore`. Every served
+   property MUST be described by the entry type's definition (a custom property
+   must therefore live in an
+   :meth:`~httk.core.EntryTypeDefinition.extended` definition); a
+   :class:`ValueError` names any offender. All served properties beyond
+   ``id``/``type`` are marked default-response. Extra keyword ``options`` (e.g.
+   ``sortable``, ``recognized_prefixes``) are forwarded to
+   :func:`~httk.optimade.schema.served.build_served_schema`; every served
+   property is sortable-capable, since the provider's property-key map is
+   passed through as the source's
+   :attr:`~httk.optimade.backend.adapter.EntrySource.sort_keys`.
+
+   Declared relationships (:meth:`~httk.core.EntryProvider.relationships`) are
+   fully auto-wired for serving *and* filtering: for each entry type with
+   declared relationships, a synthetic ``__rel_<related_type>`` id-list field
+   is materialized on EVERY row of that entry type (an empty list when the row
+   has no related entries of that type, so inverse set semantics are
+   well-defined), and a ``'<related_type>.id'`` entry built with
+   :func:`~httk.data.optimade_query.relationship_id_handler` is merged into the
+   entry type's derived filter-handler table (never overwriting an entry
+   already present, mirroring how :class:`~httk.optimade.backend.adapter.BackendAdapter`
+   respects explicitly supplied handler tables). ``<related_type>.id HAS ...``
+   filters — and, through the related-property resolver of
+   :func:`~httk.optimade.backend.translation.translate_filter`, depth-1
+   relationship-property filters such as ``references.doi CONTAINS "10.1"`` —
+   therefore work without any hand-wiring.
+
+
+.. py:function:: providers_from_registry() -> dict[str, collections.abc.Callable[Ellipsis, httk.core.EntryProvider]]
+
+   Return the registered entry-provider factories keyed by their registered name.
+
+   Resolves each factory registered via
+   :func:`httk.core.register_entry_provider` (through ``httk.handlers.*``
+   self-registration) into a callable. Providers need data, so applications
+   instantiate them: ``providers_from_registry()["atomistic-structures"](data)``.
+
+
+.. py:function:: translate_filter(filter_ast: httk.core.FilterAst | None, entries: list[str], adapter: httk.optimade.backend.adapter.BackendAdapter, sort: collections.abc.Sequence[tuple[str, bool]] | None = None) -> list[tuple[httk.optimade.backend.adapter.EntrySource, httk.data.query.Searcher]]
+
+   Build one searcher per entry source, with the filter applied to each.
+
+   Relationship-property filters (dotted identifiers over served entry types)
+   are resolved through the adapter's related-property resolver (built by
+   ``_related_property_resolver``), so filtering ``references.doi`` behaves
+   exactly like filtering ``/references`` directly.
+
+
+.. py:function:: translate_filter_node(node: httk.core.FilterAst, search_variable: httk.data.query.SearchVariable, entry: str, entry_info: collections.abc.Mapping[str, Any], handlers: httk.data.optimade_query.HandlerTable, recognized_prefixes: tuple[str, Ellipsis], served_entries: tuple[str, Ellipsis] = ()) -> httk.data.query.SearchExpression
+
+   Translate one filter node against an OPTIMADE *entry-info* property mapping.
+
+   An OPTIMADE-side adaptation of
+   :func:`~httk.data.optimade_query.translate_filter_ast`: ``entry_info`` maps
+   property names to their property dictionaries (only their ``'fulltype'``
+   keys are read) rather than straight to fulltypes, ``served_entries`` names
+   the relationship targets, and failures surface as
+   :class:`~httk.optimade.model.errors.TranslatorError` instead of the
+   upstream neutral :class:`~httk.data.optimade_query.FilterTranslationError`.
+
+   No related-property resolver is threaded through, so relationship-property
+   filters other than ``<type>.id HAS ...`` raise a not-implemented (501)
+   error. Use :func:`translate_filter` (which builds the resolver from its
+   adapter) for full relationship-property filtering.
+
+

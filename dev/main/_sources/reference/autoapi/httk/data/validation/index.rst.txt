@@ -1,0 +1,88 @@
+httk.data.validation
+====================
+
+.. py:module:: httk.data.validation
+
+.. autoapi-nested-parse::
+
+   Offline JSON-Schema validation of values against OPTIMADE property definitions.
+
+   httk-core models each OPTIMADE property as a self-describing definition whose
+   :meth:`~httk.core.PropertyDefinition.as_optimade` document *is* a JSON Schema
+   (plus ``x-optimade-*`` annotations that validators ignore). This module uses
+   that document directly to validate concrete values with ``jsonschema``'s Draft
+   2020-12 dialect.
+
+   The definitions are self-contained: they carry no ``$ref``, so validation never
+   needs to resolve or fetch anything. The document's ``$schema`` key points at the
+   OPTIMADE property-definition *meta*-schema URI (which describes definitions, not
+   values); it is removed before building the validator so ``jsonschema`` never
+   attempts to resolve it, and the dialect is pinned explicitly to
+   ``jsonschema.Draft202012Validator``. Validation is therefore fully offline.
+
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   httk.data.validation.PropertyValidationError
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.data.validation.validate_property
+   httk.data.validation.validate_record
+
+
+Module Contents
+---------------
+
+.. py:exception:: PropertyValidationError(name: str, message: str)
+
+   Bases: :py:obj:`ValueError`
+
+
+   A value did not conform to its OPTIMADE property definition.
+
+   Carries the offending property ``name`` and a human-readable ``message``. For
+   single-value failures the message wraps the underlying ``jsonschema`` error
+   message, and that ``jsonschema.exceptions.ValidationError`` is preserved
+   as the chained ``__cause__``.
+
+
+   .. py:attribute:: name
+
+
+   .. py:attribute:: message
+
+
+.. py:function:: validate_property(definition: httk.core.PropertyDefinition, value: Any) -> None
+
+   Validate a single ``value`` against ``definition``'s JSON-Schema payload.
+
+   Builds a ``jsonschema.Draft202012Validator`` directly from the
+   definition's document (with the ``$schema`` meta-schema reference removed)
+   and validates ``value`` against it. Returns ``None`` on success; raises
+   :class:`PropertyValidationError` on failure, chaining the underlying
+   ``jsonschema.exceptions.ValidationError`` as the cause. No network
+   access or registry lookup ever happens.
+
+
+.. py:function:: validate_record(entry_type: httk.core.EntryTypeDefinition, record: collections.abc.Mapping[str, Any]) -> None
+
+   Validate every property present in ``record`` against ``entry_type``.
+
+   Each key in ``record`` must be described by ``entry_type``; unknown property
+   names are rejected with a :class:`PropertyValidationError` naming them and the
+   entry type. ``id`` and ``type`` must both be present. Properties described by
+   the definition but absent from ``record`` are simply not checked (serving a
+   subset of the described properties is normal). The value of every property
+   that *is* present is validated via :func:`validate_property`. Returns ``None``
+   on success.
+
+

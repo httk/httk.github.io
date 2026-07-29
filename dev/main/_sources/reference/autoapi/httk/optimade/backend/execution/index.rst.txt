@@ -1,0 +1,72 @@
+httk.optimade.backend.execution
+===============================
+
+.. py:module:: httk.optimade.backend.execution
+
+.. autoapi-nested-parse::
+
+   Query execution: runs translated searchers and adapts results for the endpoints.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.optimade.backend.execution.StoreResults
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.optimade.backend.execution.execute_query
+
+
+Module Contents
+---------------
+
+.. py:class:: StoreResults(pairs: list[tuple[httk.optimade.backend.adapter.EntrySource, httk.data.query.Searcher]], response_fields: list[str], unknown_response_fields: list[str], limit: int | None, offset: int, recognized_prefixes: tuple[str, Ellipsis])
+
+   Results of a query over one or more searchers.
+
+   Implements the :class:`~httk.optimade.model.results.QueryResults`
+   protocol. Iteration yields one
+   :class:`~httk.optimade.model.results.ResultRow` per entry, whose values
+   map response-field names to values extracted from the matched row objects.
+
+
+   .. py:attribute:: pairs
+
+
+   .. py:attribute:: recognized_prefixes
+
+
+   .. py:attribute:: cur
+      :type:  collections.abc.Iterator[tuple[httk.optimade.backend.adapter.EntrySource, Any]] | None
+
+
+   .. py:attribute:: limit
+
+
+   .. py:attribute:: response_fields
+
+
+   .. py:attribute:: unknown_response_fields
+
+
+   .. py:attribute:: offset
+
+
+   .. py:attribute:: more_data_available
+      :value: True
+
+
+
+   .. py:method:: count() -> int
+
+
+.. py:function:: execute_query(adapter: httk.optimade.backend.adapter.BackendAdapter, entries: list[str], response_fields: list[str], unknown_response_fields: list[str], response_limit: int | None, response_offset: int | None, filter_ast: httk.core.FilterAst | None = None, *, sort: collections.abc.Sequence[tuple[str, bool]] | None = None, debug: bool = False) -> StoreResults
+

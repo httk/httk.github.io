@@ -1,0 +1,153 @@
+httk.core.views
+===============
+
+.. py:module:: httk.core.views
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/core/views/backend/index
+   /reference/autoapi/httk/core/views/coercion/index
+   /reference/autoapi/httk/core/views/unwrapping/index
+   /reference/autoapi/httk/core/views/view/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.core.views.Coercer
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.views.Backend
+   httk.core.views.View
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.views.coerce
+   httk.core.views.register_coercer
+   httk.core.views.view_class_coercer
+   httk.core.views.unwrap
+
+
+Package Contents
+----------------
+
+.. py:class:: Backend[BackendT: Backend](backend, **hints)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Abstract base class to be subclassed into classes that keep track of alternative
+   representations of certain types of data, all adhering to a common API interface.
+
+   The class variable backend_classes is a list of all classes that can carry the kind of data the subclass represents.
+
+   A system of "hints" are used primarily to disambiguate between multiple valid interpretations of the same input object.
+   Unless otherwise documented for a specific backend, extra hints that do not affect this interpretation are ignored.
+
+   A set of backends are meant to be combined with a set of Views.
+
+
+   .. py:attribute:: backend_classes
+      :type:  ClassVar[list[type[Backend[Any]]]]
+
+
+   .. py:method:: create(obj: Any, **hints: Any) -> Self
+      :classmethod:
+
+
+      Given a source data (obj) and a set of hints, create a backend from one of the alternatives in the class variable `backend_classes`.
+
+      By design this creation depends heavily on order of the classes in `backend_classes`.
+      Each class is tried in the order they appear until one of them is successful, in the sense that their `__new__` does not return None.
+      Sometimes multiple backend classes can handle the same input type. In that case, dispatch is guided by keyword arguments `**hints`,
+      with the convention that:
+
+      * if a hint named `kind` is given, a backend class should accept the object only if it matches that `kind`;
+      * when `kind` matches, additional unrecognized hints may be ignored.
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:type:: Coercer
+   :canonical: Callable[[Any, type], Any | None]
+
+
+.. py:function:: coerce(value: Any, target: Any) -> Any
+
+   Coerce ``value`` to a target class or prototype instance.
+
+   The exact string ``"natural"`` is a documented sentinel that returns ``value`` unchanged.
+   Otherwise, a class target is used directly and an instance target is treated as a prototype,
+   using its type. Values already matching the target are returned unchanged. Registered coercers
+   are then tried in registration order, and the first non-``None`` result wins. If none succeeds,
+   ``TypeError`` is raised naming the value type and target. Coercion is best effort and favors
+   lossless view wrapping; individual coercers document any deliberately lossy conversion.
+
+
+.. py:function:: register_coercer(coercer: Coercer) -> None
+
+   Append ``coercer`` to the registry, preserving registration order.
+
+
+.. py:function:: view_class_coercer(view_classes: collections.abc.Sequence[type]) -> Coercer
+
+   Return a coercer that tries matching view classes in ``view_classes`` order.
+
+   A ``TypeError``, ``ValueError``, or ``OverflowError`` from a view constructor means that view
+   cannot represent the value, so construction continues with the next matching class.
+
+
+.. py:function:: unwrap(obj: Any) -> Any
+
+   Given a Backend or a View, return the most raw representation possible, i.e., if the backend has an internal representaion -
+   or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+   that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+.. py:class:: View[BackendT: httk.core.views.backend.Backend]
+
+   A set of views allow manipulating data and state of a backend through different interfaces.
+   Hence, creating a View from a Backend, or from another View, allows to read and operate on the data through the interface of that view,
+   even if it is not the natural representation of the underlying data.
+
+   Important: views are always meant to reference the data and state of *the same* underlying object, hence, e.g.:
+
+   * If a function is given an X object, and the function applies an Xvariant1View and then calls, e.g., close() via that view,
+     the expectation should be that the original X object is also closed.
+   * When, e.g., a TextstreamStringView is created on an already partially read stream, only the unread data will appear through that string interface.
+
+   All backends and views of the same kind of data (X) should be combined into a type union XLike that functions use to declare they support this kind of data.
+   Such functions should start with creating a View on the passed data, giving them access to the data in a single desired format.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

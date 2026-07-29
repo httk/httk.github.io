@@ -1,0 +1,37 @@
+httk.handlers.atomistic
+=======================
+
+.. py:module:: httk.handlers.atomistic
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.handlers.atomistic.register_entry_provider
+   httk.handlers.atomistic.register_format_adapter
+
+
+Package Contents
+----------------
+
+.. py:function:: register_entry_provider(*, name: str, factory: str) -> None
+
+   Register an :class:`~httk.core.entry_provider.EntryProvider` factory under ``name``.
+
+   ``factory`` is a lazy ``"module:callable"`` reference to a callable that
+   constructs a provider (providers need data, so applications call the factory
+   themselves; the registry only records how to reach it). This mirrors
+   ``register_loader``.
+
+
+.. py:function:: register_format_adapter(*, name: str, adapter: str | collections.abc.Callable[Ellipsis, Any], formats: collections.abc.Sequence[str]) -> None
+
+   Register one lazy adapter for each neutral payload format in ``formats``.
+
+   ``adapter`` may be a callable or a lazy ``"module:callable"`` reference.
+   A format tag has one owner: registering it again raises an error naming both
+   the existing and attempted registrants.
+
+

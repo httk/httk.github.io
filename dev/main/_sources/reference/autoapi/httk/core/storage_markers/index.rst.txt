@@ -1,0 +1,269 @@
+httk.core.storage_markers
+=========================
+
+.. py:module:: httk.core.storage_markers
+
+.. autoapi-nested-parse::
+
+   Stdlib-only marker vocabulary for declaring storable record classes.
+
+   A *storable* class is a plain frozen dataclass whose fields a storage layer
+   (such as the database layer in *httk-data*) can resolve into a relational
+   schema. Storability is non-intrusive: there is no base class to inherit.
+   This module holds only the declaration vocabulary — the markers attached to
+   fields via :class:`typing.Annotated`, the optional class-level
+   :class:`StorageInfo` declaration, and the :class:`stored_property` decorator
+   for derived, queryable properties — so that any httk module (or application)
+   can declare storable classes while depending only on httk-core. All schema
+   resolution and storage work happens in the storage layer.
+
+   Markers are used like this::
+
+       @dataclass(frozen=True)
+       class StructureRecord:
+           __httk_storage__: ClassVar[StorageInfo] = StorageInfo(indexes=(("spacegroup", "formula"),))
+
+           formula: Annotated[str, Indexed()]
+           spacegroup: int
+           cell_basis: Annotated[FracVector, Shape(3, 3)]
+           symbols: list[str]
+
+           @stored_property
+           def natoms(self) -> int:
+               return len(self.symbols)
+
+   The class-level declaration is optional; a storage layer must accept plain
+   frozen dataclasses with no markers at all, and may also accept an external
+   :class:`StorageInfo` override for classes that cannot be modified.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.core.storage_markers.STORAGE_INFO_ATTRIBUTE
+   httk.core.storage_markers.DedupPolicy
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.storage_markers.Indexed
+   httk.core.storage_markers.Unique
+   httk.core.storage_markers.Skip
+   httk.core.storage_markers.Shape
+   httk.core.storage_markers.Related
+   httk.core.storage_markers.RelationshipLink
+   httk.core.storage_markers.StorageInfo
+   httk.core.storage_markers.stored_property
+
+
+Module Contents
+---------------
+
+.. py:data:: STORAGE_INFO_ATTRIBUTE
+   :type:  Final
+   :value: '__httk_storage__'
+
+
+   Class attribute name where a storable class may attach its :class:`StorageInfo`.
+
+.. py:type:: DedupPolicy
+   :canonical: Literal['content_id', 'by_value', 'none']
+
+
+   How a storage layer deduplicates saved instances of a class.
+
+   - ``"content_id"``: reuse an existing row whose stored content identity matches
+     (the default; suited to immutable value objects).
+   - ``"by_value"``: reuse an existing row whose stored columns all match (suited
+     to join-objects such as tags and references, whose identity is their value).
+   - ``"none"``: always insert a new row.
+
+.. py:class:: Indexed
+
+   Field marker: request a single-column index on this field's column(s).
+
+
+.. py:class:: Unique
+
+   Field marker: request a unique index on this field's column(s).
+
+
+.. py:class:: Skip
+
+   Field marker: the field exists on the dataclass but is not stored.
+
+
+.. py:class:: Shape
+
+   Field marker: fixed or variable shape for a vector-valued field.
+
+   ``rows >= 1`` declares a fixed-shape value stored inline (flattened
+   row-major into columns). ``rows == 0`` declares a variable number of rows
+   with ``cols`` fixed columns each, stored out-of-line (one row per entry,
+   in insertion order).
+
+   :param rows: Number of rows; ``0`` means variable-length.
+   :param cols: Number of columns per row; must be at least ``1``.
+
+
+   .. py:attribute:: rows
+      :type:  int
+
+
+   .. py:attribute:: cols
+      :type:  int
+      :value: 1
+
+
+
+.. py:class:: Related
+
+   Field marker: relationship metadata for a reference or list-of-storable field.
+
+   Applies to a field holding another storable class (a *reference* field) or
+   a ``list``/``tuple`` of storable classes. When the field's target class is
+   served alongside the declaring class, the storage layer surfaces the field
+   as a relationship; this marker attaches the OPTIMADE per-identifier
+   metadata that flows into each emitted
+   :class:`~httk.core.entry_provider.RelatedEntry` — ``role`` (machine
+   readable, OPTIMADE v1.3 ``meta.role``) and ``description`` (human readable,
+   OPTIMADE v1.2 ``meta.description``). ``serve=False`` suppresses the field
+   as a relationship entirely.
+
+   :param role: The machine-readable relationship role, if any.
+   :param description: The human-readable relationship description, if any.
+   :param serve: Whether the field is served as a relationship at all.
+
+
+   .. py:attribute:: role
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: description
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: serve
+      :type:  bool
+      :value: True
+
+
+
+.. py:class:: RelationshipLink
+
+   Class-level relationship declaration: each stored row expresses one FROM→TO relationship.
+
+   Declared in :attr:`StorageInfo.links`. ``source`` and ``target`` each name
+   a reference field of the declaring class, or are ``None`` to mean *the
+   declaring class's own entry*: for every stored row, one relationship is
+   declared from the entry the source side resolves to, to the entry the
+   target side resolves to. The two canonical shapes:
+
+   - **join-object**: ``RelationshipLink("structure", "reference")`` on a
+     ``StructureRef`` join class — every ``StructureRef`` row relates its
+     ``structure`` to its ``reference`` (structures → references), without the
+     join class itself being served.
+   - **field-inverse**: ``RelationshipLink("structure", None, role="output")``
+     on a ``Calculation`` class — every ``Calculation`` row relates its
+     ``structure`` to the calculation itself (structures → calculations),
+     i.e. the inverse of the ``structure`` reference field.
+
+   ``role`` and ``description`` carry the same OPTIMADE per-identifier
+   metadata as :class:`Related` into each relationship the link declares.
+
+   :param source: The reference field naming the FROM-side entry, or ``None``
+                  for the declaring class's own entry.
+   :param target: The reference field naming the TO-side entry, or ``None``
+                  for the declaring class's own entry.
+   :param role: The machine-readable relationship role, if any.
+   :param description: The human-readable relationship description, if any.
+
+   :raises ValueError: If both endpoints are ``None`` (the link would relate every
+       entry to itself), or if ``source`` and ``target`` name the same
+       field.
+
+
+   .. py:attribute:: source
+      :type:  str | None
+
+
+   .. py:attribute:: target
+      :type:  str | None
+
+
+   .. py:attribute:: role
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: description
+      :type:  str | None
+      :value: None
+
+
+
+.. py:class:: StorageInfo
+
+   Optional class-level storage declaration for a storable dataclass.
+
+   Attach as the class attribute named by :data:`STORAGE_INFO_ATTRIBUTE`
+   (``__httk_storage__``), annotated ``ClassVar[StorageInfo]`` so dataclass
+   processing ignores it. A storage layer may also accept an instance as an
+   external override for classes that cannot be modified.
+
+   :param storage_name: The name this class is stored under; ``None`` derives one from
+                        the class name. A relational backend uses it as the table name, a document
+                        store as the collection name.
+   :param indexes: Composite indexes, each a tuple of field names.
+   :param dedup: Deduplication policy applied when saving; see :data:`DedupPolicy`.
+   :param links: Class-level relationship declarations; see :class:`RelationshipLink`.
+
+
+   .. py:attribute:: storage_name
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: indexes
+      :type:  tuple[tuple[str, Ellipsis], Ellipsis]
+      :value: ()
+
+
+
+   .. py:attribute:: dedup
+      :type:  DedupPolicy
+      :value: 'content_id'
+
+
+
+   .. py:attribute:: links
+      :type:  tuple[RelationshipLink, Ellipsis]
+      :value: ()
+
+
+
+.. py:class:: stored_property
+
+   Bases: :py:obj:`property`
+
+
+   A derived property that a storage layer stores and makes queryable.
+
+   Use exactly like :class:`property` (getter only). The value type is read
+   from the getter's return annotation. On save, the storage layer evaluates
+   and stores the value alongside the declared fields; on load, the value is
+   recomputed by the property rather than passed to ``__init__``.
+
+

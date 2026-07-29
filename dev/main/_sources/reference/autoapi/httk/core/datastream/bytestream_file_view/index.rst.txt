@@ -1,0 +1,138 @@
+httk.core.datastream.bytestream_file_view
+=========================================
+
+.. py:module:: httk.core.datastream.bytestream_file_view
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.datastream.bytestream_file_view.BytestreamFileView
+
+
+Module Contents
+---------------
+
+.. py:class:: BytestreamFileView(obj: httk.core.datastream.bytestream_like.BytestreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_view.BytestreamView`, :py:obj:`io.IOBase`, :py:obj:`httk.core.datastream.bytestream_api.BytestreamAPI`
+
+
+   A view presenting an underlying data streaming backend via an io.IOBase-like API.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+   .. py:method:: close() -> None
+
+      Flush and close the IO object.
+
+      This method has no effect if the file is already closed.
+
+
+
+   .. py:method:: readable() -> bool
+
+      Return whether object was opened for reading.
+
+      If False, read() will raise OSError.
+
+
+
+   .. py:method:: writable() -> bool
+
+      Return whether object was opened for writing.
+
+      If False, write() will raise OSError.
+
+
+
+   .. py:method:: seekable() -> bool
+
+      Return whether object supports random access.
+
+      If False, seek(), tell() and truncate() will raise OSError.
+      This method may need to do a test seek().
+
+
+
+   .. py:method:: flush() -> None
+
+      Flush write buffers, if applicable.
+
+      This is not implemented for read-only and non-blocking streams.
+
+
+
+   .. py:method:: read(size: int | None = -1) -> bytes
+
+
+   .. py:method:: readline(size: int | None = -1) -> bytes
+
+      Read and return a line from the stream.
+
+      If size is specified, at most size bytes will be read.
+
+      The line terminator is always b'\n' for binary files; for text
+      files, the newlines argument to open can be used to select the line
+      terminator(s) recognized.
+
+
+
+   .. py:method:: readlines(hint: int = -1) -> list[bytes]
+
+      Return a list of lines from the stream.
+
+      hint can be specified to control the number of lines read: no more
+      lines will be read if the total size (in bytes/characters) of all
+      lines so far exceeds hint.
+
+
+
+   .. py:method:: seek(offset: int, whence: int = io.SEEK_SET) -> int
+
+      Change the stream position to the given byte offset.
+
+        offset
+          The stream position, relative to 'whence'.
+        whence
+          The relative position to seek from.
+
+      The offset is interpreted relative to the position indicated by whence.
+      Values for whence are:
+
+      * os.SEEK_SET or 0 -- start of stream (the default); offset should be zero or positive
+      * os.SEEK_CUR or 1 -- current stream position; offset may be negative
+      * os.SEEK_END or 2 -- end of stream; offset is usually negative
+
+      Return the new absolute position.
+
+
+
+   .. py:method:: tell() -> int
+
+      Return current stream position.
+
+
+
+   .. py:method:: detach() -> NoReturn
+
+

@@ -1,0 +1,49 @@
+httk.optimade.engine.processing
+===============================
+
+.. py:module:: httk.optimade.engine.processing
+
+.. autoapi-nested-parse::
+
+   Endpoint dispatch: routes a validated OPTIMADE request to its reply generator.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.optimade.engine.processing.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.optimade.engine.processing.process
+   httk.optimade.engine.processing.process_init
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:function:: process(request: httk.optimade.model.request.RawRequest, query_function: httk.optimade.model.results.QueryFunction, version: str, config: httk.optimade.model.config.OptimadeConfig, schema: httk.optimade.schema.served.ServedSchema, *, debug: bool = False) -> httk.optimade.model.request.EndpointResponse
+
+   Process an OPTIMADE query.
+
+   ``request`` carries the incoming request; only ``baseurl`` and
+   ``representation`` must be set, missing information is derived from
+   ``representation``. ``query_function`` is the callback used to execute
+   entry queries against the backend. ``schema`` describes the served entry
+   types and properties.
+
+
+.. py:function:: process_init(config: httk.optimade.model.config.OptimadeConfig, query_function: httk.optimade.model.results.QueryFunction, schema: httk.optimade.schema.served.ServedSchema, *, debug: bool = False) -> None
+
+   Precompute the number of available entries per entry endpoint.
+
+

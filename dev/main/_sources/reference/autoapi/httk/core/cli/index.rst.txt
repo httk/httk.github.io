@@ -1,0 +1,27 @@
+httk.core.cli
+=============
+
+.. py:module:: httk.core.cli
+
+.. autoapi-nested-parse::
+
+   Extensible root command-line interface for httk.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.cli.main
+
+
+Module Contents
+---------------
+
+.. py:function:: main(argv: collections.abc.Sequence[str] | None = None) -> int
+
+   Dispatch the :command:`httk` executable.
+
+

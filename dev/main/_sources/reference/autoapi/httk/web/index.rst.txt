@@ -1,0 +1,42 @@
+httk.web
+========
+
+.. py:module:: httk.web
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/web/api/index
+   /reference/autoapi/httk/web/compat/index
+   /reference/autoapi/httk/web/engine/index
+   /reference/autoapi/httk/web/functions/index
+   /reference/autoapi/httk/web/model/index
+   /reference/autoapi/httk/web/publishing/index
+   /reference/autoapi/httk/web/renderers/index
+   /reference/autoapi/httk/web/runtime/index
+   /reference/autoapi/httk/web/templating/index
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.web.create_asgi_app
+   httk.web.publish
+   httk.web.serve
+
+
+Package Contents
+----------------
+
+.. py:function:: create_asgi_app(srcdir: str | pathlib.Path, *, baseurl: str | None = None, compatibility_mode: bool = False, config_name: str = 'config', debug: bool = False) -> starlette.applications.Starlette
+
+.. py:function:: publish(srcdir: str | pathlib.Path, outdir: str | pathlib.Path, baseurl: str, *, host_static: str | None = None, compatibility_mode: bool = False, config_name: str = 'config', use_urls_without_ext: bool | None = None) -> httk.web.model.page.PublishReport
+
+.. py:function:: serve(srcdir: str | pathlib.Path, *, host: str = '127.0.0.1', port: int = 8080, baseurl: str | None = None, compatibility_mode: bool = False, config_name: str = 'config', debug: bool = False) -> None
+

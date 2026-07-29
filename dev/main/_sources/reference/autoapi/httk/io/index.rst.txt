@@ -1,0 +1,85 @@
+httk.io
+=======
+
+.. py:module:: httk.io
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/io/cif/index
+   /reference/autoapi/httk/io/vasp/index
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.io.read_cif
+   httk.io.read_poscar
+
+
+Package Contents
+----------------
+
+.. py:function:: read_cif(fs, pragmatic=True, allow_cif2=False, use_types=False)
+
+   Generic cif reader, given a filename / ioadapter it places all data in a python dictionary.
+
+   It returns a tuple: (header, list)
+   Where list are pairs of data blocks names and data blocks
+
+   Each data block is a dictionary with tag_name:value
+
+   For loops, value is another dictionary with format column_name:value
+
+   The optional parameter pragmatic regulates handling of some counter-intuitive aspects of the cif specification, where
+   the default pragmatic=True handles these features the way people usually use them, whereas pragmatic=False means
+   to read the cif file precisely according to the spec. For example, in a multiline text field::
+
+       ;
+       some text
+       ;
+
+   Means the string '\nsome text'. For this specific case pragmatic=True removes the leading newline.
+
+   set use_types to True to convert things that look like floats and integers to those respective types
+
+   A filename (``str`` or :class:`os.PathLike`) is opened through
+   :class:`httk.core.TextstreamFileView`, so a compressed file (``.cif.bz2``,
+   ``.cif.gz``, ...) is decompressed transparently. An already-open text stream
+   or a plain iterable of lines is consumed as-is and left open for the caller.
+
+
+.. py:function:: read_poscar(source: Any) -> dict[str, Any]
+
+   Parse a VASP POSCAR/CONTCAR into a neutral, string-preserving mapping.
+
+   ``source`` may be a filename (``str`` or :class:`os.PathLike`, opened through
+   :class:`httk.core.TextstreamFileView` so compressed files such as
+   ``CONTCAR.bz2`` are decompressed transparently) or an already-open text
+   stream / iterable of lines.
+
+   The returned mapping has the keys ``format`` (always ``"vasp-poscar"``),
+   ``comment``, ``scale`` and ``volume`` (exactly one is a string, the other
+   ``None``), ``cell`` (a 3x3 list of coordinate strings), ``symbols``
+   (``list[str]`` for VASP-5, ``None`` for VASP-4), ``counts`` (``list[int]``),
+   ``cartesian`` (``bool``), ``coords`` (an ``N``x3 list of strings), and
+   ``selective_dynamics`` (an ``N``x3 list of booleans when the file declares
+   selective dynamics, else ``None``). Malformed input raises a clear
+   :class:`ValueError` naming the offending line.
+
+   Three further keys report how precisely the file wrote its numbers, each the coarsest
+   claim among the tokens it covers, or ``None`` when none of them claim anything:
+   ``cell_precision``, ``scale_precision``, and ``coordinate_precision``. They are the
+   precisions of the tokens **as written**, deliberately not converted: the cell vectors
+   are still to be multiplied by the scaling factor, and the coordinates may be Cartesian
+   or fractional depending on ``cartesian``. Doing that conversion needs the assembled
+   cell, so it belongs to whoever builds the structure —
+   :func:`httk.atomistic.structure_from_poscar` — not to the reader.
+
+

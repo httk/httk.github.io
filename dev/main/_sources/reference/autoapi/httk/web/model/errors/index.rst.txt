@@ -1,0 +1,48 @@
+httk.web.model.errors
+=====================
+
+.. py:module:: httk.web.model.errors
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   httk.web.model.errors.WebError
+   httk.web.model.errors.NotFoundError
+   httk.web.model.errors.FunctionInjectionError
+
+
+Module Contents
+---------------
+
+.. py:exception:: WebError(message: str, *, status_code: int = 500)
+
+   Bases: :py:obj:`Exception`
+
+
+   Common base class for all non-exit exceptions.
+
+
+   .. py:attribute:: status_code
+      :value: 500
+
+
+
+.. py:exception:: NotFoundError(message: str = 'Not Found')
+
+   Bases: :py:obj:`WebError`
+
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: FunctionInjectionError(message: str)
+
+   Bases: :py:obj:`WebError`
+
+
+   Common base class for all non-exit exceptions.
+
+

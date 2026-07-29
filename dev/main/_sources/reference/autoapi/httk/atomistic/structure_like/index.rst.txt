@@ -1,0 +1,26 @@
+httk.atomistic.structure_like
+=============================
+
+.. py:module:: httk.atomistic.structure_like
+
+.. autoapi-nested-parse::
+
+   The accepted-input union for structure functions in httk-atomistic.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.atomistic.structure_like.StructureLike
+
+
+Module Contents
+---------------
+
+.. py:type:: StructureLike
+   :canonical: structure_backend.StructureBackend | structure_view.StructureView | structure.Structure | structure_record.StructureRecord | asu_structure.ASUStructure | compat.ASEAtomsProtocol | tuple[httk.core.VectorLike, httk.core.VectorLike, Any] | list[Any]
+
+

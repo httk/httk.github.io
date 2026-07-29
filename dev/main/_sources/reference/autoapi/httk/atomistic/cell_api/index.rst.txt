@@ -1,0 +1,78 @@
+httk.atomistic.cell_api
+=======================
+
+.. py:module:: httk.atomistic.cell_api
+
+.. autoapi-nested-parse::
+
+   The minimal canonical cell interface for httk-atomistic.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.cell_api.CellAPI
+
+
+Module Contents
+---------------
+
+.. py:class:: CellAPI
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Abstract base class for the canonical cell interface.
+
+   It declares the exact accessors that every cell backend produces from its own native
+   representation and every cell view builds its presentation from: the ``basis`` of 3x3 lattice
+   vectors (``scale * unscaled_basis``), the positive ``scale``, and the ``unscaled_basis``. All
+   three are exact httk-core vectors; this is the single interchange format, with no pairwise
+   conversion between backends.
+
+
+   .. py:property:: basis
+      :type: httk.core.SurdVector
+
+      :abstractmethod:
+
+
+
+   .. py:property:: scale
+      :type: httk.core.SurdScalar
+
+      :abstractmethod:
+
+
+
+   .. py:property:: unscaled_basis
+      :type: httk.core.SurdVector
+
+      :abstractmethod:
+
+
+
+   .. py:property:: precision
+      :type: fractions.Fraction | None
+
+
+      How precisely the basis was stated, as an absolute length, or ``None`` if unknown.
+
+      A backend that knows its source's precision overrides this; one that does not — a
+      bare matrix of numbers with no provenance — inherits ``None``.
+
+
+   .. py:property:: periodicity
+      :type: tuple[bool, bool, bool]
+
+
+      Which of the three basis rows is a genuine lattice translation.
+
+      A backend that knows its periodicity overrides this; one that does not inherit
+      ``(True, True, True)``. A cell described only by six lattice parameters or a bare
+      matrix is interpreted as a fully periodic crystal.
+
+

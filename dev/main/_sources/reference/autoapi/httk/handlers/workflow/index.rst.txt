@@ -1,0 +1,67 @@
+httk.handlers.workflow
+======================
+
+.. py:module:: httk.handlers.workflow
+
+.. autoapi-nested-parse::
+
+   Register the workflow capability with the extensible httk CLI.
+
+   Two things register here during core plugin discovery: the top-level
+   ``httk workflow`` command, and the workflow extensions of the umbrella
+   ``httk project`` command that *httk-core* owns. Both use lazy
+   ``"module:callable"`` references, so nothing heavy is imported until the
+   relevant command actually runs; ``httk project manifest`` and ``httk workflow
+   project manifest`` therefore drive the very same handlers.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.handlers.workflow.register_cli_command
+   httk.handlers.workflow.register_project_show_section
+   httk.handlers.workflow.register_project_subcommand
+
+
+Package Contents
+----------------
+
+.. py:function:: register_cli_command(name: str, handler: str | collections.abc.Callable[Ellipsis, Any], summary: str) -> None
+
+   Register a lazy top-level :command:`httk` command.
+
+   A handler is either a callable or a lazy ``"module:callable"`` reference
+   with the contract ``(argv: Sequence[str], context: CLIContext) -> int``.
+   Names use lowercase, hyphen-separated command syntax. Registration is
+   intentionally strict: reserved names and duplicate registrations are
+   errors rather than order-dependent overrides.
+
+
+.. py:function:: register_project_show_section(name: str, section: CallableRef) -> None
+
+   Register one contributor to ``httk project show``.
+
+   *section* is a callable — or a ``"module:callable"`` reference — invoked as
+   ``section(root, verify=...)`` with the discovered project root and expected
+   to return a :class:`~httk.core.project.cli.ProjectShowSection`. Sections are rendered in stable
+   order by *name*; a duplicate name is an error.
+
+
+.. py:function:: register_project_subcommand(name: str, build_parser: CallableRef, handler: CallableRef | None = None, *, summary: str = '', description: str = '') -> None
+
+   Register one lazy subcommand of ``httk project``.
+
+   *build_parser* is a callable — or a ``"module:callable"`` reference — that
+   receives the subcommand's :class:`argparse.ArgumentParser` and declares its
+   arguments on it. A leaf passes *handler*, the ``(argv, context) -> int``
+   function that runs it; a group passes ``handler=None`` and sets the handler
+   of each of its own nested leaves inside *build_parser*.
+
+   Registration is strict: names are lowercase and hyphenated, the built-in
+   ``init`` and ``show`` cannot be shadowed, and a duplicate name is an error
+   rather than an order-dependent override.
+
+

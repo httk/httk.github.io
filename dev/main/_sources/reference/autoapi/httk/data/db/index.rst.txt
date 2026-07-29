@@ -1,0 +1,562 @@
+httk.data.db
+============
+
+.. py:module:: httk.data.db
+
+.. autoapi-nested-parse::
+
+   The SQL storage layer of httk-data: store frozen dataclasses in relational databases.
+
+   This subpackage turns plain frozen dataclasses — declared storable with the
+   stdlib-only marker vocabulary in httk-core (``Indexed``, ``Unique``, ``Skip``,
+   ``Shape``, ``StorageInfo``, ``stored_property``) — into relational storage.
+   The pure-Python foundation lives here:
+
+   - :mod:`httk.data.db.schema` — :func:`resolve_schema` reads a storable class
+     into a :class:`TableSchema`, the single source of truth for DDL, inserts,
+     selects, and reconstruction;
+   - :mod:`httk.data.db.codecs` — the :class:`ValueCodec` registry with exact,
+     round-trippable encodings for rationals, surds, and datetimes;
+   - :mod:`httk.data.db.identity` — :func:`canonical_form` and :func:`content_id`,
+     the content identity used for deduplication.
+
+   These modules import cleanly without sqlalchemy. The SQL layer proper builds
+   on them and requires the ``httk-data[db]`` extra (sqlalchemy):
+
+   - :class:`~httk.data.db.engine.Database` — the engine wrapper naming where
+     data lives (``Database.sqlite(...)``, ``Database.duckdb(...)``);
+   - :class:`~httk.data.db.store.SqlStore` — save/fetch/dedup/transactions for
+     storable instances, on top of the schema-to-table mapping in
+     :mod:`httk.data.db.mapping`;
+   - :class:`~httk.data.db.searcher.SqlSearcher` (from
+     :meth:`~httk.data.db.store.SqlStore.searcher`) — the query DSL implementing
+     the :mod:`httk.data.query` search protocols, with
+     :class:`~httk.data.db.searcher.SqlVariable`,
+     :class:`~httk.data.db.searcher.SqlColumn` and
+     :class:`~httk.data.db.searcher.SqlExpression`;
+   - :class:`~httk.data.db.entry_provider.StoreEntryProvider` — the bridge that
+     serves stored classes through the neutral :class:`~httk.core.EntryProvider`
+     contract (e.g. as an OPTIMADE API via *httk-optimade*);
+   - :func:`~httk.data.db.optimade.optimade_filter_searcher` — OPTIMADE-filter
+     querying over storable classes, tying the generic filter translation in
+     :mod:`httk.data.optimade_query` to the SQL layer.
+
+   The sqlalchemy-backed names are imported lazily on first attribute access, so
+   ``import httk.data.db`` keeps working without sqlalchemy; touching them
+   without sqlalchemy installed raises :class:`ImportError` naming the extra.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/data/db/codecs/index
+   /reference/autoapi/httk/data/db/engine/index
+   /reference/autoapi/httk/data/db/entry_provider/index
+   /reference/autoapi/httk/data/db/identity/index
+   /reference/autoapi/httk/data/db/mapping/index
+   /reference/autoapi/httk/data/db/optimade/index
+   /reference/autoapi/httk/data/db/schema/index
+   /reference/autoapi/httk/data/db/searcher/index
+   /reference/autoapi/httk/data/db/store/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.data.db.FRACTION_EXACT_FORMAT
+   httk.data.db.FRACVECTOR_EXACT_FORMAT
+   httk.data.db.SURD_EXACT_FORMAT
+   httk.data.db.ScalarKind
+   httk.data.db.FieldRole
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   httk.data.db.SchemaError
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.data.db.ValueCodec
+   httk.data.db.ChildTableSpec
+   httk.data.db.ColumnSpec
+   httk.data.db.FieldSpec
+   httk.data.db.TableSchema
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.data.db.codec_for
+   httk.data.db.codec_named
+   httk.data.db.decode_fraction_exact
+   httk.data.db.decode_fracvector_exact
+   httk.data.db.decode_surdscalar_exact
+   httk.data.db.encode_fraction_exact
+   httk.data.db.encode_fracvector_exact
+   httk.data.db.encode_fracvector_floats
+   httk.data.db.encode_surdscalar_exact
+   httk.data.db.known_value_codecs
+   httk.data.db.register_value_codec
+   httk.data.db.canonical_form
+   httk.data.db.content_id
+   httk.data.db.register_schema_override
+   httk.data.db.resolve_schema
+   httk.data.db.snake_case
+
+
+Package Contents
+----------------
+
+.. py:data:: FRACTION_EXACT_FORMAT
+   :type:  Final
+   :value: 'p/q'
+
+
+   The canonical exact text of a rational — reduced ``"p/q"``, always with the ``/q`` part.
+
+.. py:data:: FRACVECTOR_EXACT_FORMAT
+   :type:  Final
+   :value: 'd;n0,n1,n2,...'
+
+
+   The canonical exact text of a rational tensor — common denominator, then numerators row-major.
+
+.. py:data:: SURD_EXACT_FORMAT
+   :type:  Final
+   :value: 'r1:p1/q1;r2:p2/q2;...'
+
+
+   The canonical exact text of a surd scalar — ``radicand:coefficient`` terms sorted by radicand.
+
+.. py:type:: ScalarKind
+   :canonical: Literal['int', 'float', 'str', 'bool', 'bytes']
+
+
+   The five scalar column kinds a storage backend must provide.
+
+.. py:class:: ValueCodec
+
+   An exact encoding of one Python value type across one or more scalar columns.
+
+   The ``columns`` tuple gives ``(suffix, kind)`` pairs: the empty suffix names
+   the field's own column (by convention the query column), non-empty suffixes
+   are appended to the field name by the schema layer (e.g. ``"_exact"``).
+   ``encode`` and ``decode`` map a value to and from the column-value tuple, in
+   ``columns`` order, and must round-trip exactly.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+      Registry name of the codec (e.g. ``"fraction"``).
+
+
+   .. py:attribute:: python_type
+      :type:  type
+
+      The Python type this codec stores; matched exactly first, then by subclass.
+
+
+   .. py:attribute:: columns
+      :type:  tuple[tuple[str, ScalarKind], Ellipsis]
+
+      The ``(column name suffix, scalar kind)`` pairs the codec encodes into.
+
+
+   .. py:attribute:: encode
+      :type:  collections.abc.Callable[[Any], tuple[Any, Ellipsis]]
+
+      Encode a value into one scalar per entry of ``columns``, in order.
+
+
+   .. py:attribute:: decode
+      :type:  collections.abc.Callable[[tuple[Any, Ellipsis]], Any]
+
+      Recover the exact value from the tuple produced by ``encode``.
+
+
+   .. py:attribute:: query_suffix
+      :type:  str
+      :value: ''
+
+
+      Suffix of the column used for querying/indexing (normally the empty suffix).
+
+
+.. py:function:: codec_for(python_type: Any) -> ValueCodec | None
+
+   Return the codec for ``python_type``, or None if no codec covers it.
+
+   An exact type match wins; otherwise the registered codecs are scanned once
+   in registration order and the first whose ``python_type`` is a base class of
+   ``python_type`` is returned (deterministic by registration order).
+
+
+.. py:function:: codec_named(name: str) -> ValueCodec
+
+   Return the codec registered as ``name``; raise :class:`ValueError` listing the known names.
+
+
+.. py:function:: decode_fraction_exact(text: str) -> fractions.Fraction
+
+   Parse :data:`FRACTION_EXACT_FORMAT` text back into an exact :class:`fractions.Fraction`.
+
+
+.. py:function:: decode_fracvector_exact(text: str, rows: int, cols: int) -> httk.core.FracVector
+
+   Parse :data:`FRACVECTOR_EXACT_FORMAT` text into a ``rows`` x ``cols`` :class:`~httk.core.FracVector`.
+
+   The numerators are laid out row-major into a tensor of shape
+   ``(rows, cols)``; their count must equal ``rows * cols``. Raises
+   :class:`ValueError` on malformed text or a count/shape mismatch.
+
+
+.. py:function:: decode_surdscalar_exact(text: str) -> httk.core.SurdScalar
+
+   Parse :data:`SURD_EXACT_FORMAT` text back into an exact :class:`~httk.core.SurdScalar`.
+
+
+.. py:function:: encode_fraction_exact(value: fractions.Fraction) -> str
+
+   The canonical :data:`FRACTION_EXACT_FORMAT` text of ``value`` (e.g. ``"-7/3"``, ``"1/1"``).
+
+
+.. py:function:: encode_fracvector_exact(value: httk.core.FracVector) -> str
+
+   The canonical :data:`FRACVECTOR_EXACT_FORMAT` text of a rational tensor.
+
+   The tensor is flattened row-major and normalized through
+   :meth:`~httk.core.FracVector.to_fractions`: ``d`` is the least positive
+   common denominator of the (reduced) elements and the numerators are the
+   elements scaled by ``d``. The text is therefore canonical — independent of
+   the internal denominator the input happened to carry — and lossless at
+   arbitrary precision. The shape itself is not encoded; fixed-shape schema
+   fields carry it in their declaration.
+
+
+.. py:function:: encode_fracvector_floats(value: httk.core.FracVector) -> tuple[float, Ellipsis]
+
+   The elements of a rational tensor as a flat row-major tuple of nearest floats.
+
+   This is the (documented approximate) companion of
+   :func:`encode_fracvector_exact`, used to fill the per-element float
+   query/index columns of fixed-shape fields.
+
+
+.. py:function:: encode_surdscalar_exact(value: httk.core.SurdScalar) -> str
+
+   The canonical :data:`SURD_EXACT_FORMAT` text of ``value`` (``"0"`` for zero).
+
+   The terms are the canonical radicand map of the surd — squarefree radicands
+   in increasing order, each with its reduced rational coefficient — so the
+   text is unique per value and round-trips exactly.
+
+
+.. py:function:: known_value_codecs() -> list[str]
+
+   Return the registered value-codec names, in registration order.
+
+
+.. py:function:: register_value_codec(codec: ValueCodec) -> None
+
+   Register ``codec``; raise :class:`ValueError` on a duplicate name or Python type.
+
+
+.. py:function:: canonical_form(obj: Any) -> str
+
+   The deterministic canonical JSON text of a storable instance's stored values.
+
+   Resolves the schema of ``obj``'s class (so the class must be storable) and
+   serializes ``[table_name, [[field, canonical value], ...]]`` over the
+   non-derived stored fields, sorted by field name, as compact JSON.
+
+
+.. py:function:: content_id(obj: Any) -> str
+
+   The SHA-256 hex digest (64 hex characters) of :func:`canonical_form` of ``obj``.
+
+
+.. py:class:: ChildTableSpec
+
+   The out-of-line child table backing a variable-length field.
+
+   Only the per-element value columns are listed; the store layer adds the
+   ``<parent>_sid`` foreign key and ``<name>_index`` ordering columns.
+
+
+   .. py:attribute:: table_name
+      :type:  str
+
+      The child table name, ``<parent table>_<field>``.
+
+
+   .. py:attribute:: element_columns
+      :type:  tuple[ColumnSpec, Ellipsis]
+
+      The value column(s) of one element row.
+
+
+   .. py:attribute:: target
+      :type:  type | None
+      :value: None
+
+
+      The storable element class when rows are foreign keys, else None.
+
+
+.. py:class:: ColumnSpec
+
+   One scalar column of a table.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+      The column name.
+
+
+   .. py:attribute:: kind
+      :type:  httk.data.db.codecs.ScalarKind
+
+      The scalar kind of the column.
+
+
+   .. py:attribute:: nullable
+      :type:  bool
+      :value: False
+
+
+      Whether the column accepts NULL (all columns of an optional field do).
+
+
+   .. py:attribute:: indexed
+      :type:  bool
+      :value: False
+
+
+      Whether a single-column index is requested (:class:`~httk.core.Indexed`).
+
+
+   .. py:attribute:: unique
+      :type:  bool
+      :value: False
+
+
+      Whether a unique index is requested (:class:`~httk.core.Unique`).
+
+
+.. py:type:: FieldRole
+   :canonical: Literal['scalar', 'encoded', 'fixed_array', 'child', 'reference']
+
+
+   How a stored field maps onto the relational model.
+
+.. py:class:: FieldSpec
+
+   The resolved storage shape of one stored field (or stored property).
+
+
+   .. py:attribute:: field
+      :type:  str
+
+      The dataclass field (or stored property) name.
+
+
+   .. py:attribute:: python_type
+      :type:  Any
+
+      The field's value type with markers and optionality stripped.
+
+
+   .. py:attribute:: role
+      :type:  FieldRole
+
+      How the field maps onto the relational model.
+
+
+   .. py:attribute:: columns
+      :type:  tuple[ColumnSpec, Ellipsis]
+      :value: ()
+
+
+      The field's columns in the parent table (empty for the child role).
+
+
+   .. py:attribute:: codec_name
+      :type:  str | None
+      :value: None
+
+
+      The value codec encoding this field (or its child elements), if any.
+
+
+   .. py:attribute:: shape
+      :type:  httk.core.Shape | None
+      :value: None
+
+
+      The :class:`~httk.core.Shape` marker for tensor-valued fields, if any.
+
+
+   .. py:attribute:: child
+      :type:  ChildTableSpec | None
+      :value: None
+
+
+      The child table specification for the child role, else None.
+
+
+   .. py:attribute:: target
+      :type:  type | None
+      :value: None
+
+
+      The referenced storable class for reference (and child-of-storable) fields.
+
+
+   .. py:attribute:: related
+      :type:  httk.core.Related | None
+      :value: None
+
+
+      The :class:`~httk.core.Related` relationship marker of the field, if any.
+
+      Only reference fields and child fields of storable elements can carry one;
+      the marker's metadata flows into the relationships an entry provider emits
+      for the field.
+
+
+   .. py:attribute:: derived
+      :type:  bool
+      :value: False
+
+
+      stored and queryable,
+      recomputed rather than passed to ``__init__`` on reconstruction.
+
+      :type: True for :class:`~httk.core.stored_property` values
+
+
+   .. py:attribute:: optional
+      :type:  bool
+      :value: False
+
+
+      True when the annotation was ``X | None``; all columns are then nullable.
+
+
+.. py:exception:: SchemaError
+
+   Bases: :py:obj:`Exception`
+
+
+   A class or field cannot be resolved into a storage schema; the message names both.
+
+
+.. py:class:: TableSchema
+
+   The resolved relational schema of one storable class.
+
+
+   .. py:attribute:: cls
+      :type:  type
+
+      The storable dataclass this schema was resolved from.
+
+
+   .. py:attribute:: table_name
+      :type:  str
+
+      The table name (:attr:`~httk.core.StorageInfo.storage_name` or the snake-cased class name).
+
+
+   .. py:attribute:: fields
+      :type:  tuple[FieldSpec, Ellipsis]
+
+      The stored fields, dataclass fields first (in declaration order), then stored properties.
+
+      The store-managed ``sid`` and ``content_id`` columns are not fields and do
+      not appear here.
+
+
+   .. py:attribute:: composite_indexes
+      :type:  tuple[tuple[str, Ellipsis], Ellipsis]
+
+      The :attr:`~httk.core.StorageInfo.indexes` declarations, resolved to column names.
+
+
+   .. py:attribute:: dedup
+      :type:  httk.core.DedupPolicy
+
+      The deduplication policy applied when instances are saved.
+
+
+   .. py:attribute:: links
+      :type:  tuple[httk.core.RelationshipLink, Ellipsis]
+      :value: ()
+
+
+      The class's :attr:`~httk.core.StorageInfo.links` relationship declarations.
+
+      Each link is validated: every non-``None`` endpoint names an existing
+      reference field of the class (child fields are not valid endpoints — a link
+      row expresses exactly one FROM→TO pair).
+
+
+   .. py:method:: field(name: str) -> FieldSpec
+
+      Return the :class:`FieldSpec` named ``name``; raise :class:`SchemaError` if absent.
+
+
+
+   .. py:method:: referenced_classes() -> tuple[type, Ellipsis]
+
+      The distinct storable classes this schema references (field order, no duplicates).
+
+
+
+.. py:function:: register_schema_override(cls: type, info: httk.core.StorageInfo) -> None
+
+   Register an external :class:`~httk.core.StorageInfo` for a class that cannot declare one.
+
+   The registered info is used by :func:`resolve_schema` whenever no explicit
+   ``override`` argument is passed, and takes precedence over a
+   ``__httk_storage__`` declaration on the class itself.
+
+
+.. py:function:: resolve_schema(cls: type, *, override: httk.core.StorageInfo | None = None) -> TableSchema
+
+   Resolve (and cache) the :class:`TableSchema` of a storable dataclass.
+
+   The effective :class:`~httk.core.StorageInfo` is, in order of precedence:
+   the explicit ``override`` argument, an info registered via
+   :func:`register_schema_override`, the class's own ``__httk_storage__``
+   attribute, or defaults. Results are cached per ``(class, effective
+   override)``, so repeated calls return the same :class:`TableSchema` object.
+   Reference cycles (a class referencing itself, or mutually referencing
+   classes) are allowed and resolve without recursion loops.
+
+   :raises SchemaError: If the class is not a frozen dataclass or any field cannot
+       be resolved; the message names the class and field.
+
+
+.. py:function:: snake_case(name: str) -> str
+
+   The default table name for a class name: CamelCase to camel_case (acronym-aware).
+
+

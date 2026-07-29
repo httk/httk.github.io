@@ -1,0 +1,150 @@
+httk.atomistic.affine_operation
+===============================
+
+.. py:module:: httk.atomistic.affine_operation
+
+.. autoapi-nested-parse::
+
+   Exact rational affine maps on fractional coordinates.
+
+   An :class:`AffineOperation` is a rotation part and a translation part held exactly as
+   :class:`~httk.core.FracVector` values. The same object serves for the two things this
+   package does with affine maps — a crystallographic symmetry operation, and a
+   change-of-basis between space-group settings — because they are the same algebra; only
+   their interpretation differs (see :class:`~httk.atomistic.SettingTransform` for the
+   latter).
+
+   Everything here is closed over the rationals: composing, inverting, conjugating, and
+   applying an operation to reduced coordinates all stay exact. That is the whole reason the
+   ASU machinery needs no tolerance.
+
+   **Convention.** The stored ``matrix`` is written for column vectors, matching how
+   crystallographic tables print an operation (``x' = W x + w``, i.e. ``-x+1/2,y,-z``).
+   httk holds coordinates as *rows*, so :meth:`AffineOperation.apply` evaluates
+   ``coords * matrix.T() + vector``. Both spellings describe the same map; only one of them is ever written out in
+   code here.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.affine_operation.AffineOperation
+
+
+Module Contents
+---------------
+
+.. py:class:: AffineOperation(matrix: Any, vector: Any = (0, 0, 0))
+
+   An exact affine map ``x -> W x + w`` on fractional coordinates.
+
+   Two operations compare equal when their matrix and translation are exactly equal.
+   Equality is *not* modulo lattice translations — use :meth:`wrapped` first when
+   comparing symmetry operations as members of a space group, since ``x+1/2`` and
+   ``x+3/2`` are the same operation there but different objects here.
+
+
+   .. py:method:: identity() -> Self
+      :classmethod:
+
+
+      The identity operation.
+
+
+
+   .. py:method:: from_record(record: dict[str, Any]) -> Self
+      :classmethod:
+
+
+      Build from a vendored ``affine_transformation`` record.
+
+      The record's ``matrix`` and ``vector`` hold exact rational strings (``"1/2"``,
+      ``"-1"``), which embed exactly.
+
+
+
+   .. py:method:: from_symop_record(record: dict[str, Any]) -> Self
+      :classmethod:
+
+
+      Build from a vendored ``symops`` entry (which nests its affine part).
+
+
+
+   .. py:property:: matrix
+      :type: httk.core.FracVector
+
+
+      The 3x3 rotation part ``W``, in the column-vector convention.
+
+
+   .. py:property:: vector
+      :type: httk.core.FracVector
+
+
+      The translation part ``w``.
+
+
+   .. py:method:: determinant() -> fractions.Fraction
+
+      The determinant of the rotation part, exactly.
+
+      For a symmetry operation this is ``+1`` (proper) or ``-1`` (improper). For a
+      change of basis it is the ratio of cell volumes, so a value other than ``±1``
+      means the operation changes the lattice.
+
+
+
+   .. py:method:: is_identity() -> bool
+
+
+   .. py:method:: apply(coords: Any) -> httk.core.FracVector
+
+      Map reduced coordinates through this operation, exactly.
+
+      ``coords`` is a single ``(3,)`` coordinate or an ``(N, 3)`` block of them; the
+      result has the same shape. No wrapping is applied — see :meth:`apply_wrapped`.
+
+
+
+   .. py:method:: apply_wrapped(coords: Any) -> httk.core.FracVector
+
+      :meth:`apply`, then wrap every component into ``[0, 1)``.
+
+
+
+   .. py:method:: inverse() -> AffineOperation
+
+      The inverse map, exactly. Raises :class:`ZeroDivisionError` if singular.
+
+
+
+   .. py:method:: conjugated_by(change: AffineOperation) -> AffineOperation
+
+      This operation seen through a change of basis: ``change * self * change^-1``.
+
+      If ``self`` is a symmetry operation expressed in one setting and ``change`` maps
+      that setting's coordinates into another, the result is the same symmetry operation
+      expressed in the other setting.
+
+
+
+   .. py:method:: wrapped() -> AffineOperation
+
+      The same operation with its translation reduced into ``[0, 1)``.
+
+      Two symmetry operations of a space group are the same element modulo lattice
+      translations exactly when their wrapped forms are equal, which is what makes
+      symop *sets* comparable.
+
+
+
+   .. py:method:: to_xyz() -> str
+
+      The operation in ``x,y,z`` notation, e.g. ``"-x+1/2,y,-z+1/2"``.
+
+
+

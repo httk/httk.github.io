@@ -1,0 +1,39 @@
+httk.core.datastream.bytestream_bytes
+=====================================
+
+.. py:module:: httk.core.datastream.bytestream_bytes
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.datastream.bytestream_bytes.BytestreamBytes
+
+
+Module Contents
+---------------
+
+.. py:class:: BytestreamBytes(content: bytes | bytearray, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_common.BytestreamCommon`, :py:obj:`httk.core.datastream.bytestream_backend.BytestreamBackend`
+
+
+   Backend for streaming byte data backed by an actual bytes object.
+
+
+   .. py:attribute:: b
+      :type:  bytes
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+

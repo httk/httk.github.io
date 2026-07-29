@@ -1,0 +1,87 @@
+httk.atomistic.cell_params_view
+===============================
+
+.. py:module:: httk.atomistic.cell_params_view
+
+.. autoapi-nested-parse::
+
+   A view presenting any cell backend as cell parameters (a, b, c, alpha, beta, gamma).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.cell_params_view.CellParamsView
+
+
+Module Contents
+---------------
+
+.. py:class:: CellParamsView(obj: httk.atomistic.cell_like.CellLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.cell_view.CellView`, :py:obj:`tuple`
+
+
+   A view presenting an underlying cell backend as cell parameters.
+
+   This view is a genuine flat 6-tuple ``(a, b, c, alpha, beta, gamma)`` with the
+   angles in degrees, built eagerly and immutable, with the elements also available
+   as the named properties ``a``/``b``/``c``/``alpha``/``beta``/``gamma``.
+   Parameters carry no orientation, so converting a cell to parameters is lossy:
+   reconstructing a cell from this view reproduces the lengths, angles, and volume,
+   but not the original cell-vector orientation.
+
+
+   .. py:property:: a
+      :type: float
+
+
+      The length of the first cell vector.
+
+
+   .. py:property:: b
+      :type: float
+
+
+      The length of the second cell vector.
+
+
+   .. py:property:: c
+      :type: float
+
+
+      The length of the third cell vector.
+
+
+   .. py:property:: alpha
+      :type: float
+
+
+      The angle between the second and third cell vectors, in degrees.
+
+
+   .. py:property:: beta
+      :type: float
+
+
+      The angle between the first and third cell vectors, in degrees.
+
+
+   .. py:property:: gamma
+      :type: float
+
+
+      The angle between the first and second cell vectors, in degrees.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

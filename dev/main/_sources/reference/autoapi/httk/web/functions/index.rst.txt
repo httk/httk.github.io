@@ -1,0 +1,34 @@
+httk.web.functions
+==================
+
+.. py:module:: httk.web.functions
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/web/functions/python_module/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.web.functions.PythonFunctionHandler
+
+
+Package Contents
+----------------
+
+.. py:class:: PythonFunctionHandler(functions_dir: pathlib.Path)
+
+   .. py:attribute:: functions_dir
+
+
+   .. py:method:: execute(*, function_name: str, params: dict[str, str], global_data: dict[str, object]) -> Any
+
+

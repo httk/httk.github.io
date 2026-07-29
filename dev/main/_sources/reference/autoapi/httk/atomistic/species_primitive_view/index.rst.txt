@@ -1,0 +1,43 @@
+httk.atomistic.species_primitive_view
+=====================================
+
+.. py:module:: httk.atomistic.species_primitive_view
+
+.. autoapi-nested-parse::
+
+   A view presenting any species backend as an OPTIMADE species dict.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.species_primitive_view.SpeciesPrimitiveView
+
+
+Module Contents
+---------------
+
+.. py:class:: SpeciesPrimitiveView(obj: httk.atomistic.species_like.SpeciesLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.species_view.SpeciesView`, :py:obj:`dict`
+
+
+   A view presenting an underlying species backend as an OPTIMADE species dict.
+
+   This view is a genuine ``dict`` carrying the OPTIMADE ``species`` fields (optional
+   fields that are ``None`` are omitted; list-valued fields are plain lists). Unlike the
+   immutable-subclass views, a dict is mutable, so this view is a detached copy: mutating
+   it does not affect the underlying backend.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

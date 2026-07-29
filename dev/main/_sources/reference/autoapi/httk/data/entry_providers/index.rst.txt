@@ -1,0 +1,234 @@
+httk.data.entry_providers
+=========================
+
+.. py:module:: httk.data.entry_providers
+
+.. autoapi-nested-parse::
+
+   In-memory :class:`~httk.core.EntryProvider` implementations for the standard entry types.
+
+   These providers map ``{id: record}`` mappings of the stdlib-only record models
+   defined in *httk-core* (:class:`~httk.core.Reference`, :class:`~httk.core.File`,
+   :class:`~httk.core.Calculation`) onto the neutral httk-core entry-provider
+   contract, so a serving module (such as *httk-optimade*) can expose them as
+   OPTIMADE ``references``/``files``/``calculations`` endpoints without either side
+   depending on the other. Each provider describes its entry type with the vendored
+   OPTIMADE standard definition loaded from httk-core via
+   :func:`~httk.core.standard_entry_type`.
+
+   The record *models* live in httk-core (contracts and models); these *providers*
+   live in httk-data (the capability layer built on those models), together with
+   property-definition validation. The database storage layer in
+   :mod:`httk.data.db` complements them with a database-backed provider
+   (:class:`~httk.data.db.entry_provider.StoreEntryProvider`) serving stored
+   dataclasses the same way.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.data.entry_providers.ReferenceEntryProvider
+   httk.data.entry_providers.FileEntryProvider
+   httk.data.entry_providers.CalculationEntryProvider
+
+
+Module Contents
+---------------
+
+.. py:class:: ReferenceEntryProvider(entries: collections.abc.Mapping[str, httk.core.Reference | collections.abc.Mapping[str, Any]], *, relationships: collections.abc.Mapping[str, collections.abc.Iterable[httk.core.RelatedEntry]] | None = None)
+
+   Bases: :py:obj:`httk.core.EntryProvider`
+
+
+   Serves OPTIMADE ``references`` from a mapping of id to :class:`~httk.core.Reference`.
+
+   ``relationships`` optionally maps a reference id to its related entries
+   (:class:`~httk.core.RelatedEntry` values, served flat per id).
+
+
+   .. py:method:: entry_types() -> collections.abc.Mapping[str, httk.core.EntryTypeDefinition]
+
+      Return the served entry types keyed by name.
+
+      Each value is an
+      :class:`~httk.core.property_definitions.EntryTypeDefinition` describing
+      the entry type and its properties. The subset a provider actually serves
+      is named by :meth:`property_keys`; a definition may describe more
+      properties than are served.
+
+
+
+   .. py:method:: property_keys(entry_type: str) -> collections.abc.Mapping[str, str]
+
+      Return the served-property-name to record-key map for ``entry_type``.
+
+      The mapping MUST include entries for at least ``id`` and ``type``. Every
+      key names a property described by :meth:`entry_types`; every value names
+      the key under which that property's value is found in a record from
+      :meth:`records`.
+
+
+
+   .. py:method:: records(entry_type: str) -> collections.abc.Iterable[collections.abc.Mapping[str, Any]]
+
+      Yield the records for ``entry_type`` as plain JSON-able mappings.
+
+      Each record is a mapping keyed by the record keys named in
+      :meth:`property_keys`; values are JSON-able (strings, numbers, booleans,
+      ``None``, or nested lists/dicts of the same).
+
+
+
+   .. py:method:: relationships(entry_type: str) -> collections.abc.Mapping[str, tuple[httk.core.RelatedEntry, Ellipsis]]
+
+      Return the related entries for each record of ``entry_type``.
+
+      The result maps an entry id to a flat tuple of :class:`~httk.core.RelatedEntry`
+      values, e.g. ``{"struct-1": (RelatedEntry("references", "ref-1"),
+      RelatedEntry("references", "ref-2", description="Cites the method"))}``.
+      Grouping the related entries by related entry type is the serving
+      layer's concern (JSON:API groups them at render time). This is the
+      neutral source of an OPTIMADE **relationships** block: a consumer turns
+      each related entry into a resource identifier under its entry type
+      (carrying the ``description``/``role`` metadata when present), and an
+      ``include=<type>`` request then embeds those related resources. The
+      default implementation returns an empty mapping (no relationships); a
+      provider overrides it to declare them. Ids referring to records this
+      provider (or a sibling provider serving the related type) does not supply
+      are simply not resolvable by the consumer.
+
+
+
+.. py:class:: FileEntryProvider(entries: collections.abc.Mapping[str, httk.core.File | collections.abc.Mapping[str, Any]], *, relationships: collections.abc.Mapping[str, collections.abc.Iterable[httk.core.RelatedEntry]] | None = None)
+
+   Bases: :py:obj:`httk.core.EntryProvider`
+
+
+   Serves OPTIMADE ``files`` from a mapping of id to :class:`~httk.core.File`.
+
+   ``relationships`` optionally maps a file id to its related entries
+   (:class:`~httk.core.RelatedEntry` values, served flat per id) — e.g. the
+   calculations a file is ``input``/``output`` of.
+
+
+   .. py:method:: entry_types() -> collections.abc.Mapping[str, httk.core.EntryTypeDefinition]
+
+      Return the served entry types keyed by name.
+
+      Each value is an
+      :class:`~httk.core.property_definitions.EntryTypeDefinition` describing
+      the entry type and its properties. The subset a provider actually serves
+      is named by :meth:`property_keys`; a definition may describe more
+      properties than are served.
+
+
+
+   .. py:method:: property_keys(entry_type: str) -> collections.abc.Mapping[str, str]
+
+      Return the served-property-name to record-key map for ``entry_type``.
+
+      The mapping MUST include entries for at least ``id`` and ``type``. Every
+      key names a property described by :meth:`entry_types`; every value names
+      the key under which that property's value is found in a record from
+      :meth:`records`.
+
+
+
+   .. py:method:: records(entry_type: str) -> collections.abc.Iterable[collections.abc.Mapping[str, Any]]
+
+      Yield the records for ``entry_type`` as plain JSON-able mappings.
+
+      Each record is a mapping keyed by the record keys named in
+      :meth:`property_keys`; values are JSON-able (strings, numbers, booleans,
+      ``None``, or nested lists/dicts of the same).
+
+
+
+   .. py:method:: relationships(entry_type: str) -> collections.abc.Mapping[str, tuple[httk.core.RelatedEntry, Ellipsis]]
+
+      Return the related entries for each record of ``entry_type``.
+
+      The result maps an entry id to a flat tuple of :class:`~httk.core.RelatedEntry`
+      values, e.g. ``{"struct-1": (RelatedEntry("references", "ref-1"),
+      RelatedEntry("references", "ref-2", description="Cites the method"))}``.
+      Grouping the related entries by related entry type is the serving
+      layer's concern (JSON:API groups them at render time). This is the
+      neutral source of an OPTIMADE **relationships** block: a consumer turns
+      each related entry into a resource identifier under its entry type
+      (carrying the ``description``/``role`` metadata when present), and an
+      ``include=<type>`` request then embeds those related resources. The
+      default implementation returns an empty mapping (no relationships); a
+      provider overrides it to declare them. Ids referring to records this
+      provider (or a sibling provider serving the related type) does not supply
+      are simply not resolvable by the consumer.
+
+
+
+.. py:class:: CalculationEntryProvider(entries: collections.abc.Mapping[str, httk.core.Calculation | collections.abc.Mapping[str, Any]], *, relationships: collections.abc.Mapping[str, collections.abc.Iterable[httk.core.RelatedEntry]] | None = None)
+
+   Bases: :py:obj:`httk.core.EntryProvider`
+
+
+   Serves OPTIMADE ``calculations`` from a mapping of id to :class:`~httk.core.Calculation`.
+
+   ``relationships`` optionally maps a calculation id to its related entries
+   (:class:`~httk.core.RelatedEntry` values, served flat per id) — e.g. its
+   ``input``/``output`` files, expressed via the ``role`` metadata.
+
+
+   .. py:method:: entry_types() -> collections.abc.Mapping[str, httk.core.EntryTypeDefinition]
+
+      Return the served entry types keyed by name.
+
+      Each value is an
+      :class:`~httk.core.property_definitions.EntryTypeDefinition` describing
+      the entry type and its properties. The subset a provider actually serves
+      is named by :meth:`property_keys`; a definition may describe more
+      properties than are served.
+
+
+
+   .. py:method:: property_keys(entry_type: str) -> collections.abc.Mapping[str, str]
+
+      Return the served-property-name to record-key map for ``entry_type``.
+
+      The mapping MUST include entries for at least ``id`` and ``type``. Every
+      key names a property described by :meth:`entry_types`; every value names
+      the key under which that property's value is found in a record from
+      :meth:`records`.
+
+
+
+   .. py:method:: records(entry_type: str) -> collections.abc.Iterable[collections.abc.Mapping[str, Any]]
+
+      Yield the records for ``entry_type`` as plain JSON-able mappings.
+
+      Each record is a mapping keyed by the record keys named in
+      :meth:`property_keys`; values are JSON-able (strings, numbers, booleans,
+      ``None``, or nested lists/dicts of the same).
+
+
+
+   .. py:method:: relationships(entry_type: str) -> collections.abc.Mapping[str, tuple[httk.core.RelatedEntry, Ellipsis]]
+
+      Return the related entries for each record of ``entry_type``.
+
+      The result maps an entry id to a flat tuple of :class:`~httk.core.RelatedEntry`
+      values, e.g. ``{"struct-1": (RelatedEntry("references", "ref-1"),
+      RelatedEntry("references", "ref-2", description="Cites the method"))}``.
+      Grouping the related entries by related entry type is the serving
+      layer's concern (JSON:API groups them at render time). This is the
+      neutral source of an OPTIMADE **relationships** block: a consumer turns
+      each related entry into a resource identifier under its entry type
+      (carrying the ``description``/``role`` metadata when present), and an
+      ``include=<type>`` request then embeds those related resources. The
+      default implementation returns an empty mapping (no relationships); a
+      provider overrides it to declare them. Ids referring to records this
+      provider (or a sibling provider serving the related type) does not supply
+      are simply not resolvable by the consumer.
+
+
+

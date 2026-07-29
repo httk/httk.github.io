@@ -1,0 +1,38 @@
+httk.handlers.data
+==================
+
+.. py:module:: httk.handlers.data
+
+.. autoapi-nested-parse::
+
+   Self-registration of httk-data's standard OPTIMADE entry providers.
+
+   Imported during ``httk.core`` discovery, this package registers httk-data's
+   in-memory providers for the standard entry types httk-core vendors
+   (``references``, ``files``, ``calculations``) and the database-backed
+   ``StoreEntryProvider`` as lazy factory references, mirroring the
+   loader-registration pattern used by the other ``httk.handlers.*`` packages.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.handlers.data.register_entry_provider
+
+
+Package Contents
+----------------
+
+.. py:function:: register_entry_provider(*, name: str, factory: str) -> None
+
+   Register an :class:`~httk.core.entry_provider.EntryProvider` factory under ``name``.
+
+   ``factory`` is a lazy ``"module:callable"`` reference to a callable that
+   constructs a provider (providers need data, so applications call the factory
+   themselves; the registry only records how to reach it). This mirrors
+   ``register_loader``.
+
+

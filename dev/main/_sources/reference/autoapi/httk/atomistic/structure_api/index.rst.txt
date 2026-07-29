@@ -1,0 +1,63 @@
+httk.atomistic.structure_api
+============================
+
+.. py:module:: httk.atomistic.structure_api
+
+.. autoapi-nested-parse::
+
+   The minimal canonical structure interface for httk-atomistic.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.structure_api.StructureAPI
+
+
+Module Contents
+---------------
+
+.. py:class:: StructureAPI
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Abstract base class for the canonical structure interface.
+
+   It declares the Unitcell quartet that every structure backend produces from its
+   own native representation and every structure view builds its presentation
+   from: ``cell``, ``sites``, ``species``, and ``species_at_sites``. This is the
+   single interchange format; there is no pairwise conversion between backends.
+
+
+   .. py:property:: cell
+      :type: httk.atomistic.cell.Cell
+
+      :abstractmethod:
+
+
+
+   .. py:property:: sites
+      :type: httk.atomistic.sites.Sites
+
+      :abstractmethod:
+
+
+
+   .. py:property:: species
+      :type: tuple[httk.atomistic.species.Species, Ellipsis]
+
+      :abstractmethod:
+
+
+
+   .. py:property:: species_at_sites
+      :type: tuple[str, Ellipsis]
+
+      :abstractmethod:
+
+
+

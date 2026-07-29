@@ -1,0 +1,138 @@
+httk.core.project.cli
+=====================
+
+.. py:module:: httk.core.project.cli
+
+.. autoapi-nested-parse::
+
+   The umbrella ``httk project`` command and its extension registry.
+
+   ``httk project`` owns the anchor: ``init`` creates one (like ``git init``) and
+   ``show`` describes it. It is deliberately extensible. A capability that layers
+   on top of the anchor — *httk-workflow* contributes signed manifests, a doctor,
+   and the workspace rows of ``show`` — registers into this command rather than
+   adding a parallel one, so an operator sees a single ``httk project`` whose leaves
+   come from whatever is installed.
+
+   The registration machinery mirrors :func:`httk.core.register_cli_command`: a
+   capability registers *lazily*, by ``"module:callable"`` reference, from its
+   ``httk.handlers.*`` package during core plugin discovery, and nothing heavy is
+   imported until ``httk project`` actually runs. Registrations are strict —
+   reserved names and duplicates are errors — and the command tree is assembled in
+   a stable order.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.core.project.cli.CallableRef
+   httk.core.project.cli.Handler
+   httk.core.project.cli.ParserBuilder
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.project.cli.ProjectShowSection
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.project.cli.register_project_subcommand
+   httk.core.project.cli.register_project_show_section
+   httk.core.project.cli.known_project_subcommands
+   httk.core.project.cli.known_project_show_sections
+   httk.core.project.cli.describe_project
+   httk.core.project.cli.build_parser
+   httk.core.project.cli.command
+
+
+Module Contents
+---------------
+
+.. py:data:: CallableRef
+
+.. py:data:: Handler
+
+.. py:data:: ParserBuilder
+
+.. py:class:: ProjectShowSection
+
+   One capability's contribution to ``httk project show``.
+
+   *json* is merged into the top level of the ``--json`` description; *rows* are
+   appended, in order, to the human-readable listing as ``label``/``value``
+   pairs.
+
+
+   .. py:attribute:: json
+      :type:  dict[str, object]
+
+
+   .. py:attribute:: rows
+      :type:  list[tuple[str, str]]
+      :value: []
+
+
+
+.. py:function:: register_project_subcommand(name: str, build_parser: CallableRef, handler: CallableRef | None = None, *, summary: str = '', description: str = '') -> None
+
+   Register one lazy subcommand of ``httk project``.
+
+   *build_parser* is a callable — or a ``"module:callable"`` reference — that
+   receives the subcommand's :class:`argparse.ArgumentParser` and declares its
+   arguments on it. A leaf passes *handler*, the ``(argv, context) -> int``
+   function that runs it; a group passes ``handler=None`` and sets the handler
+   of each of its own nested leaves inside *build_parser*.
+
+   Registration is strict: names are lowercase and hyphenated, the built-in
+   ``init`` and ``show`` cannot be shadowed, and a duplicate name is an error
+   rather than an order-dependent override.
+
+
+.. py:function:: register_project_show_section(name: str, section: CallableRef) -> None
+
+   Register one contributor to ``httk project show``.
+
+   *section* is a callable — or a ``"module:callable"`` reference — invoked as
+   ``section(root, verify=...)`` with the discovered project root and expected
+   to return a :class:`~httk.core.project.cli.ProjectShowSection`. Sections are rendered in stable
+   order by *name*; a duplicate name is an error.
+
+
+.. py:function:: known_project_subcommands() -> list[str]
+
+   Return the registered extension subcommand names, in stable order.
+
+
+.. py:function:: known_project_show_sections() -> list[str]
+
+   Return the registered show-section names, in stable order.
+
+
+.. py:function:: describe_project(root: str | pathlib.Path | None = None, *, verify: bool = True) -> tuple[dict[str, object], list[tuple[str, str]]]
+
+   Describe one project's anchor, merging every registered show section.
+
+   Returns the JSON description and the extra human-readable rows the sections
+   contributed; the anchor's own rows are added when the result is rendered.
+
+
+.. py:function:: build_parser(program: str) -> argparse.ArgumentParser
+
+   Build the whole ``httk project`` tree, including registered extensions.
+
+
+.. py:function:: command(argv: collections.abc.Sequence[str], context: httk.core.cli_context.CLIContext) -> int
+
+   Handle the registered top-level ``project`` command.
+
+

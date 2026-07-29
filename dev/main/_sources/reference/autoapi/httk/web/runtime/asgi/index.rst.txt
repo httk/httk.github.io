@@ -1,0 +1,31 @@
+httk.web.runtime.asgi
+=====================
+
+.. py:module:: httk.web.runtime.asgi
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.web.runtime.asgi.MAX_POST_BODY_BYTES
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.web.runtime.asgi.create_app
+
+
+Module Contents
+---------------
+
+.. py:data:: MAX_POST_BODY_BYTES
+   :value: 1000000
+
+
+.. py:function:: create_app(*, engine: httk.web.engine.site_engine.SiteEngine, debug: bool = False) -> starlette.applications.Starlette
+

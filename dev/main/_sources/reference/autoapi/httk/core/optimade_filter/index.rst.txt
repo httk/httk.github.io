@@ -1,0 +1,127 @@
+httk.core.optimade_filter
+=========================
+
+.. py:module:: httk.core.optimade_filter
+
+.. autoapi-nested-parse::
+
+   The OPTIMADE filter language as a first-class httk citizen.
+
+   This package makes the OPTIMADE filter language a standard httk query
+   feature: :func:`parse_optimade_filter` parses a filter string into a nested
+   tuple abstract syntax tree (the "ojf" format, :data:`FilterAst`), e.g.::
+
+       ('AND', ('HAS_ALL', ('=', '='), ('Identifier', 'elements'),
+                (('String', 'Ga'), ('String', 'Ti'))),
+               ('OR', ('=', ('Identifier', 'nelements'), ('Number', '3')),
+                      ('=', ('Identifier', 'nelements'), ('Number', '2'))))
+
+   It is the sibling of the vendored OPTIMADE property definitions in
+   ``httk.core.optimade_defs`` — two halves of the same standard: the property
+   definitions describe what can be queried, and this package parses the query
+   language itself. The grammar is loaded from the packaged
+   ``optimade_filter_grammar.ebnf`` (see the adjacent ``README.md`` for
+   provenance) and parsed by the vendored LR(1) parser generator in
+   ``_miniparser``.
+
+   Errors raised on bad user input are :class:`ParserSyntaxError`; grammar
+   problems raise :class:`ParserGrammarError`; parser bugs raise
+   :class:`ParserInternalError`. All are subclasses of :class:`ParserError`.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/core/optimade_filter/parser/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.core.optimade_filter.FilterAst
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   httk.core.optimade_filter.ParserError
+   httk.core.optimade_filter.ParserGrammarError
+   httk.core.optimade_filter.ParserInternalError
+   httk.core.optimade_filter.ParserSyntaxError
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.optimade_filter.optimade_parse_tree_to_ojf
+   httk.core.optimade_filter.parse_optimade_filter
+   httk.core.optimade_filter.parse_optimade_filter_raw
+
+
+Package Contents
+----------------
+
+.. py:exception:: ParserError
+
+   Bases: :py:obj:`Exception`
+
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: ParserGrammarError
+
+   Bases: :py:obj:`ParserError`
+
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: ParserInternalError
+
+   Bases: :py:obj:`ParserError`
+
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: ParserSyntaxError(*args: Any)
+
+   Bases: :py:obj:`ParserError`
+
+
+   Common base class for all non-exit exceptions.
+
+
+   .. py:attribute:: info
+
+
+   .. py:attribute:: line
+
+
+   .. py:attribute:: pos
+
+
+   .. py:attribute:: linestr
+
+
+.. py:type:: FilterAst
+   :canonical: tuple[Any, ...]
+
+
+.. py:function:: optimade_parse_tree_to_ojf(ast: tuple[Any, Ellipsis]) -> FilterAst
+
+.. py:function:: parse_optimade_filter(filter_string: str, verbosity: int | Any = 0) -> FilterAst
+
+.. py:function:: parse_optimade_filter_raw(filter_string: str, verbosity: int | Any = 0) -> tuple[Any, Ellipsis]
+

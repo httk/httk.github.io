@@ -1,0 +1,31 @@
+httk.optimade.endpoints.info
+============================
+
+.. py:module:: httk.optimade.endpoints.info
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.optimade.endpoints.info.generate_info_endpoint_reply
+   httk.optimade.endpoints.info.generate_entry_info_endpoint_reply
+   httk.optimade.endpoints.info.generate_base_endpoint_reply
+   httk.optimade.endpoints.info.generate_versions_endpoint_reply
+   httk.optimade.endpoints.info.generate_links_endpoint_reply
+
+
+Module Contents
+---------------
+
+.. py:function:: generate_info_endpoint_reply(request: httk.optimade.model.request.ValidatedRequest, config: httk.optimade.model.config.OptimadeConfig, schema: httk.optimade.schema.served.ServedSchema) -> dict[str, Any]
+
+.. py:function:: generate_entry_info_endpoint_reply(request: httk.optimade.model.request.ValidatedRequest, config: httk.optimade.model.config.OptimadeConfig, entry: str, schema: httk.optimade.schema.served.ServedSchema) -> dict[str, Any]
+
+.. py:function:: generate_base_endpoint_reply(request: httk.optimade.model.request.ValidatedRequest, config: httk.optimade.model.config.OptimadeConfig) -> str
+
+.. py:function:: generate_versions_endpoint_reply(request: httk.optimade.model.request.ValidatedRequest, config: httk.optimade.model.config.OptimadeConfig) -> str
+
+.. py:function:: generate_links_endpoint_reply(request: httk.optimade.model.request.ValidatedRequest, config: httk.optimade.model.config.OptimadeConfig) -> dict[str, Any]
+

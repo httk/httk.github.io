@@ -1,0 +1,19 @@
+httk.optimade.runtime.asgi
+==========================
+
+.. py:module:: httk.optimade.runtime.asgi
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.optimade.runtime.asgi.create_app
+
+
+Module Contents
+---------------
+
+.. py:function:: create_app(*, query_function: httk.optimade.model.results.QueryFunction, config: httk.optimade.model.config.OptimadeConfig, schema: httk.optimade.schema.served.ServedSchema, baseurl: str | None = None, debug: bool = False) -> starlette.applications.Starlette
+

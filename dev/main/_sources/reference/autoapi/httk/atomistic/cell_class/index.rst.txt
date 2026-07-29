@@ -1,0 +1,77 @@
+httk.atomistic.cell_class
+=========================
+
+.. py:module:: httk.atomistic.cell_class
+
+.. autoapi-nested-parse::
+
+   Backend wrapping a Cell in the class representation.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.cell_class.CellClass
+
+
+Module Contents
+---------------
+
+.. py:class:: CellClass(obj: httk.atomistic.cell.Cell, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.cell_backend.CellBackend`
+
+
+   Backend for a cell backed by an actual ``Cell`` object.
+
+   Its exact accessors delegate to the wrapped Cell (preserving its ``scale``/``unscaled_basis``
+   split), and ``unwrap`` returns that Cell.
+
+
+   .. py:property:: basis
+      :type: httk.core.SurdVector
+
+
+
+   .. py:property:: scale
+      :type: httk.core.SurdScalar
+
+
+
+   .. py:property:: precision
+      :type: fractions.Fraction | None
+
+
+      How precisely the basis was stated, as an absolute length, or ``None`` if unknown.
+
+      A backend that knows its source's precision overrides this; one that does not — a
+      bare matrix of numbers with no provenance — inherits ``None``.
+
+
+   .. py:property:: periodicity
+      :type: tuple[bool, bool, bool]
+
+
+      Which of the three basis rows is a genuine lattice translation.
+
+      A backend that knows its periodicity overrides this; one that does not inherit
+      ``(True, True, True)``. A cell described only by six lattice parameters or a bare
+      matrix is interpreted as a fully periodic crystal.
+
+
+   .. py:property:: unscaled_basis
+      :type: httk.core.SurdVector
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

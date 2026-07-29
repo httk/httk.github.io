@@ -1,0 +1,43 @@
+httk.core.loading
+=================
+
+.. py:module:: httk.core.loading
+
+.. autoapi-nested-parse::
+
+   Dispatch file loaders and optional domain adapters.
+
+   ``load`` retains the neutral loader result when no domain adapter owns its
+   format, while installed capability modules can register adapters to provide a
+   one-call domain-loading experience. Callers that need the neutral payload can
+   use ``raw=True``.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.loading.load
+
+
+Module Contents
+---------------
+
+.. py:function:: load(filename: str, *, raw: bool = False, **kwargs: Any) -> Any
+
+   Load ``filename`` and adapt its neutral payload to a domain object.
+
+   Dispatch strips at most one recognized compression suffix (``.gz``,
+   ``.bz2``, ...) to obtain an *inner* name, then selects a loader by that
+   inner name's extension (``.cif``, ``.poscar``, ...) or, failing that, by its
+   exact basename (``POSCAR``, ``CONTCAR``; case-insensitive). The selected
+   loader always receives the **original** ``filename``; loaders open it
+   through the datastream layer, which transparently decompresses. By default,
+   a mapping with a string ``"format"`` tag is passed to the registered domain
+   adapter for that format. ``raw=True`` is the neutral-payload escape hatch.
+   Payloads with unknown formats, and non-mapping loader results, pass through
+   unchanged.
+
+

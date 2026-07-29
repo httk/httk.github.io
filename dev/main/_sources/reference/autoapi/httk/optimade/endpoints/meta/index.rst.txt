@@ -1,0 +1,19 @@
+httk.optimade.endpoints.meta
+============================
+
+.. py:module:: httk.optimade.endpoints.meta
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.optimade.endpoints.meta.generate_meta
+
+
+Module Contents
+---------------
+
+.. py:function:: generate_meta(*, representation: str, api_version: str, config: httk.optimade.model.config.OptimadeConfig, data_count: int | None = None, more_data_available: bool = False, data_available: int | None = None, warnings: list[dict[str, Any]] | None = None, last_id: str | None = None) -> dict[str, Any]
+

@@ -1,0 +1,102 @@
+httk.web.model.config
+=====================
+
+.. py:module:: httk.web.model.config
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.web.model.config.SiteConfig
+
+
+Module Contents
+---------------
+
+.. py:class:: SiteConfig
+
+   .. py:attribute:: srcdir
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: content_subdir
+      :type:  str
+      :value: 'content'
+
+
+
+   .. py:attribute:: static_subdir
+      :type:  str
+      :value: 'static'
+
+
+
+   .. py:attribute:: template_subdir
+      :type:  str
+      :value: 'templates'
+
+
+
+   .. py:attribute:: functions_subdir
+      :type:  str
+      :value: 'functions'
+
+
+
+   .. py:attribute:: baseurl
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: host_static
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: compatibility_mode
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: config_name
+      :type:  str
+      :value: 'config'
+
+
+
+   .. py:attribute:: publish_use_urls_without_ext
+      :type:  bool
+      :value: True
+
+
+
+   .. py:method:: from_srcdir(srcdir: str | pathlib.Path, *, baseurl: str | None = None, host_static: str | None = None, compatibility_mode: bool = False, config_name: str = 'config', publish_use_urls_without_ext: bool = True) -> Self
+      :classmethod:
+
+
+
+   .. py:property:: content_dir
+      :type: pathlib.Path
+
+
+
+   .. py:property:: static_dir
+      :type: pathlib.Path
+
+
+
+   .. py:property:: template_dir
+      :type: pathlib.Path
+
+
+
+   .. py:property:: functions_dir
+      :type: pathlib.Path
+
+
+

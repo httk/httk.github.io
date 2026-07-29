@@ -1,0 +1,45 @@
+httk.core.datastream.textstream_request
+=======================================
+
+.. py:module:: httk.core.datastream.textstream_request
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.datastream.textstream_request.TextstreamRequest
+
+
+Module Contents
+---------------
+
+.. py:class:: TextstreamRequest(request: urllib.request.Request, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_common.TextstreamCommon`, :py:obj:`httk.core.datastream.textstream_backend.TextstreamBackend`
+
+
+   Backend for streaming text fetched via a urllib.request.Request.
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: url
+      :type: str
+
+
+
+   .. py:property:: request
+      :type: urllib.request.Request
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+

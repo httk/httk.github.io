@@ -1,0 +1,68 @@
+httk.optimade.filter
+====================
+
+.. py:module:: httk.optimade.filter
+
+.. autoapi-nested-parse::
+
+   Re-exports of the OPTIMADE filter-language parser.
+
+   The parser is implemented in :mod:`httk.core.optimade_filter`, beside the
+   vendored OPTIMADE property definitions in ``httk.core.optimade_defs``, and is
+   also exposed through this package.
+
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   httk.optimade.filter.ParserError
+   httk.optimade.filter.ParserSyntaxError
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.optimade.filter.parse_optimade_filter
+   httk.optimade.filter.parse_optimade_filter_raw
+
+
+Package Contents
+----------------
+
+.. py:exception:: ParserError
+
+   Bases: :py:obj:`Exception`
+
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: ParserSyntaxError(*args: Any)
+
+   Bases: :py:obj:`ParserError`
+
+
+   Common base class for all non-exit exceptions.
+
+
+   .. py:attribute:: info
+
+
+   .. py:attribute:: line
+
+
+   .. py:attribute:: pos
+
+
+   .. py:attribute:: linestr
+
+
+.. py:function:: parse_optimade_filter(filter_string: str, verbosity: int | Any = 0) -> FilterAst
+
+.. py:function:: parse_optimade_filter_raw(filter_string: str, verbosity: int | Any = 0) -> tuple[Any, Ellipsis]
+

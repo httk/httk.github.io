@@ -1,0 +1,51 @@
+httk.core.vectors.vector_frac_view
+==================================
+
+.. py:module:: httk.core.vectors.vector_frac_view
+
+.. autoapi-nested-parse::
+
+   A view presenting any vector backend as a FracVector (the exact-rational representation).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.vectors.vector_frac_view.VectorFracView
+
+
+Module Contents
+---------------
+
+.. py:class:: VectorFracView(obj: httk.core.vectors.vector_like.VectorLike, denom: Any = _NO_DENOM, **hints: Any)
+
+   Bases: :py:obj:`httk.core.vectors.vector_view.VectorView`, :py:obj:`httk.core.vectors.fracvector.FracVector`
+
+
+   A view presenting an underlying vector backend as an exact
+   :class:`~httk.core.vectors.fracvector.FracVector`.
+
+   This view is a genuine FracVector, so it can be passed anywhere a FracVector is accepted,
+   and it exposes the full exact-rational algebra (``det``/``inv``/``*``/...). It is built
+   eagerly from the backend's exact ``fractions`` interchange on construction, so the
+   round-trip is exactness-preserving for the frac and native backends. (numpy values are
+   binary rationals, so a numpy source round-trips to the exact float64 rational, not
+   necessarily the original decimal fraction.)
+
+   Because inherited FracVector algebra builds its results with the low-level
+   ``self.__class__(noms, denom)`` constructor, this class also accepts that two-argument form;
+   results built that way are plain (backend-less) FracVector values presented through this
+   class.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

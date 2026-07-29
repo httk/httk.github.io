@@ -1,0 +1,59 @@
+httk.io.cif.cif_reader
+======================
+
+.. py:module:: httk.io.cif.cif_reader
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.io.cif.cif_reader.rewindable_iterator
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.io.cif.cif_reader.read_cif
+
+
+Module Contents
+---------------
+
+.. py:class:: rewindable_iterator(iterator: collections.abc.Iterable[str])
+
+   .. py:method:: rewind(rewindstr: str | None = None) -> None
+
+
+.. py:function:: read_cif(fs, pragmatic=True, allow_cif2=False, use_types=False)
+
+   Generic cif reader, given a filename / ioadapter it places all data in a python dictionary.
+
+   It returns a tuple: (header, list)
+   Where list are pairs of data blocks names and data blocks
+
+   Each data block is a dictionary with tag_name:value
+
+   For loops, value is another dictionary with format column_name:value
+
+   The optional parameter pragmatic regulates handling of some counter-intuitive aspects of the cif specification, where
+   the default pragmatic=True handles these features the way people usually use them, whereas pragmatic=False means
+   to read the cif file precisely according to the spec. For example, in a multiline text field::
+
+       ;
+       some text
+       ;
+
+   Means the string '\nsome text'. For this specific case pragmatic=True removes the leading newline.
+
+   set use_types to True to convert things that look like floats and integers to those respective types
+
+   A filename (``str`` or :class:`os.PathLike`) is opened through
+   :class:`httk.core.TextstreamFileView`, so a compressed file (``.cif.bz2``,
+   ``.cif.gz``, ...) is decompressed transparently. An already-open text stream
+   or a plain iterable of lines is consumed as-is and left open for the caller.
+
+

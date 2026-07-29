@@ -1,0 +1,255 @@
+httk.workflow.configuration
+===========================
+
+.. py:module:: httk.workflow.configuration
+
+.. autoapi-nested-parse::
+
+   XDG configuration and identity management for workflow commands.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.workflow.configuration.CONFIG_FORMAT
+   httk.workflow.configuration.CONFIG_FORMAT_VERSION
+   httk.workflow.configuration.IDENTITY_SIGNATURE_DOMAIN
+   httk.workflow.configuration.IDENTITY_KEY_MEMBER
+   httk.workflow.configuration.IDENTITY_SIGNATURE_MEMBER
+   httk.workflow.configuration.CONFIG_KEYS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.workflow.configuration.ConfigKey
+   httk.workflow.configuration.DocumentSignature
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.workflow.configuration.settable_config_keys
+   httk.workflow.configuration.config_home
+   httk.workflow.configuration.data_home
+   httk.workflow.configuration.adopt_legacy_data_home
+   httk.workflow.configuration.remotes_home
+   httk.workflow.configuration.keys_home
+   httk.workflow.configuration.config_path
+   httk.workflow.configuration.read_config
+   httk.workflow.configuration.write_config
+   httk.workflow.configuration.set_config_key
+   httk.workflow.configuration.unset_config_key
+   httk.workflow.configuration.initialize_config
+   httk.workflow.configuration.identity_key_paths
+   httk.workflow.configuration.ensure_identity_key
+   httk.workflow.configuration.identity_seed
+   httk.workflow.configuration.identity_public_key
+   httk.workflow.configuration.signature_digest
+   httk.workflow.configuration.sign_document
+   httk.workflow.configuration.verify_document
+   httk.workflow.configuration.import_v1_configuration
+
+
+Module Contents
+---------------
+
+.. py:data:: CONFIG_FORMAT
+   :value: 'httk-config'
+
+
+.. py:data:: CONFIG_FORMAT_VERSION
+   :value: 1
+
+
+.. py:data:: IDENTITY_SIGNATURE_DOMAIN
+   :value: b'httk-workflow-identity-v1\x00'
+
+
+.. py:data:: IDENTITY_KEY_MEMBER
+   :value: 'operator_key'
+
+
+.. py:data:: IDENTITY_SIGNATURE_MEMBER
+   :value: 'signature'
+
+
+.. py:class:: ConfigKey
+
+   One member the user configuration is allowed to carry.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: description
+      :type:  str
+
+
+   .. py:attribute:: settable
+      :type:  bool
+      :value: True
+
+
+
+.. py:data:: CONFIG_KEYS
+   :type:  collections.abc.Mapping[str, ConfigKey]
+
+.. py:function:: settable_config_keys() -> tuple[str, Ellipsis]
+
+   Return the configuration keys ``config set`` accepts, in order.
+
+
+.. py:function:: config_home() -> pathlib.Path
+
+   Return the httk configuration directory.
+
+
+.. py:function:: data_home() -> pathlib.Path
+
+   Return the httk data directory.
+
+   Nothing httk-workflow keeps per user lives here any more: remote
+   definitions and identity keys are *configuration*, and moved to
+   :func:`config_home`. The function stays because the directory is still the
+   right answer for genuine data, and because :func:`adopt_legacy_data_home` has
+   to know where to look for what was left there.
+
+
+.. py:function:: adopt_legacy_data_home() -> None
+
+   Adopt whatever an earlier release left in the data home, once.
+
+
+.. py:function:: remotes_home() -> pathlib.Path
+
+   Return where this user's remote definitions live.
+
+
+.. py:function:: keys_home() -> pathlib.Path
+
+   Return where this user's identity keys live.
+
+
+.. py:function:: config_path() -> pathlib.Path
+
+.. py:function:: read_config() -> dict[str, object]
+
+   Read the user configuration, returning an empty mapping if absent.
+
+   A document of an unrecognized format is refused by name rather than read as
+   if its members meant what this implementation means by them. A document with
+   no version at all predates versioning and is accepted as legacy, because
+   that is what every configuration written before this check looks like.
+
+
+.. py:function:: write_config(values: collections.abc.Mapping[str, object]) -> pathlib.Path
+
+   Write a versioned user configuration.
+
+
+.. py:function:: set_config_key(key: str, value: str) -> pathlib.Path
+
+   Set one registered configuration key and return the written path.
+
+
+.. py:function:: unset_config_key(key: str) -> pathlib.Path
+
+   Remove one registered configuration key and return the written path.
+
+
+.. py:function:: initialize_config(*, name: str, email: str) -> dict[str, object]
+
+   Create or update the user identity and ensure a signing key exists.
+
+
+.. py:function:: identity_key_paths() -> tuple[pathlib.Path, pathlib.Path]
+
+.. py:function:: ensure_identity_key() -> tuple[pathlib.Path, pathlib.Path]
+
+   Create the user's standard Ed25519 identity key if it is absent.
+
+
+.. py:function:: identity_seed() -> bytes | None
+
+   Return the local identity seed, or ``None`` when no key was created.
+
+   Nothing here creates a key. An installation that never ran ``config init``
+   simply has no identity, and every caller treats that as *unsigned* rather
+   than as an error, which is what keeps a mixed deployment working.
+
+
+.. py:function:: identity_public_key() -> str | None
+
+   Return the recorded local identity public key, or ``None``.
+
+
+.. py:function:: signature_digest(document: collections.abc.Mapping[str, object]) -> bytes
+
+   Return the domain-separated digest one identity signature covers.
+
+   The digest covers the whole document except the signature itself, in the
+   same canonical JSON every other httk document is hashed as, so the signing
+   key and the signed members travel together and neither can be swapped.
+
+
+.. py:function:: sign_document(document: collections.abc.Mapping[str, object]) -> dict[str, object]
+
+   Return *document* with a detached identity signature, when one is possible.
+
+   Signing is optional by construction: a caller with no identity key returns
+   the document unchanged, and a verifier accepts an unsigned document. The
+   signature is attribution — it says which identity published this — and never
+   authorization: nothing is permitted because a document is signed.
+
+
+.. py:class:: DocumentSignature
+
+   What checking one document's optional identity signature established.
+
+
+   .. py:attribute:: present
+      :type:  bool
+
+
+   .. py:attribute:: valid
+      :type:  bool
+
+
+   .. py:attribute:: operator_key
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: reason
+      :type:  str | None
+      :value: None
+
+
+
+.. py:function:: verify_document(document: collections.abc.Mapping[str, object]) -> DocumentSignature
+
+   Check the optional identity signature of *document*.
+
+   An absent signature is reported as absent rather than as a failure, so a
+   document published by an installation without an identity key stays usable.
+   A signature that is present and does not verify is a failure: it is either
+   damaged or forged, and neither is something to act on.
+
+
+.. py:function:: import_v1_configuration(source: str | os.PathLike[str] | None = None) -> dict[str, object]
+
+   Import safe metadata and public identity from a legacy ``~/.httk`` tree.
+
+   Legacy 64-byte private material is deliberately left untouched.
+
+

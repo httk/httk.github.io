@@ -1,0 +1,28 @@
+httk.web.renderers.httkweb_compat
+=================================
+
+.. py:module:: httk.web.renderers.httkweb_compat
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.web.renderers.httkweb_compat.HttkwebCompatRenderer
+
+
+Module Contents
+---------------
+
+.. py:class:: HttkwebCompatRenderer
+
+   Minimal compatibility renderer for legacy .httkweb files.
+
+   Old .httkweb pages typically have YAML-like front matter bounded by dashes,
+   followed by text that is close to reStructuredText.
+
+
+   .. py:method:: render(source_path: pathlib.Path) -> httk.web.renderers.base.RenderResult
+
+

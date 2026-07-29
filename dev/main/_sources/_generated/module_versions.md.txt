@@ -1,0 +1,9 @@
+| Module | Version | Documentation |
+| --- | --- | --- |
+| httk-atomistic | dev:main | [https://docs.httk.org/httk-atomistic/dev/main/](https://docs.httk.org/httk-atomistic/dev/main/) |
+| httk-core | dev:main | [https://docs.httk.org/httk-core/dev/main/](https://docs.httk.org/httk-core/dev/main/) |
+| httk-data | dev:main | [https://docs.httk.org/httk-data/dev/main/](https://docs.httk.org/httk-data/dev/main/) |
+| httk-io | dev:main | [https://docs.httk.org/httk-io/dev/main/](https://docs.httk.org/httk-io/dev/main/) |
+| httk-optimade | dev:main | [https://docs.httk.org/httk-optimade/dev/main/](https://docs.httk.org/httk-optimade/dev/main/) |
+| httk-web | dev:main | [https://docs.httk.org/httk-web/dev/main/](https://docs.httk.org/httk-web/dev/main/) |
+| httk-workflow | dev:main | [https://docs.httk.org/httk-workflow/dev/main/](https://docs.httk.org/httk-workflow/dev/main/) |

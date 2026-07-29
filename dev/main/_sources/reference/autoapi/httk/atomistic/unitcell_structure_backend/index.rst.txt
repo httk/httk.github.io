@@ -1,0 +1,61 @@
+httk.atomistic.unitcell_structure_backend
+=========================================
+
+.. py:module:: httk.atomistic.unitcell_structure_backend
+
+.. autoapi-nested-parse::
+
+   Backend wrapping a Structure in the Unitcell representation.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.unitcell_structure_backend.UnitcellStructureBackend
+
+
+Module Contents
+---------------
+
+.. py:class:: UnitcellStructureBackend(obj: httk.atomistic.structure.Structure, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.structure_backend.StructureBackend`
+
+
+   Backend for a crystal structure backed by an actual ``Structure`` object.
+
+   Its quartet accessors delegate to the wrapped Structure, and ``unwrap`` returns
+   that Structure.
+
+
+   .. py:property:: cell
+      :type: httk.atomistic.cell.Cell
+
+
+
+   .. py:property:: sites
+      :type: httk.atomistic.sites.Sites
+
+
+
+   .. py:property:: species
+      :type: tuple[httk.atomistic.species.Species, Ellipsis]
+
+
+
+   .. py:property:: species_at_sites
+      :type: tuple[str, Ellipsis]
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

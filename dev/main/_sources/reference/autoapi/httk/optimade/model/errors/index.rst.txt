@@ -1,0 +1,57 @@
+httk.optimade.model.errors
+==========================
+
+.. py:module:: httk.optimade.model.errors
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   httk.optimade.model.errors.OptimadeError
+   httk.optimade.model.errors.TranslatorError
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.optimade.model.errors.translator_error_from
+
+
+Module Contents
+---------------
+
+.. py:exception:: OptimadeError(message: str, response_code: int, response_message: str, longmsg: str | None = None)
+
+   Bases: :py:obj:`Exception`
+
+
+   Common base class for all non-exit exceptions.
+
+
+   .. py:attribute:: response_code
+
+
+   .. py:attribute:: response_msg
+
+
+   .. py:attribute:: content
+
+
+.. py:exception:: TranslatorError(message: str, response_code: int, response_message: str, longmsg: str | None = None)
+
+   Bases: :py:obj:`OptimadeError`
+
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:function:: translator_error_from(error: httk.data.optimade_query.FilterTranslationError) -> TranslatorError
+
+   Wrap a neutral :class:`~httk.data.optimade_query.FilterTranslationError`
+   into a :class:`TranslatorError` carrying the corresponding HTTP status.
+
+

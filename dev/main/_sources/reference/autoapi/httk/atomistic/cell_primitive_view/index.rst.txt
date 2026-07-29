@@ -1,0 +1,41 @@
+httk.atomistic.cell_primitive_view
+==================================
+
+.. py:module:: httk.atomistic.cell_primitive_view
+
+.. autoapi-nested-parse::
+
+   A view presenting any cell backend as a raw 3-row tuple of cell vectors.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.cell_primitive_view.CellPrimitiveView
+
+
+Module Contents
+---------------
+
+.. py:class:: CellPrimitiveView(obj: httk.atomistic.cell_like.CellLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.cell_view.CellView`, :py:obj:`tuple`
+
+
+   A view presenting an underlying cell backend as the raw 3x3 basis matrix of floats.
+
+   This view is a genuine tuple of three cell-vector rows (the scaled lattice vectors rendered to
+   floats from the exact ``basis``), built eagerly and immutable.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

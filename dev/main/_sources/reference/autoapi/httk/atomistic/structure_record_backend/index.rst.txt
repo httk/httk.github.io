@@ -1,0 +1,56 @@
+httk.atomistic.structure_record_backend
+=======================================
+
+.. py:module:: httk.atomistic.structure_record_backend
+
+.. autoapi-nested-parse::
+
+   Structure backend for :class:`~httk.atomistic.StructureRecord` snapshots.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.structure_record_backend.StructureRecordBackend
+
+
+Module Contents
+---------------
+
+.. py:class:: StructureRecordBackend(obj: httk.atomistic.structure_record.StructureRecord, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.structure_backend.StructureBackend`
+
+
+   Backend exposing a ``StructureRecord`` through the structure quartet.
+
+
+   .. py:property:: cell
+      :type: httk.atomistic.cell.Cell
+
+
+
+   .. py:property:: sites
+      :type: httk.atomistic.sites.Sites
+
+
+
+   .. py:property:: species
+      :type: tuple[httk.atomistic.species.Species, Ellipsis]
+
+
+
+   .. py:property:: species_at_sites
+      :type: tuple[str, Ellipsis]
+
+
+
+   .. py:method:: unwrap() -> httk.atomistic.structure_record.StructureRecord
+
+      Return the stored snapshot rather than the reconstructed structure.
+
+
+

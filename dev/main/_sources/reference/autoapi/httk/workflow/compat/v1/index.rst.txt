@@ -1,0 +1,148 @@
+httk.workflow.compat.v1
+=======================
+
+.. py:module:: httk.workflow.compat.v1
+
+.. autoapi-nested-parse::
+
+   Compatibility support for instantiated httk v1 task templates.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.workflow.compat.v1.V1_BACKEND
+   httk.workflow.compat.v1.V1_CAPABILITY
+   httk.workflow.compat.v1.V1_WORKFLOW
+   httk.workflow.compat.v1.V1_PRIORITY_MAP
+   httk.workflow.compat.v1.V2_TO_V1_PRIORITY
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.workflow.compat.v1.V1RunnerBackend
+   httk.workflow.compat.v1.V1TaskManager
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.workflow.compat.v1.bundled_v1_root
+   httk.workflow.compat.v1.legacy_priority
+   httk.workflow.compat.v1.prepare_v1_payload
+   httk.workflow.compat.v1.submit_v1_task
+   httk.workflow.compat.v1.parse_v1_task_name
+
+
+Package Contents
+----------------
+
+.. py:data:: V1_BACKEND
+   :value: 'httk-v1'
+
+
+.. py:data:: V1_CAPABILITY
+   :value: 'httk-v1'
+
+
+.. py:data:: V1_WORKFLOW
+   :value: 'httk.v1.ht_steps'
+
+
+.. py:data:: V1_PRIORITY_MAP
+
+.. py:data:: V2_TO_V1_PRIORITY
+
+.. py:function:: bundled_v1_root() -> pathlib.Path
+
+   Return the packaged compatibility ``HTTK_DIR`` root.
+
+
+.. py:function:: legacy_priority(value: int) -> int
+
+   Map a legacy priority from 1 through 5 onto the v2 range.
+
+
+.. py:function:: prepare_v1_payload(source: str | os.PathLike[str], destination: str | os.PathLike[str], *, materializer: V1Materializer | None = None, instantiate_globals: collections.abc.Mapping[str, object] | None = None, job_id: str | None = None, tag: str = 'v1-task', name: str = 'httk v1 task', initial_step: str = 'start', pool: str = 'default', priority: int = 3, attempts: int = 10, parent: collections.abc.Mapping[str, object] | None = None, root_placement: str | None = None, legacy_link: collections.abc.Mapping[str, object] | None = None) -> httk.workflow.protocol.JobDefinition
+
+   Copy an instantiated v1 template and add its immutable v2 job definition.
+
+   ``materializer`` and ``instantiate_globals`` are mutually exclusive. The
+   latter executes trusted template code in the current interpreter and does
+   not restore removed v1 Python imports.
+
+
+.. py:function:: submit_v1_task(workspace: httk.workflow.Workspace, source: str | os.PathLike[str], placement: str | pathlib.PurePosixPath, *, materializer: V1Materializer | None = None, instantiate_globals: collections.abc.Mapping[str, object] | None = None, job_id: str | None = None, tag: str = 'v1-task', name: str = 'httk v1 task', initial_step: str = 'start', pool: str = 'default', priority: int = 3, attempts: int = 10) -> httk.workflow.protocol.Marker
+
+   Prepare and atomically submit one legacy task through a v2 workspace.
+
+
+.. py:function:: parse_v1_task_name(value: str) -> dict[str, str] | None
+
+   Parse a legacy task basename, returning ``None`` when it is unrelated.
+
+
+.. py:class:: V1RunnerBackend(*, runtime_root: str | os.PathLike[str] | None = None, timeout: float = 21600.0, wrapper: str | None = None, log_compression: str = 'bzip2', attempts: int = 10)
+
+   Runner backend which adapts v1 filesystem decisions to v2 outcomes.
+
+
+   .. py:attribute:: name
+      :value: 'httk-v1'
+
+
+
+   .. py:attribute:: runtime_root
+
+
+   .. py:attribute:: timeout
+      :value: 21600.0
+
+
+
+   .. py:attribute:: wrapper
+      :value: None
+
+
+
+   .. py:attribute:: log_compression
+      :value: 'bzip2'
+
+
+
+   .. py:attribute:: attempts
+      :value: 10
+
+
+
+   .. py:method:: validate(job: httk.workflow.protocol.JobDefinition, payload: pathlib.Path) -> None
+
+
+   .. py:method:: command(launch: httk.workflow.backends.AttemptLaunch) -> collections.abc.Sequence[str]
+
+
+   .. py:method:: commit_outcome(commit: httk.workflow.backends.OutcomeCommit) -> None
+
+
+   .. py:method:: reconcile(workspace: httk.workflow.Workspace) -> None
+
+
+   .. py:method:: marker_changed(workspace: httk.workflow.Workspace, marker: httk.workflow.protocol.Marker) -> None
+
+
+.. py:class:: V1TaskManager(workspace: httk.workflow.Workspace, *, taskset: str = 'any', maximum_workers: int = 1, lease_seconds: float | None = None, heartbeat_interval: float = 30.0, unsafe_persistent_takeover: bool = False, runtime_root: str | os.PathLike[str] | None = None, timeout: float = 21600.0, wrapper: str | None = None, log_compression: str = 'bzip2', attempts: int = 10)
+
+   Bases: :py:obj:`httk.workflow.TaskManager`
+
+
+   A task manager restricted to jobs using the httk v1 runner backend.
+
+

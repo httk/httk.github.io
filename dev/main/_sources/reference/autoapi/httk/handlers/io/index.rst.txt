@@ -1,0 +1,27 @@
+httk.handlers.io
+================
+
+.. py:module:: httk.handlers.io
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.handlers.io.register_loader
+
+
+Package Contents
+----------------
+
+.. py:function:: register_loader(*, name: str, loader: str, extensions: tuple[str, Ellipsis] = (), filenames: tuple[str, Ellipsis] = ()) -> None
+
+   Register a loader under one or more file ``extensions`` and/or ``filenames``.
+
+   ``extensions`` are matched (case-insensitively) against a file's suffix, e.g.
+   ``".cif"``. ``filenames`` are exact basenames matched (case-insensitively)
+   against a file's name with any recognized compression suffix stripped, e.g.
+   ``"POSCAR"`` matches ``POSCAR``, ``poscar``, and ``POSCAR.bz2``.
+
+

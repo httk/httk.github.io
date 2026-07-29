@@ -1,0 +1,241 @@
+httk.data.query
+===============
+
+.. py:module:: httk.data.query
+
+.. autoapi-nested-parse::
+
+   Typed protocols for the store/searcher query contract.
+
+   These protocols define the backend-agnostic query interface shared by httk
+   data stores: the database layer in httk-data implements them over SQL, and
+   serving modules (such as *httk-optimade*, whose in-memory store also conforms)
+   program against them. They mirror the query interface of the httk v1 database
+   layer (``httk.db`` ``FilteredCollection`` searchers), so lightweight fakes can
+   stand in for a real store in tests.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.data.query.SearchExpression
+   httk.data.query.SearchField
+   httk.data.query.SearchVariable
+   httk.data.query.SearchResult
+   httk.data.query.Searcher
+   httk.data.query.Store
+
+
+Module Contents
+---------------
+
+.. py:class:: SearchExpression
+
+   Bases: :py:obj:`Protocol`
+
+
+   Base class for protocol classes.
+
+   Protocol classes are defined as::
+
+       class Proto(Protocol):
+           def meth(self) -> int:
+               ...
+
+   Such classes are primarily used with static type checkers that recognize
+   structural subtyping (static duck-typing).
+
+   For example::
+
+       class C:
+           def meth(self) -> int:
+               return 0
+
+       def func(x: Proto) -> int:
+           return x.meth()
+
+       func(C())  # Passes static type check
+
+   See PEP 544 for details. Protocol classes decorated with
+   @typing.runtime_checkable act as simple-minded runtime protocols that check
+   only the presence of given attributes, ignoring their type signatures.
+   Protocol classes can be generic, they are defined as::
+
+       class GenProto[T](Protocol):
+           def meth(self) -> T:
+               ...
+
+
+.. py:class:: SearchField
+
+   Bases: :py:obj:`Protocol`
+
+
+   A queryable field of a search variable.
+
+   In addition to the methods below, fields support the rich comparison
+   operators (``==``, ``!=``, ``<``, ``<=``, ``>``, ``>=``), returning
+   :class:`SearchExpression`. The handlers invoke those via
+   ``getattr(field, '__eq__')(value)`` since the comparison dunders cannot be
+   typed as expression-returning.
+
+   The three string-matching methods take **literal** text: no wildcard or
+   pattern syntax whatsoever crosses this contract, so ``%`` and ``_`` (and
+   any other metacharacter) match themselves. A backend is therefore free to
+   implement them with SQL ``LIKE`` over an escaped pattern, with a regular
+   expression, or with a full-text index — the choice is invisible here.
+
+
+   .. py:method:: has_any(*values: Any) -> SearchExpression
+
+
+   .. py:method:: has_only(*values: Any) -> SearchExpression
+
+
+   .. py:method:: contains(text: str) -> SearchExpression
+
+      Match values containing ``text`` as a literal substring.
+
+
+
+   .. py:method:: startswith(prefix: str) -> SearchExpression
+
+      Match values beginning with the literal ``prefix``.
+
+
+
+   .. py:method:: endswith(suffix: str) -> SearchExpression
+
+      Match values ending with the literal ``suffix``.
+
+
+
+.. py:class:: SearchVariable
+
+   Bases: :py:obj:`Protocol`
+
+
+   A query variable bound to a target type; attribute access yields fields.
+
+   ``always_true``/``always_false`` are reserved names: they are real methods
+   of the variable, never stored fields resolved through ``__getattr__``.
+   They exist so a translation layer can express a constant truth value
+   without inventing a probe field. A ``field == field`` probe is NULL-unsound,
+   since it yields NULL (not true) for a NULL field.
+
+
+   .. py:method:: always_true() -> SearchExpression
+
+      An expression that matches every row.
+
+
+
+   .. py:method:: always_false() -> SearchExpression
+
+      An expression that matches no row.
+
+
+
+.. py:class:: SearchResult
+
+   Bases: :py:obj:`NamedTuple`
+
+
+   One match: the declared output values, and the names they were declared under.
+
+   ``values`` holds one entry per :meth:`Searcher.output` call in declaration
+   order; it is a tuple, so ``values, names = result`` and ``result[0][0]``
+   both work.
+
+
+   .. py:attribute:: values
+      :type:  tuple[Any, Ellipsis]
+
+
+   .. py:attribute:: names
+      :type:  tuple[str, Ellipsis]
+
+
+.. py:class:: Searcher
+
+   Bases: :py:obj:`Protocol`
+
+
+   A single query under construction, and its results once iterated.
+
+   Iteration yields one :class:`SearchResult` per match, so ``item[0][0]`` is
+   the first declared output of the match (typically the matched row object).
+   The expressions received by ``add`` are always ones produced by this same
+   backend's search variables, so implementations may type them as their own
+   expression class; a backend that needs a second (post-filter) evaluation
+   position decides that from the expression itself, not from the caller.
+
+
+   .. py:attribute:: offset
+      :type:  int
+
+
+   .. py:method:: variable(target: Any) -> Any
+
+
+   .. py:method:: output(variable: Any, name: str) -> None
+
+
+   .. py:method:: add(expression: Any) -> None
+
+
+   .. py:method:: count() -> int
+
+
+   .. py:method:: set_limit(limit: int) -> None
+
+
+   .. py:method:: add_offset(offset: int) -> None
+
+
+   .. py:method:: add_sort(field: Any, descending: bool) -> None
+
+
+.. py:class:: Store
+
+   Bases: :py:obj:`Protocol`
+
+
+   Base class for protocol classes.
+
+   Protocol classes are defined as::
+
+       class Proto(Protocol):
+           def meth(self) -> int:
+               ...
+
+   Such classes are primarily used with static type checkers that recognize
+   structural subtyping (static duck-typing).
+
+   For example::
+
+       class C:
+           def meth(self) -> int:
+               return 0
+
+       def func(x: Proto) -> int:
+           return x.meth()
+
+       func(C())  # Passes static type check
+
+   See PEP 544 for details. Protocol classes decorated with
+   @typing.runtime_checkable act as simple-minded runtime protocols that check
+   only the presence of given attributes, ignoring their type signatures.
+   Protocol classes can be generic, they are defined as::
+
+       class GenProto[T](Protocol):
+           def meth(self) -> T:
+               ...
+
+
+   .. py:method:: searcher() -> Searcher
+
+

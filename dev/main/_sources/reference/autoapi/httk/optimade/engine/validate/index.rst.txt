@@ -1,0 +1,34 @@
+httk.optimade.engine.validate
+=============================
+
+.. py:module:: httk.optimade.engine.validate
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.optimade.engine.validate.PAGE_LIMIT_MAX
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.optimade.engine.validate.validate_optimade_request
+   httk.optimade.engine.validate.determine_optimade_version
+
+
+Module Contents
+---------------
+
+.. py:data:: PAGE_LIMIT_MAX
+   :value: 50
+
+
+.. py:function:: validate_optimade_request(request: httk.optimade.model.request.RawRequest, version: str, schema: httk.optimade.schema.served.ServedSchema) -> httk.optimade.model.request.ValidatedRequest
+
+.. py:function:: determine_optimade_version(request: httk.optimade.model.request.RawRequest) -> str
+

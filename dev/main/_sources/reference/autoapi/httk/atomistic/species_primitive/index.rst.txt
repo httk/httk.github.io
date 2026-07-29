@@ -1,0 +1,78 @@
+httk.atomistic.species_primitive
+================================
+
+.. py:module:: httk.atomistic.species_primitive
+
+.. autoapi-nested-parse::
+
+   Backend wrapping a validated OPTIMADE species dict.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.species_primitive.SpeciesPrimitive
+
+
+Module Contents
+---------------
+
+.. py:class:: SpeciesPrimitive(obj: dict[str, Any], **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.species_backend.SpeciesBackend`
+
+
+   Backend for a species backed by an OPTIMADE species dict.
+
+   The native representation is a mapping with the OPTIMADE ``species`` fields; the
+   required ``name``/``chemical_symbols``/``concentration`` are validated conservatively
+   on construction. The accessors read the corresponding fields (optional fields absent
+   from the dict read as ``None``), and ``unwrap`` returns the original dict.
+
+
+   .. py:property:: name
+      :type: str
+
+
+
+   .. py:property:: chemical_symbols
+      :type: tuple[str, Ellipsis]
+
+
+
+   .. py:property:: concentration
+      :type: tuple[float, Ellipsis]
+
+
+
+   .. py:property:: mass
+      :type: tuple[float, Ellipsis] | None
+
+
+
+   .. py:property:: attached
+      :type: tuple[str, Ellipsis] | None
+
+
+
+   .. py:property:: nattached
+      :type: tuple[int, Ellipsis] | None
+
+
+
+   .. py:property:: original_name
+      :type: str | None
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

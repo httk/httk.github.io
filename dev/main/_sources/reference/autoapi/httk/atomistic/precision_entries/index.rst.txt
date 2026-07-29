@@ -1,0 +1,60 @@
+httk.atomistic.precision_entries
+================================
+
+.. py:module:: httk.atomistic.precision_entries
+
+.. autoapi-nested-parse::
+
+   Serving how precisely a structure's numbers were stated.
+
+   OPTIMADE standardises nothing about data precision — the only ``standard_uncertainty`` in
+   its structures definition is CODATA metadata inside a unit definition — so these are
+   database-specific properties described by the published definitions in
+   :mod:`~httk.atomistic.httk_definitions`.
+
+   Serving them matters because a consumer choosing a matching tolerance or a symmetry
+   ``symprec`` otherwise has to guess. With these two values it can derive one, exactly as
+   :func:`~httk.atomistic.structure_tolerance` does locally.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.atomistic.precision_entries.PRECISION_PROPERTY_KEYS
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.atomistic.precision_entries.precision_definitions
+   httk.atomistic.precision_entries.precision_properties
+
+
+Module Contents
+---------------
+
+.. py:data:: PRECISION_PROPERTY_KEYS
+   :type:  dict[str, str]
+
+.. py:function:: precision_definitions() -> dict[str, httk.core.PropertyDefinition]
+
+   The vendored precision definitions, keyed by their served name.
+
+
+.. py:function:: precision_properties(structure: Any) -> dict[str, Any]
+
+   How precisely this structure's coordinates and cell were stated.
+
+   Both are ``null`` for a structure that does not say — one built by hand, or read from a
+   source that does not write its numbers to a definite number of digits. That is the
+   honest answer, and it is distinguishable from a claim of exactness.
+
+   Rendered as floats, since that is what a JSON consumer will use them as; they are held
+   exactly on the structure itself.
+
+

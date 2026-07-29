@@ -1,0 +1,1427 @@
+httk.workflow.protocol
+======================
+
+.. py:module:: httk.workflow.protocol
+
+.. autoapi-nested-parse::
+
+   The language-neutral filesystem protocol surface of *httk₂* workflows.
+
+   This module is the one deliberate public home of the on-disk protocol: the
+   shapes, validators, and primitives an implementation in any language reads and
+   writes to interoperate through a workspace. The normative specification is
+   the filesystem protocol reference in the httk-workflow documentation; everything
+   named here is what that document describes, and an independent inspection or
+   verification tool should be able to work from this namespace and that document
+   alone.
+
+   Nothing here is manager bookkeeping, a subprocess wrapper, a CLI handler, or a
+   scheduling pass — those live in their own modules and are not part of the
+   protocol. The implementations are owned by the modules re-exported below
+   (:mod:`~httk.workflow.models`, :mod:`~httk.workflow.journal`,
+   :mod:`~httk.workflow.transactions`, and the runtime builders), which are
+   internal detail from the protocol's point of view; import the names from here.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.workflow.protocol.CARRIED_STATE_MEMBERS
+   httk.workflow.protocol.CORE_PROFILE
+   httk.workflow.protocol.CORE_STATE_KINDS
+   httk.workflow.protocol.QUIESCENT_KINDS
+   httk.workflow.protocol.READABLE_CORE_PROFILES
+   httk.workflow.protocol.RUNNER_SOURCES
+   httk.workflow.protocol.STATE_KINDS
+   httk.workflow.protocol.SUPPORTED_EXTENSIONS
+   httk.workflow.protocol.TERMINAL_KINDS
+   httk.workflow.protocol.WITHDRAWN_EXTENSIONS
+   httk.workflow.protocol.JoinCondition
+   httk.workflow.protocol.OutcomeAction
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   httk.workflow.protocol.FormatError
+   httk.workflow.protocol.RunnerResolutionError
+   httk.workflow.protocol.TransactionError
+   httk.workflow.protocol.TransitionLostError
+   httk.workflow.protocol.UnsupportedExtensionError
+   httk.workflow.protocol.WorkflowError
+   httk.workflow.protocol.WorkspaceCorruptionError
+   httk.workflow.protocol.WorkspaceUnavailableError
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.workflow.protocol.JournalFrame
+   httk.workflow.protocol.RecordVerification
+   httk.workflow.protocol.Failure
+   httk.workflow.protocol.JobDefinition
+   httk.workflow.protocol.Marker
+   httk.workflow.protocol.RetentionPolicy
+   httk.workflow.protocol.RetryPolicy
+   httk.workflow.protocol.StateFrame
+   httk.workflow.protocol.WorkspacePolicy
+   httk.workflow.protocol.AttemptContext
+   httk.workflow.protocol.ChildReference
+   httk.workflow.protocol.JobSpec
+   httk.workflow.protocol.OutcomeDraft
+   httk.workflow.protocol.ReplayableWorkdirBatch
+   httk.workflow.protocol.RunLog
+   httk.workflow.protocol.TransactionBuilder
+   httk.workflow.protocol.MarkerFault
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.workflow.protocol.encode_record_ref
+   httk.workflow.protocol.iter_journal_frames
+   httk.workflow.protocol.iter_segment_frames
+   httk.workflow.protocol.parse_record_ref
+   httk.workflow.protocol.read_record
+   httk.workflow.protocol.segment_path
+   httk.workflow.protocol.verify_record
+   httk.workflow.protocol.canonical_uuid
+   httk.workflow.protocol.is_payload_private
+   httk.workflow.protocol.job_digest
+   httk.workflow.protocol.make_job_key
+   httk.workflow.protocol.marker_basename
+   httk.workflow.protocol.normalize_placement
+   httk.workflow.protocol.parse_job_key
+   httk.workflow.protocol.parse_package_runner
+   httk.workflow.protocol.to_base36
+   httk.workflow.protocol.validate_attempt_control
+   httk.workflow.protocol.validate_declaration_name
+   httk.workflow.protocol.validate_declarations
+   httk.workflow.protocol.validate_failure
+   httk.workflow.protocol.validate_inputs
+   httk.workflow.protocol.validate_label
+   httk.workflow.protocol.validate_runner_path
+   httk.workflow.protocol.validate_sha256
+   httk.workflow.protocol.validate_step
+   httk.workflow.protocol.join_mapping
+   httk.workflow.protocol.prepare_job_payload
+   httk.workflow.protocol.replay_transaction
+
+
+Module Contents
+---------------
+
+.. py:exception:: FormatError
+
+   Bases: :py:obj:`WorkflowError`, :py:obj:`ValueError`
+
+
+   A workspace, job, journal frame, outcome, or request is malformed.
+
+
+.. py:exception:: RunnerResolutionError(code: str, message: str)
+
+   Bases: :py:obj:`WorkflowError`
+
+
+   A shared runner cannot be resolved, staged, or verified.
+
+   The failure carries the exact protocol failure ``code`` the manager records,
+   so an unresolvable runner (``runner_unavailable``) and a runner whose staged
+   bytes disagree with the digest the job pinned (``runner_mismatch``) stay
+   distinguishable to an operator.
+
+
+   .. py:attribute:: code
+
+
+.. py:exception:: TransactionError
+
+   Bases: :py:obj:`WorkflowError`
+
+
+   A transactional-data manifest cannot be safely replayed.
+
+
+.. py:exception:: TransitionLostError
+
+   Bases: :py:obj:`WorkflowError`
+
+
+   Another actor committed a transition from the expected marker.
+
+
+.. py:exception:: UnsupportedExtensionError
+
+   Bases: :py:obj:`WorkflowError`
+
+
+   A workspace requires an extension this implementation does not support.
+
+
+.. py:exception:: WorkflowError
+
+   Bases: :py:obj:`Exception`
+
+
+   Base class for workflow protocol failures.
+
+
+.. py:exception:: WorkspaceCorruptionError
+
+   Bases: :py:obj:`WorkflowError`
+
+
+   The authoritative filesystem state is internally inconsistent.
+
+
+.. py:exception:: WorkspaceUnavailableError
+
+   Bases: :py:obj:`WorkflowError`
+
+
+   The workspace cannot currently provide a coherent protocol view.
+
+
+.. py:class:: JournalFrame
+
+   One intact frame found by walking a segment from its header.
+
+
+   .. py:attribute:: record_ref
+      :type:  str
+
+
+   .. py:attribute:: writer_id
+      :type:  str
+
+
+   .. py:attribute:: segment
+      :type:  int
+
+
+   .. py:attribute:: offset
+      :type:  int
+
+
+   .. py:attribute:: frame
+      :type:  dict[str, Any]
+
+
+.. py:class:: RecordVerification
+
+   The outcome of reading one referenced frame without raising.
+
+
+   .. py:attribute:: record_ref
+      :type:  str
+
+
+   .. py:attribute:: frame
+      :type:  dict[str, Any] | None
+
+
+   .. py:attribute:: problem
+      :type:  str | None
+
+
+   .. py:attribute:: detail
+      :type:  str
+
+
+   .. py:property:: ok
+      :type: bool
+
+
+      Report whether the referenced frame was read and verified.
+
+
+.. py:function:: encode_record_ref(writer_id: str, segment: int, offset: int, length: int, checksum: bytes) -> str
+
+   Encode one canonical ``hwref-v1`` reference.
+
+
+.. py:function:: iter_journal_frames(control_dir: pathlib.Path) -> collections.abc.Iterator[JournalFrame]
+
+   Yield every intact frame of every segment of every writer.
+
+
+.. py:function:: iter_segment_frames(path: pathlib.Path, writer_id: str, segment: int) -> collections.abc.Iterator[JournalFrame]
+
+   Yield every intact frame of one segment.
+
+   The walk is deliberately forgiving. A damaged frame whose framing is still
+   intact is skipped, because the frames behind it remain locatable and are
+   exactly what a repair is looking for; a torn or partially visible tail is
+   the normal state of a segment a live writer is appending to and simply ends
+   the walk.
+
+
+.. py:function:: parse_record_ref(record_ref: str) -> tuple[str, int, int, int, str]
+
+   Parse one canonical ``hwref-v1`` reference.
+
+
+.. py:function:: read_record(control_dir: pathlib.Path, record_ref: str, *, deadline_seconds: float | None = None) -> dict[str, Any]
+
+   Read and verify a journal record, retrying visibility-short reads.
+
+   A frame that is absent, short, or undecodable may be an extension of a
+   segment that has not reached this client yet, so it is retried with bounded
+   backoff until *deadline_seconds* — the workspace's configured visibility
+   deadline — expires. Damage that no amount of waiting can repair is reported
+   at once.
+
+
+.. py:function:: segment_path(control_dir: pathlib.Path, writer_id: str, segment: int) -> pathlib.Path
+
+   Return the segment file one record reference names.
+
+
+.. py:function:: verify_record(control_dir: pathlib.Path, record_ref: str, *, deadline_seconds: float | None = None) -> RecordVerification
+
+   Read one referenced frame, reporting damage rather than raising.
+
+   This is the reading half of a workspace check: it distinguishes a segment
+   that is gone from one that is truncated, corrupt, or simply not holding the
+   frame the reference names, which is what a repair decision needs.
+
+
+.. py:data:: CARRIED_STATE_MEMBERS
+   :value: ('step', 'activation_id', 'activation_ordinal', 'attempt_id', 'attempt_ordinal',...
+
+
+.. py:data:: CORE_PROFILE
+   :value: 'core-v2'
+
+
+.. py:data:: CORE_STATE_KINDS
+
+.. py:data:: QUIESCENT_KINDS
+
+.. py:data:: READABLE_CORE_PROFILES
+
+.. py:data:: RUNNER_SOURCES
+
+.. py:data:: STATE_KINDS
+   :value: ('submitted', 'ready', 'claimed', 'running', 'committing', 'cancelling', 'relocating',...
+
+
+.. py:data:: SUPPORTED_EXTENSIONS
+
+.. py:data:: TERMINAL_KINDS
+
+.. py:data:: WITHDRAWN_EXTENSIONS
+
+.. py:class:: Failure
+
+   One canonical structured failure record.
+
+   Every failure published by a runner, a bridge, or the manager itself uses
+   exactly this shape: a stable machine ``code``, one human ``message``,
+   optional structured ``details``, and the advisory ``retryable`` flag. Retry
+   policy is keyed on ``code`` alone; ``retryable`` is recorded evidence and
+   never a manager decision.
+
+
+   .. py:attribute:: code
+      :type:  str
+
+
+   .. py:attribute:: message
+      :type:  str
+
+
+   .. py:attribute:: details
+      :type:  collections.abc.Mapping[str, object] | None
+      :value: None
+
+
+
+   .. py:attribute:: retryable
+      :type:  bool
+      :value: False
+
+
+
+   .. py:method:: as_mapping() -> dict[str, object]
+
+      Return the canonical JSON representation of this failure.
+
+
+
+.. py:class:: JobDefinition
+
+   .. py:attribute:: id
+      :type:  str
+
+
+   .. py:attribute:: tag
+      :type:  str | None
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: workflow
+      :type:  str
+
+
+   .. py:attribute:: runner_backend
+      :type:  str
+
+
+   .. py:attribute:: runner_source
+      :type:  str
+
+
+   .. py:attribute:: runner_path
+      :type:  pathlib.PurePosixPath
+
+
+   .. py:attribute:: runner_sha256
+      :type:  str | None
+
+
+   .. py:attribute:: runner_arguments
+      :type:  tuple[str, Ellipsis]
+
+
+   .. py:attribute:: workdir_mode
+      :type:  str
+
+
+   .. py:attribute:: workdir_path
+      :type:  pathlib.PurePosixPath
+
+
+   .. py:attribute:: data_mode
+      :type:  str
+
+
+   .. py:attribute:: initial_step
+      :type:  str
+
+
+   .. py:attribute:: priority
+      :type:  int
+
+
+   .. py:attribute:: claim_pool
+      :type:  str
+
+
+   .. py:attribute:: required_capabilities
+      :type:  frozenset[str]
+
+
+   .. py:attribute:: retry_policy
+      :type:  RetryPolicy
+
+
+   .. py:attribute:: resources
+      :type:  collections.abc.Mapping[str, object]
+
+
+   .. py:attribute:: inputs
+      :type:  collections.abc.Mapping[str, object]
+
+
+   .. py:attribute:: declarations
+      :type:  collections.abc.Mapping[str, collections.abc.Mapping[str, object]]
+
+
+   .. py:attribute:: parent
+      :type:  collections.abc.Mapping[str, object] | None
+
+
+   .. py:attribute:: raw
+      :type:  collections.abc.Mapping[str, object]
+
+
+   .. py:attribute:: stored_digest
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:property:: job_key
+      :type: str
+
+
+
+   .. py:property:: digest
+      :type: str
+
+
+      Return the immutable job digest.
+
+      Normatively the digest is :func:`~httk.workflow.models.job_digest` over the stored ``job.json``
+      file bytes exactly as submitted, which is what every definition read
+      through :meth:`from_bytes` carries. A definition composed in memory has
+      no stored bytes yet, so its canonical serialization is hashed instead;
+      the two agree as soon as that serialization is what gets written.
+
+
+   .. py:method:: from_bytes(data: bytes, *, name: str = 'job.json') -> JobDefinition
+      :classmethod:
+
+
+      Parse stored ``job.json`` bytes, pinning the normative job digest.
+
+
+
+   .. py:method:: from_path(path: pathlib.Path) -> JobDefinition
+      :classmethod:
+
+
+      Read one stored ``job.json``, pinning the normative job digest.
+
+
+
+   .. py:method:: from_mapping(value: collections.abc.Mapping[str, object]) -> JobDefinition
+      :classmethod:
+
+
+
+.. py:class:: Marker
+
+   .. py:attribute:: kind
+      :type:  str
+
+
+   .. py:attribute:: placement
+      :type:  pathlib.PurePosixPath
+
+
+   .. py:attribute:: job_key
+      :type:  str
+
+
+   .. py:attribute:: priority
+      :type:  int
+
+
+   .. py:attribute:: generation
+      :type:  int
+
+
+   .. py:attribute:: record_ref
+      :type:  str
+
+
+   .. py:attribute:: path
+      :type:  pathlib.Path
+
+
+   .. py:property:: job_id
+      :type: str
+
+
+
+   .. py:method:: from_path(state_root: pathlib.Path, path: pathlib.Path) -> Marker
+      :classmethod:
+
+
+
+.. py:class:: RetentionPolicy
+
+   How long a workspace keeps the history it is allowed to collect.
+
+   Every member is optional and means "no configured limit" when absent. The
+   collector that acts on these numbers is a separate concern; the workspace
+   only carries them so that every implementation attaching to it agrees on
+   what may be removed and when.
+
+
+   .. py:attribute:: attempt_control_days
+      :type:  float | None
+      :value: None
+
+
+
+   .. py:attribute:: journal_days
+      :type:  float | None
+      :value: None
+
+
+
+   .. py:attribute:: trash_days
+      :type:  float | None
+      :value: None
+
+
+
+   .. py:method:: from_mapping(value: object, name: str = 'policy.retention') -> RetentionPolicy
+      :classmethod:
+
+
+
+   .. py:method:: as_mapping() -> dict[str, object]
+
+      Return the JSON representation, omitting unconfigured limits.
+
+
+
+.. py:class:: RetryPolicy
+
+   The attempt budgets of one job and the failures it retries within them.
+
+   Two independent rules make a failure retry-eligible, and both are bounded by
+   exactly the same budgets:
+
+   * ``retry_on`` lists failure codes. A manager-detected failure — a lost
+     lease, a process failure, an unusable outcome — is retried when its code
+     appears in this set.
+   * A runner-declared failure published with ``retryable: true`` is retried
+     whether or not its code appears in ``retry_on``, because the runner that
+     produced the failure is the authority on whether repeating the attempt can
+     help.
+
+   Neither rule can exceed ``maximum_attempts_per_activation`` or
+   ``maximum_total_attempts``: an exhausted budget always ends the job.
+
+
+   .. py:attribute:: maximum_attempts_per_activation
+      :type:  int | None
+
+
+   .. py:attribute:: maximum_total_attempts
+      :type:  int | None
+
+
+   .. py:attribute:: maximum_activations
+      :type:  int | None
+
+
+   .. py:attribute:: retry_on
+      :type:  frozenset[str]
+
+
+   .. py:method:: from_mapping(value: object) -> RetryPolicy
+      :classmethod:
+
+
+
+.. py:class:: StateFrame
+
+   The members of one state frame, typed for the manager that uses them.
+
+   The frame is held exactly as it is on disk, so every member round-trips
+   verbatim — including one written by a newer implementation, by an enabled
+   extension, or by a workspace older than this code. What this implementation
+   reads and writes goes through the typed accessors and through :meth:`of`,
+   so a mistyped member name is a type error at the call site rather than a
+   silently defaulted value at runtime.
+
+   The envelope members ``format``, ``workspace_id``, ``job_id``, ``kind``,
+   ``state_generation``, and their siblings belong to the transition that
+   publishes a frame and are supplied by the workspace, never here.
+
+
+   .. py:attribute:: members
+      :type:  collections.abc.Mapping[str, Any]
+
+
+   .. py:method:: from_mapping(value: object, name: str = 'state frame') -> StateFrame
+      :classmethod:
+
+
+      Read one stored state frame, keeping every member verbatim.
+
+
+
+   .. py:method:: as_mapping() -> dict[str, object]
+
+      Return the JSON representation, member for member.
+
+
+
+   .. py:method:: has(name: str) -> bool
+
+      Report whether the frame carries *name* at all, null included.
+
+
+
+   .. py:method:: of(base: StateFrame | None = None, *, step: str = _UNSET, activation_id: str = _UNSET, activation_ordinal: int = _UNSET, attempt_id: str = _UNSET, attempt_ordinal: int = _UNSET, total_attempts: int = _UNSET, data_generation: int | None = _UNSET, join_summary: collections.abc.Sequence[object] | None = _UNSET, runner_steps: collections.abc.Sequence[str] = _UNSET, manager_id: str = _UNSET, writer_id: str = _UNSET, claim_id: str = _UNSET, attempt_control: str = _UNSET, lease_seconds: float = _UNSET, matched_pool: str = _UNSET, matched_capabilities: collections.abc.Sequence[str] = _UNSET, started_at: str = _UNSET, workdir: str = _UNSET, outcome_action: str = _UNSET, child_digests: collections.abc.Mapping[str, str] = _UNSET, child_labels: collections.abc.Mapping[str, str] = _UNSET, next_step: str = _UNSET, join: collections.abc.Mapping[str, object] = _UNSET, pause: object = _UNSET, failure: collections.abc.Mapping[str, object] = _UNSET, job_digest: str = _UNSET, unclean_restart: bool = _UNSET, unsafe_persistent_takeover: bool = _UNSET, takeover_evidence: collections.abc.Mapping[str, object] = _UNSET, cancellation: collections.abc.Mapping[str, object] = _UNSET, previous_attempt_id: str | None = _UNSET, operator: object = _UNSET, operator_key: object = _UNSET, operator_reason: object = _UNSET, request_id: object = _UNSET, revival_hazard: collections.abc.Mapping[str, object] = _UNSET, reason: str = _UNSET) -> StateFrame
+      :classmethod:
+
+
+      Return *base* with the named members set, absent ones untouched.
+
+      Every member a manager writes is one declared keyword, so the complete
+      vocabulary of a state frame is visible in one signature and no call site
+      can invent a member by misspelling one. Passing ``None`` writes the JSON
+      null the protocol distinguishes from an absent member.
+
+
+
+   .. py:method:: carried() -> StateFrame
+
+      Return only the members every transition of this activation repeats.
+
+
+
+   .. py:method:: select(names: collections.abc.Sequence[str]) -> StateFrame
+
+      Return only the named members this frame actually carries.
+
+
+
+   .. py:property:: step
+      :type: str | None
+
+
+
+   .. py:property:: activation_id
+      :type: str | None
+
+
+
+   .. py:property:: activation_ordinal
+      :type: int | None
+
+
+
+   .. py:property:: attempt_id
+      :type: str | None
+
+
+
+   .. py:property:: attempt_ordinal
+      :type: int | None
+
+
+
+   .. py:property:: total_attempts
+      :type: int | None
+
+
+
+   .. py:property:: data_generation
+      :type: int | None
+
+
+
+   .. py:property:: join_summary
+      :type: object
+
+
+
+   .. py:property:: manager_id
+      :type: str | None
+
+
+      Return the owning manager, refusing anything that is not one.
+
+      The value is joined below ``managers/`` to reach a heartbeat, so a frame
+      that does not name a canonical manager UUID is a protocol violation
+      rather than a path to try.
+
+
+   .. py:property:: attempt_control
+      :type: str | None
+
+
+      Return the validated attempt-control component of this frame.
+
+
+   .. py:property:: lease_seconds
+      :type: float | None
+
+
+
+   .. py:property:: started_at
+      :type: str | None
+
+
+
+   .. py:property:: workdir
+      :type: str | None
+
+
+
+   .. py:property:: next_step
+      :type: str | None
+
+
+
+   .. py:property:: join
+      :type: collections.abc.Mapping[str, object] | None
+
+
+
+   .. py:property:: failure
+      :type: collections.abc.Mapping[str, object] | None
+
+
+
+   .. py:property:: pause
+      :type: object
+
+
+
+   .. py:property:: cancellation
+      :type: collections.abc.Mapping[str, object] | None
+
+
+
+   .. py:property:: child_digests
+      :type: collections.abc.Mapping[str, object] | None
+
+
+
+   .. py:property:: previous_attempt_id
+      :type: str | None
+
+
+
+   .. py:property:: unclean_restart
+      :type: bool
+
+
+
+   .. py:property:: unsafe_persistent_takeover
+      :type: bool
+
+
+
+   .. py:property:: reason
+      :type: str | None
+
+
+
+.. py:class:: WorkspacePolicy
+
+   The tunables every implementation attaching to one workspace shares.
+
+   These are workspace properties rather than per-process options: two
+   managers on different hosts must agree on how long a marker may take to
+   become visible and on how long an unheartbeaten lease means anything. They
+   live in ``format.json`` beside the format and profile declarations, and a
+   workspace written before this section existed simply reads as the defaults.
+
+
+   .. py:attribute:: visibility_deadline_seconds
+      :type:  float
+      :value: 5.0
+
+
+
+   .. py:attribute:: lease_seconds
+      :type:  float
+      :value: 900.0
+
+
+
+   .. py:attribute:: journal_segment_bytes
+      :type:  int
+      :value: 67108864
+
+
+
+   .. py:attribute:: retention
+      :type:  RetentionPolicy
+
+
+   .. py:method:: from_mapping(value: object, name: str = 'policy') -> WorkspacePolicy
+      :classmethod:
+
+
+      Validate one complete policy object, filling in absent members.
+
+
+
+   .. py:method:: as_mapping() -> dict[str, object]
+
+      Return the complete JSON representation stored in ``format.json``.
+
+
+
+   .. py:method:: updated(changes: collections.abc.Mapping[str, object], name: str = 'policy') -> WorkspacePolicy
+
+      Return this policy with *changes* applied and revalidated.
+
+
+
+.. py:function:: canonical_uuid(value: object, name: str = 'id') -> str
+
+.. py:function:: is_payload_private(name: str) -> bool
+
+   Report whether one payload entry name is runner-private scratch.
+
+   A runner-private entry is excluded from every payload digest, so publishing
+   an outcome or writing job state can never change the digest of a payload
+   that a manager, a transfer, or a registration check must still recognize.
+
+
+.. py:function:: job_digest(data: bytes) -> str
+
+   Return the normative immutable job digest of stored ``job.json`` bytes.
+
+   The digest of a job is the SHA-256 over the ``job.json`` file bytes exactly
+   as submitted. Nothing rewrites or renormalizes those bytes, so the digest is
+   reproducible by any implementation with only a hash utility.
+
+
+.. py:function:: make_job_key(job_id: str, tag: str | None) -> str
+
+.. py:function:: marker_basename(job_key: str, priority: int, generation: int, record_ref: str) -> str
+
+.. py:function:: normalize_placement(value: str | pathlib.PurePosixPath) -> pathlib.PurePosixPath
+
+.. py:function:: parse_job_key(value: str) -> tuple[str | None, str]
+
+.. py:function:: parse_package_runner(value: str) -> tuple[str, pathlib.PurePosixPath] | None
+
+   Split the reserved ``pkg:<module>/<resource>`` installed runner form.
+
+   Return ``None`` when *value* is an ordinary relative runner path, so callers
+   can treat the reserved form as one alternative spelling of ``runner.path``
+   rather than as a separate protocol member.
+
+
+.. py:function:: to_base36(value: int) -> str
+
+.. py:function:: validate_attempt_control(value: object, name: str = 'attempt_control') -> str
+
+   Validate one attempt-control directory name read from a state frame.
+
+   The name is joined below a job payload to reach the control directory of an
+   attempt, so it is exactly one relative component of the canonical
+   ``.httk-attempt.<attempt-id>`` shape. Validating it before it is joined is
+   what keeps a hostile or damaged frame from naming a path outside the job.
+
+
+.. py:function:: validate_declaration_name(value: object, name: str = 'declaration name') -> str
+
+   Validate one declaration name of a job.
+
+   The name keys the ``declarations`` object of ``job.json`` and is also the
+   basename of the runtime-refined document below ``.httk-job/declarations/``,
+   so it must be a safe single path component and nothing else.
+
+
+.. py:function:: validate_declarations(value: object, name: str = 'declarations') -> dict[str, dict[str, object]]
+
+   Validate the optional ``declarations`` object of a job.
+
+   Each member is one workflow-declaration document carried verbatim: the
+   protocol checks that a declaration is a JSON object and never looks inside
+   it, because what the members mean is owned by the vocabulary the document
+   names itself — the OPTIMADE workflow-declaration work is standardizing
+   exactly that, and an engine that reinterpreted it would only be able to
+   disagree with it. The bytes live in ``job.json`` and are therefore covered
+   by the immutable job digest like every other member.
+
+
+.. py:function:: validate_failure(value: object, name: str = 'failure') -> Failure
+
+   Validate one published failure object.
+
+
+.. py:function:: validate_inputs(value: object, name: str = 'inputs') -> dict[str, object]
+
+   Validate the optional application-defined ``inputs`` object of a job.
+
+   The member is opaque to the protocol: only its shape, its key syntax, and
+   its serialized size are checked. Its bytes are part of ``job.json`` and are
+   therefore covered by the immutable job digest like every other member.
+
+
+.. py:function:: validate_label(value: object, name: str) -> str
+
+.. py:function:: validate_runner_path(value: object, source: str) -> pathlib.PurePosixPath
+
+   Validate ``runner.path`` against the root implied by ``runner.source``.
+
+   Every source resolves the same relative path below a different root: the job
+   payload, the workspace runner store, or one configured installed-runner
+   search path. The path must therefore stay below its root under every source,
+   and only an installed runner may use the reserved ``pkg:`` form.
+
+
+.. py:function:: validate_sha256(value: object, name: str) -> str
+
+   Validate one lowercase hexadecimal SHA-256 digest string.
+
+
+.. py:function:: validate_step(value: object, name: str = 'step') -> str
+
+.. py:class:: AttemptContext
+
+   The immutable identity and restart evidence for one running attempt.
+
+
+   .. py:attribute:: workspace_id
+      :type:  str
+
+
+   .. py:attribute:: job_id
+      :type:  str
+
+
+   .. py:attribute:: job_key
+      :type:  str
+
+
+   .. py:attribute:: placement
+      :type:  str
+
+
+   .. py:attribute:: step
+      :type:  str
+
+
+   .. py:attribute:: activation_id
+      :type:  str
+
+
+   .. py:attribute:: attempt_id
+      :type:  str
+
+
+   .. py:attribute:: activation_ordinal
+      :type:  int | None
+
+
+   .. py:attribute:: attempt_ordinal
+      :type:  int | None
+
+
+   .. py:attribute:: total_attempts
+      :type:  int | None
+
+
+   .. py:attribute:: is_restart
+      :type:  bool
+
+
+   .. py:attribute:: is_unclean_restart
+      :type:  bool
+
+
+   .. py:attribute:: attempt_reason
+      :type:  str | None
+
+
+   .. py:attribute:: previous_attempt_id
+      :type:  str | None
+
+
+   .. py:attribute:: activation_reason
+      :type:  str | None
+
+
+   .. py:attribute:: workdir_mode
+      :type:  str | None
+
+
+   .. py:attribute:: workdir_reused
+      :type:  bool
+
+
+   .. py:attribute:: unsafe_persistent_takeover
+      :type:  bool
+
+
+   .. py:attribute:: data_generation
+      :type:  int | None
+
+
+   .. py:attribute:: durable
+      :type:  bool
+
+
+   .. py:attribute:: settings
+      :type:  collections.abc.Mapping[str, object]
+
+
+   .. py:attribute:: resources
+      :type:  collections.abc.Mapping[str, object]
+
+
+   .. py:attribute:: join
+      :type:  object
+
+
+   .. py:attribute:: raw
+      :type:  collections.abc.Mapping[str, Any]
+
+
+   .. py:method:: read(path: str | os.PathLike[str]) -> Self
+      :classmethod:
+
+
+      Read and validate a manager-written attempt context.
+
+
+
+.. py:class:: ChildReference
+
+   The stable identity used in a native join.
+
+
+   .. py:attribute:: workspace_id
+      :type:  str
+
+
+   .. py:attribute:: job_id
+      :type:  str
+
+
+   .. py:attribute:: job_key
+      :type:  str
+
+
+   .. py:attribute:: placement_hint
+      :type:  str
+
+
+   .. py:method:: as_mapping() -> dict[str, str]
+
+
+.. py:class:: JobSpec
+
+   Values needed to create an immutable native job definition.
+
+   A ``payload`` runner is a file inside the job payload. A ``workspace`` or
+   ``installed`` runner lives outside the payload and must therefore pin its own
+   ``runner_sha256``, which is how one published runner serves a whole campaign
+   of jobs without being copied per job.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: workflow
+      :type:  str
+
+
+   .. py:attribute:: runner_path
+      :type:  str
+
+
+   .. py:attribute:: initial_step
+      :type:  str
+      :value: 'start'
+
+
+
+   .. py:attribute:: tag
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: job_id
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: runner_backend
+      :type:  str
+      :value: 'path'
+
+
+
+   .. py:attribute:: runner_source
+      :type:  Literal['payload', 'workspace', 'installed']
+      :value: 'payload'
+
+
+
+   .. py:attribute:: runner_sha256
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: runner_arguments
+      :type:  tuple[str, Ellipsis]
+      :value: ()
+
+
+
+   .. py:attribute:: workdir_mode
+      :type:  Literal['persistent', 'isolated']
+      :value: 'persistent'
+
+
+
+   .. py:attribute:: workdir_path
+      :type:  str
+      :value: 'run'
+
+
+
+   .. py:attribute:: data_mode
+      :type:  Literal['none', 'transactional']
+      :value: 'none'
+
+
+
+   .. py:attribute:: priority
+      :type:  int
+      :value: 500
+
+
+
+   .. py:attribute:: claim_pool
+      :type:  str
+      :value: 'default'
+
+
+
+   .. py:attribute:: required_capabilities
+      :type:  tuple[str, Ellipsis]
+      :value: ()
+
+
+
+   .. py:attribute:: maximum_attempts_per_activation
+      :type:  int | None
+      :value: None
+
+
+
+   .. py:attribute:: maximum_total_attempts
+      :type:  int | None
+      :value: None
+
+
+
+   .. py:attribute:: maximum_activations
+      :type:  int | None
+      :value: None
+
+
+
+   .. py:attribute:: retry_on
+      :type:  tuple[str, Ellipsis]
+      :value: ()
+
+
+
+   .. py:attribute:: resources
+      :type:  collections.abc.Mapping[str, object]
+
+
+   .. py:attribute:: inputs
+      :type:  collections.abc.Mapping[str, object]
+
+
+   .. py:attribute:: declarations
+      :type:  collections.abc.Mapping[str, collections.abc.Mapping[str, object]]
+
+
+   .. py:method:: as_mapping(*, parent: collections.abc.Mapping[str, object] | None = None) -> dict[str, object]
+
+
+.. py:type:: JoinCondition
+   :canonical: Literal['all_succeeded', 'all_terminal', 'any_succeeded', 'at_least']
+
+
+.. py:type:: OutcomeAction
+   :canonical: Literal['advance', 'retry', 'wait', 'succeed', 'fail', 'pause']
+
+
+.. py:class:: OutcomeDraft(context: httk.workflow.runtime.AttemptContext, control: pathlib.Path, root: pathlib.Path | None = None, *, durable: bool = False)
+
+   One unpublished outcome bundle below an attempt control directory.
+
+   The draft is the single place that writes the protocol shapes of an outcome:
+   its transaction, its spawn set, and the atomic rename that publishes it. It
+   is bound to nothing but the attempt identity and the control directory, so
+   the authoring SDK and the Bash bridge publish through exactly one
+   implementation.
+
+
+   .. py:attribute:: context
+
+
+   .. py:attribute:: control
+
+
+   .. py:attribute:: durable
+      :value: False
+
+
+
+   .. py:attribute:: root
+
+
+   .. py:method:: transaction() -> TransactionBuilder
+
+
+   .. py:method:: add_child(payload: str | os.PathLike[str], placement: str | pathlib.PurePosixPath, *, label: str | None = None) -> ChildReference
+
+      Register one prepared payload directory as a child of this outcome.
+
+
+
+   .. py:method:: add_child_job(job: collections.abc.Mapping[str, object], placement: str | pathlib.PurePosixPath, *, label: str) -> ChildReference
+
+      Register one synthesized child that needs no prepared payload.
+
+      A child whose runner lives outside the payload — a workspace or installed
+      runner — is completely described by its ``job.json``, so a partitioned
+      campaign can spawn children without copying a payload tree per child.
+
+
+
+   .. py:property:: children
+      :type: tuple[ChildReference, Ellipsis]
+
+
+
+   .. py:method:: publish(action: OutcomeAction, *, next_step: str | None = None, priority: int | None = None, failure: collections.abc.Mapping[str, object] | None = None, retry: collections.abc.Mapping[str, object] | None = None, join: collections.abc.Mapping[str, object] | None = None, pause: collections.abc.Mapping[str, object] | None = None, message: str | None = None, expected_data_generation: int | None = None, runner_steps: collections.abc.Sequence[str] | None = None) -> pathlib.Path
+
+
+.. py:class:: ReplayableWorkdirBatch(workdir: pathlib.Path, root: pathlib.Path, *, durable: bool = False)
+
+   A sealed, idempotently replayable set of workdir changes.
+
+
+   .. py:attribute:: workdir
+
+
+   .. py:attribute:: root
+
+
+   .. py:attribute:: durable
+      :value: False
+
+
+
+   .. py:attribute:: transaction
+
+
+   .. py:method:: create(workdir: str | os.PathLike[str], *, durable: bool = False) -> ReplayableWorkdirBatch
+      :classmethod:
+
+
+
+   .. py:method:: seal() -> pathlib.Path
+
+
+   .. py:method:: commit() -> pathlib.Path
+
+
+   .. py:method:: recover(workdir: str | os.PathLike[str], *, durable: bool = False) -> tuple[pathlib.Path, Ellipsis]
+      :staticmethod:
+
+
+
+.. py:class:: RunLog(workdir: str | os.PathLike[str])
+
+   Append-only structured application evidence in a workdir.
+
+
+   .. py:attribute:: path
+
+
+   .. py:method:: append(kind: str, message: str, *, files: collections.abc.Sequence[str | os.PathLike[str]] = ()) -> None
+
+
+.. py:class:: TransactionBuilder(root: pathlib.Path, *, expected_generation: int, durable: bool = False)
+
+   Build a validated replayable transaction manifest.
+
+
+   .. py:attribute:: root
+
+
+   .. py:attribute:: expected_generation
+
+
+   .. py:attribute:: durable
+      :value: False
+
+
+
+   .. py:method:: resume(root: str | os.PathLike[str], *, expected_generation: int, durable: bool = False) -> Self
+      :classmethod:
+
+
+      Reattach to a transaction an earlier process of this attempt sealed.
+
+      A Bash runner publishes one outcome through many short-lived processes, so
+      the staged manifest on disk — not any in-memory counter — is what carries
+      the operations of a draft from one call to the next. Resuming reads it
+      back, so appending an operation continues the same sequence and the same
+      overlap checks as the process that staged the first one.
+
+
+
+   .. py:method:: make_dir(operation_id: str, path: str | os.PathLike[str]) -> None
+
+
+   .. py:method:: put_file(operation_id: str, source: str | os.PathLike[str], path: str | os.PathLike[str]) -> None
+
+
+   .. py:method:: put_tree(operation_id: str, source: str | os.PathLike[str], path: str | os.PathLike[str], *, replace: bool = False) -> None
+
+
+   .. py:method:: remove(operation_id: str, path: str | os.PathLike[str], *, missing_ok: bool = False) -> None
+
+
+   .. py:method:: seal() -> pathlib.Path
+
+
+.. py:function:: join_mapping(children: collections.abc.Sequence[ChildReference], condition: JoinCondition = 'all_succeeded', count: int | None = None, on_impossible_step: str | None = None) -> dict[str, object]
+
+   Return the validated ``join`` member of one waiting outcome.
+
+
+.. py:function:: prepare_job_payload(destination: str | os.PathLike[str], spec: JobSpec, *, parent: collections.abc.Mapping[str, object] | None = None, durable: bool = False) -> httk.workflow.models.JobDefinition
+
+   Create and validate ``job.json`` in an existing prepared payload.
+
+   *durable* synchronizes the written ``job.json`` for a caller preparing a
+   payload directly on durable storage; it defaults to ``False`` because a
+   payload prepared here is not yet a workspace artifact, and its submission
+   is what makes it authoritative and durable.
+
+
+.. py:function:: replay_transaction(transaction_dir: pathlib.Path, data_dir: pathlib.Path, *, expected_generation: int, durable: bool = False) -> bool
+
+   Idempotently apply one published transaction.
+
+   Returns whether the manifest contains operations and therefore advances the
+   data generation.
+
+   When *durable* is set, every destination this replay installs and every
+   directory whose entries it changes — including the parents that gained or
+   lost a name, and the trash a removal moved into — is synchronized before
+   this call returns. The manager relies on that ordering: it appends the
+   destination state frame and renames the marker out of ``committing`` only
+   after replay returns, so a committed transaction is on storage before the
+   marker that claims it is.
+
+
+.. py:class:: MarkerFault
+
+   One state entry shaped like a marker that cannot be interpreted.
+
+
+   .. py:attribute:: path
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: reason
+      :type:  str
+
+

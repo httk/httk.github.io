@@ -1,0 +1,145 @@
+httk.optimade.backend.memory_store
+==================================
+
+.. py:module:: httk.optimade.backend.memory_store
+
+.. autoapi-nested-parse::
+
+   A generic in-memory store implementing the httk store/searcher protocols.
+
+   Rows are plain dicts keyed by backend record keys, and search expressions
+   evaluate as predicates over those rows. It is the reference
+   :class:`~httk.data.query.Store` implementation: it backs the
+   example demo server and is what
+   :func:`~httk.optimade.backend.providers.adapter_from_providers` loads an
+   :class:`~httk.core.EntryProvider`'s records into.
+
+   Set operations evaluate exactly here — ``has_any``/``has_only`` are plain set
+   predicates over the row's list value, and ``~`` negates them directly. The SQL
+   backend needs an aggregate rendering and a second (HAVING) evaluation position
+   to say the same thing, but that is entirely its own business: the neutral
+   protocol only ever hands a store one expression per ``searcher.add`` call.
+
+   String matching is literal here too (``contains``/``startswith``/``endswith``
+   are plain :class:`str` operations), which is exactly what the neutral protocol
+   promises — no pattern language is involved at any point.
+
+   Iteration yields :class:`~httk.data.query.SearchResult` values, one entry in
+   ``values`` per :meth:`MemorySearcher.output` call: a variable output yields the
+   whole row dict, a field output the row's value for that field.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.optimade.backend.memory_store.Row
+   httk.optimade.backend.memory_store.Predicate
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.optimade.backend.memory_store.MemoryExpression
+   httk.optimade.backend.memory_store.MemoryField
+   httk.optimade.backend.memory_store.MemoryVariable
+   httk.optimade.backend.memory_store.MemorySearcher
+   httk.optimade.backend.memory_store.InMemoryStore
+
+
+Module Contents
+---------------
+
+.. py:data:: Row
+
+.. py:data:: Predicate
+
+.. py:class:: MemoryExpression(predicate: Predicate)
+
+   .. py:attribute:: predicate
+
+
+.. py:class:: MemoryField(name: str)
+
+   .. py:attribute:: name
+
+
+   .. py:method:: startswith(other: str) -> MemoryExpression
+
+
+   .. py:method:: endswith(other: str) -> MemoryExpression
+
+
+   .. py:method:: contains(other: str) -> MemoryExpression
+
+
+   .. py:method:: has_any(*values: Any) -> MemoryExpression
+
+
+   .. py:method:: has_only(*values: Any) -> MemoryExpression
+
+
+.. py:class:: MemoryVariable(target: str)
+
+   A query variable over one table of rows; attribute access yields fields.
+
+   ``always_true``/``always_false`` are real methods, declared before the
+   catch-all ``__getattr__`` so they win over it — they are reserved names
+   that never resolve to a row key.
+
+
+   .. py:attribute:: target
+
+
+   .. py:method:: always_true() -> MemoryExpression
+
+
+   .. py:method:: always_false() -> MemoryExpression
+
+
+.. py:class:: MemorySearcher(tables: dict[str, list[Row]])
+
+   .. py:attribute:: offset
+      :value: 0
+
+
+
+   .. py:method:: variable(target: Any) -> MemoryVariable
+
+
+   .. py:method:: output(variable: MemoryVariable | MemoryField, name: str) -> None
+
+      Append an output: a variable (yields the whole row) or a field (its value).
+
+
+
+   .. py:method:: add(expression: MemoryExpression) -> None
+
+
+   .. py:method:: add_sort(field: MemoryField, descending: bool) -> None
+
+
+   .. py:method:: count() -> int
+
+
+   .. py:method:: set_limit(limit: int) -> None
+
+
+   .. py:method:: add_offset(offset: int) -> None
+
+
+.. py:class:: InMemoryStore(tables: dict[str, list[Row]])
+
+   A store over dict rows: ``InMemoryStore({'structures': [ {...}, ... ]})``.
+
+
+   .. py:attribute:: tables
+
+
+   .. py:method:: searcher() -> MemorySearcher
+
+

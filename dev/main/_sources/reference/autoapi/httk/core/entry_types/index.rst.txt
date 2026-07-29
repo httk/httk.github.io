@@ -1,0 +1,345 @@
+httk.core.entry_types
+=====================
+
+.. py:module:: httk.core.entry_types
+
+.. autoapi-nested-parse::
+
+   Data models for the standard OPTIMADE entry types.
+
+   This module holds light frozen dataclasses that carry one record's worth of
+   data for each of httk-core's vendored OPTIMADE standards (``references``,
+   ``files``, ``calculations``):
+
+   - :class:`Reference`, :class:`File`, :class:`Calculation` — one immutable
+     record each, with a field for every non-core property of the respective
+     standard (``id`` comes from a provider's mapping key; ``type`` is constant).
+
+   These are the neutral top-level record models. The
+   :class:`~httk.core.EntryProvider` implementations that serve them through the
+   provider contract live in the *httk-data* module (``httk.data.entry_providers``),
+   which imports these dataclasses; httk-core keeps only the stdlib-only models.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.entry_types.Reference
+   httk.core.entry_types.File
+   httk.core.entry_types.Calculation
+
+
+Module Contents
+---------------
+
+.. py:class:: Reference
+
+   One OPTIMADE ``references`` record (a bibliographic reference).
+
+   Every field is optional and defaults to ``None``; ``id`` is supplied by the
+   provider's mapping key and ``type`` is the constant ``"references"``. Author
+   and editor lists are tuples of plain name dictionaries.
+
+
+   .. py:attribute:: immutable_id
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: last_modified
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: address
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: annote
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: booktitle
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: chapter
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: crossref
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: edition
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: howpublished
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: institution
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: journal
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: key
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: month
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: note
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: number
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: organization
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: pages
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: publisher
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: school
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: series
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: title
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: volume
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: year
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: bib_type
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: authors
+      :type:  tuple[collections.abc.Mapping[str, Any], Ellipsis] | None
+      :value: None
+
+
+
+   .. py:attribute:: editors
+      :type:  tuple[collections.abc.Mapping[str, Any], Ellipsis] | None
+      :value: None
+
+
+
+   .. py:attribute:: doi
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: url
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:method:: create(obj: Reference | Mapping[str, Any]) -> Self
+      :classmethod:
+
+
+
+.. py:class:: File
+
+   One OPTIMADE ``files`` record.
+
+   Every field is optional and defaults to ``None``; ``id`` is supplied by the
+   provider's mapping key and ``type`` is the constant ``"files"``. Timestamps
+   are ISO-8601 strings and ``checksums`` is a mapping of algorithm name to hex
+   digest.
+
+
+   .. py:attribute:: immutable_id
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: last_modified
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: url
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: url_stable_until
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: name
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: size
+      :type:  int | None
+      :value: None
+
+
+
+   .. py:attribute:: media_type
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: version
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: modification_timestamp
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: description
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: checksums
+      :type:  collections.abc.Mapping[str, str] | None
+      :value: None
+
+
+
+   .. py:attribute:: atime
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: ctime
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: mtime
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:method:: create(obj: File | Mapping[str, Any]) -> Self
+      :classmethod:
+
+
+
+.. py:class:: Calculation
+
+   One OPTIMADE ``calculations`` record.
+
+   Every field is optional and defaults to ``None``; ``id`` is supplied by the
+   provider's mapping key and ``type`` is the constant ``"calculations"``. The
+   standard ``calculations`` entry type carries only the shared core
+   properties; database-specific results are added by extending the definition.
+
+
+   .. py:attribute:: immutable_id
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: last_modified
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:method:: create(obj: Calculation | Mapping[str, Any]) -> Self
+      :classmethod:
+
+
+

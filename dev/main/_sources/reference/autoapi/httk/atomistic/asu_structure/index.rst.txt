@@ -1,0 +1,201 @@
+httk.atomistic.asu_structure
+============================
+
+.. py:module:: httk.atomistic.asu_structure
+
+.. autoapi-nested-parse::
+
+   A crystal structure held as its asymmetric unit.
+
+   An :class:`ASUStructure` records only the symmetry-distinct sites — the asymmetric unit —
+   plus the space group needed to regenerate the rest. Where a :class:`~httk.atomistic.Structure`
+   lists every atom in the cell, this lists one representative per orbit as a Wyckoff letter
+   and the values of that position's free parameters.
+
+   **Any setting, including non-standard ones.** The Wyckoff data is always recorded against
+   the International Tables *standard* setting, and a :class:`~httk.atomistic.SettingTransform`
+   carries the change of basis from there to whatever setting the structure is actually in.
+   A setting that appears in no table is representable just as well as a tabulated one: the
+   transform is stored, not looked up. That pairing is what makes the representation lossless
+   for arbitrary settings.
+
+   **Expansion is exact and needs no tolerance.** Reduced coordinates, symmetry operations,
+   Wyckoff parameters, and the setting transform are all exact rationals, and the vendored
+   orbits are complete and pre-deduplicated. So generating the full cell is affine arithmetic
+   over the rationals with an exact equality test at the end — no coordinate grid, no
+   snapping, no neighbour search. Tolerance enters this class only where a *measured*
+   structure is first recognized as symmetric, never in expansion.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.asu_structure.ASUSite
+   httk.atomistic.asu_structure.ASUStructure
+
+
+Module Contents
+---------------
+
+.. py:class:: ASUSite
+
+   One symmetry-distinct site: a Wyckoff position, its free parameters, and a species.
+
+   ``wyckoff`` is a bare letter (``"e"``, not ``"4e"``) naming a position of the
+   **standard setting**, and ``free_params`` holds one exact value per degree of freedom
+   of that position — none at all for a fixed position such as an inversion centre.
+   ``species`` names one of the owning structure's species.
+
+   Partial occupancy needs nothing special here: it lives in the referenced
+   :class:`~httk.atomistic.Species`, which already carries a composition.
+
+
+   .. py:attribute:: wyckoff
+      :type:  str
+
+
+   .. py:attribute:: free_params
+      :type:  httk.core.FracVector
+
+
+   .. py:attribute:: species
+      :type:  str
+
+
+   .. py:property:: free_count
+      :type: int
+
+
+      How many free parameters this site carries.
+
+
+.. py:class:: ASUStructure(cell: httk.atomistic.cell_like.CellLike, spacegroup: httk.atomistic.spacegroup.Spacegroup | int, asu_sites: collections.abc.Sequence[ASUSite], species: collections.abc.Sequence[httk.atomistic.species_like.SpeciesLike], transform: httk.atomistic.setting_transform.SettingTransform | None = None, coordinate_precision: Any = None)
+
+   A crystal structure represented by its asymmetric unit.
+
+   Holds the cell in the structure's own setting, the space group as its **standard**
+   setting, a transform from that standard setting to the structure's own, one
+   :class:`ASUSite` per symmetry-distinct site, and the species they name.
+
+
+   .. py:property:: cell
+      :type: httk.atomistic.cell.Cell
+
+
+      The cell, in the structure's own setting.
+
+
+   .. py:property:: spacegroup
+      :type: httk.atomistic.spacegroup.Spacegroup
+
+
+      The space group, as its IT standard setting.
+
+
+   .. py:property:: transform
+      :type: httk.atomistic.setting_transform.SettingTransform
+
+
+      The change of basis from the standard setting to this structure's own.
+
+
+   .. py:property:: asu_sites
+      :type: tuple[ASUSite, Ellipsis]
+
+
+      The symmetry-distinct sites.
+
+
+   .. py:property:: species
+      :type: tuple[httk.atomistic.species.Species, Ellipsis]
+
+
+      The species referenced by the sites.
+
+
+   .. py:property:: coordinate_precision
+      :type: fractions.Fraction | None
+
+
+      How precisely the coordinates behind this structure were stated, or ``None``.
+
+      Fractional, and expressed in **this structure's own setting** — the frame the data
+      arrived in — so it needs no transforming on the way to the expanded sites. Recording
+      it here is what lets an asymmetric unit say how good the data behind it was, rather
+      than leaving that to be guessed again downstream.
+
+      It is provenance, never an operating parameter: expansion remains exact and uses no
+      tolerance at all.
+
+
+   .. py:property:: asu
+      :type: ASUStructure
+
+
+      Self, so a view can recognize a backend that already holds an ASU and pass it through.
+
+
+   .. py:property:: is_standard_setting
+      :type: bool
+
+
+      Whether the structure is written in the IT standard setting of its space group.
+
+
+   .. py:method:: setting() -> httk.atomistic.spacegroup.Spacegroup | None
+
+      The tabulated setting this structure is written in, or ``None`` if untabulated.
+
+      A structure in an arbitrary setting is perfectly representable but has no tabulated
+      name; that is the point of storing the transform rather than a setting label.
+
+      A transform looked up from the tables remembers which setting it came from, but one
+      that was constructed directly does not, so an equal transform is also matched
+      against the group's tabulated settings. An identity transform means the structure is
+      in the standard setting, which is of course tabulated — reporting it as nameless
+      would be simply wrong.
+
+
+
+   .. py:method:: expand_sites() -> httk.atomistic.sites.Sites
+
+      Every site of the unit cell, as exact reduced coordinates in this structure's setting.
+
+      The orbit of each asymmetric-unit site is generated in the standard setting, mapped
+      through the setting transform, wrapped into ``[0, 1)``, and deduplicated by exact
+      equality. Deduplication is not a formality: when the transform shrinks the cell — as
+      it does for the seven rhombohedral-axes settings, where ``det M == 3`` — the standard
+      setting's orbit is three times too large and the surplus points coincide exactly.
+      The opposite case, a transform onto a larger cell, is covered by
+      :meth:`~httk.atomistic.SettingTransform.lattice_cosets`.
+
+
+
+   .. py:method:: expand_species_at_sites() -> tuple[str, Ellipsis]
+
+      The species name occupying each site produced by :meth:`expand_sites`, in order.
+
+
+
+   .. py:method:: multiplicities() -> tuple[int, Ellipsis]
+
+      How many cell sites each asymmetric-unit site generates, in order.
+
+      Usually the Wyckoff position's tabulated multiplicity, but not always: a setting
+      transform that changes the cell volume changes the count too, by a factor of three
+      for the rhombohedral-axes settings.
+
+
+
+   .. py:method:: to_structure() -> Any
+
+      The equivalent full-cell :class:`~httk.atomistic.Structure`.
+
+      Equivalent to ``UnitcellStructureView(asu_structure)``; provided as a plain method so
+      the common case needs no knowledge of the view machinery.
+
+
+

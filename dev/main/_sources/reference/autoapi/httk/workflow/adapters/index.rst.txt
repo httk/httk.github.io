@@ -1,0 +1,191 @@
+httk.workflow.adapters
+======================
+
+.. py:module:: httk.workflow.adapters
+
+.. autoapi-nested-parse::
+
+   Versioned JSON remote-adapter bundles.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.workflow.adapters.ADAPTER_OPERATIONS
+   httk.workflow.adapters.ADAPTER_EXECUTABLE
+   httk.workflow.adapters.CREDENTIALS_FILE
+   httk.workflow.adapters.METADATA_FILE
+   httk.workflow.adapters.ADAPTER_FORMAT
+   httk.workflow.adapters.REQUEST_FORMAT
+   httk.workflow.adapters.RESULT_FORMAT
+   httk.workflow.adapters.PERSISTABLE_QUEUE_SETTINGS
+   httk.workflow.adapters.SEED_SETTING_MAP
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.workflow.adapters.RemoteTarget
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.workflow.adapters.seed_application_settings
+   httk.workflow.adapters.metadata_path
+   httk.workflow.adapters.read_metadata
+   httk.workflow.adapters.validate_adapter_bundle
+   httk.workflow.adapters.split_remote
+   httk.workflow.adapters.resolve_remote
+   httk.workflow.adapters.project_remote_roots
+   httk.workflow.adapters.list_remotes
+   httk.workflow.adapters.add_remote
+   httk.workflow.adapters.split_settings
+   httk.workflow.adapters.read_credentials
+   httk.workflow.adapters.store_credentials
+   httk.workflow.adapters.queue_settings
+   httk.workflow.adapters.import_v1_remote
+   httk.workflow.adapters.run_adapter
+
+
+Module Contents
+---------------
+
+.. py:data:: ADAPTER_OPERATIONS
+   :value: ('configure', 'install', 'invoke', 'push', 'pull', 'start-manager', 'status')
+
+
+.. py:data:: ADAPTER_EXECUTABLE
+   :value: 'adapter'
+
+
+.. py:data:: CREDENTIALS_FILE
+   :value: 'credentials.json'
+
+
+.. py:data:: METADATA_FILE
+   :value: 'remote.json'
+
+
+.. py:data:: ADAPTER_FORMAT
+   :value: 'httk-computer-adapter'
+
+
+.. py:data:: REQUEST_FORMAT
+   :value: 'httk-computer-request'
+
+
+.. py:data:: RESULT_FORMAT
+   :value: 'httk-computer-result'
+
+
+.. py:data:: PERSISTABLE_QUEUE_SETTINGS
+
+.. py:data:: SEED_SETTING_MAP
+   :type:  collections.abc.Mapping[str, str]
+
+.. py:function:: seed_application_settings(bundle: str | os.PathLike[str], queue: str) -> dict[str, object]
+
+   Return the application settings a remote queue seeds a workspace with.
+
+
+.. py:class:: RemoteTarget
+
+   Resolved remote bundle and queue.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: queue
+      :type:  str
+
+
+   .. py:attribute:: bundle
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: project_local
+      :type:  bool
+
+
+.. py:function:: metadata_path(bundle: str | os.PathLike[str]) -> pathlib.Path
+
+   Return the metadata file of one adapter bundle.
+
+
+.. py:function:: read_metadata(bundle: str | os.PathLike[str]) -> dict[str, Any]
+
+   Read the metadata of one adapter bundle.
+
+
+.. py:function:: validate_adapter_bundle(bundle: str | os.PathLike[str]) -> dict[str, Any]
+
+   Validate static adapter metadata and the single dispatcher executable.
+
+
+.. py:function:: split_remote(value: str) -> tuple[str, str | None]
+
+.. py:function:: resolve_remote(value: str, *, project: str | os.PathLike[str] | None = None) -> RemoteTarget
+
+   Resolve project-local before global remote definitions.
+
+
+.. py:function:: project_remote_roots(project_root: pathlib.Path) -> tuple[pathlib.Path, Ellipsis]
+
+   Return where one project keeps its remotes.
+
+
+.. py:function:: list_remotes(project: str | os.PathLike[str] | None = None) -> list[dict[str, object]]
+
+   List definitions with project entries shadowing global entries.
+
+
+.. py:function:: add_remote(name: str, *, template: str, global_scope: bool = False, project: str | os.PathLike[str] | None = None) -> pathlib.Path
+
+   Copy one maintained adapter template into user/project data.
+
+
+.. py:function:: split_settings(settings: collections.abc.Mapping[str, str]) -> tuple[dict[str, str], dict[str, str]]
+
+   Partition ``--set`` values into persistable settings and credentials.
+
+
+.. py:function:: read_credentials(bundle: str | os.PathLike[str], queue: str) -> dict[str, Any]
+
+   Read queue-scoped credentials that never enter a project manifest.
+
+
+.. py:function:: store_credentials(bundle: str | os.PathLike[str], queue: str, settings: collections.abc.Mapping[str, str]) -> pathlib.Path
+
+   Merge *settings* into the queue-scoped, manifest-excluded credentials.
+
+
+.. py:function:: queue_settings(bundle: str | os.PathLike[str], queue: str) -> dict[str, Any]
+
+   Return persisted queue settings with credentials merged back in.
+
+
+.. py:function:: import_v1_remote(source: str | os.PathLike[str], *, name: str | None = None, global_scope: bool = False, project: str | os.PathLike[str] | None = None) -> pathlib.Path
+
+   Map a recognizable legacy executable bundle to the versioned contract.
+
+   Legacy shell programs are never copied or executed. Only their simple
+   assignment-only ``config`` files are read, and the result uses a maintained
+   v2 adapter implementation. What is read is an *httk v1* computer definition,
+   so the legacy names below are the names that tree really uses.
+
+
+.. py:function:: run_adapter(bundle: str | os.PathLike[str], operation: str, request: collections.abc.Mapping[str, object], *, timeout: float | None = None) -> dict[str, Any]
+
+   Execute one JSON adapter operation without invoking a shell.
+
+

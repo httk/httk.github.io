@@ -1,0 +1,25 @@
+httk.web.functions.python_module
+================================
+
+.. py:module:: httk.web.functions.python_module
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.web.functions.python_module.PythonFunctionHandler
+
+
+Module Contents
+---------------
+
+.. py:class:: PythonFunctionHandler(functions_dir: pathlib.Path)
+
+   .. py:attribute:: functions_dir
+
+
+   .. py:method:: execute(*, function_name: str, params: dict[str, str], global_data: dict[str, object]) -> Any
+
+

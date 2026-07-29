@@ -1,0 +1,52 @@
+httk.core.vectors.vector_frac
+=============================
+
+.. py:module:: httk.core.vectors.vector_frac
+
+.. autoapi-nested-parse::
+
+   Backend wrapping a FracVector/FracScalar in the exact-rational representation.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.vectors.vector_frac.VectorFrac
+
+
+Module Contents
+---------------
+
+.. py:class:: VectorFrac(obj: httk.core.vectors.fracvector.FracVector, **hints: Any)
+
+   Bases: :py:obj:`httk.core.vectors.vector_backend.VectorBackend`
+
+
+   Backend for a vector backed by an actual :class:`~httk.core.vectors.fracvector.FracVector`
+   (or :class:`~httk.core.vectors.fracvector.FracScalar`).
+
+   Its ``fractions`` accessor produces the exact nested tuple of Fraction, and ``unwrap``
+   returns the wrapped FracVector.
+
+
+   .. py:property:: fractions
+      :type: httk.core.vectors.vector_api.Fractions
+
+
+
+   .. py:property:: dim
+      :type: tuple[int, Ellipsis]
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

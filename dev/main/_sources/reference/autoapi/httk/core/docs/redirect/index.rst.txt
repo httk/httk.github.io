@@ -1,0 +1,33 @@
+httk.core.docs.redirect
+=======================
+
+.. py:module:: httk.core.docs.redirect
+
+.. autoapi-nested-parse::
+
+   Generate the relative root redirect for a versioned documentation site.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.docs.redirect.root_redirect_html
+   httk.core.docs.redirect.write_root_redirect
+
+
+Module Contents
+---------------
+
+.. py:function:: root_redirect_html(target_relative_path: str) -> str
+
+   Return a complete HTML5 document redirecting to a relative site path.
+
+
+.. py:function:: write_root_redirect(site_root: str | pathlib.Path, target: str) -> None
+
+   Write ``index.html`` at *site_root* with a relative redirect to *target*.
+
+

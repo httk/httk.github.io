@@ -1,0 +1,49 @@
+httk.web.engine
+===============
+
+.. py:module:: httk.web.engine
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/web/engine/discovery/index
+   /reference/autoapi/httk/web/engine/site_engine/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.web.engine.SiteEngine
+
+
+Package Contents
+----------------
+
+.. py:class:: SiteEngine(config: httk.web.model.config.SiteConfig)
+
+   .. py:attribute:: config
+
+
+   .. py:attribute:: template_engine
+      :type:  httk.web.templating.TemplateEngine
+
+
+   .. py:attribute:: function_handler
+
+
+   .. py:attribute:: global_data
+      :type:  dict[str, object]
+
+
+   .. py:method:: resolve(route: str) -> httk.web.model.page.ResolvedRoute
+
+
+   .. py:method:: render(route: str, query: dict[str, str] | None = None, request: httk.web.model.request.HttpRequestContext | None = None) -> httk.web.model.page.PageResult
+
+

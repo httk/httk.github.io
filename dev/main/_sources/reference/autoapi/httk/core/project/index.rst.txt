@@ -1,0 +1,196 @@
+httk.core.project
+=================
+
+.. py:module:: httk.core.project
+
+.. autoapi-nested-parse::
+
+   The httk project anchor and the umbrella ``httk project`` command.
+
+   A *project* is a directory marked at its root by a ``.httk-project`` control
+   directory, discovered by walking upward exactly as ``git`` finds a ``.git``.
+   This package owns that anchor — creating it, reading and validating its
+   ``project.json``, and managing its Ed25519 identity and trust anchors — and the
+   extensible :command:`httk project` command that operates on it. It creates no
+   workflow workspace; that is layered on by a workflow installation.
+
+   The anchor API is re-exported here for convenience; the command and its
+   extension registry live in :mod:`httk.core.project.cli`.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/core/project/anchor/index
+   /reference/autoapi/httk/core/project/cli/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.core.project.PROJECT_DIRECTORY
+   httk.core.project.PROJECT_FILE
+   httk.core.project.PUBLIC_KEY_PREFIX
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.project.canonical_public_key
+   httk.core.project.discover_project
+   httk.core.project.format_public_key
+   httk.core.project.import_v1_project
+   httk.core.project.initialize_project
+   httk.core.project.key_fingerprint
+   httk.core.project.parse_public_key
+   httk.core.project.pin_project_key
+   httk.core.project.pinned_project_key
+   httk.core.project.project_public_key_path
+   httk.core.project.read_project
+   httk.core.project.read_project_section
+   httk.core.project.read_public_key_file
+   httk.core.project.require_project
+   httk.core.project.trust_project_key
+   httk.core.project.trusted_project_keys
+   httk.core.project.write_project_section
+
+
+Package Contents
+----------------
+
+.. py:data:: PROJECT_DIRECTORY
+   :value: '.httk-project'
+
+
+.. py:data:: PROJECT_FILE
+   :value: 'project.json'
+
+
+.. py:data:: PUBLIC_KEY_PREFIX
+   :value: 'ed25519:'
+
+
+.. py:function:: canonical_public_key(value: str) -> str
+
+   Normalize any accepted public key spelling to the recorded one.
+
+
+.. py:function:: discover_project(start: str | os.PathLike[str] | None = None) -> pathlib.Path | None
+
+   Find the nearest project root at or above *start*.
+
+
+.. py:function:: format_public_key(raw: bytes) -> str
+
+   Return the recorded representation of one raw Ed25519 public key.
+
+
+.. py:function:: import_v1_project(root: str | os.PathLike[str], *, source: str | os.PathLike[str] | None = None, name: str | None = None) -> dict[str, object]
+
+   Create the project anchor from a legacy ``ht.project`` directory.
+
+   Only the anchor is created: the project's metadata and the adoption of the
+   legacy identities its old manifests were signed with. A workflow
+   installation adds the workspace and any queue import on top of this.
+
+
+.. py:function:: initialize_project(root: str | os.PathLike[str], *, name: str, description: str = '', default_queue: str | None = None, manifest_exclusions: collections.abc.Iterable[str] = ()) -> dict[str, object]
+
+   Initialize the project anchor: its metadata, its key, and its remotes dir.
+
+   This creates only the anchor — ``.httk-project`` with ``project.json``, the
+   project's Ed25519 signing key, and the ``remotes`` directory. It creates no
+   workflow workspace; a workflow installation layers that on top of the anchor
+   so that a core-only installation still has a working project.
+
+
+.. py:function:: key_fingerprint(value: str) -> str
+
+   Return the stable display fingerprint of one public key.
+
+
+.. py:function:: parse_public_key(value: str) -> bytes
+
+   Decode a recorded public key, accepting the bare base64 spelling too.
+
+
+.. py:function:: pin_project_key(root: str | os.PathLike[str] | None = None) -> dict[str, object]
+
+   Adopt the project's current ``keys/project.pub`` as its trust anchor.
+
+   Pinning is always an explicit act. Verification trusts the key recorded in
+   ``project.json`` and never the key a manifest carries in its own header, so
+   adopting the key that is in the tree right now is exactly the decision an
+   operator has to make consciously for an older project that has no pin.
+
+
+.. py:function:: pinned_project_key(metadata: collections.abc.Mapping[str, object]) -> str | None
+
+   Return the project's own pinned public key, or ``None`` when absent.
+
+
+.. py:function:: project_public_key_path(root: str | os.PathLike[str]) -> pathlib.Path
+
+   Return where a project keeps its own signing key's public half.
+
+
+.. py:function:: read_project(root: str | os.PathLike[str]) -> dict[str, object]
+
+   Read and validate the ``project.json`` of the project rooted at *root*.
+
+
+.. py:function:: read_project_section(root: str | os.PathLike[str], name: str) -> dict[str, object]
+
+   Return one named object member of ``project.json``, empty when absent.
+
+   A *section* is a top-level member of the project manifest that some layer
+   above the anchor owns — the workflow workspace registry, a campaign map —
+   and reads and writes as a whole. The anchor does not interpret the member;
+   it only guarantees that what a caller stores under a name comes back as the
+   object it was, and refuses a member that some other writer has left as a
+   non-object so a caller never silently reads a scalar as a mapping.
+
+
+.. py:function:: read_public_key_file(path: str | os.PathLike[str]) -> str
+
+   Read one ``*.pub`` file and return its recorded public key.
+
+
+.. py:function:: require_project(start: str | os.PathLike[str] | None = None) -> pathlib.Path
+
+   Return the nearest project root, refusing when there is none.
+
+
+.. py:function:: trust_project_key(root: str | os.PathLike[str] | None, key: str) -> dict[str, object]
+
+   Adopt one further public key as a trust anchor of this project.
+
+
+.. py:function:: trusted_project_keys(metadata: collections.abc.Mapping[str, object]) -> tuple[str, Ellipsis]
+
+   Return every key *metadata* pins: the project's own and any adopted one.
+
+   The pinned key of ``project.json`` is the trust anchor a manifest is checked
+   against. ``trusted_keys`` carries the additional anchors an operator has
+   adopted deliberately — most often the legacy identities an imported *httk*
+   v1 project signed its old manifests with.
+
+
+.. py:function:: write_project_section(root: str | os.PathLike[str], name: str, value: collections.abc.Mapping[str, object]) -> dict[str, object]
+
+   Store one named object member of ``project.json`` and return the metadata.
+
+   The write is an ordinary read-modify-write of the validated manifest, so the
+   members the anchor owns are preserved untouched and only the named section is
+   replaced. The section must be a mapping; the anchor stores its members
+   verbatim without interpreting them.
+
+

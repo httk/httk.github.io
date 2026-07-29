@@ -1,0 +1,167 @@
+httk.optimade.backend.handlers
+==============================
+
+.. py:module:: httk.optimade.backend.handlers
+
+.. autoapi-nested-parse::
+
+   Re-exports of the generic OPTIMADE filter handlers.
+
+   The handler tables and generic handlers are implemented in
+   :mod:`httk.data.optimade_query` and exposed here under the
+   ``httk.optimade.backend.handlers`` namespace.
+
+   The handlers raise
+   :class:`~httk.data.optimade_query.FilterTranslationError` (which carries a
+   neutral failure category instead of HTTP semantics);
+   :func:`~httk.optimade.backend.translation.translate_filter` wraps it into
+   :class:`~httk.optimade.model.errors.TranslatorError` with the appropriate
+   HTTP status. :func:`~httk.data.optimade_query.simple_property_handlers` takes a
+   plain property-name -> ``fulltype`` mapping as its third argument. A ``'HAS'``
+   handler is called as
+   ``handler(property, ops, values, search_variable, has_type)`` and returns a
+   plain :class:`~httk.data.query.SearchExpression`; the caller applies ``NOT`` as
+   ``~``, and the backend determines whether the resulting expression also needs
+   post-filter evaluation.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.optimade.backend.handlers.HandlerTable
+   httk.optimade.backend.handlers.invert_op
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.optimade.backend.handlers.constant_comparison_handler
+   httk.optimade.backend.handlers.constant_set_handler
+   httk.optimade.backend.handlers.constant_stringmatching_handler
+   httk.optimade.backend.handlers.false_handler
+   httk.optimade.backend.handlers.known_unknown_handler
+   httk.optimade.backend.handlers.number_handler
+   httk.optimade.backend.handlers.set_handler
+   httk.optimade.backend.handlers.simple_property_handlers
+   httk.optimade.backend.handlers.string_handler
+   httk.optimade.backend.handlers.stringmatching_handler
+   httk.optimade.backend.handlers.timestamp_handler
+   httk.optimade.backend.handlers.true_handler
+   httk.optimade.backend.handlers.unknown_comparison_handler
+   httk.optimade.backend.handlers.unknown_has_handler
+   httk.optimade.backend.handlers.unknown_length_handler
+   httk.optimade.backend.handlers.unknown_stringmatching_handler
+   httk.optimade.backend.handlers.unknown_unknown_handler
+
+
+Module Contents
+---------------
+
+.. py:type:: HandlerTable
+   :canonical: Mapping[str, Mapping[str, Callable[..., Any]]]
+
+
+   Per-property translation callables, keyed by property name.
+
+   The inner mapping's keys name the filter-operation families: ``'comparison'``
+   (``=``, ``!=``, ``<``, ``<=``, ``>``, ``>=``), ``'stringmatching'``
+   (``CONTAINS``/``STARTS``/``ENDS``), ``'HAS'`` (the set operations),
+   ``'length'`` (``LENGTH``), and ``'unknown'`` (``IS KNOWN``/``IS UNKNOWN``).
+   A ``'HAS'`` handler is called as ``handler(property, ops, values,
+   search_variable, has_type)`` and returns a plain
+   :class:`~httk.data.query.SearchExpression`. The caller applies ``NOT`` as
+   ``~``; handlers do not receive negation state or report post-filter placement.
+   Dotted ``'<type>.id'`` entries provide relationship-id filtering (see
+   :func:`~httk.data.optimade_query.relationship_id_handler`).
+
+.. py:function:: constant_comparison_handler(val1: Any, op: str, val2: Any, search_variable: httk.data.query.SearchVariable) -> httk.data.query.SearchExpression
+
+   Fold ``val1 <op> val2`` (both constants) to a constant expression.
+
+   ``val1`` is the *value being compared* and ``val2`` the *filter constant*,
+   the same left-to-right convention as :func:`constant_set_handler`;
+   :func:`~httk.data.optimade_query.translate_filter_ast` has already inverted ``op`` for
+   constant-on-the-left filters, so this ordering is the filter's own.
+
+
+.. py:function:: constant_set_handler(val1: Any, ops: Any, val2: Any, has_type: str, search_variable: httk.data.query.SearchVariable) -> httk.data.query.SearchExpression
+
+.. py:function:: constant_stringmatching_handler(val1: Any, val2: Any, stringmatching_type: str, search_variable: httk.data.query.SearchVariable) -> httk.data.query.SearchExpression
+
+   Fold ``val1 <CONTAINS|STARTS|ENDS> val2`` (both constants) to a constant expression.
+
+   ``val1`` is the *value being matched* and ``val2`` the *filter text*, the
+   same left-to-right convention as :func:`constant_set_handler`.
+
+
+.. py:function:: false_handler(search_variable: httk.data.query.SearchVariable) -> httk.data.query.SearchExpression
+
+   A constant-false expression over ``search_variable``.
+
+
+.. py:data:: invert_op
+
+.. py:function:: known_unknown_handler(entry: str, search_variable: httk.data.query.SearchVariable, unknown_type: str) -> httk.data.query.SearchExpression
+
+.. py:function:: number_handler(entry: str, op: str, value: Any, search_variable: httk.data.query.SearchVariable) -> httk.data.query.SearchExpression
+
+.. py:function:: set_handler(entry: str, ops: Any, values: Any, has_type: str, search_variable: httk.data.query.SearchVariable) -> httk.data.query.SearchExpression
+
+   Translate one HAS family node over the list-valued field ``entry``.
+
+   ``HAS ALL`` becomes a conjunction of one-value ``has_any`` calls (each
+   constraining an independently joined child row); ``HAS ANY`` and ``HAS
+   ONLY`` map straight onto ``has_any``/``has_only``. Negation is *not* the
+   handler's business: a surrounding ``NOT`` inverts the returned expression,
+   and the backend's ``~`` knows how to negate a set predicate.
+
+
+.. py:function:: simple_property_handlers(entry_type: str, property_keys: collections.abc.Mapping[str, str], property_fulltypes: collections.abc.Mapping[str, str]) -> dict[str, collections.abc.Mapping[str, collections.abc.Callable[Ellipsis, Any]]]
+
+   Build a filter handler table for an entry type from a property-key map.
+
+   Always provides the standard ``id`` (matched against the ``__id`` field)
+   and ``type`` (a constant equal to ``entry_type``) handlers. For every
+   property named in ``property_keys`` (which maps property names to backend
+   field names), handlers are generated from the property's fulltype in
+   ``property_fulltypes`` (default ``"string"``): string properties get
+   comparison and stringmatching handlers; integer and float properties get a
+   numeric comparison handler; ``list of ...`` properties get a HAS (set
+   membership) handler. Every generated property also gets a ``known``
+   unknown handler.
+
+
+.. py:function:: string_handler(entry: str, op: str, value: Any, search_variable: httk.data.query.SearchVariable) -> httk.data.query.SearchExpression
+
+.. py:function:: stringmatching_handler(entry: str, value: str, stringmatching_type: str, search_variable: httk.data.query.SearchVariable) -> httk.data.query.SearchExpression
+
+   Translate ``CONTAINS``/``STARTS``/``ENDS`` onto the field's literal matchers.
+
+   The filter constant is passed through **unescaped**: the search-field protocol's
+   ``contains``/``startswith``/``endswith`` take literal text, so ``%`` and
+   ``_`` match themselves (as OPTIMADE requires). Any escaping a backend's
+   pattern language needs is that backend's own business.
+
+
+.. py:function:: timestamp_handler(entry: str, op: str, value: Any, search_variable: httk.data.query.SearchVariable) -> httk.data.query.SearchExpression
+
+.. py:function:: true_handler(search_variable: httk.data.query.SearchVariable) -> httk.data.query.SearchExpression
+
+   A constant-true expression over ``search_variable``.
+
+
+.. py:function:: unknown_comparison_handler(entry: str, ops: Any, values: Any, search_variable: httk.data.query.SearchVariable) -> httk.data.query.SearchExpression
+
+.. py:function:: unknown_has_handler(entry: str, op: Any, value: Any, search_variable: httk.data.query.SearchVariable, has_type: str) -> httk.data.query.SearchExpression
+
+.. py:function:: unknown_length_handler(entry: str, op: str, value: Any, search_variable: httk.data.query.SearchVariable) -> httk.data.query.SearchExpression
+
+.. py:function:: unknown_stringmatching_handler(entry: str, values: Any, stringmatching_type: str, search_variable: httk.data.query.SearchVariable) -> httk.data.query.SearchExpression
+
+.. py:function:: unknown_unknown_handler(entry: str, search_variable: httk.data.query.SearchVariable, unknown_type: str) -> httk.data.query.SearchExpression
+

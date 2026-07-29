@@ -1,0 +1,470 @@
+httk.core.docs
+==============
+
+.. py:module:: httk.core.docs
+
+.. autoapi-nested-parse::
+
+   Shared versioned httk documentation machinery.
+
+   The package composes immutable release trees alongside replaceable ``dev:main``
+   trees, writes root/page manifests and redirects, validates locks and
+   inventories, and supplies the Furo-aligned version selector used by published
+   sites.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/core/docs/cli/index
+   /reference/autoapi/httk/core/docs/config/index
+   /reference/autoapi/httk/core/docs/ecosystem/index
+   /reference/autoapi/httk/core/docs/gitsite/index
+   /reference/autoapi/httk/core/docs/inventories/index
+   /reference/autoapi/httk/core/docs/lockfile/index
+   /reference/autoapi/httk/core/docs/manifests/index
+   /reference/autoapi/httk/core/docs/redirect/index
+   /reference/autoapi/httk/core/docs/release/index
+   /reference/autoapi/httk/core/docs/semver/index
+   /reference/autoapi/httk/core/docs/sitetree/index
+   /reference/autoapi/httk/core/docs/sphinx_ext/index
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   httk.core.docs.ConfigError
+   httk.core.docs.EcosystemManifestError
+   httk.core.docs.GitSiteError
+   httk.core.docs.GitUnavailableError
+   httk.core.docs.InventoryError
+   httk.core.docs.LockError
+   httk.core.docs.ReleaseError
+   httk.core.docs.VersionError
+   httk.core.docs.ComposeError
+   httk.core.docs.ImmutabilityError
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.docs.InternalDependency
+   httk.core.docs.VersioningConfig
+   httk.core.docs.CommitSiteResult
+   httk.core.docs.ReleaseCheck
+   httk.core.docs.Version
+   httk.core.docs.ComposeResult
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.docs.load_versioning_config
+   httk.core.docs.build_ecosystem_manifest
+   httk.core.docs.read_ecosystem_manifest
+   httk.core.docs.verify_ecosystem_manifest
+   httk.core.docs.write_ecosystem_manifest
+   httk.core.docs.commit_site
+   httk.core.docs.fetch_inventory
+   httk.core.docs.read_inventory_header
+   httk.core.docs.check_lock
+   httk.core.docs.compute_input_hash
+   httk.core.docs.filter_lock_pins
+   httk.core.docs.generate_lock
+   httk.core.docs.internal_pins
+   httk.core.docs.read_lock_pins
+   httk.core.docs.build_page_manifest
+   httk.core.docs.build_version_manifest
+   httk.core.docs.read_version_manifest
+   httk.core.docs.write_page_manifest
+   httk.core.docs.write_version_manifest
+   httk.core.docs.root_redirect_html
+   httk.core.docs.write_root_redirect
+   httk.core.docs.check_release
+   httk.core.docs.dependency_doc_targets
+   httk.core.docs.highest_version
+   httk.core.docs.is_release_dir_name
+   httk.core.docs.parse_tag
+   httk.core.docs.parse_version
+   httk.core.docs.compose_site
+
+
+Package Contents
+----------------
+
+.. py:exception:: ConfigError
+
+   Bases: :py:obj:`ValueError`
+
+
+   Raised when a versioning TOML file is missing, malformed, or unsafe.
+
+
+.. py:class:: InternalDependency
+
+   Documentation-site metadata for one internal httk distribution.
+
+
+   .. py:attribute:: distribution
+      :type:  str
+
+
+   .. py:attribute:: slug
+      :type:  str
+
+
+   .. py:attribute:: repository_url
+      :type:  str
+
+
+   .. py:attribute:: main_branch
+      :type:  str
+      :value: 'main'
+
+
+
+.. py:class:: VersioningConfig
+
+   Configuration for one versioned documentation site.
+
+
+   .. py:attribute:: slug
+      :type:  str
+
+
+   .. py:attribute:: repository_url
+      :type:  str
+
+
+   .. py:attribute:: main_branch
+      :type:  str
+      :value: 'main'
+
+
+
+   .. py:attribute:: import_roots
+      :type:  tuple[str, Ellipsis]
+      :value: ()
+
+
+
+   .. py:attribute:: internal_dependencies
+      :type:  tuple[InternalDependency, Ellipsis]
+      :value: ()
+
+
+
+.. py:function:: load_versioning_config(path: str | pathlib.Path) -> VersioningConfig
+
+   Read and validate a versioning TOML file, rejecting unknown keys.
+
+
+.. py:exception:: EcosystemManifestError
+
+   Bases: :py:obj:`RuntimeError`
+
+
+   Raised when an ecosystem checkout cannot produce a valid manifest.
+
+
+.. py:function:: build_ecosystem_manifest(submodules_dir: str | pathlib.Path, *, require_release_tags: bool = False) -> dict[str, object]
+
+   Build the sorted manifest for direct Git checkouts under *submodules_dir*.
+
+
+.. py:function:: read_ecosystem_manifest(path: str | pathlib.Path) -> dict[str, object]
+
+   Read a JSON manifest and report malformed files as typed errors.
+
+
+.. py:function:: verify_ecosystem_manifest(submodules_dir: str | pathlib.Path, manifest_path: str | pathlib.Path, *, require_release_tags: bool = False) -> None
+
+   Verify a committed manifest against the current checkout state.
+
+
+.. py:function:: write_ecosystem_manifest(manifest: collections.abc.Mapping[str, object], output: str | pathlib.Path) -> None
+
+   Write *manifest* as sorted, newline-terminated JSON using an atomic replace.
+
+
+.. py:class:: CommitSiteResult
+
+   Summary of a site commit operation.
+
+
+   .. py:attribute:: repository
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: branch
+      :type:  str
+
+
+   .. py:attribute:: commit
+      :type:  str
+
+
+   .. py:attribute:: tree
+      :type:  str
+
+
+.. py:exception:: GitSiteError
+
+   Bases: :py:obj:`RuntimeError`
+
+
+   Raised when a generated site cannot be committed to a Git repository.
+
+
+.. py:exception:: GitUnavailableError
+
+   Bases: :py:obj:`GitSiteError`
+
+
+   Raised when the ``git`` executable is not available.
+
+
+.. py:function:: commit_site(site_directory: str | pathlib.Path, branch: str, message: str, *, repository: str | pathlib.Path | None = None, author_name: str | None = None, author_email: str | None = None, committer_name: str | None = None, committer_email: str | None = None) -> CommitSiteResult
+
+   Replace *branch* with one parentless commit containing *site_directory*.
+
+   The site is converted directly into Git objects, so the caller's index and
+   checked-out files are not changed. Ref leases for concurrent publishers
+   remain the caller's responsibility when pushing the resulting branch. Git
+   dates remain ambient, so commit IDs are intentionally not deterministic.
+
+
+.. py:exception:: InventoryError
+
+   Bases: :py:obj:`RuntimeError`
+
+
+   Raised when an inventory cannot be fetched or has unexpected metadata.
+
+
+.. py:function:: fetch_inventory(url: str, dest: str | pathlib.Path, *, expected_project: str | None = None, expected_version: str | None = None) -> tuple[str, str]
+
+   Fetch an inventory from HTTP(S) or ``file://``, validate it, and save it.
+
+
+.. py:function:: read_inventory_header(path_or_bytes: str | pathlib.Path | bytes) -> tuple[str, str]
+
+   Return project and version from the plain-text inventory header.
+
+
+.. py:exception:: LockError
+
+   Bases: :py:obj:`RuntimeError`
+
+
+   Raised when a documentation lock is absent, stale, or cannot be made.
+
+
+.. py:function:: check_lock(project_dir: str | pathlib.Path, lock_path: str | pathlib.Path) -> None
+
+   Raise :class:`LockError` if a lock is missing or stale for *project_dir*.
+
+
+.. py:function:: compute_input_hash(pyproject_path: str | pathlib.Path) -> str
+
+   Hash the documentation dependency inputs, independent of TOML formatting.
+
+
+.. py:function:: filter_lock_pins(pins: collections.abc.Mapping[str, str], *, drop: collections.abc.Iterable[str]) -> dict[str, str]
+
+   Return pins excluding all ``httk-*`` names and the explicitly dropped names.
+
+
+.. py:function:: generate_lock(project_dir: str | pathlib.Path, output_path: str | pathlib.Path, *, command_prefix: collections.abc.Sequence[str] | None = None) -> None
+
+   Generate a lock by invoking ``uv pip compile`` or an injected command.
+
+
+.. py:function:: internal_pins(pins: collections.abc.Mapping[str, str]) -> dict[str, str]
+
+   Return the normalized subset of pins belonging to internal httk distributions.
+
+
+.. py:function:: read_lock_pins(lock_path: str | pathlib.Path) -> dict[str, str]
+
+   Read normalized distribution names and versions from a lock file.
+
+
+.. py:function:: build_page_manifest(version_name: str, html_dir: str | pathlib.Path) -> dict[str, Any]
+
+   List every HTML page below *html_dir* as sorted POSIX paths.
+
+
+.. py:function:: build_version_manifest(slug: str, url: str, source_commit: str | None, release_versions: list[httk.core.docs.semver.Version] | tuple[httk.core.docs.semver.Version, Ellipsis], has_dev: bool) -> dict[str, Any]
+
+   Build a root manifest with releases newest-first and optional dev last.
+
+
+.. py:function:: read_version_manifest(path: str | pathlib.Path) -> dict[str, Any]
+
+   Read a JSON version manifest from *path*.
+
+
+.. py:function:: write_page_manifest(path: str | pathlib.Path, manifest: dict[str, Any]) -> None
+
+   Write one per-version page manifest.
+
+
+.. py:function:: write_version_manifest(path: str | pathlib.Path, manifest: dict[str, Any]) -> None
+
+   Write one JSON version manifest using stable, human-readable formatting.
+
+
+.. py:function:: root_redirect_html(target_relative_path: str) -> str
+
+   Return a complete HTML5 document redirecting to a relative site path.
+
+
+.. py:function:: write_root_redirect(site_root: str | pathlib.Path, target: str) -> None
+
+   Write ``index.html`` at *site_root* with a relative redirect to *target*.
+
+
+.. py:class:: ReleaseCheck
+
+   Summary of a successful release preflight.
+
+
+   .. py:attribute:: tag
+      :type:  str
+
+
+   .. py:attribute:: version
+      :type:  httk.core.docs.semver.Version
+
+
+   .. py:attribute:: lock_path
+      :type:  pathlib.Path
+
+
+.. py:exception:: ReleaseError
+
+   Bases: :py:obj:`RuntimeError`
+
+
+   Raised when a release tag, project version, or documentation lock is invalid.
+
+
+.. py:function:: check_release(project_dir: str | pathlib.Path, tag: str) -> ReleaseCheck
+
+   Validate a release tag against ``pyproject.toml`` and its docs lock.
+
+
+.. py:function:: dependency_doc_targets(config: httk.core.docs.config.VersioningConfig, pins: collections.abc.Mapping[str, str], base_url: str, channel: str) -> dict[str, str]
+
+   Derive exact release or ``dev/main`` inventory URLs for internal dependencies.
+
+
+.. py:class:: Version
+
+   One non-negative three-component documentation release version.
+
+
+   .. py:attribute:: major
+      :type:  int
+
+
+   .. py:attribute:: minor
+      :type:  int
+
+
+   .. py:attribute:: patch
+      :type:  int
+
+
+   .. py:property:: tag
+      :type: str
+
+
+      Return the canonical Git tag spelling, ``vX.Y.Z``.
+
+
+.. py:exception:: VersionError
+
+   Bases: :py:obj:`ValueError`
+
+
+   Raised when text is not an exact ``X.Y.Z`` documentation version.
+
+
+.. py:function:: highest_version(versions: collections.abc.Iterable[Version]) -> Version | None
+
+   Return the greatest version in *versions*, or ``None`` when empty.
+
+
+.. py:function:: is_release_dir_name(name: str) -> bool
+
+   Return whether *name* is a valid release directory such as ``v2.1.0``.
+
+
+.. py:function:: parse_tag(text: str) -> Version
+
+   Parse exactly the release tag ``vX.Y.Z``.
+
+
+.. py:function:: parse_version(text: str) -> Version
+
+   Parse exactly ``X.Y.Z`` without prerelease or build metadata.
+
+
+.. py:exception:: ComposeError
+
+   Bases: :py:obj:`RuntimeError`
+
+
+   Raised when a documentation tree contains unsafe or unsupported entries.
+
+
+.. py:class:: ComposeResult
+
+   Summary of one site composition operation.
+
+
+   .. py:attribute:: changed
+      :type:  bool
+
+
+   .. py:attribute:: unchanged
+      :type:  bool
+
+
+   .. py:attribute:: default_target
+      :type:  str
+
+
+   .. py:attribute:: versions
+      :type:  tuple[str, Ellipsis]
+
+
+.. py:exception:: ImmutabilityError
+
+   Bases: :py:obj:`RuntimeError`
+
+
+   Raised when a rebuild differs from an already published release tree.
+
+
+.. py:function:: compose_site(site_root: pathlib.Path, build_html: pathlib.Path, *, slug: str, site_url: str, source_commit: str | None, target: httk.core.docs.semver.Version | Literal['dev'], repair: bool = False) -> ComposeResult
+
+   Compose a docs-site tree while preserving all existing release directories.
+
+   ``repair=True`` is reserved for replacing an existing release after an
+   approved manual repair. The replacement uses the same rename transaction
+   as the development swap and never removes the live release in place.
+
+

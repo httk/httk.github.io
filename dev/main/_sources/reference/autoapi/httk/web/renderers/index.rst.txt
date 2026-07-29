@@ -1,0 +1,122 @@
+httk.web.renderers
+==================
+
+.. py:module:: httk.web.renderers
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/web/renderers/base/index
+   /reference/autoapi/httk/web/renderers/html/index
+   /reference/autoapi/httk/web/renderers/httkweb_compat/index
+   /reference/autoapi/httk/web/renderers/markdown/index
+   /reference/autoapi/httk/web/renderers/rst/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.web.renderers.RENDERERS_BY_SUFFIX
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.web.renderers.Renderer
+   httk.web.renderers.RenderResult
+   httk.web.renderers.HtmlRenderer
+   httk.web.renderers.HttkwebCompatRenderer
+   httk.web.renderers.MarkdownRenderer
+   httk.web.renderers.RstRenderer
+
+
+Package Contents
+----------------
+
+.. py:class:: Renderer
+
+   Bases: :py:obj:`Protocol`
+
+
+   Base class for protocol classes.
+
+   Protocol classes are defined as::
+
+       class Proto(Protocol):
+           def meth(self) -> int:
+               ...
+
+   Such classes are primarily used with static type checkers that recognize
+   structural subtyping (static duck-typing).
+
+   For example::
+
+       class C:
+           def meth(self) -> int:
+               return 0
+
+       def func(x: Proto) -> int:
+           return x.meth()
+
+       func(C())  # Passes static type check
+
+   See PEP 544 for details. Protocol classes decorated with
+   @typing.runtime_checkable act as simple-minded runtime protocols that check
+   only the presence of given attributes, ignoring their type signatures.
+   Protocol classes can be generic, they are defined as::
+
+       class GenProto[T](Protocol):
+           def meth(self) -> T:
+               ...
+
+
+   .. py:method:: render(source_path: pathlib.Path) -> RenderResult
+
+
+.. py:class:: RenderResult
+
+   .. py:attribute:: html
+      :type:  str
+
+
+   .. py:attribute:: metadata
+      :type:  dict[str, object]
+
+
+.. py:class:: HtmlRenderer
+
+   .. py:method:: render(source_path: pathlib.Path) -> httk.web.renderers.base.RenderResult
+
+
+.. py:class:: HttkwebCompatRenderer
+
+   Minimal compatibility renderer for legacy .httkweb files.
+
+   Old .httkweb pages typically have YAML-like front matter bounded by dashes,
+   followed by text that is close to reStructuredText.
+
+
+   .. py:method:: render(source_path: pathlib.Path) -> httk.web.renderers.base.RenderResult
+
+
+.. py:class:: MarkdownRenderer
+
+   .. py:method:: render(source_path: pathlib.Path) -> httk.web.renderers.base.RenderResult
+
+
+.. py:class:: RstRenderer
+
+   .. py:method:: render(source_path: pathlib.Path) -> httk.web.renderers.base.RenderResult
+
+
+.. py:data:: RENDERERS_BY_SUFFIX
+   :type:  dict[str, base.Renderer]
+

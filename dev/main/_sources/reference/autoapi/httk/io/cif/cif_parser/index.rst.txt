@@ -1,0 +1,150 @@
+httk.io.cif.cif_parser
+======================
+
+.. py:module:: httk.io.cif.cif_parser
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.io.cif.cif_parser.CifMeta
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.io.cif.cif_parser.parse_cif_float
+   httk.io.cif.cif_parser.parse_cif_int
+   httk.io.cif.cif_parser.parse_linear_expr
+   httk.io.cif.cif_parser.parse_xyz_op
+   httk.io.cif.cif_parser.xyz_symops_to_matrix
+   httk.io.cif.cif_parser.cif_exact_token
+   httk.io.cif.cif_parser.parse_asu_cell
+   httk.io.cif.cif_parser.parse_structural_modulation
+   httk.io.cif.cif_parser.cifblock_to_asu
+   httk.io.cif.cif_parser.read_cif_asus
+   httk.io.cif.cif_parser.asus_from_cif_file
+   httk.io.cif.cif_parser.single_asu_from_cif_file
+
+
+Module Contents
+---------------
+
+.. py:class:: CifMeta
+
+   Bases: :py:obj:`TypedDict`
+
+
+   What a CIF number claims about its own precision, beyond its value.
+
+   Both are exact rationals, or ``None`` when the token makes no such claim. ``None`` is
+   not the same as claiming exactness: a value written ``1/3`` states an exact number and
+   reports ``None`` for both, while ``?`` states nothing at all and also reports ``None``.
+
+   ``precision`` is implied by the digits written (``0.3333`` is good to ``1/10000``);
+   ``esd`` is the standard uncertainty a file states explicitly, so ``0.3333(7)`` reports
+   a precision of ``1/10000`` *and* an esd of ``7/10000``. They measure different things
+   and the coarser of the two is the honest claim.
+
+
+   .. py:attribute:: esd
+      :type:  fractions.Fraction | None
+
+
+   .. py:attribute:: precision
+      :type:  fractions.Fraction | None
+
+
+.. py:function:: parse_cif_float(token: str, *, meta: Literal[False] = ..., pragmatic: bool = ...) -> float | None
+                 parse_cif_float(token: str, *, meta: Literal[True], pragmatic: bool = ...) -> tuple[float | None, CifMeta]
+
+   Parse a CIF numeric field.
+
+   If meta=False:
+       return float_value or None.
+
+   If meta=True:
+       return ``(float_value_or_None, CifMeta)`` — the value plus what the token claims
+       about its own precision. See :class:`CifMeta`; both of its fields are exact
+       rationals or ``None``.
+
+
+.. py:function:: parse_cif_int(token: str, *, strict: bool = True, allow_round: bool = False) -> int
+
+   Convert a CIF numeric token (e.g., '123(4)', '3E2', '1.0E3') to an int using the central value.
+   - strict=True: require the value to be exactly integral; otherwise raise ValueError.
+   - allow_round=True (only if strict=False): round half-even to the nearest int.
+
+
+.. py:function:: parse_linear_expr(expr, use_fractions=False)
+
+   expr: e.g. 'x-y', '-z+1/2', 'x', 'y', 'z-1', 'x-2y', '3x+1/2'
+   Returns (row, const) where row is [ax, ay, az] (integers or Fractions),
+   and const is a float or Fraction depending on use_fractions.
+
+
+.. py:function:: parse_xyz_op(op, use_fractions=False)
+
+   op: e.g. 'x-y,x,-z+1/2'
+   Returns (R, t) where R is 3x3 (list of rows), t is length-3 float list
+
+
+.. py:function:: xyz_symops_to_matrix(symops_xyz, use_fractions=False)
+
+.. py:function:: cif_exact_token(token: str) -> str | None
+
+   The numeric part of a CIF value, as text, with any uncertainty estimate removed.
+
+   ``"0.3333(5)"`` becomes ``"0.3333"``; ``"?"`` and ``"."`` become ``None``. The point of
+   keeping the text rather than a float is fidelity: a consumer that wants an exact value
+   can read ``0.3333`` as the rational 3333/10000, which is what the file says, whereas
+   ``float("0.3333")`` is a binary approximation whose exact rational value is
+   6004199023210345/18014398509481984 and says something the file did not.
+
+
+.. py:function:: parse_asu_cell(cifblock)
+
+.. py:function:: parse_structural_modulation(cifblock)
+
+   Extract structural superspace modulation information from a standard CIF.
+
+   Returns a tuple ``(structural_q, mod_dim, has_struct_mod, struct_mod_atoms)`` where
+   ``structural_q`` is a list of q-vectors or ``None``, ``mod_dim`` is the modulation
+   dimension (0 if absent), ``has_struct_mod`` is a bool, and ``struct_mod_atoms`` is a
+   sorted list of atom-site labels.
+
+
+.. py:function:: cifblock_to_asu(cifblock, *, return_single=False)
+
+.. py:function:: read_cif_asus(fs)
+
+   Read a CIF and return its asymmetric units as a neutral, tagged payload.
+
+   This is what ``httk.core.load`` returns for a ``.cif`` file: a mapping with
+   ``format`` set to ``"cif"``, ``blocks`` holding one asymmetric-unit mapping per data
+   block that describes a structure, and ``header`` the file's leading comment. The tag
+   lets a consumer dispatch on the file type without knowing which reader
+   produced the payload.
+
+   Loading never fails on account of a block that is not a structure. CIF is a
+   general-purpose format and a file may hold bibliographic entries, powder patterns, or
+   an incomplete draft alongside — or instead of — anything crystallographic. Blocks
+   without atom sites are simply not structures and are passed over; blocks that have
+   atom sites but cannot be interpreted are collected in ``unparsed``, each with the
+   reason, so that nothing is dropped silently and the failure surfaces when a structure
+   is actually asked for.
+
+   The mapping stays neutral — plain lists, strings, and exact ``Fraction`` symmetry
+   operations, with no domain objects — so *httk-io* need not know about
+   *httk-atomistic*. Turning it into a structure is
+   ``httk.atomistic.asu_structure_from_cif``.
+
+
+.. py:function:: asus_from_cif_file(fs)
+
+.. py:function:: single_asu_from_cif_file(fs)
+

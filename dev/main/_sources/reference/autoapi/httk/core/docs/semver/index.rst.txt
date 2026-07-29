@@ -1,0 +1,93 @@
+httk.core.docs.semver
+=====================
+
+.. py:module:: httk.core.docs.semver
+
+.. autoapi-nested-parse::
+
+   Strict, deliberately small Semantic Versioning helpers for documentation tags.
+
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   httk.core.docs.semver.VersionError
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.docs.semver.Version
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.docs.semver.parse_version
+   httk.core.docs.semver.parse_tag
+   httk.core.docs.semver.highest_version
+   httk.core.docs.semver.is_release_dir_name
+
+
+Module Contents
+---------------
+
+.. py:exception:: VersionError
+
+   Bases: :py:obj:`ValueError`
+
+
+   Raised when text is not an exact ``X.Y.Z`` documentation version.
+
+
+.. py:class:: Version
+
+   One non-negative three-component documentation release version.
+
+
+   .. py:attribute:: major
+      :type:  int
+
+
+   .. py:attribute:: minor
+      :type:  int
+
+
+   .. py:attribute:: patch
+      :type:  int
+
+
+   .. py:property:: tag
+      :type: str
+
+
+      Return the canonical Git tag spelling, ``vX.Y.Z``.
+
+
+.. py:function:: parse_version(text: str) -> Version
+
+   Parse exactly ``X.Y.Z`` without prerelease or build metadata.
+
+
+.. py:function:: parse_tag(text: str) -> Version
+
+   Parse exactly the release tag ``vX.Y.Z``.
+
+
+.. py:function:: highest_version(versions: collections.abc.Iterable[Version]) -> Version | None
+
+   Return the greatest version in *versions*, or ``None`` when empty.
+
+
+.. py:function:: is_release_dir_name(name: str) -> bool
+
+   Return whether *name* is a valid release directory such as ``v2.1.0``.
+
+

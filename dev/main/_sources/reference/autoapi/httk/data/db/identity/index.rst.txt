@@ -1,0 +1,62 @@
+httk.data.db.identity
+=====================
+
+.. py:module:: httk.data.db.identity
+
+.. autoapi-nested-parse::
+
+   Content identity: a canonical text form and SHA-256 identity for storable instances.
+
+   :func:`content_id` gives every storable instance a deterministic identity
+   derived purely from its stored, non-derived field values — the basis of the
+   store layer's ``"content_id"`` deduplication policy and of its store-managed
+   ``content_id`` column. Two instances (even of distinct object identity, even
+   holding distinct-but-equal nested instances) get the same identity exactly when
+   their stored values are equal.
+
+   The identity hashes :func:`canonical_form`: a compact JSON text of
+   ``[table_name, [[field, canonical value], ...]]`` with the stored non-derived
+   fields sorted by field name. Canonical values are chosen to be exact and
+   deterministic per field role:
+
+   - rationals (:class:`fractions.Fraction`, :class:`~httk.core.FracScalar`,
+     :class:`~httk.core.SurdScalar`) — their canonical exact text;
+   - :class:`~httk.core.FracVector` tensors — the canonical exact tensor text;
+   - ``float`` — its ``repr`` (shortest exact round-trip text);
+   - ``bytes`` — its hex text;
+   - ``str``/``int``/``bool``/``None`` — as-is;
+   - ``datetime`` (and any single-text-column codec) — its encoded text;
+   - lists/tuples — JSON arrays of their elements' canonical values, in order;
+   - nested storable instances — their :func:`content_id`, recursively.
+
+   Derived (:class:`~httk.core.stored_property`) values are functions of the
+   fields and are excluded, so they can never skew the identity.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.data.db.identity.canonical_form
+   httk.data.db.identity.content_id
+
+
+Module Contents
+---------------
+
+.. py:function:: canonical_form(obj: Any) -> str
+
+   The deterministic canonical JSON text of a storable instance's stored values.
+
+   Resolves the schema of ``obj``'s class (so the class must be storable) and
+   serializes ``[table_name, [[field, canonical value], ...]]`` over the
+   non-derived stored fields, sorted by field name, as compact JSON.
+
+
+.. py:function:: content_id(obj: Any) -> str
+
+   The SHA-256 hex digest (64 hex characters) of :func:`canonical_form` of ``obj``.
+
+

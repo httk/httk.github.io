@@ -1,0 +1,896 @@
+httk.core.datastream
+====================
+
+.. py:module:: httk.core.datastream
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/core/datastream/bytestream_api/index
+   /reference/autoapi/httk/core/datastream/bytestream_backend/index
+   /reference/autoapi/httk/core/datastream/bytestream_bytes/index
+   /reference/autoapi/httk/core/datastream/bytestream_bytes_view/index
+   /reference/autoapi/httk/core/datastream/bytestream_common/index
+   /reference/autoapi/httk/core/datastream/bytestream_file/index
+   /reference/autoapi/httk/core/datastream/bytestream_file_view/index
+   /reference/autoapi/httk/core/datastream/bytestream_filename/index
+   /reference/autoapi/httk/core/datastream/bytestream_filename_view/index
+   /reference/autoapi/httk/core/datastream/bytestream_like/index
+   /reference/autoapi/httk/core/datastream/bytestream_request/index
+   /reference/autoapi/httk/core/datastream/bytestream_request_view/index
+   /reference/autoapi/httk/core/datastream/bytestream_url/index
+   /reference/autoapi/httk/core/datastream/bytestream_url_view/index
+   /reference/autoapi/httk/core/datastream/bytestream_view/index
+   /reference/autoapi/httk/core/datastream/compression/index
+   /reference/autoapi/httk/core/datastream/textstream_api/index
+   /reference/autoapi/httk/core/datastream/textstream_backend/index
+   /reference/autoapi/httk/core/datastream/textstream_common/index
+   /reference/autoapi/httk/core/datastream/textstream_file/index
+   /reference/autoapi/httk/core/datastream/textstream_file_view/index
+   /reference/autoapi/httk/core/datastream/textstream_filename/index
+   /reference/autoapi/httk/core/datastream/textstream_filename_view/index
+   /reference/autoapi/httk/core/datastream/textstream_like/index
+   /reference/autoapi/httk/core/datastream/textstream_request/index
+   /reference/autoapi/httk/core/datastream/textstream_request_view/index
+   /reference/autoapi/httk/core/datastream/textstream_string/index
+   /reference/autoapi/httk/core/datastream/textstream_string_view/index
+   /reference/autoapi/httk/core/datastream/textstream_url/index
+   /reference/autoapi/httk/core/datastream/textstream_url_view/index
+   /reference/autoapi/httk/core/datastream/textstream_view/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.core.datastream.BytestreamLike
+   httk.core.datastream.TextstreamLike
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.datastream.BytestreamBackend
+   httk.core.datastream.BytestreamBytes
+   httk.core.datastream.BytestreamBytesView
+   httk.core.datastream.BytestreamCommon
+   httk.core.datastream.BytestreamFile
+   httk.core.datastream.BytestreamFileView
+   httk.core.datastream.BytestreamFilename
+   httk.core.datastream.BytestreamFilenameView
+   httk.core.datastream.BytestreamRequest
+   httk.core.datastream.BytestreamRequestView
+   httk.core.datastream.BytestreamURL
+   httk.core.datastream.BytestreamURLView
+   httk.core.datastream.BytestreamView
+   httk.core.datastream.CompressionCodec
+   httk.core.datastream.TextstreamBackend
+   httk.core.datastream.TextstreamCommon
+   httk.core.datastream.TextstreamFile
+   httk.core.datastream.TextstreamFileView
+   httk.core.datastream.TextstreamFilename
+   httk.core.datastream.TextstreamFilenameView
+   httk.core.datastream.TextstreamRequest
+   httk.core.datastream.TextstreamRequestView
+   httk.core.datastream.TextstreamString
+   httk.core.datastream.TextstreamStringView
+   httk.core.datastream.TextstreamURL
+   httk.core.datastream.TextstreamURLView
+   httk.core.datastream.TextstreamView
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.datastream.known_compressions
+   httk.core.datastream.register_compression
+
+
+Package Contents
+----------------
+
+.. py:class:: BytestreamBackend(backend, **hints)
+
+   Bases: :py:obj:`httk.core.views.Backend`\ [\ :py:obj:`BytestreamBackend`\ ], :py:obj:`httk.core.datastream.bytestream_api.BytestreamAPI`
+
+
+   Abstract base class for all backends of streaming byte data.
+
+
+   .. py:attribute:: backend_classes
+      :type:  ClassVar[list[type[httk.core.views.Backend[Any]]]]
+
+
+.. py:class:: BytestreamBytes(content: bytes | bytearray, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_common.BytestreamCommon`, :py:obj:`httk.core.datastream.bytestream_backend.BytestreamBackend`
+
+
+   Backend for streaming byte data backed by an actual bytes object.
+
+
+   .. py:attribute:: b
+      :type:  bytes
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: BytestreamBytesView(obj: httk.core.datastream.bytestream_like.BytestreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_view.BytestreamView`, :py:obj:`bytes`
+
+
+   A view presenting underlying streaming byte data as bytes.
+   This view can be used both to pass bytes in place of streaming data, and for reading streaming data into bytes.
+   Note: this view is not lazy (this is impossible for views inheriting bytes, since bytes is immutable), hence all
+   streaming data is read immediately upon creating this view.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: BytestreamCommon
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Common superclass for many of the implementations of backends for streaming byte data.
+
+
+   .. py:method:: unwrap() -> io.IOBase
+
+
+   .. py:method:: read(size: int = -1) -> bytes
+
+
+   .. py:method:: close() -> None
+
+
+   .. py:method:: seek(offset: int, whence: int = os.SEEK_SET) -> int
+
+
+   .. py:method:: tell() -> int
+
+
+.. py:class:: BytestreamFile(obj: io.IOBase, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_common.BytestreamCommon`, :py:obj:`httk.core.datastream.bytestream_backend.BytestreamBackend`
+
+
+   Backend for file-based (io.IOBase-conforming) streaming byte data.
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: BytestreamFileView(obj: httk.core.datastream.bytestream_like.BytestreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_view.BytestreamView`, :py:obj:`io.IOBase`, :py:obj:`httk.core.datastream.bytestream_api.BytestreamAPI`
+
+
+   A view presenting an underlying data streaming backend via an io.IOBase-like API.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+   .. py:method:: close() -> None
+
+      Flush and close the IO object.
+
+      This method has no effect if the file is already closed.
+
+
+
+   .. py:method:: readable() -> bool
+
+      Return whether object was opened for reading.
+
+      If False, read() will raise OSError.
+
+
+
+   .. py:method:: writable() -> bool
+
+      Return whether object was opened for writing.
+
+      If False, write() will raise OSError.
+
+
+
+   .. py:method:: seekable() -> bool
+
+      Return whether object supports random access.
+
+      If False, seek(), tell() and truncate() will raise OSError.
+      This method may need to do a test seek().
+
+
+
+   .. py:method:: flush() -> None
+
+      Flush write buffers, if applicable.
+
+      This is not implemented for read-only and non-blocking streams.
+
+
+
+   .. py:method:: read(size: int | None = -1) -> bytes
+
+
+   .. py:method:: readline(size: int | None = -1) -> bytes
+
+      Read and return a line from the stream.
+
+      If size is specified, at most size bytes will be read.
+
+      The line terminator is always b'\n' for binary files; for text
+      files, the newlines argument to open can be used to select the line
+      terminator(s) recognized.
+
+
+
+   .. py:method:: readlines(hint: int = -1) -> list[bytes]
+
+      Return a list of lines from the stream.
+
+      hint can be specified to control the number of lines read: no more
+      lines will be read if the total size (in bytes/characters) of all
+      lines so far exceeds hint.
+
+
+
+   .. py:method:: seek(offset: int, whence: int = io.SEEK_SET) -> int
+
+      Change the stream position to the given byte offset.
+
+        offset
+          The stream position, relative to 'whence'.
+        whence
+          The relative position to seek from.
+
+      The offset is interpreted relative to the position indicated by whence.
+      Values for whence are:
+
+      * os.SEEK_SET or 0 -- start of stream (the default); offset should be zero or positive
+      * os.SEEK_CUR or 1 -- current stream position; offset may be negative
+      * os.SEEK_END or 2 -- end of stream; offset is usually negative
+
+      Return the new absolute position.
+
+
+
+   .. py:method:: tell() -> int
+
+      Return current stream position.
+
+
+
+   .. py:method:: detach() -> NoReturn
+
+
+.. py:class:: BytestreamFilename(filename: str | pathlib.Path, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_common.BytestreamCommon`, :py:obj:`httk.core.datastream.bytestream_backend.BytestreamBackend`
+
+
+   Backend for streaming byte data via operations on a file specified by a filename.
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: BytestreamFilenameView(obj: httk.core.datastream.bytestream_like.BytestreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_view.BytestreamView`, :py:obj:`str`
+
+
+   A view presenting an underlying data streaming backend via a filename.
+   This view is mostly useful for providing filenames to functions that will open them.
+   Note: this view is not lazy (this is impossible for views inheriting str, since str is immutable).
+
+   Raises TypeError if created with a streaming data source that does not come with a name.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:type:: BytestreamLike
+   :canonical: bytestream_backend.BytestreamBackend | bytestream_view.BytestreamView | io.IOBase | io.BytesIO | bytes | bytearray | str | pathlib.Path | urllib.request.Request
+
+
+.. py:class:: BytestreamRequest(request: urllib.request.Request, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_common.BytestreamCommon`, :py:obj:`httk.core.datastream.bytestream_backend.BytestreamBackend`
+
+
+   Backend for streaming byte data fetched via a urllib.request.Request.
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: url
+      :type: str
+
+
+
+   .. py:property:: request
+      :type: urllib.request.Request
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: BytestreamRequestView(obj: httk.core.datastream.bytestream_like.BytestreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_view.BytestreamView`, :py:obj:`urllib.request.Request`
+
+
+   A view presenting an underlying data streaming backend via a urllib.request.Request.
+   This view is mostly useful for providing a Request to functions that will open it.
+   Note: this view is not lazy (it does not fetch); it only mirrors the underlying request/URL.
+
+   Raises TypeError if created with a streaming data source that does not come with a URL.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: BytestreamURL(url: str, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_common.BytestreamCommon`, :py:obj:`httk.core.datastream.bytestream_backend.BytestreamBackend`
+
+
+   Backend for streaming byte data fetched from a URL string.
+   A bare string is interpreted as a URL when its scheme is one of http, https, ftp, or file,
+   or when an explicit kind="url" hint is given.
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: url
+      :type: str
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: BytestreamURLView(obj: httk.core.datastream.bytestream_like.BytestreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_view.BytestreamView`, :py:obj:`str`
+
+
+   A view presenting an underlying data streaming backend via a URL string.
+   This view is mostly useful for providing a URL to functions that will open it.
+   Note: this view is not lazy (this is impossible for views inheriting str, since str is immutable).
+
+   Raises TypeError if created with a streaming data source that does not come with a URL.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: BytestreamView
+
+   Bases: :py:obj:`httk.core.views.View`\ [\ :py:obj:`httk.core.datastream.bytestream_backend.BytestreamBackend`\ ]
+
+
+   Abstract base class for all views of streaming byte data.
+
+
+.. py:class:: CompressionCodec
+
+   A decompression codec for a single container format.
+
+   A codec is an orthogonal layer below the datastream backends: it turns a compressed
+   binary stream into an uncompressed binary stream, independently of where the compressed
+   bytes come from (a filename, an open file, raw bytes, or a remote response).
+
+
+   .. py:attribute:: name
+      :type:  str
+
+      Canonical, lower-case codec name (e.g. ``"gzip"``); also how an explicit hint selects it.
+
+
+   .. py:attribute:: extensions
+      :type:  tuple[str, Ellipsis]
+
+      Recognized filename suffixes including the leading dot (e.g. ``(".gz",)``).
+
+
+   .. py:attribute:: magics
+      :type:  tuple[bytes, Ellipsis]
+
+      Leading magic-byte signatures; an empty tuple means the format cannot be sniffed.
+
+
+   .. py:attribute:: open_stream
+      :type:  collections.abc.Callable[[io.IOBase], io.IOBase]
+
+      Wrap a compressed binary stream and return a readable, decompressed binary stream.
+
+
+.. py:function:: known_compressions() -> list[str]
+
+   Return the registered codec names, in registration order.
+
+
+.. py:function:: register_compression(codec: CompressionCodec) -> None
+
+   Register (or replace) a codec under its :attr:`~CompressionCodec.name` (case-insensitive).
+
+
+.. py:class:: TextstreamBackend(backend, **hints)
+
+   Bases: :py:obj:`httk.core.views.Backend`\ [\ :py:obj:`TextstreamBackend`\ ], :py:obj:`httk.core.datastream.textstream_api.TextstreamAPI`
+
+
+   Abstract base class for all backends of streaming text data.
+
+
+   .. py:attribute:: backend_classes
+      :type:  ClassVar[list[type[httk.core.views.Backend[Any]]]]
+
+
+.. py:class:: TextstreamCommon
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Common superclass for many of the implementations of backends for streaming text data.
+
+
+   .. py:method:: unwrap() -> io.TextIOBase
+
+
+   .. py:method:: read(size: int = -1) -> str
+
+
+   .. py:method:: close() -> None
+
+
+   .. py:method:: seek(offset: int, whence: int = os.SEEK_SET) -> int
+
+
+   .. py:method:: tell() -> int
+
+
+.. py:class:: TextstreamFile(obj: io.TextIOBase, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_common.TextstreamCommon`, :py:obj:`httk.core.datastream.textstream_backend.TextstreamBackend`
+
+
+   Backend for file-based (io.TextIOBase-conforming) streaming text data
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: TextstreamFileView(obj: httk.core.datastream.textstream_like.TextstreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_view.TextstreamView`, :py:obj:`io.TextIOBase`, :py:obj:`httk.core.datastream.textstream_api.TextstreamAPI`
+
+
+   A view presenting an underlying data streaming backend via the full io.TextIOBase API, which is a superset of TextstreamAPI.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+   .. py:method:: close() -> None
+
+      Flush and close the IO object.
+
+      This method has no effect if the file is already closed.
+
+
+
+   .. py:method:: readable() -> bool
+
+      Return whether object was opened for reading.
+
+      If False, read() will raise OSError.
+
+
+
+   .. py:method:: writable() -> bool
+
+      Return whether object was opened for writing.
+
+      If False, write() will raise OSError.
+
+
+
+   .. py:method:: seekable() -> bool
+
+      Return whether object supports random access.
+
+      If False, seek(), tell() and truncate() will raise OSError.
+      This method may need to do a test seek().
+
+
+
+   .. py:method:: flush() -> None
+
+      Flush write buffers, if applicable.
+
+      This is not implemented for read-only and non-blocking streams.
+
+
+
+   .. py:method:: read(size: int | None = -1) -> str
+
+      Read at most size characters from stream.
+
+      Read from underlying buffer until we have size characters or we hit EOF.
+      If size is negative or omitted, read until EOF.
+
+
+
+   .. py:method:: readline(size: int | None = -1) -> str
+
+      Read until newline or EOF.
+
+      Return an empty string if EOF is hit immediately.
+      If size is specified, at most size characters will be read.
+
+
+
+   .. py:method:: readlines(hint: int = -1) -> list[str]
+
+      Return a list of lines from the stream.
+
+      hint can be specified to control the number of lines read: no more
+      lines will be read if the total size (in bytes/characters) of all
+      lines so far exceeds hint.
+
+
+
+   .. py:method:: seek(offset: int, whence: int = io.SEEK_SET) -> int
+
+      Change the stream position to the given byte offset.
+
+        offset
+          The stream position, relative to 'whence'.
+        whence
+          The relative position to seek from.
+
+      The offset is interpreted relative to the position indicated by whence.
+      Values for whence are:
+
+      * os.SEEK_SET or 0 -- start of stream (the default); offset should be zero or positive
+      * os.SEEK_CUR or 1 -- current stream position; offset may be negative
+      * os.SEEK_END or 2 -- end of stream; offset is usually negative
+
+      Return the new absolute position.
+
+
+
+   .. py:method:: tell() -> int
+
+      Return current stream position.
+
+
+
+   .. py:method:: detach() -> NoReturn
+
+      Separate the underlying buffer from the TextIOBase and return it.
+
+      After the underlying buffer has been detached, the TextIO is in an unusable state.
+
+
+
+   .. py:property:: encoding
+      :type: str | None
+
+
+      Encoding of the text stream.
+
+      Subclasses should override.
+
+
+   .. py:property:: errors
+      :type: str | None
+
+
+      The error setting of the decoder or encoder.
+
+      Subclasses should override.
+
+
+   .. py:property:: newlines
+      :type: str | tuple[str, Ellipsis] | None
+
+
+      Line endings translated so far.
+
+      Only line endings translated during reading are considered.
+
+      Subclasses should override.
+
+
+.. py:class:: TextstreamFilename(filename: str | pathlib.Path, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_common.TextstreamCommon`, :py:obj:`httk.core.datastream.textstream_backend.TextstreamBackend`
+
+
+   Backend for streaming text via operations on a file specfied by a filename
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: TextstreamFilenameView(obj: httk.core.datastream.textstream_like.TextstreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_view.TextstreamView`, :py:obj:`str`
+
+
+   A view presenting an underlying data streaming backend via a filename.
+   This view is probably mostly useful for providing filenames to functions that will open them.
+   Note: this view is not lazy (this is impossible for views inherting str, since str is immutable)
+
+   Raises TypeError if created with a streaming data source that does not have a name.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:type:: TextstreamLike
+   :canonical: textstream_backend.TextstreamBackend | textstream_view.TextstreamView | io.TextIOBase | io.StringIO | str | pathlib.Path | urllib.request.Request
+
+
+.. py:class:: TextstreamRequest(request: urllib.request.Request, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_common.TextstreamCommon`, :py:obj:`httk.core.datastream.textstream_backend.TextstreamBackend`
+
+
+   Backend for streaming text fetched via a urllib.request.Request.
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: url
+      :type: str
+
+
+
+   .. py:property:: request
+      :type: urllib.request.Request
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: TextstreamRequestView(obj: httk.core.datastream.textstream_like.TextstreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_view.TextstreamView`, :py:obj:`urllib.request.Request`
+
+
+   A view presenting an underlying data streaming backend via a urllib.request.Request.
+   This view is mostly useful for providing a Request to functions that will open it.
+   Note: this view is not lazy (it does not fetch); it only mirrors the underlying request/URL.
+
+   Raises TypeError if created with a streaming data source that does not come with a URL.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: TextstreamString(content: str, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_common.TextstreamCommon`, :py:obj:`httk.core.datastream.textstream_backend.TextstreamBackend`
+
+
+   Backend for streaming text backed by an actual string
+
+
+   .. py:attribute:: s
+      :type:  str
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: TextstreamStringView(obj: httk.core.datastream.textstream_like.TextstreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_view.TextstreamView`, :py:obj:`str`
+
+
+   A view presenting an underlying data streaming as a string.
+   This view can be used both to pass a string in place of streaming data, and for reading streaming data into a string.
+   Note: this view is not lazy (this is impossible for views inherting str, since str is immutable), hence all the streaming data
+   is read immedately upon creating this view.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: TextstreamURL(url: str, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_common.TextstreamCommon`, :py:obj:`httk.core.datastream.textstream_backend.TextstreamBackend`
+
+
+   Backend for streaming text fetched from a URL string.
+   A bare string is interpreted as a URL when its scheme is one of http, https, ftp, or file,
+   or when an explicit kind="url" hint is given.
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: url
+      :type: str
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: TextstreamURLView(obj: httk.core.datastream.textstream_like.TextstreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_view.TextstreamView`, :py:obj:`str`
+
+
+   A view presenting an underlying data streaming backend via a URL string.
+   This view is mostly useful for providing a URL to functions that will open it.
+   Note: this view is not lazy (this is impossible for views inheriting str, since str is immutable).
+
+   Raises TypeError if created with a streaming data source that does not come with a URL.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: TextstreamView
+
+   Bases: :py:obj:`httk.core.views.View`\ [\ :py:obj:`httk.core.datastream.textstream_backend.TextstreamBackend`\ ]
+
+
+   Abstract base class for all views of streaming text data.
+
+

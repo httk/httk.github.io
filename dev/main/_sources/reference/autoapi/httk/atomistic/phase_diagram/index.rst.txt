@@ -1,0 +1,153 @@
+httk.atomistic.phase_diagram
+============================
+
+.. py:module:: httk.atomistic.phase_diagram
+
+.. autoapi-nested-parse::
+
+   Float linear-programming phase diagrams for atomistic compositions.
+
+   The structure layer keeps coordinates and cells exact. Phase-diagram construction is a
+   deliberate numerical boundary instead: formula-unit counts and total energies are normalized
+   to per-atom floats and a small dense numpy simplex solver constructs the lower convex hull.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.phase_diagram.PhaseDiagram
+
+
+Module Contents
+---------------
+
+.. py:class:: PhaseDiagram(elements: tuple[str, Ellipsis], ids: tuple[str, Ellipsis], compositions: tuple[tuple[float, Ellipsis], Ellipsis], energies_per_atom: tuple[float, Ellipsis], tolerance: float)
+
+   A normalized float convex-hull phase diagram.
+
+   Construct with :meth:`from_compositions` or :meth:`from_structures`. Energies supplied
+   to either factory are total formula-unit or unit-cell energies and are divided by the
+   corresponding atom count. All exposed compositions and energies are plain floats.
+
+   Hull membership uses the requested per-atom energy ``tolerance``. At duplicated
+   compositions only the lowest-energy polymorph is stable, except that every polymorph
+   tied within the tolerance is reported stable. ``None`` decompositions identify stable
+   phases, including uncontested phases whose composition lies outside the convex hull of
+   every other input.
+
+   Tie-lines are every midpoint-supported pair of distinct stable compositions. A stable
+   phase lying genuinely between two others on both their composition and energy segments
+   subsumes the long segment. Distinct pair endpoints are compared exactly; the internal
+   ``1e-9`` composition tolerance is used only to decide whether a third phase lies on
+   their open segment. With four or more exactly coplanar stable phases, crossing diagonals
+   can describe equally valid triangulations; this class reports all midpoint-supported
+   pairs rather than choosing one triangulation.
+
+
+   .. py:method:: from_compositions(compositions: collections.abc.Sequence[collections.abc.Mapping[str, int | float | fractions.Fraction]], energies: collections.abc.Sequence[float], ids: collections.abc.Sequence[str] | None = None, *, tolerance: float = 1e-08) -> Self
+      :classmethod:
+
+
+      Build a diagram from formula-unit compositions and total energies.
+
+      Each composition maps an element label to its count in the formula unit to which
+      the matching total energy refers. Counts must be finite and non-negative, with a
+      strictly positive total atom count. Elements are sorted independently of mapping
+      insertion order before rows are normalized to atomic fractions.
+
+
+
+   .. py:method:: from_structures(structures: collections.abc.Sequence[httk.atomistic.structure_like.StructureLike], energies: collections.abc.Sequence[float], ids: collections.abc.Sequence[str] | None = None, *, tolerance: float = 1e-08) -> Self
+      :classmethod:
+
+
+      Build a diagram from structures and their total unit-cell energies.
+
+      Each site contributes its named species' ``chemical_symbols`` weighted by
+      ``concentration``. ``"vacancy"`` contributes no atoms; ``"X"`` is rejected because
+      an unknown element cannot define a composition coordinate. Default identifiers are
+      deterministic alphabetically sorted labels using the (possibly fractional) unit-cell
+      counts without reducing them.
+
+
+
+   .. py:property:: elements
+      :type: tuple[str, Ellipsis]
+
+
+      Element-coordinate order used by :attr:`compositions`.
+
+
+   .. py:property:: ids
+      :type: tuple[str, Ellipsis]
+
+
+      Phase identifiers in input order.
+
+
+   .. py:property:: compositions
+      :type: tuple[tuple[float, Ellipsis], Ellipsis]
+
+
+      Per-atom composition-fraction rows in :attr:`elements` order.
+
+
+   .. py:property:: energies_per_atom
+      :type: tuple[float, Ellipsis]
+
+
+      Input energies normalized by formula-unit or unit-cell atom count.
+
+
+   .. py:property:: hull_indices
+      :type: tuple[int, Ellipsis]
+
+
+      Stable phase indices in input order.
+
+
+   .. py:property:: energy_above_hull
+      :type: tuple[float, Ellipsis]
+
+
+      Non-negative energy distance from the lower hull in per-atom units.
+
+
+   .. py:property:: phase_lines
+      :type: tuple[tuple[int, int], Ellipsis]
+
+
+      Sorted midpoint-supported stable tie-lines as ``(smaller, larger)`` indices.
+
+
+   .. py:method:: decomposition(index: int) -> tuple[tuple[int, float], Ellipsis] | None
+
+      Optimal stable-phase ``(index, weight)`` pairs, or ``None`` when stable.
+
+
+
+   .. py:method:: is_stable(index: int) -> bool
+
+      Whether the phase at ``index`` is stable within the energy tolerance.
+
+
+
+   .. py:method:: plot(*, ax: Any = None, show_unstable: bool = True, label_stable: bool = True) -> Any
+
+      Plot the phase diagram and return its matplotlib Axes.
+
+      Binary diagrams use the fraction of the second element on the x axis. The y axis is
+      formation energy relative to the lowest stable pure-element endpoints when both are
+      present, and raw energy per atom otherwise. One-element diagrams use raw energy at a
+      single composition point.
+
+      Diagrams with three or more elements use a regular composition polygon whose corner
+      ``k`` is at angle ``2*pi*k/N``. Phase lines are drawn individually in black; stable
+      phases are filled and unstable phases are open. Matplotlib is imported only here and
+      this method never calls ``show`` or writes a file.
+
+
+

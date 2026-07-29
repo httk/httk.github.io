@@ -1,0 +1,30 @@
+httk.web.publishing.static
+==========================
+
+.. py:module:: httk.web.publishing.static
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.web.publishing.static.CONTENT_EXTENSIONS
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.web.publishing.static.publish_site
+
+
+Module Contents
+---------------
+
+.. py:data:: CONTENT_EXTENSIONS
+   :type:  set[str]
+
+.. py:function:: publish_site(*, engine: httk.web.engine.site_engine.SiteEngine, outdir: str | pathlib.Path) -> httk.web.model.page.PublishReport
+

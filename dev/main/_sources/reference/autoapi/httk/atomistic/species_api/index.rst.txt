@@ -1,0 +1,84 @@
+httk.atomistic.species_api
+==========================
+
+.. py:module:: httk.atomistic.species_api
+
+.. autoapi-nested-parse::
+
+   The minimal canonical species interface for httk-atomistic.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.species_api.SpeciesAPI
+
+
+Module Contents
+---------------
+
+.. py:class:: SpeciesAPI
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Abstract base class for the canonical single-species interface.
+
+   It declares the accessors mirroring the OPTIMADE ``species`` fields that every
+   species backend produces from its own native representation and every species view
+   builds its presentation from: ``name``, ``chemical_symbols``, ``concentration``,
+   and the optional ``mass``, ``attached``, ``nattached``, and ``original_name``.
+
+
+   .. py:property:: name
+      :type: str
+
+      :abstractmethod:
+
+
+
+   .. py:property:: chemical_symbols
+      :type: tuple[str, Ellipsis]
+
+      :abstractmethod:
+
+
+
+   .. py:property:: concentration
+      :type: tuple[float, Ellipsis]
+
+      :abstractmethod:
+
+
+
+   .. py:property:: mass
+      :type: tuple[float, Ellipsis] | None
+
+      :abstractmethod:
+
+
+
+   .. py:property:: attached
+      :type: tuple[str, Ellipsis] | None
+
+      :abstractmethod:
+
+
+
+   .. py:property:: nattached
+      :type: tuple[int, Ellipsis] | None
+
+      :abstractmethod:
+
+
+
+   .. py:property:: original_name
+      :type: str | None
+
+      :abstractmethod:
+
+
+

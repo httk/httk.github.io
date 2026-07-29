@@ -1,0 +1,630 @@
+httk.workflow.compat.cwl
+========================
+
+.. py:module:: httk.workflow.compat.cwl
+
+.. autoapi-nested-parse::
+
+   Importing one CWL document as one *httk₂* job.
+
+   The `Common Workflow Language <https://www.commonwl.org/>`_ is supported here as
+   a workflow **language**, not as an execution engine. A document is parsed and
+   validated with `cwl-utils <https://github.com/common-workflow-language/cwl-utils>`_,
+   normalized into one self-contained JSON plan, and then executed entirely by
+   *httk₂*'s own packaged ``cwl_runner.py`` on *httk₂*'s own manager: claims, leases,
+   attempts, checkpoints, labeled children and journalled state frames are the same
+   ones every other job of a workspace gets. **cwltool is not used, not bundled and
+   never invoked.**
+
+   .. code-block:: python
+
+       from httk.workflow import Workspace
+       from httk.workflow.compat.cwl import import_cwl
+
+       workspace = Workspace.initialize("workflow-workspace")
+       imported = import_cwl(workspace, "flow.cwl", "job.yml", tag="echo")
+       print(imported.job.job_key, imported.warnings)
+
+   Parsing needs the optional extra::
+
+       pip install httk-workflow[cwl]
+
+   which brings *cwl-utils* and *cwl-upgrader*. Nothing else in *httk-workflow*
+   depends on either, and the packaged runner that executes the normalized plan
+   needs neither: the plan is plain JSON, so the machine that *runs* an imported CWL
+   job does not need a CWL library at all.
+
+   The supported subset
+   --------------------
+
+   Supported: ``Workflow`` and ``CommandLineTool`` of CWL v1.0, v1.1 and v1.2
+   (older versions are upgraded when *cwl-upgrader* is installed); ``baseCommand``
+   and ``arguments``; input bindings with ``position``, ``prefix``, ``separate``
+   and ``itemSeparator``; the types ``File``, ``Directory``, ``string``, ``int``,
+   ``long``, ``float``, ``double``, ``boolean``, ``Any``, arrays of those, and
+   optional (``?``) forms of all of them; ``stdout``/``stderr`` shortcuts and
+   ``stdout``/``stderr`` redirection; output collection through
+   ``outputBinding.glob`` with ``loadContents``; ``EnvVarRequirement``,
+   ``ResourceRequirement`` (recorded), ``ToolTimeLimit`` (honoured),
+   ``successCodes``; workflow steps with ``source``, ``default``, ``linkMerge`` and
+   plain-reference ``valueFrom``; single-input ``scatter`` and ``dotproduct``
+   ``scatter``; subworkflows; and ``when`` written as one plain parameter
+   reference.
+
+   Rejected, always with the feature name and where it was found: any JavaScript
+   (``InlineJavascriptRequirement``, ``${...}`` bodies, and anything inside
+   ``$(...)`` beyond a plain ``inputs.x``/``runtime.x`` reference), ``ExpressionTool``
+   and ``Operation``, ``nested_crossproduct`` and ``flat_crossproduct``,
+   ``streamable`` inputs and outputs, ``secondaryFiles``, ``outputEval``,
+   ``ShellCommandRequirement``, ``SchemaDefRequirement``,
+   ``InitialWorkDirRequirement``, ``stdin`` redirection, record and enum schemas,
+   and CWL v1.2 loops.
+
+   ``DockerRequirement`` is neither rejected nor honoured: it is recorded as the
+   required capability ``docker`` on the job — so only a manager declaring that
+   capability will claim it — and reported as a warning, because *httk₂* runs the
+   command directly and does not pull, build or enter the image.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.workflow.compat.cwl.DEFAULT_PLACEMENT
+   httk.workflow.compat.cwl.FILES_DIRECTORY
+   httk.workflow.compat.cwl.WORKFLOW
+   httk.workflow.compat.cwl.INITIAL_STEP
+   httk.workflow.compat.cwl.PACKAGE
+   httk.workflow.compat.cwl.RUNNER
+   httk.workflow.compat.cwl.DOCUMENT_FILE
+   httk.workflow.compat.cwl.INPUTS_FILE
+   httk.workflow.compat.cwl.STAGED_DIRECTORY
+   httk.workflow.compat.cwl.DOCKER_CAPABILITY
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   httk.workflow.compat.cwl.UnsupportedCwlError
+   httk.workflow.compat.cwl.CwlImportError
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.workflow.compat.cwl.Workspace
+   httk.workflow.compat.cwl.ScaffoldedJob
+   httk.workflow.compat.cwl.CwlNotes
+   httk.workflow.compat.cwl.ImportedCwl
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.workflow.compat.cwl.submit_integration_job
+   httk.workflow.compat.cwl.load_cwl_plan
+   httk.workflow.compat.cwl.load_cwl_inputs
+   httk.workflow.compat.cwl.stage_cwl_inputs
+   httk.workflow.compat.cwl.import_cwl
+
+
+Package Contents
+----------------
+
+.. py:class:: Workspace(root: str | os.PathLike[str], *, mutable: bool = True, durable: bool = True, marker_index_capacity: int = DEFAULT_MARKER_INDEX_CAPACITY)
+
+   One self-contained httk workflow filesystem workspace.
+
+
+   .. py:attribute:: root
+
+
+   .. py:attribute:: control
+
+
+   .. py:attribute:: runners
+
+
+   .. py:attribute:: durable
+      :value: True
+
+
+
+   .. py:attribute:: format
+
+
+   .. py:attribute:: core_profile
+
+
+   .. py:attribute:: extensions
+
+
+   .. py:attribute:: workspace_id
+      :value: ''
+
+
+
+   .. py:method:: initialize(root: str | os.PathLike[str], *, extensions: collections.abc.Iterable[str] = (), durable: bool = True, policy: collections.abc.Mapping[str, object] | None = None) -> Workspace
+      :classmethod:
+
+
+      Create and return a new workspace.
+
+
+
+   .. py:property:: policy
+      :type: httk.workflow.models.WorkspacePolicy
+
+
+      Return the shared tunables this workspace publishes to every attacher.
+
+
+   .. py:property:: visibility_deadline
+      :type: float
+
+
+      Return how long a metadata visibility retry may keep probing.
+
+
+   .. py:method:: set_policy(changes: collections.abc.Mapping[str, object]) -> httk.workflow.models.WorkspacePolicy
+
+      Validate *changes*, merge them into the stored policy, and publish it.
+
+      The write is an ordinary read-modify-write of ``format.json`` through an
+      exclusively created temporary file and a rename, so a reader never sees
+      a torn object. It is deliberately not serialized against another writer:
+      policy is administrative, changes are rare, and last writer wins.
+
+
+
+   .. py:property:: settings
+      :type: dict[str, object]
+
+
+      Return this workspace's application settings, a flat dotted map.
+
+      Application settings are distinct from :attr:`policy`, which tunes the
+      engine. These are the values an application step resolves at run time —
+      the VASP command, a pseudopotential library — one layer of the
+      job-inputs → environment → workspace → default resolution a runner reads
+      through :meth:`~httk.workflow.sdk.Attempt.setting`. A workspace written
+      before the section existed reads as an empty map.
+
+
+   .. py:method:: set_setting(key: str, value: object) -> dict[str, object]
+
+      Store one application setting and return the resulting map.
+
+      The write is the same read-modify-write of ``format.json`` that
+      :meth:`set_policy` uses: an exclusively created temporary and a rename,
+      so a reader never sees a torn object, and last writer wins.
+
+
+
+   .. py:method:: unset_setting(key: str) -> dict[str, object]
+
+      Remove one application setting, refusing one that is not set.
+
+
+
+   .. py:method:: seed_settings(seeds: collections.abc.Mapping[str, object]) -> dict[str, object]
+
+      Merge *seeds* into the settings, keeping any value already set.
+
+      Seeding happens once, when a workspace bound to a remote is created: the
+      remote definition's whitelisted queue settings become the workspace's
+      starting application settings. An explicit setting already present is
+      never overwritten, so a value the operator chose outlives a reseed.
+
+
+
+   .. py:method:: open_journal_writer(*, writer_id: str | None = None) -> httk.workflow.journal.JournalWriter
+
+      Open one exclusive journal writer configured by workspace policy.
+
+
+
+   .. py:method:: check(*, repair: bool = False, quarantine_unrepairable: bool = False) -> httk.workflow.fsck.FsckReport
+
+      Verify that every marker resolves to its journal frame.
+
+
+
+   .. py:method:: collect_garbage(*, dry_run: bool = False, now: float | None = None) -> httk.workflow.gc.GcReport
+
+      Collect the disk this workspace's retention policy permits freeing.
+
+
+
+   .. py:method:: upgrade(extensions: collections.abc.Iterable[str]) -> frozenset[str]
+
+      Enable extensions that have an implemented in-place migration.
+
+
+
+   .. py:method:: runner_store_path(path: str | pathlib.PurePosixPath) -> pathlib.Path
+
+      Return the store location of one workspace runner.
+
+      The store is flat and name-keyed below ``.httk-workflow/runners/``.
+      Relative subdirectories are permitted so a campaign can group runners,
+      but a name can never escape the store.
+
+
+
+   .. py:method:: publish_runner(source: str | os.PathLike[str], *, name: str | pathlib.PurePosixPath | None = None, replace: bool = False) -> dict[str, object]
+
+      Install one runner in the workspace store and describe the reference.
+
+      Publication is content addressed: republishing identical bytes is an
+      idempotent no-op, and replacing a name whose content differs requires
+      *replace* so a live campaign referring to the old digest can never be
+      changed underneath by accident.
+
+
+
+   .. py:method:: detach(job_id: str, *, destination_workspace_id: str, destination_placement: str | pathlib.PurePosixPath | None = None, transfer_id: str | None = None) -> pathlib.Path
+
+      Seal one quiescent job as a detached transfer bundle.
+
+
+
+   .. py:method:: import_bundle(bundle: str | os.PathLike[str]) -> dict[str, object]
+
+      Import a validated detached transfer bundle.
+
+
+
+   .. py:method:: acknowledge_transfer(acknowledgement: collections.abc.Mapping[str, object]) -> pathlib.Path
+
+      Retire a source bundle after destination acknowledgement.
+
+
+
+   .. py:method:: recover_transfers() -> list[dict[str, object]]
+
+      Recover or report interrupted detached-transfer publications.
+
+
+
+   .. py:method:: state_directory(kind: str, placement: pathlib.PurePosixPath) -> pathlib.Path
+
+
+   .. py:method:: marker_path(kind: str, placement: pathlib.PurePosixPath, job_key: str, priority: int, generation: int, record_ref: str) -> pathlib.Path
+
+
+   .. py:method:: payload_path(placement: pathlib.PurePosixPath, job_key: str) -> pathlib.Path
+
+
+   .. py:method:: walk_markers(kinds: collections.abc.Iterable[str] | None = None, *, roots: collections.abc.Sequence[pathlib.PurePosixPath] = (), heartbeat: collections.abc.Callable[[], None] | None = None, heartbeat_every: int = DISCOVERY_HEARTBEAT_STRIDE) -> collections.abc.Iterator[httk.workflow.models.Marker]
+
+      Stream every schedulable marker of *kinds*, exhaustively.
+
+      This is the streaming, cursorless counterpart of a bounded pass: it walks
+      the same scandir tree with no discovery budget, reports every fault, and
+      takes a heartbeat opportunity every *heartbeat_every* entries so a long
+      exhaustive pass — polling running attempts, recovering claims — keeps its
+      lease alive from inside the walk. A pass MAY restrict itself to placement
+      *roots*; the debug workspace narrows what it surfaces through its private
+      ``_scheduling_includes`` hook.
+
+
+
+   .. py:method:: scan_marker_entries(kinds: collections.abc.Iterable[str] | None = None) -> collections.abc.Iterator[httk.workflow.models.Marker | MarkerFault]
+
+      Yield every marker below ``state/``, reporting damage per entry.
+
+      One unusable entry must never hide the rest of the workspace, so a
+      marker-shaped basename that fails validation is reported as a
+      :class:`MarkerFault` instead of aborting the scan. This is the exhaustive
+      walk the workspace tools (fsck, collection, status, harvest) use; the
+      scheduling passes use the bounded :class:`~httk.workflow.workspace.MarkerStream` instead.
+
+
+
+   .. py:method:: scan_markers(kinds: collections.abc.Iterable[str] | None = None) -> collections.abc.Iterable[httk.workflow.models.Marker]
+
+
+   .. py:method:: report_marker_fault(fault: MarkerFault) -> None
+
+      Report an uninterpretable state entry loudly once, then quietly.
+
+      A marker whose basename or placement cannot be parsed is workspace
+      corruption rather than a job state: the core profile leaves its repair
+      to an explicit workspace tool, so a manager only reports it and never
+      schedules or relocates it.
+
+
+
+   .. py:method:: invalidate_marker_index() -> None
+
+      Drop the cached job-id index, so the next lookup rebuilds it.
+
+
+
+   .. py:method:: find_markers(job_key: str, kinds: collections.abc.Iterable[str] | None = None) -> list[httk.workflow.models.Marker]
+
+
+   .. py:method:: find_marker_by_id(job_id: str) -> httk.workflow.models.Marker | None
+
+      Return the one current marker of *job_id*, or ``None`` if it has none.
+
+      Resolution follows the specified ladder: the in-memory index, then a
+      targeted probe of the finite state set at the placement the index last
+      saw, then one complete rescan. Absence is only ever reported after that
+      rescan, so a job another actor has just created or moved is never
+      mistaken for a job that does not exist.
+
+
+
+   .. py:method:: find_marker_at(job_key: str, placement: pathlib.PurePosixPath) -> httk.workflow.models.Marker | None
+
+      Find *job_key* by checking the finite state set at a placement.
+
+      This is the first rung of the resolution ladder: a join child carrying a
+      placement hint is resolved here, without the index and without a scan.
+      The index is used only as a shortcut when it already names this job at
+      exactly this placement, which turns the bounded directory sweep below
+      into one confirmed lookup.
+
+
+
+   .. py:method:: load_job(marker: httk.workflow.models.Marker) -> httk.workflow.models.JobDefinition
+
+
+   .. py:method:: read_state(marker: httk.workflow.models.Marker) -> dict[str, Any]
+
+
+   .. py:method:: transition(writer: httk.workflow.journal.JournalWriter, marker: httk.workflow.models.Marker, kind: str, updates: collections.abc.Mapping[str, object], *, priority: int | None = None) -> httk.workflow.models.Marker
+
+      Append a state frame and atomically move *marker* to it.
+
+
+
+   .. py:method:: repoint_marker(writer: httk.workflow.journal.JournalWriter, marker: httk.workflow.models.Marker, frame: collections.abc.Mapping[str, object]) -> httk.workflow.models.Marker
+
+      Publish a repair frame for *marker* and move the marker onto it.
+
+      This is the repair counterpart of :meth:`transition`. The caller supplies
+      the complete frame because what needs repairing is precisely the frame
+      the marker references now, which cannot be read and therefore cannot be
+      carried forward automatically. The frame must still name this marker's
+      job and kind at the next generation, so a repair can never disguise a
+      state change as a repair.
+
+
+
+   .. py:method:: submit(source: str | os.PathLike[str], placement: str | pathlib.PurePosixPath, *, move: bool = False) -> httk.workflow.models.Marker
+
+      Copy or move a complete payload into the workspace and publish it.
+
+
+
+   .. py:method:: validate_job_payload(marker: httk.workflow.models.Marker) -> httk.workflow.models.JobDefinition
+
+      Perform manager-side immutable submission validation.
+
+
+
+   .. py:method:: quarantine(path: pathlib.Path, *, reason: str) -> pathlib.Path
+
+      Move a malformed protocol entry into the canonical quarantine.
+
+
+
+   .. py:method:: payload_digest(marker: httk.workflow.models.Marker) -> str
+
+      Return the digest of one payload, ignoring runner-private entries.
+
+
+
+   .. py:method:: publish_request(request: collections.abc.Mapping[str, object]) -> pathlib.Path
+
+      Atomically publish an operator request.
+
+
+
+.. py:data:: DEFAULT_PLACEMENT
+   :value: 'jobs'
+
+
+.. py:data:: FILES_DIRECTORY
+   :value: 'files'
+
+
+.. py:class:: ScaffoldedJob
+
+   One job this module submitted, and everything needed to look at it again.
+
+
+   .. py:attribute:: job_id
+      :type:  str
+
+
+   .. py:attribute:: job_key
+      :type:  str
+
+
+   .. py:attribute:: tag
+      :type:  str | None
+
+
+   .. py:attribute:: placement
+      :type:  pathlib.PurePosixPath
+
+
+   .. py:attribute:: payload
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: marker
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: workflow
+      :type:  str
+
+
+   .. py:attribute:: initial_step
+      :type:  str
+
+
+   .. py:attribute:: template
+      :type:  str
+
+
+   .. py:attribute:: runner
+      :type:  collections.abc.Mapping[str, object]
+
+
+   .. py:method:: as_mapping() -> dict[str, object]
+
+      Return the machine-readable report of this job.
+
+
+
+.. py:function:: submit_integration_job(workspace: httk.workflow.Workspace, *, runner_package: str, runner: str, workflow: str, initial_step: str, name: str, inputs: collections.abc.Mapping[str, object], documents: collections.abc.Mapping[str, str] | None = None, files: collections.abc.Mapping[str, str | os.PathLike[str]] | None = None, tag: str | None = None, placement: str | pathlib.PurePosixPath = DEFAULT_PLACEMENT, priority: int | None = None, data_mode: Literal['none', 'transactional'] = 'none', workdir_mode: Literal['persistent', 'isolated'] = 'persistent', required_capabilities: tuple[str, Ellipsis] = (), maximum_attempts_per_activation: int | None = None, template: str = 'import') -> httk.workflow.scaffold.ScaffoldedJob
+
+   Build one payload for a packaged integration runner and submit it.
+
+   *documents* are written verbatim into the payload and *files* are copied
+   into it, both under the naming rule of
+   :func:`~httk.workflow.scaffold.payload_relative`: a bare name lands in
+   ``files/`` and a name carrying a directory is used as written. The payload is
+   built inside the workspace's own scratch directory, so submitting it is a
+   rename rather than a copy however large the staged inputs are.
+
+
+.. py:data:: WORKFLOW
+   :value: 'cwl.workflow'
+
+
+.. py:data:: INITIAL_STEP
+   :value: 'start'
+
+
+.. py:data:: PACKAGE
+   :value: 'httk.workflow.compat.cwl'
+
+
+.. py:data:: RUNNER
+   :value: 'cwl_runner.py'
+
+
+.. py:data:: DOCUMENT_FILE
+   :value: 'files/workflow.cwl.json'
+
+
+.. py:data:: INPUTS_FILE
+   :value: 'files/inputs.json'
+
+
+.. py:data:: STAGED_DIRECTORY
+   :value: 'files/inputs'
+
+
+.. py:data:: DOCKER_CAPABILITY
+   :value: 'docker'
+
+
+.. py:exception:: UnsupportedCwlError
+
+   Bases: :py:obj:`ValueError`
+
+
+   One CWL feature outside the subset *httk₂* executes.
+
+
+.. py:exception:: CwlImportError
+
+   Bases: :py:obj:`ValueError`
+
+
+   A CWL document that cannot be read, parsed or staged at all.
+
+
+.. py:class:: CwlNotes
+
+   What one normalization pass accumulates besides the plan itself.
+
+   A note is never a refusal: everything here was accepted, and every entry is
+   something an operator should nevertheless be told — a container that will not
+   be entered, a hint that was dropped — or something the job must carry, like
+   the capabilities a document implies.
+
+
+   .. py:attribute:: warnings
+      :type:  list[str]
+      :value: []
+
+
+
+   .. py:attribute:: capabilities
+      :type:  set[str]
+
+
+.. py:class:: ImportedCwl
+
+   One imported CWL document: the job, the plan, and what was noted.
+
+
+   .. py:attribute:: job
+      :type:  httk.workflow.compat._integration.ScaffoldedJob
+
+
+   .. py:attribute:: document
+      :type:  collections.abc.Mapping[str, object]
+
+
+   .. py:attribute:: inputs
+      :type:  collections.abc.Mapping[str, object]
+
+
+   .. py:attribute:: warnings
+      :type:  tuple[str, Ellipsis]
+
+
+.. py:function:: load_cwl_plan(workflow_path: str | os.PathLike[str]) -> tuple[dict[str, object], CwlNotes]
+
+   Parse, check and normalize one CWL document into the plan httk executes.
+
+
+.. py:function:: load_cwl_inputs(inputs_path: str | os.PathLike[str]) -> dict[str, object]
+
+   Read one CWL input object, as YAML when a YAML reader is installed.
+
+
+.. py:function:: stage_cwl_inputs(values: collections.abc.Mapping[str, object], base: pathlib.Path, documents: dict[str, str], files: dict[str, str | os.PathLike[str]]) -> dict[str, object]
+
+   Return the input object with every File and Directory staged in the payload.
+
+   A staged entry carries a payload-relative ``payload`` member instead of a
+   ``path``, so the job is self-contained: it travels to another machine with
+   the files its first tool reads.
+
+
+.. py:function:: import_cwl(workspace: httk.workflow.Workspace, workflow_path: str | os.PathLike[str], inputs_path: str | os.PathLike[str], *, placement: str | pathlib.PurePosixPath = DEFAULT_PLACEMENT, tag: str | None = None, name: str | None = None, priority: int | None = None, data_mode: Literal['none', 'transactional'] = 'none', maximum_attempts: int | None = 3, timeout: float | None = None) -> ImportedCwl
+
+   Import one CWL document and its input object as one submitted job.
+
+   The document is parsed with *cwl-utils*, checked against the supported
+   subset, normalized into one self-contained JSON plan with every ``run:``
+   reference inlined, and staged in the payload together with the input object
+   and every local file it names. The job runs the packaged ``cwl_runner.py``
+   through the reserved installed form, so no runner file is written per
+   workflow.
+
+   Anything outside the subset raises :exc:`~httk.workflow.compat.cwl.UnsupportedCwlError` naming the
+   feature and where it was found; anything accepted with a caveat — a
+   ``DockerRequirement``, an ignored hint — is reported in
+   :attr:`~httk.workflow.compat.cwl.ImportedCwl.warnings`.
+
+

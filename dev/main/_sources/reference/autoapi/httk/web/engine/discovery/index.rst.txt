@@ -1,0 +1,35 @@
+httk.web.engine.discovery
+=========================
+
+.. py:module:: httk.web.engine.discovery
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.web.engine.discovery.DEFAULT_CONTENT_EXTENSIONS
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.web.engine.discovery.normalize_route
+   httk.web.engine.discovery.resolve_route
+
+
+Module Contents
+---------------
+
+.. py:data:: DEFAULT_CONTENT_EXTENSIONS
+   :type:  tuple[str, Ellipsis]
+   :value: ('.md', '.rst', '.html', '.httkweb')
+
+
+.. py:function:: normalize_route(route: str) -> str
+
+.. py:function:: resolve_route(config: httk.web.model.config.SiteConfig, route: str) -> httk.web.model.page.ResolvedRoute
+

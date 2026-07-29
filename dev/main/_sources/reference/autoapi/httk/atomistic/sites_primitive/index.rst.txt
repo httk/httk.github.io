@@ -1,0 +1,47 @@
+httk.atomistic.sites_primitive
+==============================
+
+.. py:module:: httk.atomistic.sites_primitive
+
+.. autoapi-nested-parse::
+
+   Backend wrapping a raw Nx3 matrix of reduced coordinates.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.sites_primitive.SitesPrimitive
+
+
+Module Contents
+---------------
+
+.. py:class:: SitesPrimitive(obj: Any, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.sites_backend.SitesBackend`
+
+
+   Backend for sites backed by a raw Nx3 list or tuple of numbers (or any Nx3 vector-like).
+
+   The native representation is preserved verbatim (one site per row); the exact rational
+   :class:`~httk.core.FracVector` ``reduced_coords`` are built lazily and cached, and ``unwrap``
+   returns the original raw object.
+
+
+   .. py:property:: reduced_coords
+      :type: httk.core.FracVector
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

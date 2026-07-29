@@ -1,0 +1,56 @@
+httk.optimade.endpoints
+=======================
+
+.. py:module:: httk.optimade.endpoints
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/optimade/endpoints/entries/index
+   /reference/autoapi/httk/optimade/endpoints/error/index
+   /reference/autoapi/httk/optimade/endpoints/info/index
+   /reference/autoapi/httk/optimade/endpoints/meta/index
+   /reference/autoapi/httk/optimade/endpoints/partial_data/index
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.optimade.endpoints.generate_entry_endpoint_reply
+   httk.optimade.endpoints.generate_single_entry_endpoint_reply
+   httk.optimade.endpoints.format_optimade_error
+   httk.optimade.endpoints.generate_base_endpoint_reply
+   httk.optimade.endpoints.generate_entry_info_endpoint_reply
+   httk.optimade.endpoints.generate_info_endpoint_reply
+   httk.optimade.endpoints.generate_links_endpoint_reply
+   httk.optimade.endpoints.generate_versions_endpoint_reply
+   httk.optimade.endpoints.generate_meta
+
+
+Package Contents
+----------------
+
+.. py:function:: generate_entry_endpoint_reply(request: httk.optimade.model.request.ValidatedRequest, config: httk.optimade.model.config.OptimadeConfig, data: httk.optimade.model.results.QueryResults, related_resolver: RelatedResolver | None = None) -> dict[str, Any]
+
+.. py:function:: generate_single_entry_endpoint_reply(request: httk.optimade.model.request.ValidatedRequest, config: httk.optimade.model.config.OptimadeConfig, data: httk.optimade.model.results.QueryResults, related_resolver: RelatedResolver | None = None) -> dict[str, Any]
+
+.. py:function:: format_optimade_error(ex: Exception, request: httk.optimade.model.request.RawRequest, config: httk.optimade.model.config.OptimadeConfig, version: str = optimade_default_version) -> httk.optimade.model.request.EndpointResponse
+
+.. py:function:: generate_base_endpoint_reply(request: httk.optimade.model.request.ValidatedRequest, config: httk.optimade.model.config.OptimadeConfig) -> str
+
+.. py:function:: generate_entry_info_endpoint_reply(request: httk.optimade.model.request.ValidatedRequest, config: httk.optimade.model.config.OptimadeConfig, entry: str, schema: httk.optimade.schema.served.ServedSchema) -> dict[str, Any]
+
+.. py:function:: generate_info_endpoint_reply(request: httk.optimade.model.request.ValidatedRequest, config: httk.optimade.model.config.OptimadeConfig, schema: httk.optimade.schema.served.ServedSchema) -> dict[str, Any]
+
+.. py:function:: generate_links_endpoint_reply(request: httk.optimade.model.request.ValidatedRequest, config: httk.optimade.model.config.OptimadeConfig) -> dict[str, Any]
+
+.. py:function:: generate_versions_endpoint_reply(request: httk.optimade.model.request.ValidatedRequest, config: httk.optimade.model.config.OptimadeConfig) -> str
+
+.. py:function:: generate_meta(*, representation: str, api_version: str, config: httk.optimade.model.config.OptimadeConfig, data_count: int | None = None, more_data_available: bool = False, data_available: int | None = None, warnings: list[dict[str, Any]] | None = None, last_id: str | None = None) -> dict[str, Any]
+

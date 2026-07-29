@@ -1,0 +1,32 @@
+httk.optimade.runtime
+=====================
+
+.. py:module:: httk.optimade.runtime
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/optimade/runtime/asgi/index
+   /reference/autoapi/httk/optimade/runtime/devserver/index
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.optimade.runtime.create_app
+   httk.optimade.runtime.run_dev_server
+
+
+Package Contents
+----------------
+
+.. py:function:: create_app(*, query_function: httk.optimade.model.results.QueryFunction, config: httk.optimade.model.config.OptimadeConfig, schema: httk.optimade.schema.served.ServedSchema, baseurl: str | None = None, debug: bool = False) -> starlette.applications.Starlette
+
+.. py:function:: run_dev_server(*, app: starlette.applications.Starlette, host: str, port: int) -> None
+

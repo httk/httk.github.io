@@ -1,0 +1,169 @@
+httk.workflow.backends
+======================
+
+.. py:module:: httk.workflow.backends
+
+.. autoapi-nested-parse::
+
+   Runner-backend contracts used by the workflow manager.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.workflow.backends.AttemptLaunch
+   httk.workflow.backends.OutcomeCommit
+   httk.workflow.backends.RunnerBackend
+   httk.workflow.backends.PathRunnerBackend
+
+
+Module Contents
+---------------
+
+.. py:class:: AttemptLaunch
+
+   Paths and context needed to construct an attempt command.
+
+   ``runner`` is the executable the manager resolved for this attempt. A
+   payload runner is the file inside ``payload``; a shared runner is the
+   verified copy the manager staged below ``control``, never the original.
+
+
+   .. py:attribute:: job
+      :type:  httk.workflow.models.JobDefinition
+
+
+   .. py:attribute:: marker
+      :type:  httk.workflow.models.Marker
+
+
+   .. py:attribute:: payload
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: workdir
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: control
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: context_path
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: context
+      :type:  collections.abc.Mapping[str, Any]
+
+
+   .. py:attribute:: runner
+      :type:  pathlib.Path | None
+      :value: None
+
+
+
+   .. py:property:: runner_command
+      :type: pathlib.Path
+
+
+      Return the executable to run, defaulting to the payload runner.
+
+
+.. py:class:: OutcomeCommit
+
+   A published outcome being committed by the authoritative manager.
+
+
+   .. py:attribute:: job
+      :type:  httk.workflow.models.JobDefinition
+
+
+   .. py:attribute:: marker
+      :type:  httk.workflow.models.Marker
+
+
+   .. py:attribute:: payload
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: outcome_path
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: outcome
+      :type:  collections.abc.Mapping[str, Any]
+
+
+.. py:class:: RunnerBackend
+
+   Bases: :py:obj:`Protocol`
+
+
+   Execution behavior selected by ``runner.backend`` in ``job.json``.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:method:: validate(job: httk.workflow.models.JobDefinition, payload: pathlib.Path) -> None
+
+      Validate backend-specific immutable payload requirements.
+
+
+
+   .. py:method:: command(launch: AttemptLaunch) -> collections.abc.Sequence[str]
+      :abstractmethod:
+
+
+      Return the command argument vector for one attempt.
+
+
+
+   .. py:method:: commit_outcome(commit: OutcomeCommit) -> None
+
+      Complete backend-specific idempotent work before the marker advances.
+
+
+
+   .. py:method:: reconcile(workspace: httk.workflow.workspace.Workspace) -> None
+
+      Repair backend-specific derived views; never alter authoritative state.
+
+
+
+   .. py:method:: marker_changed(workspace: httk.workflow.workspace.Workspace, marker: httk.workflow.models.Marker) -> None
+
+      Refresh derived views after an authoritative marker transition.
+
+
+
+.. py:class:: PathRunnerBackend
+
+   The normal backend which directly executes ``runner.path``.
+
+
+   .. py:attribute:: name
+      :value: 'path'
+
+
+
+   .. py:method:: validate(job: httk.workflow.models.JobDefinition, payload: pathlib.Path) -> None
+
+
+   .. py:method:: command(launch: AttemptLaunch) -> collections.abc.Sequence[str]
+
+
+   .. py:method:: commit_outcome(commit: OutcomeCommit) -> None
+
+
+   .. py:method:: reconcile(workspace: httk.workflow.workspace.Workspace) -> None
+
+
+   .. py:method:: marker_changed(workspace: httk.workflow.workspace.Workspace, marker: httk.workflow.models.Marker) -> None
+
+

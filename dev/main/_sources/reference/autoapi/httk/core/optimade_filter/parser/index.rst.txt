@@ -1,0 +1,84 @@
+httk.core.optimade_filter.parser
+================================
+
+.. py:module:: httk.core.optimade_filter.parser
+
+.. autoapi-nested-parse::
+
+   Parser for the OPTIMADE filter language.
+
+   Parses an OPTIMADE filter string into a nested tuple abstract syntax tree
+   (the "ojf" format), e.g.::
+
+       ('AND', ('HAS_ALL', ('=', '='), ('Identifier', 'elements'),
+                (('String', 'Ga'), ('String', 'Ti'))),
+               ('OR', ('=', ('Identifier', 'nelements'), ('Number', '3')),
+                      ('=', ('Identifier', 'nelements'), ('Number', '2'))))
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.core.optimade_filter.parser.FilterAst
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   httk.core.optimade_filter.parser.ParserError
+   httk.core.optimade_filter.parser.ParserSyntaxError
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.optimade_filter.parser.parse_optimade_filter
+   httk.core.optimade_filter.parser.parse_optimade_filter_raw
+
+
+Module Contents
+---------------
+
+.. py:exception:: ParserError
+
+   Bases: :py:obj:`Exception`
+
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: ParserSyntaxError(*args: Any)
+
+   Bases: :py:obj:`ParserError`
+
+
+   Common base class for all non-exit exceptions.
+
+
+   .. py:attribute:: info
+
+
+   .. py:attribute:: line
+
+
+   .. py:attribute:: pos
+
+
+   .. py:attribute:: linestr
+
+
+.. py:type:: FilterAst
+   :canonical: tuple[Any, ...]
+
+
+.. py:function:: parse_optimade_filter(filter_string: str, verbosity: int | Any = 0) -> FilterAst
+
+.. py:function:: parse_optimade_filter_raw(filter_string: str, verbosity: int | Any = 0) -> tuple[Any, Ellipsis]
+

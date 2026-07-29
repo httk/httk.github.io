@@ -1,0 +1,231 @@
+httk.web.model
+==============
+
+.. py:module:: httk.web.model
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/web/model/config/index
+   /reference/autoapi/httk/web/model/errors/index
+   /reference/autoapi/httk/web/model/page/index
+   /reference/autoapi/httk/web/model/request/index
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   httk.web.model.FunctionInjectionError
+   httk.web.model.NotFoundError
+   httk.web.model.WebError
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.web.model.SiteConfig
+   httk.web.model.PageResult
+   httk.web.model.PublishReport
+   httk.web.model.ResolvedRoute
+   httk.web.model.HttpRequestContext
+
+
+Package Contents
+----------------
+
+.. py:class:: SiteConfig
+
+   .. py:attribute:: srcdir
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: content_subdir
+      :type:  str
+      :value: 'content'
+
+
+
+   .. py:attribute:: static_subdir
+      :type:  str
+      :value: 'static'
+
+
+
+   .. py:attribute:: template_subdir
+      :type:  str
+      :value: 'templates'
+
+
+
+   .. py:attribute:: functions_subdir
+      :type:  str
+      :value: 'functions'
+
+
+
+   .. py:attribute:: baseurl
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: host_static
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: compatibility_mode
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: config_name
+      :type:  str
+      :value: 'config'
+
+
+
+   .. py:attribute:: publish_use_urls_without_ext
+      :type:  bool
+      :value: True
+
+
+
+   .. py:method:: from_srcdir(srcdir: str | pathlib.Path, *, baseurl: str | None = None, host_static: str | None = None, compatibility_mode: bool = False, config_name: str = 'config', publish_use_urls_without_ext: bool = True) -> Self
+      :classmethod:
+
+
+
+   .. py:property:: content_dir
+      :type: pathlib.Path
+
+
+
+   .. py:property:: static_dir
+      :type: pathlib.Path
+
+
+
+   .. py:property:: template_dir
+      :type: pathlib.Path
+
+
+
+   .. py:property:: functions_dir
+      :type: pathlib.Path
+
+
+
+.. py:exception:: FunctionInjectionError(message: str)
+
+   Bases: :py:obj:`WebError`
+
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: NotFoundError(message: str = 'Not Found')
+
+   Bases: :py:obj:`WebError`
+
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: WebError(message: str, *, status_code: int = 500)
+
+   Bases: :py:obj:`Exception`
+
+
+   Common base class for all non-exit exceptions.
+
+
+   .. py:attribute:: status_code
+      :value: 500
+
+
+
+.. py:class:: PageResult
+
+   .. py:attribute:: status_code
+      :type:  int
+
+
+   .. py:attribute:: content_type
+      :type:  str
+
+
+   .. py:attribute:: body
+      :type:  bytes
+
+
+   .. py:attribute:: metadata
+      :type:  dict[str, object]
+
+
+   .. py:attribute:: warnings
+      :type:  list[str]
+      :value: []
+
+
+
+.. py:class:: PublishReport
+
+   .. py:attribute:: written_files
+      :type:  list[pathlib.Path]
+      :value: []
+
+
+
+   .. py:attribute:: warnings
+      :type:  list[str]
+      :value: []
+
+
+
+.. py:class:: ResolvedRoute
+
+   .. py:attribute:: kind
+      :type:  Literal['static', 'content', 'missing']
+
+
+   .. py:attribute:: route
+      :type:  str
+
+
+   .. py:attribute:: source_path
+      :type:  pathlib.Path | None
+      :value: None
+
+
+
+.. py:class:: HttpRequestContext
+
+   .. py:attribute:: method
+      :type:  str
+      :value: 'GET'
+
+
+
+   .. py:attribute:: query
+      :type:  dict[str, str]
+
+
+   .. py:attribute:: postvars
+      :type:  dict[str, str]
+
+
+   .. py:attribute:: headers
+      :type:  dict[str, str]
+
+

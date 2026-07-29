@@ -1,0 +1,42 @@
+httk.core.datastream.textstream_url
+===================================
+
+.. py:module:: httk.core.datastream.textstream_url
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.datastream.textstream_url.TextstreamURL
+
+
+Module Contents
+---------------
+
+.. py:class:: TextstreamURL(url: str, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_common.TextstreamCommon`, :py:obj:`httk.core.datastream.textstream_backend.TextstreamBackend`
+
+
+   Backend for streaming text fetched from a URL string.
+   A bare string is interpreted as a URL when its scheme is one of http, https, ftp, or file,
+   or when an explicit kind="url" hint is given.
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: url
+      :type: str
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+

@@ -1,0 +1,26 @@
+httk.atomistic.species_like
+===========================
+
+.. py:module:: httk.atomistic.species_like
+
+.. autoapi-nested-parse::
+
+   The accepted-input union for species functions in httk-atomistic.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.atomistic.species_like.SpeciesLike
+
+
+Module Contents
+---------------
+
+.. py:type:: SpeciesLike
+   :canonical: species_backend.SpeciesBackend | species_view.SpeciesView | species.Species | dict[str, Any] | str | int
+
+

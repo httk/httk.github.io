@@ -1,0 +1,69 @@
+httk.optimade.backend.translation
+=================================
+
+.. py:module:: httk.optimade.backend.translation
+
+.. autoapi-nested-parse::
+
+   Translation of OPTIMADE filter syntax trees into backend search expressions.
+
+   The generic translation is implemented in :mod:`httk.data.optimade_query`;
+   :func:`translate_filter` delegates to
+   :func:`~httk.data.optimade_query.translate_filter_ast` and wraps its neutral
+   :class:`~httk.data.optimade_query.FilterTranslationError` failure categories
+   into :class:`~httk.optimade.model.errors.TranslatorError` HTTP errors.
+   :func:`format_value` and :func:`translate_filter_node` are thin
+   OPTIMADE-side wrappers over the upstream functions.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.optimade.backend.translation.format_value
+   httk.optimade.backend.translation.translate_filter
+   httk.optimade.backend.translation.translate_filter_node
+
+
+Module Contents
+---------------
+
+.. py:function:: format_value(fulltype: str, val: tuple[Any, Ellipsis], allow_null: bool = False) -> Any
+
+   Convert a filter value and translate neutral failures to HTTP errors.
+
+   Delegates to :func:`httk.data.optimade_query.format_value` and raises
+   :class:`~httk.optimade.model.errors.TranslatorError` for its neutral
+   :class:`~httk.data.optimade_query.FilterTranslationError` failures.
+
+
+.. py:function:: translate_filter(filter_ast: httk.core.FilterAst | None, entries: list[str], adapter: httk.optimade.backend.adapter.BackendAdapter, sort: collections.abc.Sequence[tuple[str, bool]] | None = None) -> list[tuple[httk.optimade.backend.adapter.EntrySource, httk.data.query.Searcher]]
+
+   Build one searcher per entry source, with the filter applied to each.
+
+   Relationship-property filters (dotted identifiers over served entry types)
+   are resolved through the adapter's related-property resolver (built by
+   ``_related_property_resolver``), so filtering ``references.doi`` behaves
+   exactly like filtering ``/references`` directly.
+
+
+.. py:function:: translate_filter_node(node: httk.core.FilterAst, search_variable: httk.data.query.SearchVariable, entry: str, entry_info: collections.abc.Mapping[str, Any], handlers: httk.data.optimade_query.HandlerTable, recognized_prefixes: tuple[str, Ellipsis], served_entries: tuple[str, Ellipsis] = ()) -> httk.data.query.SearchExpression
+
+   Translate one filter node against an OPTIMADE *entry-info* property mapping.
+
+   An OPTIMADE-side adaptation of
+   :func:`~httk.data.optimade_query.translate_filter_ast`: ``entry_info`` maps
+   property names to their property dictionaries (only their ``'fulltype'``
+   keys are read) rather than straight to fulltypes, ``served_entries`` names
+   the relationship targets, and failures surface as
+   :class:`~httk.optimade.model.errors.TranslatorError` instead of the
+   upstream neutral :class:`~httk.data.optimade_query.FilterTranslationError`.
+
+   No related-property resolver is threaded through, so relationship-property
+   filters other than ``<type>.id HAS ...`` raise a not-implemented (501)
+   error. Use :func:`translate_filter` (which builds the resolver from its
+   adapter) for full relationship-property filtering.
+
+

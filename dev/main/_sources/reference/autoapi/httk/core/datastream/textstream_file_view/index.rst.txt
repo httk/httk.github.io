@@ -1,0 +1,175 @@
+httk.core.datastream.textstream_file_view
+=========================================
+
+.. py:module:: httk.core.datastream.textstream_file_view
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.datastream.textstream_file_view.TextstreamFileView
+
+
+Module Contents
+---------------
+
+.. py:class:: TextstreamFileView(obj: httk.core.datastream.textstream_like.TextstreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_view.TextstreamView`, :py:obj:`io.TextIOBase`, :py:obj:`httk.core.datastream.textstream_api.TextstreamAPI`
+
+
+   A view presenting an underlying data streaming backend via the full io.TextIOBase API, which is a superset of TextstreamAPI.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+   .. py:method:: close() -> None
+
+      Flush and close the IO object.
+
+      This method has no effect if the file is already closed.
+
+
+
+   .. py:method:: readable() -> bool
+
+      Return whether object was opened for reading.
+
+      If False, read() will raise OSError.
+
+
+
+   .. py:method:: writable() -> bool
+
+      Return whether object was opened for writing.
+
+      If False, write() will raise OSError.
+
+
+
+   .. py:method:: seekable() -> bool
+
+      Return whether object supports random access.
+
+      If False, seek(), tell() and truncate() will raise OSError.
+      This method may need to do a test seek().
+
+
+
+   .. py:method:: flush() -> None
+
+      Flush write buffers, if applicable.
+
+      This is not implemented for read-only and non-blocking streams.
+
+
+
+   .. py:method:: read(size: int | None = -1) -> str
+
+      Read at most size characters from stream.
+
+      Read from underlying buffer until we have size characters or we hit EOF.
+      If size is negative or omitted, read until EOF.
+
+
+
+   .. py:method:: readline(size: int | None = -1) -> str
+
+      Read until newline or EOF.
+
+      Return an empty string if EOF is hit immediately.
+      If size is specified, at most size characters will be read.
+
+
+
+   .. py:method:: readlines(hint: int = -1) -> list[str]
+
+      Return a list of lines from the stream.
+
+      hint can be specified to control the number of lines read: no more
+      lines will be read if the total size (in bytes/characters) of all
+      lines so far exceeds hint.
+
+
+
+   .. py:method:: seek(offset: int, whence: int = io.SEEK_SET) -> int
+
+      Change the stream position to the given byte offset.
+
+        offset
+          The stream position, relative to 'whence'.
+        whence
+          The relative position to seek from.
+
+      The offset is interpreted relative to the position indicated by whence.
+      Values for whence are:
+
+      * os.SEEK_SET or 0 -- start of stream (the default); offset should be zero or positive
+      * os.SEEK_CUR or 1 -- current stream position; offset may be negative
+      * os.SEEK_END or 2 -- end of stream; offset is usually negative
+
+      Return the new absolute position.
+
+
+
+   .. py:method:: tell() -> int
+
+      Return current stream position.
+
+
+
+   .. py:method:: detach() -> NoReturn
+
+      Separate the underlying buffer from the TextIOBase and return it.
+
+      After the underlying buffer has been detached, the TextIO is in an unusable state.
+
+
+
+   .. py:property:: encoding
+      :type: str | None
+
+
+      Encoding of the text stream.
+
+      Subclasses should override.
+
+
+   .. py:property:: errors
+      :type: str | None
+
+
+      The error setting of the decoder or encoder.
+
+      Subclasses should override.
+
+
+   .. py:property:: newlines
+      :type: str | tuple[str, Ellipsis] | None
+
+
+      Line endings translated so far.
+
+      Only line endings translated during reading are considered.
+
+      Subclasses should override.
+
+

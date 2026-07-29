@@ -1,0 +1,40 @@
+httk.core.datastream.textstream_common
+======================================
+
+.. py:module:: httk.core.datastream.textstream_common
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.datastream.textstream_common.TextstreamCommon
+
+
+Module Contents
+---------------
+
+.. py:class:: TextstreamCommon
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Common superclass for many of the implementations of backends for streaming text data.
+
+
+   .. py:method:: unwrap() -> io.TextIOBase
+
+
+   .. py:method:: read(size: int = -1) -> str
+
+
+   .. py:method:: close() -> None
+
+
+   .. py:method:: seek(offset: int, whence: int = os.SEEK_SET) -> int
+
+
+   .. py:method:: tell() -> int
+
+

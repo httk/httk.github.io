@@ -1,0 +1,60 @@
+httk.atomistic.sites_class
+==========================
+
+.. py:module:: httk.atomistic.sites_class
+
+.. autoapi-nested-parse::
+
+   Backend wrapping a Sites object in the class representation.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.sites_class.SitesClass
+
+
+Module Contents
+---------------
+
+.. py:class:: SitesClass(obj: httk.atomistic.sites.Sites, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.sites_backend.SitesBackend`
+
+
+   Backend for sites backed by an actual ``Sites`` object.
+
+   Its ``reduced_coords`` accessor delegates to the wrapped Sites, and ``unwrap``
+   returns that Sites.
+
+
+   .. py:property:: reduced_coords
+      :type: httk.core.FracVector
+
+
+
+   .. py:property:: precision
+      :type: fractions.Fraction | None
+
+
+      How precisely the coordinates were stated, in fractional units, or ``None``.
+
+      Fractional, not a length: reduced coordinates are dimensionless and a ``Sites`` has
+      no cell to convert with. :meth:`~httk.atomistic.Structure.cartesian_precision`
+      does the conversion, where the cell is known.
+
+      Concrete rather than abstract, so a backend with no source of precision inherits
+      ``None`` instead of breaking.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

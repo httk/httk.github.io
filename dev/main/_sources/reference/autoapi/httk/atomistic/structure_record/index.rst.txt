@@ -1,0 +1,151 @@
+httk.atomistic.structure_record
+===============================
+
+.. py:module:: httk.atomistic.structure_record
+
+.. autoapi-nested-parse::
+
+   Frozen storage records for complete atomistic structures.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.structure_record.SpeciesRecord
+   httk.atomistic.structure_record.StructureRecord
+
+
+Module Contents
+---------------
+
+.. py:class:: SpeciesRecord
+
+   The storable frozen snapshot of an atomistic :class:`~httk.atomistic.Species`.
+
+   The presence flags preserve ``None`` for optional tuple fields because a relational child
+   table cannot distinguish a missing optional value from an empty tuple when reconstructing.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: chemical_symbols
+      :type:  tuple[str, Ellipsis]
+
+
+   .. py:attribute:: concentration
+      :type:  tuple[float, Ellipsis]
+
+
+   .. py:attribute:: mass
+      :type:  tuple[float, Ellipsis] | None
+      :value: None
+
+
+
+   .. py:attribute:: original_name
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: attached
+      :type:  tuple[str, Ellipsis] | None
+      :value: None
+
+
+
+   .. py:attribute:: nattached
+      :type:  tuple[int, Ellipsis] | None
+      :value: None
+
+
+
+   .. py:attribute:: mass_present
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: attached_present
+      :type:  bool
+      :value: False
+
+
+
+   .. py:method:: from_species(species: httk.atomistic.species.Species) -> SpeciesRecord
+      :classmethod:
+
+
+      Create a storage record containing the exact species metadata.
+
+
+
+   .. py:method:: to_species() -> httk.atomistic.species.Species
+
+      Reconstruct the domain :class:`~httk.atomistic.Species` from this snapshot.
+
+
+
+.. py:class:: StructureRecord
+
+   A storable snapshot of a complete :class:`~httk.atomistic.Structure`.
+
+   This record is a snapshot, not a live proxy: changing a source ``Structure`` does not
+   update it, and changing a record does not update a previously reconstructed structure.
+   Rationals, surd bases, precisions, and periodicity remain exact. Species float fields
+   round-trip at IEEE-double fidelity, with the SQL layer's documented caveat that ``-0.0``
+   may return as ``+0.0``.
+
+   ``periodicity`` is annotated as a list because the storage schema supports homogeneous
+   variable-length sequences, not fixed-length tuples. It is copied and validated here so
+   callers cannot mutate the input list through the record. Construction also builds and
+   discards the domain ``Structure`` once, so invalid domain combinations cannot exist.
+
+
+   .. py:attribute:: basis
+      :type:  tuple[httk.core.SurdScalar, Ellipsis]
+
+
+   .. py:attribute:: reduced_coords
+      :type:  Annotated[httk.core.FracVector, httk.core.storage_markers.Shape(0, 3)]
+
+
+   .. py:attribute:: species
+      :type:  tuple[SpeciesRecord, Ellipsis]
+
+
+   .. py:attribute:: species_at_sites
+      :type:  tuple[str, Ellipsis]
+
+
+   .. py:attribute:: periodicity
+      :type:  list[bool]
+
+
+   .. py:attribute:: basis_precision
+      :type:  fractions.Fraction | None
+
+
+   .. py:attribute:: coordinate_precision
+      :type:  fractions.Fraction | None
+
+
+   .. py:method:: from_structure(structure: httk.atomistic.structure_like.StructureLike) -> StructureRecord
+      :classmethod:
+
+
+      Take a canonical snapshot of any :data:`~httk.atomistic.StructureLike` input.
+
+
+
+   .. py:method:: to_structure() -> httk.atomistic.structure.Structure
+
+      Rebuild the exact :class:`~httk.atomistic.Structure` represented by this snapshot.
+
+
+

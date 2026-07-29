@@ -1,0 +1,22 @@
+httk.web.renderers.markdown
+===========================
+
+.. py:module:: httk.web.renderers.markdown
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.web.renderers.markdown.MarkdownRenderer
+
+
+Module Contents
+---------------
+
+.. py:class:: MarkdownRenderer
+
+   .. py:method:: render(source_path: pathlib.Path) -> httk.web.renderers.base.RenderResult
+
+

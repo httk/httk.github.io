@@ -1,0 +1,26 @@
+httk.atomistic.sites_like
+=========================
+
+.. py:module:: httk.atomistic.sites_like
+
+.. autoapi-nested-parse::
+
+   The accepted-input union for sites functions in httk-atomistic.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.atomistic.sites_like.SitesLike
+
+
+Module Contents
+---------------
+
+.. py:type:: SitesLike
+   :canonical: sites_backend.SitesBackend | sites_view.SitesView | sites.Sites | httk.core.VectorLike
+
+

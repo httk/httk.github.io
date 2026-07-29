@@ -1,0 +1,85 @@
+httk.io.cif.mcif_parser
+=======================
+
+.. py:module:: httk.io.cif.mcif_parser
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.io.cif.mcif_parser.extract_parent_q_basis
+   httk.io.cif.mcif_parser.extract_fourier_coeffs
+   httk.io.cif.mcif_parser.extract_fourier
+   httk.io.cif.mcif_parser.xyzt_symops_to_matrix
+   httk.io.cif.mcif_parser.parse_alg_op
+   httk.io.cif.mcif_parser.alg_symops_to_matrix
+   httk.io.cif.mcif_parser.crystal_to_cartesian
+   httk.io.cif.mcif_parser.is_rational_component
+   httk.io.cif.mcif_parser.cifblock_to_mag_asu
+   httk.io.cif.mcif_parser.mag_asus_from_mcif_file
+   httk.io.cif.mcif_parser.single_mag_asu_from_mcif_file
+
+
+Module Contents
+---------------
+
+.. py:function:: extract_parent_q_basis(cifblock)
+
+   Return the parent propagation basis as a list of ``(kx, ky, kz)`` tuples,
+   or ``None`` if it is not present.
+
+
+.. py:function:: extract_fourier_coeffs(cifblock, max_q_guess=12)
+
+   Return ``(coeff_rows, m)`` where ``coeff_rows`` is a list of coefficient tuples
+   ``(c1, c2, ..., cm)`` and ``m`` is the number of q-vectors detected (``>= 0``).
+
+   All present ``q{i}_coeff`` columns are found, zipped row-wise with missing entries
+   filled by zeros, and duplicate coefficient tuples are removed.
+
+
+.. py:function:: extract_fourier(cifblock)
+
+   Return the ``(basis, coeffs)`` descriptor, or ``None`` if there is insufficient data.
+
+   ``basis`` comes from ``parent_propagation_vector.kxkykz`` and ``coeffs`` are the
+   unique coefficient tuples from ``atom_site_Fourier_wave_vector.q*_coeff``.
+
+
+.. py:function:: xyzt_symops_to_matrix(symops_xyz, use_fractions=False, time_reversal_convention='mcif')
+
+.. py:function:: parse_alg_op(op, use_fractions=False, time_reversal_convention='mcif')
+
+   Parse an msCIF `_space_group_symop_magn_ssg_operation.algebraic` string.
+
+   Examples of `op`:
+     'x1,x2,x3,x4,x5,x6,+1'
+     'x1,x2,x3,x4+1/2,-1'
+     'x1+1/2,x2+1/2,-x3,-x4,-1'
+     'x1-x2,x1,x3+1/3,x4-1/6,x5,+1'
+
+   Returns (R, t, time):
+     R: 3x3 list of rows with entries in {-1,0,1}
+     t: length-3 list of floats (or Fractions if use_fractions=True)
+     time: +1 / -1 (or mapped for spglib)
+
+
+.. py:function:: alg_symops_to_matrix(symops_alg, use_fractions=False, time_reversal_convention='mcif')
+
+.. py:function:: crystal_to_cartesian(moments_cryst, basis)
+
+   moments_cryst : list of N vectors [mx, my, mz] in crystal coordinates
+   basis         : 3x3 list with rows a, b, c in Cartesian
+   returns       : list of N vectors in Cartesian coordinates
+
+
+.. py:function:: is_rational_component(x, max_den=12, tol=1e-06)
+
+.. py:function:: cifblock_to_mag_asu(cifblock, *, error_on_nonmag=False)
+
+.. py:function:: mag_asus_from_mcif_file(fs, *, error_on_nonmag=False)
+
+.. py:function:: single_mag_asu_from_mcif_file(fs, *, error_on_nonmag=False)
+

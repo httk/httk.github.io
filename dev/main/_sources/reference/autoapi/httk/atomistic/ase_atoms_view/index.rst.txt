@@ -1,0 +1,45 @@
+httk.atomistic.ase_atoms_view
+=============================
+
+.. py:module:: httk.atomistic.ase_atoms_view
+
+.. autoapi-nested-parse::
+
+   ASE ``Atoms`` view for the :mod:`httk.atomistic` structure family.
+
+   ASE is an optional dependency. This module intentionally imports it unconditionally,
+   so the package-level exports can guard the import while documentation tools can see
+   the public :class:`ASEAtomsView` definition.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.ase_atoms_view.ASEAtomsView
+
+
+Module Contents
+---------------
+
+.. py:class:: ASEAtomsView(obj: httk.atomistic.structure_like.StructureLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.structure_view.StructureView`, :py:obj:`ase.Atoms`
+
+
+   Present a :data:`~httk.atomistic.structure_like.StructureLike` as ASE ``Atoms``.
+
+   The conversion carries the structure quartet: cell, reduced positions, atomic
+   numbers, and periodicity. ASE must be installed to construct this view. Mixed or
+   attached species cannot be represented by ASE atomic numbers and raise
+   :class:`TypeError`.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the raw object represented by the underlying structure backend.
+
+
+

@@ -1,0 +1,144 @@
+httk.workflow.transfers
+=======================
+
+.. py:module:: httk.workflow.transfers
+
+.. autoapi-nested-parse::
+
+   Crash-recoverable detached job transfer.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.workflow.transfers.TRANSFER_DIRECTORY
+   httk.workflow.transfers.TRANSFER_MANIFEST
+   httk.workflow.transfers.TRANSFER_RUNNERS
+   httk.workflow.transfers.TRANSFER_FORMAT
+   httk.workflow.transfers.TRANSFER_FORMAT_VERSION
+   httk.workflow.transfers.TRANSFER_OFFER_FORMAT
+   httk.workflow.transfers.TRANSFER_RETIREMENT_FORMAT
+   httk.workflow.transfers.DEFAULT_OFFER_STATES
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.workflow.transfers.detach_job
+   httk.workflow.transfers.validate_bundle
+   httk.workflow.transfers.import_bundle
+   httk.workflow.transfers.acknowledge_transfer
+   httk.workflow.transfers.recover_transfers
+   httk.workflow.transfers.offer_transfers
+   httk.workflow.transfers.retire_transfers
+   httk.workflow.transfers.discard_staged_bundle
+
+
+Module Contents
+---------------
+
+.. py:data:: TRANSFER_DIRECTORY
+   :value: '.httk-transfer'
+
+
+.. py:data:: TRANSFER_MANIFEST
+   :value: 'manifest.json'
+
+
+.. py:data:: TRANSFER_RUNNERS
+   :value: 'runners'
+
+
+.. py:data:: TRANSFER_FORMAT
+   :value: 'httk-workflow-detached-transfer'
+
+
+.. py:data:: TRANSFER_FORMAT_VERSION
+   :value: 2
+
+
+.. py:data:: TRANSFER_OFFER_FORMAT
+   :value: 'httk-workflow-transfer-offer'
+
+
+.. py:data:: TRANSFER_RETIREMENT_FORMAT
+   :value: 'httk-workflow-transfer-retirement'
+
+
+.. py:data:: DEFAULT_OFFER_STATES
+   :value: ('succeeded', 'failed')
+
+
+.. py:function:: detach_job(workspace: httk.workflow.workspace.Workspace, job_id: str, *, destination_workspace_id: str, destination_placement: str | pathlib.PurePosixPath | None = None, transfer_id: str | None = None) -> pathlib.Path
+
+   Fence and seal one job, leaving no schedulable source marker.
+
+
+.. py:function:: validate_bundle(bundle: str | os.PathLike[str]) -> dict[str, Any]
+
+   Validate a sealed bundle and return its manifest.
+
+
+.. py:function:: import_bundle(workspace: httk.workflow.workspace.Workspace, bundle: str | os.PathLike[str]) -> dict[str, object]
+
+   Idempotently import a sealed bundle and publish its prior state.
+
+
+.. py:function:: acknowledge_transfer(workspace: httk.workflow.workspace.Workspace, acknowledgement: collections.abc.Mapping[str, object]) -> pathlib.Path
+
+   Validate an acknowledgement and retire the sealed source bundle.
+
+   An acknowledgement that carries an identity signature must carry a valid
+   one: retiring a source is irreversible enough that a damaged or forged
+   attribution is refused rather than recorded. An acknowledgement with no
+   signature is accepted exactly as before, so a destination without an
+   identity key keeps working.
+
+
+.. py:function:: recover_transfers(workspace: httk.workflow.workspace.Workspace) -> list[dict[str, object]]
+
+   Finish source sealing and inventory every retained bundle.
+
+
+.. py:function:: offer_transfers(workspace: httk.workflow.workspace.Workspace, *, destination_workspace_id: str, states: collections.abc.Iterable[str] = DEFAULT_OFFER_STATES, placement: str | pathlib.PurePosixPath | None = None) -> list[dict[str, object]]
+
+   Seal every finished job of *workspace* into a bundle for one destination.
+
+   This is the far side of a results fetch: the remote that ran the work
+   offers what stopped there, and the workspace that asked pulls each bundle
+   and imports it. Offering is idempotent because a sealed bundle is reported
+   from its ledger rather than sealed again, so the jobs a first call detached
+   — which no longer have a schedulable marker — are exactly the jobs a second
+   call re-offers, and an interrupted fetch resumes by simply asking again.
+
+   A job that cannot leave right now is skipped rather than fatal: one still
+   referenced by an unresolved join keeps the campaign it belongs to
+   consistent, and reporting the rest lets the fetch make progress.
+
+
+.. py:function:: retire_transfers(workspace: httk.workflow.workspace.Workspace, job_ids: collections.abc.Sequence[str], *, destination_workspace_id: str | None = None) -> list[dict[str, object]]
+
+   Retire the sealed source bundle of every named job.
+
+   A fetch retires at the source only once the destination holds an
+   acknowledgement, so the identity of the job is all this side needs; naming
+   the destination as well refuses to retire a bundle that was sealed for
+   somebody else. Retirement moves the bundle rather than deleting it, and a
+   bundle already retired is reported as such, so calling this twice is the
+   same as calling it once.
+
+
+.. py:function:: discard_staged_bundle(workspace: httk.workflow.workspace.Workspace, staging: pathlib.Path) -> None
+
+   Drop a staged incoming bundle whose payload the workspace now owns.
+
+   The staging tree is renamed out of the incoming directory before it is
+   removed, so an interrupted removal can never leave a partial bundle where a
+   resumed fetch would find one and mistake it for the real thing.
+
+

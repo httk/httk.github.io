@@ -1,0 +1,75 @@
+httk.atomistic.species_class
+============================
+
+.. py:module:: httk.atomistic.species_class
+
+.. autoapi-nested-parse::
+
+   Backend wrapping a Species in the class representation.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.species_class.SpeciesClass
+
+
+Module Contents
+---------------
+
+.. py:class:: SpeciesClass(obj: httk.atomistic.species.Species | str | int, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.species_backend.SpeciesBackend`
+
+
+   Backend for a species backed by an actual ``Species`` object.
+
+   Its accessors delegate to the wrapped Species, and ``unwrap`` returns that Species.
+
+
+   .. py:property:: name
+      :type: str
+
+
+
+   .. py:property:: chemical_symbols
+      :type: tuple[str, Ellipsis]
+
+
+
+   .. py:property:: concentration
+      :type: tuple[float, Ellipsis]
+
+
+
+   .. py:property:: mass
+      :type: tuple[float, Ellipsis] | None
+
+
+
+   .. py:property:: attached
+      :type: tuple[str, Ellipsis] | None
+
+
+
+   .. py:property:: nattached
+      :type: tuple[int, Ellipsis] | None
+
+
+
+   .. py:property:: original_name
+      :type: str | None
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

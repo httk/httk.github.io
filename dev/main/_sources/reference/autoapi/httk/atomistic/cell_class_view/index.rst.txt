@@ -1,0 +1,41 @@
+httk.atomistic.cell_class_view
+==============================
+
+.. py:module:: httk.atomistic.cell_class_view
+
+.. autoapi-nested-parse::
+
+   A view presenting any cell backend as a Cell (the class representation).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.cell_class_view.CellClassView
+
+
+Module Contents
+---------------
+
+.. py:class:: CellClassView(obj: httk.atomistic.cell_like.CellLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.cell_view.CellView`, :py:obj:`httk.atomistic.cell.Cell`
+
+
+   A view presenting an underlying cell backend as a ``Cell``.
+
+   This view is a genuine ``Cell``, so it can be passed anywhere a Cell is accepted.
+   Its basis is built eagerly from the backend on construction.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

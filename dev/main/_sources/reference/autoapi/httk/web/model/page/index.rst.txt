@@ -1,0 +1,73 @@
+httk.web.model.page
+===================
+
+.. py:module:: httk.web.model.page
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.web.model.page.ResolvedRoute
+   httk.web.model.page.PageResult
+   httk.web.model.page.PublishReport
+
+
+Module Contents
+---------------
+
+.. py:class:: ResolvedRoute
+
+   .. py:attribute:: kind
+      :type:  Literal['static', 'content', 'missing']
+
+
+   .. py:attribute:: route
+      :type:  str
+
+
+   .. py:attribute:: source_path
+      :type:  pathlib.Path | None
+      :value: None
+
+
+
+.. py:class:: PageResult
+
+   .. py:attribute:: status_code
+      :type:  int
+
+
+   .. py:attribute:: content_type
+      :type:  str
+
+
+   .. py:attribute:: body
+      :type:  bytes
+
+
+   .. py:attribute:: metadata
+      :type:  dict[str, object]
+
+
+   .. py:attribute:: warnings
+      :type:  list[str]
+      :value: []
+
+
+
+.. py:class:: PublishReport
+
+   .. py:attribute:: written_files
+      :type:  list[pathlib.Path]
+      :value: []
+
+
+
+   .. py:attribute:: warnings
+      :type:  list[str]
+      :value: []
+
+
+

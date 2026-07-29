@@ -1,0 +1,53 @@
+httk.core.vectors.vector_numpy_view
+===================================
+
+.. py:module:: httk.core.vectors.vector_numpy_view
+
+.. autoapi-nested-parse::
+
+   A view presenting any vector backend as a numpy ndarray, with a selectable dtype.
+
+   This module subclasses :class:`numpy.ndarray`, which happens at class-definition time, so it
+   cannot be imported at all unless numpy is installed. The package ``__init__`` guards its import
+   with ``try/except ImportError`` accordingly.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.vectors.vector_numpy_view.VectorNumpyView
+
+
+Module Contents
+---------------
+
+.. py:class:: VectorNumpyView(shape, dtype=float, buffer=None, offset=0, strides=None, order=None)
+
+   Bases: :py:obj:`httk.core.vectors.vector_view.VectorView`, :py:obj:`numpy.ndarray`
+
+
+   A view presenting an underlying vector backend as a :class:`numpy.ndarray`, ``float64`` by
+   default and any real numpy ``dtype=`` on request.
+
+   This view is a genuine ndarray (built via ``numpy.asarray(...).view(cls)``), so it can be passed
+   anywhere a numpy array is accepted. For a **float** dtype (the default ``float64``) building it
+   is lossy-by-design: exact rational values become their nearest binary value, so ``1/3`` becomes
+   a binary rational and round-tripping recovers that binary rational, not the original ``1/3`` (use
+   :meth:`~httk.core.vectors.fracvector.FracVector.limit_denominator` to recover a small
+   denominator). For an **integer** dtype each element is first converted through the ``"int"`` leaf
+   codec's default (nearest, ties to even) via the exact Fraction hub — so a value such as ``1/2``
+   becomes ``0`` by half-even rounding rather than being silently truncated by numpy. numpy is an
+   optional dependency (``httk-core[numpy]``).
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

@@ -1,0 +1,84 @@
+httk.core.vectors.vector_api
+============================
+
+.. py:module:: httk.core.vectors.vector_api
+
+.. autoapi-nested-parse::
+
+   The minimal canonical vector interface shared by all vector backends and views.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.core.vectors.vector_api.Fractions
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.vectors.vector_api.VectorAPI
+
+
+Module Contents
+---------------
+
+.. py:type:: Fractions
+   :canonical: fractions.Fraction | tuple[Fractions, ...]
+
+
+.. py:class:: VectorAPI
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Abstract base class for the canonical vector interface.
+
+   It declares the exactness-preserving ``fractions`` accessor (a nested tuple of
+   :class:`fractions.Fraction`, or a bare Fraction for a scalar) that every vector backend
+   produces from its own native representation and every vector view builds its presentation
+   from, together with the ``dim`` shape tuple. This is the single interchange format; there is
+   no pairwise conversion between backends.
+
+   On top of the two abstract accessors it provides the guaranteed float renderings
+   :meth:`to_floats` and :meth:`to_float`, derived from the ``fractions`` hub — so *whatever*
+   object the family hands you, ``.to_floats()`` works. (The exact value types
+   :class:`~httk.core.vectors.fracvector.FracVector` and
+   :class:`~httk.core.vectors.surdvector.SurdVector` honor the same contract with their own
+   implementations.)
+
+
+   .. py:property:: fractions
+      :type: Fractions
+
+      :abstractmethod:
+
+
+
+   .. py:property:: dim
+      :type: tuple[int, Ellipsis]
+
+      :abstractmethod:
+
+
+
+   .. py:method:: to_floats() -> Any
+
+      The value as (possibly nested) plain lists of ``float`` — a bare ``float`` for a scalar.
+
+      Derived from the exact ``fractions`` hub; nested lists match the
+      ``numpy.ndarray.tolist()`` convention and are directly JSON-serializable.
+
+
+
+   .. py:method:: to_float() -> float
+
+      The scalar value as a plain ``float``; raises :class:`TypeError` on a non-scalar.
+
+
+

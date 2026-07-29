@@ -1,0 +1,55 @@
+httk.core.vectors.vector_numpy
+==============================
+
+.. py:module:: httk.core.vectors.vector_numpy
+
+.. autoapi-nested-parse::
+
+   Backend wrapping a numpy ndarray (numpy is an optional dependency, imported lazily).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.vectors.vector_numpy.VectorNumpy
+
+
+Module Contents
+---------------
+
+.. py:class:: VectorNumpy(obj: Any, **hints: Any)
+
+   Bases: :py:obj:`httk.core.vectors.vector_backend.VectorBackend`
+
+
+   Backend for a vector backed by a :class:`numpy.ndarray`.
+
+   numpy is an optional dependency (``httk-core[numpy]``) and is imported lazily; if numpy is
+   not installed, this backend's ``__new__`` returns None so it is simply never selected.
+
+   numpy float64 values are themselves binary rationals, so the ``fractions`` interchange is
+   produced *exactly* from the array (each float becomes its exact rational value). Only the
+   reverse direction (building a numpy view) is lossy. ``unwrap`` returns the wrapped array.
+
+
+   .. py:property:: fractions
+      :type: httk.core.vectors.vector_api.Fractions
+
+
+
+   .. py:property:: dim
+      :type: tuple[int, Ellipsis]
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

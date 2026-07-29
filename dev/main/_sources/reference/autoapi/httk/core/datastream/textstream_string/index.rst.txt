@@ -1,0 +1,39 @@
+httk.core.datastream.textstream_string
+======================================
+
+.. py:module:: httk.core.datastream.textstream_string
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.datastream.textstream_string.TextstreamString
+
+
+Module Contents
+---------------
+
+.. py:class:: TextstreamString(content: str, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_common.TextstreamCommon`, :py:obj:`httk.core.datastream.textstream_backend.TextstreamBackend`
+
+
+   Backend for streaming text backed by an actual string
+
+
+   .. py:attribute:: s
+      :type:  str
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+

@@ -1,0 +1,49 @@
+httk.core.docs.inventories
+==========================
+
+.. py:module:: httk.core.docs.inventories
+
+.. autoapi-nested-parse::
+
+   Read and validate Sphinx intersphinx v2 inventory headers.
+
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   httk.core.docs.inventories.InventoryError
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.docs.inventories.read_inventory_header
+   httk.core.docs.inventories.fetch_inventory
+
+
+Module Contents
+---------------
+
+.. py:exception:: InventoryError
+
+   Bases: :py:obj:`RuntimeError`
+
+
+   Raised when an inventory cannot be fetched or has unexpected metadata.
+
+
+.. py:function:: read_inventory_header(path_or_bytes: str | pathlib.Path | bytes) -> tuple[str, str]
+
+   Return project and version from the plain-text inventory header.
+
+
+.. py:function:: fetch_inventory(url: str, dest: str | pathlib.Path, *, expected_project: str | None = None, expected_version: str | None = None) -> tuple[str, str]
+
+   Fetch an inventory from HTTP(S) or ``file://``, validate it, and save it.
+
+

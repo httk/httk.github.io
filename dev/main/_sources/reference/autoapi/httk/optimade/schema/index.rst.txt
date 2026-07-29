@@ -1,0 +1,16 @@
+httk.optimade.schema
+====================
+
+.. py:module:: httk.optimade.schema
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/optimade/schema/served/index
+   /reference/autoapi/httk/optimade/schema/trajectories/index
+
+

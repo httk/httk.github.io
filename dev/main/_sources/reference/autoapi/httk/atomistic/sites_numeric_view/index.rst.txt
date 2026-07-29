@@ -1,0 +1,42 @@
+httk.atomistic.sites_numeric_view
+=================================
+
+.. py:module:: httk.atomistic.sites_numeric_view
+
+.. autoapi-nested-parse::
+
+   A view presenting any sites backend as a NumericSites object (the plain-numpy presentation).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.sites_numeric_view.SitesNumericView
+
+
+Module Contents
+---------------
+
+.. py:class:: SitesNumericView(obj: httk.atomistic.sites_like.SitesLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.sites_view.SitesView`, :py:obj:`httk.atomistic.numeric_sites.NumericSites`
+
+
+   A view presenting an underlying sites backend as a ``NumericSites`` object.
+
+   This view is a genuine ``NumericSites``, so it can be passed anywhere one is accepted. Its exact
+   ``Sites`` is built eagerly from the backend on construction. Like a ``NumericSites`` it requires
+   numpy (raising :class:`ImportError` otherwise).
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

@@ -1,0 +1,73 @@
+httk.atomistic.numeric_unitcell_structure_backend
+=================================================
+
+.. py:module:: httk.atomistic.numeric_unitcell_structure_backend
+
+.. autoapi-nested-parse::
+
+   Backend for numeric unitcell structure presentations.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.numeric_unitcell_structure_backend.NumericUnitcellStructureBackend
+
+
+Module Contents
+---------------
+
+.. py:class:: NumericUnitcellStructureBackend(obj: Any, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.structure_backend.StructureBackend`
+
+
+   Backend recognizing the plain-numpy structure quartet.
+
+   The wrapped object must expose ``NumericCell``/``NumericSites`` values through
+   ``cell``/``sites`` and the usual ``species``/``species_at_sites`` attributes.
+   Its exact quartet is taken from an ``exact`` :class:`~httk.atomistic.structure.Structure` when available,
+   then from the component presentations' ``exact`` values. If neither component
+   carries an exact value, the numeric ``basis`` and ``reduced_coords`` arrays are
+   passed through the vector family into ``Cell`` and ``Sites``. That last route is
+   exact embedding of the floats: their binary float64 values, rather than their
+   decimal spellings, become the exact values.
+
+
+   .. py:property:: cell
+      :type: httk.atomistic.cell.Cell
+
+
+      The exact cell quartet component.
+
+
+   .. py:property:: sites
+      :type: httk.atomistic.sites.Sites
+
+
+      The exact sites quartet component.
+
+
+   .. py:property:: species
+      :type: tuple[httk.atomistic.species.Species, Ellipsis]
+
+
+      The exact structure's distinct species.
+
+
+   .. py:property:: species_at_sites
+      :type: tuple[str, Ellipsis]
+
+
+      The exact species name for each site.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the wrapped numeric presentation object.
+
+
+

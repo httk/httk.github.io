@@ -1,0 +1,372 @@
+httk.data.db.schema
+===================
+
+.. py:module:: httk.data.db.schema
+
+.. autoapi-nested-parse::
+
+   Schema IR: resolve a storable dataclass into the relational schema that drives storage.
+
+   A *storable* class is a plain **frozen dataclass** declared with the stdlib-only
+   marker vocabulary from httk-core (:class:`~httk.core.Indexed`,
+   :class:`~httk.core.Unique`, :class:`~httk.core.Skip`, :class:`~httk.core.Shape`,
+   :class:`~httk.core.StorageInfo`, :class:`~httk.core.stored_property`).
+   :func:`resolve_schema` reads the class once — dataclass fields, ``Annotated``
+   markers, stored properties, and the optional class-level or externally
+   registered :class:`~httk.core.StorageInfo` — and produces a
+   :class:`TableSchema`, the single source of truth from which the SQL layer
+   derives DDL, inserts, selects, and reconstruction alike.
+
+   Resolution rules (field annotation, then the resulting relational shape):
+
+   - ``int``/``float``/``str``/``bool``/``bytes`` — one scalar column named after
+     the field (``bool`` is its own column kind, never folded into ``int``).
+   - ``X | None`` — the field is optional; all of its columns become nullable.
+   - a type with a registered :class:`~httk.data.db.codecs.ValueCodec`
+     (:class:`fractions.Fraction`, :class:`~httk.core.FracScalar`,
+     :class:`~httk.core.SurdScalar`, :class:`datetime.datetime`, ...) — the
+     codec's columns, named by appending each suffix to the field name.
+   - ``Annotated[FracVector, Shape(r, c)]`` with ``r >= 1`` — a fixed-shape tensor
+     stored inline: ``r*c`` float columns ``name_0 .. name_{r*c-1}`` plus one
+     ``name_exact`` text column holding the canonical exact tensor text.
+   - ``Annotated[FracVector, Shape(0, c)]`` — variable rows in a child table
+     ``<parent>_<name>``, each row ``c`` float columns plus a ``name_exact`` text
+     column with the same exact encoding per row.
+   - ``list[T]`` / homogeneous ``tuple[T, ...]`` — a child table: scalar or
+     codec-typed elements store their columns per row; storable-dataclass elements
+     store one ``name_sid`` foreign-key column per row.
+   - another storable frozen dataclass (optionally ``| None``) — a reference:
+     one ``name_sid`` foreign-key column.
+   - ``Annotated[..., Skip()]`` — omitted from storage (the field must have a
+     default so instances can be reconstructed without it).
+   - ``Annotated[..., Related(...)]`` — relationship metadata carried on the
+     resolved :class:`FieldSpec`; valid only on reference fields and on
+     lists/tuples of storable classes.
+   - a :class:`~httk.core.stored_property` — resolved like a field from its return
+     annotation, flagged derived: stored and queryable, recomputed (not passed to
+     ``__init__``) on reconstruction.
+
+   The store layer additionally manages a ``sid`` integer primary key and a
+   ``content_id`` text column on every table (and ``<parent>_sid`` /
+   ``<name>_index`` columns on child tables); those never appear in
+   :attr:`TableSchema.fields`, and declaring a field named ``sid`` or
+   ``content_id`` is an error.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.data.db.schema.ScalarKind
+   httk.data.db.schema.FieldRole
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   httk.data.db.schema.SchemaError
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.data.db.schema.ColumnSpec
+   httk.data.db.schema.ChildTableSpec
+   httk.data.db.schema.FieldSpec
+   httk.data.db.schema.TableSchema
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.data.db.schema.snake_case
+   httk.data.db.schema.register_schema_override
+   httk.data.db.schema.resolve_schema
+
+
+Module Contents
+---------------
+
+.. py:type:: ScalarKind
+   :canonical: Literal['int', 'float', 'str', 'bool', 'bytes']
+
+
+   The five scalar column kinds a storage backend must provide.
+
+.. py:type:: FieldRole
+   :canonical: Literal['scalar', 'encoded', 'fixed_array', 'child', 'reference']
+
+
+   How a stored field maps onto the relational model.
+
+.. py:exception:: SchemaError
+
+   Bases: :py:obj:`Exception`
+
+
+   A class or field cannot be resolved into a storage schema; the message names both.
+
+
+.. py:class:: ColumnSpec
+
+   One scalar column of a table.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+      The column name.
+
+
+   .. py:attribute:: kind
+      :type:  httk.data.db.codecs.ScalarKind
+
+      The scalar kind of the column.
+
+
+   .. py:attribute:: nullable
+      :type:  bool
+      :value: False
+
+
+      Whether the column accepts NULL (all columns of an optional field do).
+
+
+   .. py:attribute:: indexed
+      :type:  bool
+      :value: False
+
+
+      Whether a single-column index is requested (:class:`~httk.core.Indexed`).
+
+
+   .. py:attribute:: unique
+      :type:  bool
+      :value: False
+
+
+      Whether a unique index is requested (:class:`~httk.core.Unique`).
+
+
+.. py:class:: ChildTableSpec
+
+   The out-of-line child table backing a variable-length field.
+
+   Only the per-element value columns are listed; the store layer adds the
+   ``<parent>_sid`` foreign key and ``<name>_index`` ordering columns.
+
+
+   .. py:attribute:: table_name
+      :type:  str
+
+      The child table name, ``<parent table>_<field>``.
+
+
+   .. py:attribute:: element_columns
+      :type:  tuple[ColumnSpec, Ellipsis]
+
+      The value column(s) of one element row.
+
+
+   .. py:attribute:: target
+      :type:  type | None
+      :value: None
+
+
+      The storable element class when rows are foreign keys, else None.
+
+
+.. py:class:: FieldSpec
+
+   The resolved storage shape of one stored field (or stored property).
+
+
+   .. py:attribute:: field
+      :type:  str
+
+      The dataclass field (or stored property) name.
+
+
+   .. py:attribute:: python_type
+      :type:  Any
+
+      The field's value type with markers and optionality stripped.
+
+
+   .. py:attribute:: role
+      :type:  FieldRole
+
+      How the field maps onto the relational model.
+
+
+   .. py:attribute:: columns
+      :type:  tuple[ColumnSpec, Ellipsis]
+      :value: ()
+
+
+      The field's columns in the parent table (empty for the child role).
+
+
+   .. py:attribute:: codec_name
+      :type:  str | None
+      :value: None
+
+
+      The value codec encoding this field (or its child elements), if any.
+
+
+   .. py:attribute:: shape
+      :type:  httk.core.Shape | None
+      :value: None
+
+
+      The :class:`~httk.core.Shape` marker for tensor-valued fields, if any.
+
+
+   .. py:attribute:: child
+      :type:  ChildTableSpec | None
+      :value: None
+
+
+      The child table specification for the child role, else None.
+
+
+   .. py:attribute:: target
+      :type:  type | None
+      :value: None
+
+
+      The referenced storable class for reference (and child-of-storable) fields.
+
+
+   .. py:attribute:: related
+      :type:  httk.core.Related | None
+      :value: None
+
+
+      The :class:`~httk.core.Related` relationship marker of the field, if any.
+
+      Only reference fields and child fields of storable elements can carry one;
+      the marker's metadata flows into the relationships an entry provider emits
+      for the field.
+
+
+   .. py:attribute:: derived
+      :type:  bool
+      :value: False
+
+
+      stored and queryable,
+      recomputed rather than passed to ``__init__`` on reconstruction.
+
+      :type: True for :class:`~httk.core.stored_property` values
+
+
+   .. py:attribute:: optional
+      :type:  bool
+      :value: False
+
+
+      True when the annotation was ``X | None``; all columns are then nullable.
+
+
+.. py:class:: TableSchema
+
+   The resolved relational schema of one storable class.
+
+
+   .. py:attribute:: cls
+      :type:  type
+
+      The storable dataclass this schema was resolved from.
+
+
+   .. py:attribute:: table_name
+      :type:  str
+
+      The table name (:attr:`~httk.core.StorageInfo.storage_name` or the snake-cased class name).
+
+
+   .. py:attribute:: fields
+      :type:  tuple[FieldSpec, Ellipsis]
+
+      The stored fields, dataclass fields first (in declaration order), then stored properties.
+
+      The store-managed ``sid`` and ``content_id`` columns are not fields and do
+      not appear here.
+
+
+   .. py:attribute:: composite_indexes
+      :type:  tuple[tuple[str, Ellipsis], Ellipsis]
+
+      The :attr:`~httk.core.StorageInfo.indexes` declarations, resolved to column names.
+
+
+   .. py:attribute:: dedup
+      :type:  httk.core.DedupPolicy
+
+      The deduplication policy applied when instances are saved.
+
+
+   .. py:attribute:: links
+      :type:  tuple[httk.core.RelationshipLink, Ellipsis]
+      :value: ()
+
+
+      The class's :attr:`~httk.core.StorageInfo.links` relationship declarations.
+
+      Each link is validated: every non-``None`` endpoint names an existing
+      reference field of the class (child fields are not valid endpoints — a link
+      row expresses exactly one FROM→TO pair).
+
+
+   .. py:method:: field(name: str) -> FieldSpec
+
+      Return the :class:`FieldSpec` named ``name``; raise :class:`SchemaError` if absent.
+
+
+
+   .. py:method:: referenced_classes() -> tuple[type, Ellipsis]
+
+      The distinct storable classes this schema references (field order, no duplicates).
+
+
+
+.. py:function:: snake_case(name: str) -> str
+
+   The default table name for a class name: CamelCase to camel_case (acronym-aware).
+
+
+.. py:function:: register_schema_override(cls: type, info: httk.core.StorageInfo) -> None
+
+   Register an external :class:`~httk.core.StorageInfo` for a class that cannot declare one.
+
+   The registered info is used by :func:`resolve_schema` whenever no explicit
+   ``override`` argument is passed, and takes precedence over a
+   ``__httk_storage__`` declaration on the class itself.
+
+
+.. py:function:: resolve_schema(cls: type, *, override: httk.core.StorageInfo | None = None) -> TableSchema
+
+   Resolve (and cache) the :class:`TableSchema` of a storable dataclass.
+
+   The effective :class:`~httk.core.StorageInfo` is, in order of precedence:
+   the explicit ``override`` argument, an info registered via
+   :func:`register_schema_override`, the class's own ``__httk_storage__``
+   attribute, or defaults. Results are cached per ``(class, effective
+   override)``, so repeated calls return the same :class:`TableSchema` object.
+   Reference cycles (a class referencing itself, or mutually referencing
+   classes) are allowed and resolve without recursion loops.
+
+   :raises SchemaError: If the class is not a frozen dataclass or any field cannot
+       be resolved; the message names the class and field.
+
+

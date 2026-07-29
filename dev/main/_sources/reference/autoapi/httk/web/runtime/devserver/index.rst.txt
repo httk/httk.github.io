@@ -1,0 +1,19 @@
+httk.web.runtime.devserver
+==========================
+
+.. py:module:: httk.web.runtime.devserver
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.web.runtime.devserver.run_dev_server
+
+
+Module Contents
+---------------
+
+.. py:function:: run_dev_server(*, app: starlette.applications.Starlette, host: str, port: int) -> None
+

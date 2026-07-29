@@ -1,0 +1,43 @@
+httk.atomistic.structure_primitive_view
+=======================================
+
+.. py:module:: httk.atomistic.structure_primitive_view
+
+.. autoapi-nested-parse::
+
+   A view presenting any structure backend as an spglib-like (lattice, positions, numbers) triple.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.structure_primitive_view.StructurePrimitiveView
+
+
+Module Contents
+---------------
+
+.. py:class:: StructurePrimitiveView(obj: httk.atomistic.structure_like.StructureLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.structure_view.StructureView`, :py:obj:`tuple`
+
+
+   A view presenting an underlying structure backend as a primitive triple.
+
+   This view is a genuine ``(lattice, positions, numbers)`` tuple, built eagerly
+   and immutable. Because the primitive representation carries only bare atomic
+   numbers, every site's species must be a single, unattached chemical element
+   (see ``Species.is_single_element``); otherwise a TypeError is raised.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

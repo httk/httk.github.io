@@ -1,0 +1,387 @@
+httk.core.vectors.vectormath
+============================
+
+.. py:module:: httk.core.vectors.vectormath
+
+.. autoapi-nested-parse::
+
+   Functional wrappers over the :mod:`math` module that also work on FracVector-like objects.
+
+   Each function first tries to dispatch to a method on the argument (so a FracVector computes
+   an exact-rational element-wise result), and otherwise falls back to the corresponding
+   :mod:`math` function on a plain scalar.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.vectors.vectormath.ceil
+   httk.core.vectors.vectormath.copysign
+   httk.core.vectors.vectormath.sign
+   httk.core.vectors.vectormath.fabs
+   httk.core.vectors.vectormath.factorial
+   httk.core.vectors.vectormath.floor
+   httk.core.vectors.vectormath.fmod
+   httk.core.vectors.vectormath.frexp
+   httk.core.vectors.vectormath.fsum
+   httk.core.vectors.vectormath.isinf
+   httk.core.vectors.vectormath.isanyinf
+   httk.core.vectors.vectormath.isnan
+   httk.core.vectors.vectormath.isanynan
+   httk.core.vectors.vectormath.ldexp
+   httk.core.vectors.vectormath.modf
+   httk.core.vectors.vectormath.trunc
+   httk.core.vectors.vectormath.exp
+   httk.core.vectors.vectormath.expm1
+   httk.core.vectors.vectormath.log
+   httk.core.vectors.vectormath.log1p
+   httk.core.vectors.vectormath.log10
+   httk.core.vectors.vectormath.pow
+   httk.core.vectors.vectormath.sqrt
+   httk.core.vectors.vectormath.acos
+   httk.core.vectors.vectormath.asin
+   httk.core.vectors.vectormath.atan
+   httk.core.vectors.vectormath.atan2
+   httk.core.vectors.vectormath.cos
+   httk.core.vectors.vectormath.hypot
+   httk.core.vectors.vectormath.sin
+   httk.core.vectors.vectormath.tan
+   httk.core.vectors.vectormath.degrees
+   httk.core.vectors.vectormath.radians
+   httk.core.vectors.vectormath.acosh
+   httk.core.vectors.vectormath.asinh
+   httk.core.vectors.vectormath.atanh
+   httk.core.vectors.vectormath.cosh
+   httk.core.vectors.vectormath.sinh
+   httk.core.vectors.vectormath.tanh
+   httk.core.vectors.vectormath.erf
+   httk.core.vectors.vectormath.erfc
+   httk.core.vectors.vectormath.gamma
+   httk.core.vectors.vectormath.lgamma
+   httk.core.vectors.vectormath.pi
+   httk.core.vectors.vectormath.e
+
+
+Module Contents
+---------------
+
+.. py:function:: ceil(x: Any, **args: Any) -> Any
+
+   Return the ceiling of x, the smallest integer value greater than or equal to x.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: copysign(x: Any, y: Any, **args: Any) -> Any
+
+   Return x with the sign of y. If an element of y is zero, abs of the corresponding element
+   in x is returned.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: sign(x: Any, **args: Any) -> Any
+
+   Return the sign of x: -1, 0, or 1 (the numpy convention, so sign(0) == 0).
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: fabs(x: Any, **args: Any) -> Any
+
+   Return the absolute value of x.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: factorial(x: Any, **args: Any) -> Any
+
+   Return x factorial. Raises ValueError if (any element of) x is negative.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: floor(x: Any, **args: Any) -> Any
+
+   Return the floor of x, the largest integer value less than or equal to x.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: fmod(x: Any, y: Any, **args: Any) -> Any
+
+   Equivalent to x % y.
+
+
+.. py:function:: frexp(x: Any, **args: Any) -> Any
+
+   Return the mantissa and exponent of x as the pair (m, e). m is a float and e is an integer
+   such that x == m * 2**e exactly. If x is zero, returns (0.0, 0), otherwise 0.5 <= abs(m) < 1.
+
+   This decomposition is only meaningful for binary floating-point values; exact
+   rational types such as FracVector do not support it — convert with
+   ``to_floats()``/``to_float()`` first (a clear TypeError is raised otherwise).
+
+   (For vectors applied to each element and returns tuples nested in lists.)
+
+
+.. py:function:: fsum(iterable: Any, **args: Any) -> Any
+
+   Equivalent to sum(iterable).
+
+
+.. py:function:: isinf(x: Any, **args: Any) -> Any
+
+   Check if the float x is positive or negative infinity.
+
+   (For vectors applied to each element and returns True/False as nested lists.)
+
+
+.. py:function:: isanyinf(x: Any, **args: Any) -> Any
+
+   Check if the float x is positive or negative infinity.
+
+   (For vectors returns True/False if any element is inf.)
+
+
+.. py:function:: isnan(x: Any, **args: Any) -> Any
+
+   Check if the float x is a NaN (not a number).
+
+   (For vectors applied to each element and returns True/False as nested lists.)
+
+
+.. py:function:: isanynan(x: Any, **args: Any) -> Any
+
+   Check if the float x is a NaN (not a number).
+
+   (For vectors returns True/False if any element is NaN.)
+
+
+.. py:function:: ldexp(x: Any, i: int, **args: Any) -> Any
+
+   Return x * (2**i). This is essentially the inverse of function frexp().
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: modf(x: Any, **args: Any) -> Any
+
+   Return the fractional and integer parts of x. Both results carry the sign of x.
+
+   (For vectors applied to each element and returns tuples nested in lists.)
+
+
+.. py:function:: trunc(x: Any, **args: Any) -> Any
+
+   Return the integer part of x.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: exp(x: Any, **args: Any) -> Any
+
+   Return e**x. (For vectors applied to each element.)
+
+
+.. py:function:: expm1(x: Any, **args: Any) -> Any
+
+   Return e**x - 1. (For vectors applied to each element.)
+
+
+.. py:function:: log(x: Any, base: Any = None, **args: Any) -> Any
+
+   With one argument, return the natural logarithm of x (to base e).
+
+   With two arguments, return the logarithm of x to the given base, calculated as
+   log(x)/log(base).
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: log1p(x: Any, **args: Any) -> Any
+
+   Return the natural logarithm of 1+x (base e). The result is calculated in a way which is
+   accurate for x near zero.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: log10(x: Any, **args: Any) -> Any
+
+   Return the base-10 logarithm of x. This is usually more accurate than log(x, 10).
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: pow(x: Any, y: Any, **args: Any) -> Any
+
+   Return x raised to the power y. Equivalent with x**y.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: sqrt(x: Any, **args: Any) -> Any
+
+   Return the square root of x.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: acos(x: Any, **args: Any) -> Any
+
+   Return the arc cosine of x, in radians.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: asin(x: Any, **args: Any) -> Any
+
+   Return the arc sine of x, in radians.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: atan(x: Any, **args: Any) -> Any
+
+   Return the arc tangent of x, in radians.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: atan2(y: Any, x: Any, **args: Any) -> Any
+
+   Return atan(y / x), in radians, with the standard ``atan2(y, x)`` argument order
+   used by :func:`math.atan2`, numpy, and :func:`httk.core.exactmath.atan2`.
+   The result is between -pi and pi. The point of atan2() is that the signs of both
+   inputs are known to it, so it can compute the correct quadrant for the angle.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: cos(x: Any, **args: Any) -> Any
+
+   Return the cosine of x radians.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: hypot(x: Any, y: Any, **args: Any) -> Any
+
+   Return the Euclidean norm, sqrt(x*x + y*y). This is the length of the vector from the origin
+   to point (x, y).
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: sin(x: Any, **args: Any) -> Any
+
+   Return the sine of x radians.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: tan(x: Any, **args: Any) -> Any
+
+   Return the tangent of x radians.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: degrees(x: Any, **args: Any) -> Any
+
+   Convert angle x from radians to degrees.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: radians(x: Any, **args: Any) -> Any
+
+   Convert angle x from degrees to radians.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: acosh(x: Any, **args: Any) -> Any
+
+   Return the inverse hyperbolic cosine of x.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: asinh(x: Any, **args: Any) -> Any
+
+   Return the inverse hyperbolic sine of x.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: atanh(x: Any, **args: Any) -> Any
+
+   Return the inverse hyperbolic tangent of x.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: cosh(x: Any, **args: Any) -> Any
+
+   Return the hyperbolic cosine of x.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: sinh(x: Any, **args: Any) -> Any
+
+   Return the hyperbolic sine of x.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: tanh(x: Any, **args: Any) -> Any
+
+   Return the hyperbolic tangent of x.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: erf(x: Any, **args: Any) -> Any
+
+   Return the error function at x.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: erfc(x: Any, **args: Any) -> Any
+
+   Return the complementary error function at x.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: gamma(x: Any, **args: Any) -> Any
+
+   Return the Gamma function at x.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: lgamma(x: Any, **args: Any) -> Any
+
+   Return the natural logarithm of the absolute value of the Gamma function at x.
+
+   (For vectors applied to each element.)
+
+
+.. py:function:: pi(x: Any, **args: Any) -> Any
+
+   Return the value of pi represented using the same scalar or vector representation as x.
+
+
+.. py:function:: e(x: Any, **args: Any) -> Any
+
+   Return the value of e represented using the same scalar or vector representation as x.
+
+

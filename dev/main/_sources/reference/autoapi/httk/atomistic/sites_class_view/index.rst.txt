@@ -1,0 +1,41 @@
+httk.atomistic.sites_class_view
+===============================
+
+.. py:module:: httk.atomistic.sites_class_view
+
+.. autoapi-nested-parse::
+
+   A view presenting any sites backend as a Sites object (the class representation).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.sites_class_view.SitesClassView
+
+
+Module Contents
+---------------
+
+.. py:class:: SitesClassView(obj: httk.atomistic.sites_like.SitesLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.sites_view.SitesView`, :py:obj:`httk.atomistic.sites.Sites`
+
+
+   A view presenting an underlying sites backend as a ``Sites`` object.
+
+   This view is a genuine ``Sites``, so it can be passed anywhere a Sites is accepted.
+   Its coordinates are built eagerly from the backend on construction.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

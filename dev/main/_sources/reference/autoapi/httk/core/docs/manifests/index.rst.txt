@@ -1,0 +1,51 @@
+httk.core.docs.manifests
+========================
+
+.. py:module:: httk.core.docs.manifests
+
+.. autoapi-nested-parse::
+
+   JSON manifests used by the documentation site's root and selector.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.docs.manifests.build_version_manifest
+   httk.core.docs.manifests.write_version_manifest
+   httk.core.docs.manifests.read_version_manifest
+   httk.core.docs.manifests.build_page_manifest
+   httk.core.docs.manifests.write_page_manifest
+
+
+Module Contents
+---------------
+
+.. py:function:: build_version_manifest(slug: str, url: str, source_commit: str | None, release_versions: list[httk.core.docs.semver.Version] | tuple[httk.core.docs.semver.Version, Ellipsis], has_dev: bool) -> dict[str, Any]
+
+   Build a root manifest with releases newest-first and optional dev last.
+
+
+.. py:function:: write_version_manifest(path: str | pathlib.Path, manifest: dict[str, Any]) -> None
+
+   Write one JSON version manifest using stable, human-readable formatting.
+
+
+.. py:function:: read_version_manifest(path: str | pathlib.Path) -> dict[str, Any]
+
+   Read a JSON version manifest from *path*.
+
+
+.. py:function:: build_page_manifest(version_name: str, html_dir: str | pathlib.Path) -> dict[str, Any]
+
+   List every HTML page below *html_dir* as sorted POSIX paths.
+
+
+.. py:function:: write_page_manifest(path: str | pathlib.Path, manifest: dict[str, Any]) -> None
+
+   Write one per-version page manifest.
+
+

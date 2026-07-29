@@ -1,0 +1,41 @@
+httk.atomistic.sites_primitive_view
+===================================
+
+.. py:module:: httk.atomistic.sites_primitive_view
+
+.. autoapi-nested-parse::
+
+   A view presenting any sites backend as a raw Nx3 tuple of reduced coordinates.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.sites_primitive_view.SitesPrimitiveView
+
+
+Module Contents
+---------------
+
+.. py:class:: SitesPrimitiveView(obj: httk.atomistic.sites_like.SitesLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.sites_view.SitesView`, :py:obj:`tuple`
+
+
+   A view presenting an underlying sites backend as a raw Nx3 matrix of floats.
+
+   This view is a genuine tuple of reduced-coordinate rows (rendered to floats from the exact
+   ``reduced_coords``), built eagerly and immutable.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

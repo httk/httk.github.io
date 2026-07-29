@@ -1,0 +1,56 @@
+httk.core.vectors.vector_surd
+=============================
+
+.. py:module:: httk.core.vectors.vector_surd
+
+.. autoapi-nested-parse::
+
+   Backend wrapping a SurdVector in the exact squarefree-radical representation.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.vectors.vector_surd.VectorSurd
+
+
+Module Contents
+---------------
+
+.. py:class:: VectorSurd(obj: httk.core.vectors.surdvector.SurdVector, **hints: Any)
+
+   Bases: :py:obj:`httk.core.vectors.vector_backend.VectorBackend`
+
+
+   Backend for a vector backed by an exact :class:`~httk.core.vectors.surdvector.SurdVector`
+   (or :class:`~httk.core.vectors.surdvector.SurdScalar`), kind ``"surd"``.
+
+   ``unwrap`` returns the exact SurdVector. The canonical ``fractions`` hub is **exact** whenever
+   the value is rational (a surd whose canonical form has only the radicand-1 term), matching the
+   established backend-keeps-the-original principle; when the value is genuinely irrational it is
+   reduced to a *deterministic* rational approximation at the active decimal context precision plus
+   a small guard (lossy but reproducible), and the exact original remains recoverable via
+   ``unwrap``.
+
+
+   .. py:property:: fractions
+      :type: httk.core.vectors.vector_api.Fractions
+
+
+
+   .. py:property:: dim
+      :type: tuple[int, Ellipsis]
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

@@ -1,0 +1,71 @@
+httk.atomistic.cell_params
+==========================
+
+.. py:module:: httk.atomistic.cell_params
+
+.. autoapi-nested-parse::
+
+   Backend wrapping cell parameters (a, b, c, alpha, beta, gamma).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.cell_params.CellParams
+
+
+Module Contents
+---------------
+
+.. py:class:: CellParams(obj: Any, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.cell_backend.CellBackend`
+
+
+   Backend for a cell backed by cell parameters ``(a, b, c, alpha, beta, gamma)``.
+
+   The native representation is a flat length-6 vector-like of the cell-vector lengths
+   ``a``/``b``/``c`` and the angles ``alpha``/``beta``/``gamma`` in degrees, stored as exact
+   :class:`~fractions.Fraction` values (parsed via
+   :func:`~httk.core.exactmath.any_to_fraction`). The exact ``basis`` is derived lazily and
+   cached using the standard crystallographic orientation convention (first cell vector along x,
+   second in the xy-plane); for the common Niven angles it is exact (radicals intact). Since
+   parameters carry no separate length factor, ``scale`` is the exact ``1`` and
+   ``unscaled_basis == basis``. Parameters carry no orientation, so a cell → parameters → cell
+   round-trip reproduces lengths, angles, and volume, but not the original orientation.
+   ``unwrap`` returns the original raw object.
+
+
+   .. py:property:: basis
+      :type: httk.core.SurdVector
+
+
+
+   .. py:property:: scale
+      :type: httk.core.SurdScalar
+
+
+
+   .. py:property:: unscaled_basis
+      :type: httk.core.SurdVector
+
+
+
+   .. py:property:: params
+      :type: tuple[fractions.Fraction, Ellipsis]
+
+
+      The stored ``(a, b, c, alpha, beta, gamma)`` as exact Fractions (angles in degrees).
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

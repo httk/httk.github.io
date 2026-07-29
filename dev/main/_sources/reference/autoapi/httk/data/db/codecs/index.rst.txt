@@ -1,0 +1,232 @@
+httk.data.db.codecs
+===================
+
+.. py:module:: httk.data.db.codecs
+
+.. autoapi-nested-parse::
+
+   Value codecs: exact, round-trippable encodings of rich Python values into scalar columns.
+
+   A :class:`ValueCodec` describes how one field value of a given Python type is
+   stored across one or more scalar columns and recovered exactly. The registry
+   (:func:`register_value_codec` / :func:`codec_for` / :func:`codec_named`)
+   mirrors the leaf-codec registry idiom in :mod:`httk.core.vectors`: a frozen
+   dataclass plus module-level registration functions, with built-in codecs
+   registered at import time.
+
+   Rational values are stored **losslessly**: a query/index column holds the
+   nearest ``float`` (comparisons on it are documented float-approximate), while a
+   companion ``*_exact`` text column holds a canonical exact form that is the
+   round-trip source of truth. The canonical text formats are:
+
+   - :data:`FRACTION_EXACT_FORMAT` — a reduced fraction as ``"p/q"``, always with
+     the ``/q`` part (``"1/1"`` for one), denominator positive. Used for
+     :class:`fractions.Fraction` and :class:`~httk.core.FracScalar`.
+   - :data:`SURD_EXACT_FORMAT` — a :class:`~httk.core.SurdScalar` as its canonical
+     radicand map: ``"r1:p1/q1;r2:p2/q2;..."`` sorted by squarefree radicand
+     (``"0"`` for zero), e.g. ``"1:1/2;2:3/4"`` for ``1/2 + (3/4)*sqrt(2)``.
+   - :data:`FRACVECTOR_EXACT_FORMAT` — a :class:`~httk.core.FracVector` tensor as
+     ``"d;n0,n1,n2,..."``: the least positive common denominator ``d`` followed by
+     the integer numerators flattened row-major. Used by the schema layer for
+     fixed-shape (``Shape``) fields and per-row child-table storage.
+
+   httk-core is a hard dependency of httk-data, so the httk.core vector types are
+   imported unconditionally; nothing in this module needs sqlalchemy.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.data.db.codecs.ScalarKind
+   httk.data.db.codecs.FRACTION_EXACT_FORMAT
+   httk.data.db.codecs.SURD_EXACT_FORMAT
+   httk.data.db.codecs.FRACVECTOR_EXACT_FORMAT
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.data.db.codecs.ValueCodec
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.data.db.codecs.register_value_codec
+   httk.data.db.codecs.known_value_codecs
+   httk.data.db.codecs.codec_for
+   httk.data.db.codecs.codec_named
+   httk.data.db.codecs.encode_fraction_exact
+   httk.data.db.codecs.decode_fraction_exact
+   httk.data.db.codecs.encode_surdscalar_exact
+   httk.data.db.codecs.decode_surdscalar_exact
+   httk.data.db.codecs.encode_fracvector_exact
+   httk.data.db.codecs.decode_fracvector_exact
+   httk.data.db.codecs.encode_fracvector_floats
+
+
+Module Contents
+---------------
+
+.. py:type:: ScalarKind
+   :canonical: Literal['int', 'float', 'str', 'bool', 'bytes']
+
+
+   The five scalar column kinds a storage backend must provide.
+
+.. py:data:: FRACTION_EXACT_FORMAT
+   :type:  Final
+   :value: 'p/q'
+
+
+   The canonical exact text of a rational — reduced ``"p/q"``, always with the ``/q`` part.
+
+.. py:data:: SURD_EXACT_FORMAT
+   :type:  Final
+   :value: 'r1:p1/q1;r2:p2/q2;...'
+
+
+   The canonical exact text of a surd scalar — ``radicand:coefficient`` terms sorted by radicand.
+
+.. py:data:: FRACVECTOR_EXACT_FORMAT
+   :type:  Final
+   :value: 'd;n0,n1,n2,...'
+
+
+   The canonical exact text of a rational tensor — common denominator, then numerators row-major.
+
+.. py:class:: ValueCodec
+
+   An exact encoding of one Python value type across one or more scalar columns.
+
+   The ``columns`` tuple gives ``(suffix, kind)`` pairs: the empty suffix names
+   the field's own column (by convention the query column), non-empty suffixes
+   are appended to the field name by the schema layer (e.g. ``"_exact"``).
+   ``encode`` and ``decode`` map a value to and from the column-value tuple, in
+   ``columns`` order, and must round-trip exactly.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+      Registry name of the codec (e.g. ``"fraction"``).
+
+
+   .. py:attribute:: python_type
+      :type:  type
+
+      The Python type this codec stores; matched exactly first, then by subclass.
+
+
+   .. py:attribute:: columns
+      :type:  tuple[tuple[str, ScalarKind], Ellipsis]
+
+      The ``(column name suffix, scalar kind)`` pairs the codec encodes into.
+
+
+   .. py:attribute:: encode
+      :type:  collections.abc.Callable[[Any], tuple[Any, Ellipsis]]
+
+      Encode a value into one scalar per entry of ``columns``, in order.
+
+
+   .. py:attribute:: decode
+      :type:  collections.abc.Callable[[tuple[Any, Ellipsis]], Any]
+
+      Recover the exact value from the tuple produced by ``encode``.
+
+
+   .. py:attribute:: query_suffix
+      :type:  str
+      :value: ''
+
+
+      Suffix of the column used for querying/indexing (normally the empty suffix).
+
+
+.. py:function:: register_value_codec(codec: ValueCodec) -> None
+
+   Register ``codec``; raise :class:`ValueError` on a duplicate name or Python type.
+
+
+.. py:function:: known_value_codecs() -> list[str]
+
+   Return the registered value-codec names, in registration order.
+
+
+.. py:function:: codec_for(python_type: Any) -> ValueCodec | None
+
+   Return the codec for ``python_type``, or None if no codec covers it.
+
+   An exact type match wins; otherwise the registered codecs are scanned once
+   in registration order and the first whose ``python_type`` is a base class of
+   ``python_type`` is returned (deterministic by registration order).
+
+
+.. py:function:: codec_named(name: str) -> ValueCodec
+
+   Return the codec registered as ``name``; raise :class:`ValueError` listing the known names.
+
+
+.. py:function:: encode_fraction_exact(value: fractions.Fraction) -> str
+
+   The canonical :data:`FRACTION_EXACT_FORMAT` text of ``value`` (e.g. ``"-7/3"``, ``"1/1"``).
+
+
+.. py:function:: decode_fraction_exact(text: str) -> fractions.Fraction
+
+   Parse :data:`FRACTION_EXACT_FORMAT` text back into an exact :class:`fractions.Fraction`.
+
+
+.. py:function:: encode_surdscalar_exact(value: httk.core.SurdScalar) -> str
+
+   The canonical :data:`SURD_EXACT_FORMAT` text of ``value`` (``"0"`` for zero).
+
+   The terms are the canonical radicand map of the surd — squarefree radicands
+   in increasing order, each with its reduced rational coefficient — so the
+   text is unique per value and round-trips exactly.
+
+
+.. py:function:: decode_surdscalar_exact(text: str) -> httk.core.SurdScalar
+
+   Parse :data:`SURD_EXACT_FORMAT` text back into an exact :class:`~httk.core.SurdScalar`.
+
+
+.. py:function:: encode_fracvector_exact(value: httk.core.FracVector) -> str
+
+   The canonical :data:`FRACVECTOR_EXACT_FORMAT` text of a rational tensor.
+
+   The tensor is flattened row-major and normalized through
+   :meth:`~httk.core.FracVector.to_fractions`: ``d`` is the least positive
+   common denominator of the (reduced) elements and the numerators are the
+   elements scaled by ``d``. The text is therefore canonical — independent of
+   the internal denominator the input happened to carry — and lossless at
+   arbitrary precision. The shape itself is not encoded; fixed-shape schema
+   fields carry it in their declaration.
+
+
+.. py:function:: decode_fracvector_exact(text: str, rows: int, cols: int) -> httk.core.FracVector
+
+   Parse :data:`FRACVECTOR_EXACT_FORMAT` text into a ``rows`` x ``cols`` :class:`~httk.core.FracVector`.
+
+   The numerators are laid out row-major into a tensor of shape
+   ``(rows, cols)``; their count must equal ``rows * cols``. Raises
+   :class:`ValueError` on malformed text or a count/shape mismatch.
+
+
+.. py:function:: encode_fracvector_floats(value: httk.core.FracVector) -> tuple[float, Ellipsis]
+
+   The elements of a rational tensor as a flat row-major tuple of nearest floats.
+
+   This is the (documented approximate) companion of
+   :func:`encode_fracvector_exact`, used to fill the per-element float
+   query/index columns of fixed-shape fields.
+
+

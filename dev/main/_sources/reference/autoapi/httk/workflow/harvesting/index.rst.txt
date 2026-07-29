@@ -1,0 +1,319 @@
+httk.workflow.harvesting
+========================
+
+.. py:module:: httk.workflow.harvesting
+
+.. autoapi-nested-parse::
+
+   The results-harvest contract: everything a data layer needs about one job.
+
+   Harvesting is the read-only counterpart of running work. A manager decides what
+   happens next; a harvest reports what already happened, once, per job that
+   stopped, in a shape a data layer can store without knowing anything about
+   markers, journals, or leases.
+
+   That shape — :class:`~httk.workflow.harvesting.HarvestRecord` — is the layering boundary of *httk₂*.
+   *httk-workflow* has no database dependency and never will: it produces records,
+   and something else consumes them. A consumer therefore reads results like this,
+   and nothing in this module knows what ``store`` or ``load_vasp`` are:
+
+   .. code-block:: python
+
+       for record in harvest(workspace):
+           store.save(load_vasp(record))
+
+   Every member of a record is derived from exactly the authoritative state a
+   manager reads — the marker below ``state/``, the journal frames that marker's
+   chain names, and the immutable ``job.json`` — so a record never says anything the
+   workspace does not. Two properties follow from that and are the reason this
+   module exists at all:
+
+   * **The executed code is pinned.** A record carries the immutable job digest and
+     the complete runner identity: backend, source, path, and the SHA-256 the job
+     pinned for every runner that lives outside its payload. For a runner named by
+     the reserved ``pkg:`` form the installed distribution and its version are
+     reported as well, so a stored result names the software that produced it.
+   * **Damage is reported, never guessed.** A job whose journal chain is broken is
+     still harvested, with whatever remains readable and ``gaps`` set, because a
+     result that exists must not become invisible just because part of its history
+     did not survive.
+
+   :func:`harvest` is lazily evaluated over one scan of the workspace. By design it
+   iterates jobs without materializing the workspace, and building one record reads
+   only that job's own payload and journal chain.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.workflow.harvesting.HARVEST_FORMAT
+   httk.workflow.harvesting.HARVEST_FORMAT_VERSION
+   httk.workflow.harvesting.HARVESTABLE_KINDS
+   httk.workflow.harvesting.DEFAULT_HARVEST_STATES
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.workflow.harvesting.HarvestRecord
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.workflow.harvesting.module_distribution
+   httk.workflow.harvesting.runner_provenance
+   httk.workflow.harvesting.timeline
+   httk.workflow.harvesting.children_of
+   httk.workflow.harvesting.declarations_of
+   httk.workflow.harvesting.record_of
+   httk.workflow.harvesting.harvest_kinds
+   httk.workflow.harvesting.harvest
+
+
+Module Contents
+---------------
+
+.. py:data:: HARVEST_FORMAT
+   :value: 'httk-workflow-harvest'
+
+
+.. py:data:: HARVEST_FORMAT_VERSION
+   :value: 1
+
+
+.. py:data:: HARVESTABLE_KINDS
+
+.. py:data:: DEFAULT_HARVEST_STATES
+   :value: ('succeeded',)
+
+
+.. py:function:: module_distribution(module: str) -> tuple[str, str] | None
+
+   Return the ``(name, version)`` of the distribution installing *module*.
+
+   The answer is read from installation metadata alone and never by importing
+   anything: a module name comes out of an untrusted ``job.json``, and importing
+   it to ask which package it belongs to would execute code during a read-only
+   harvest. A wheel installation is recognized by the module path recorded in
+   its file list, and an editable installation by the source tree its
+   ``direct_url.json`` names. Anything else — a module on ``PYTHONPATH`` that no
+   installed distribution owns — is reported as unknown rather than guessed.
+
+
+.. py:function:: runner_provenance(job: httk.workflow.models.JobDefinition) -> dict[str, object] | None
+
+   Return what installation provenance exists for one job's runner.
+
+   Only the reserved ``pkg:<module>/<resource>`` form of an installed runner
+   resolves to a Python distribution, so every other runner reports ``None``: a
+   payload runner is pinned by the job digest, and a workspace or plain
+   installed runner is pinned by ``runner.sha256`` and nothing else is known
+   about where it came from.
+
+
+.. py:function:: timeline(frames: collections.abc.Sequence[collections.abc.Mapping[str, Any]]) -> dict[str, object]
+
+   Return the activation and attempt timeline of one job, oldest first.
+
+   The frames are exactly the ones the workspace's ``job_frames`` reader
+   walked, so this is a pure regrouping of recorded history: an activation is
+   every consecutive frame sharing one ``activation_id``, and an attempt is
+   opened by the ``claimed`` frame that consumed a budget and closed by the
+   first frame that reported how it ended. A frame the journal could not return
+   sets ``gaps`` and is skipped, which keeps a job with a damaged history
+   harvestable instead of silent.
+
+
+.. py:function:: children_of(frames: collections.abc.Sequence[collections.abc.Mapping[str, Any]]) -> dict[str, dict[str, object]]
+
+   Return the labeled children one job registered, keyed by spawn label.
+
+   A campaign therefore harvests as a tree: every record names the children it
+   spawned, and each of those is a job a consumer harvests in its own right. A
+   label is mandatory in ``core-v2``, so an unlabeled child reference — only
+   possible in a workspace written by an older profile — is left out rather than
+   given an invented name. A label reused by a later activation names the child
+   of the most recent spawn under it.
+
+
+.. py:class:: HarvestRecord
+
+   Everything a data layer needs about one job that stopped.
+
+   Paths appear twice on purpose. The members ``payload_path``,
+   ``workdir_path``, and ``data_path`` are workspace relative, which is what a
+   stored record must hold so it survives moving the workspace; the properties
+   :attr:`payload`, :attr:`workdir`, and :attr:`data` resolve them against the
+   workspace this record was harvested from, which is what code reading result
+   files wants.
+
+
+   .. py:attribute:: workspace_root
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: workspace_id
+      :type:  str
+
+
+   .. py:attribute:: job_id
+      :type:  str
+
+
+   .. py:attribute:: job_key
+      :type:  str
+
+
+   .. py:attribute:: job
+      :type:  collections.abc.Mapping[str, object]
+
+
+   .. py:attribute:: runner_provenance
+      :type:  collections.abc.Mapping[str, object] | None
+
+
+   .. py:attribute:: state
+      :type:  str
+
+
+   .. py:attribute:: failure
+      :type:  httk.workflow.models.Failure | None
+
+
+   .. py:attribute:: placement
+      :type:  pathlib.PurePosixPath
+
+
+   .. py:attribute:: payload_path
+      :type:  pathlib.PurePosixPath
+
+
+   .. py:attribute:: workdir_path
+      :type:  pathlib.PurePosixPath | None
+
+
+   .. py:attribute:: data_path
+      :type:  pathlib.PurePosixPath | None
+
+
+   .. py:attribute:: data_generation
+      :type:  int | None
+
+
+   .. py:attribute:: provenance
+      :type:  collections.abc.Mapping[str, object]
+
+
+   .. py:attribute:: runner_steps
+      :type:  tuple[str, Ellipsis] | None
+
+
+   .. py:attribute:: children
+      :type:  collections.abc.Mapping[str, collections.abc.Mapping[str, object]]
+
+
+   .. py:attribute:: declarations
+      :type:  collections.abc.Mapping[str, collections.abc.Mapping[str, collections.abc.Mapping[str, object] | None]]
+
+
+   .. py:attribute:: runner_description
+      :type:  collections.abc.Mapping[str, object] | None
+      :value: None
+
+
+
+   .. py:property:: payload
+      :type: pathlib.Path
+
+
+      The absolute payload directory of this job.
+
+
+   .. py:property:: workdir
+      :type: pathlib.Path | None
+
+
+      The absolute workdir of this job's last attempt, when one is known.
+
+
+   .. py:property:: data
+      :type: pathlib.Path | None
+
+
+      The absolute transactional data directory, for a job that has one.
+
+
+   .. py:property:: gaps
+      :type: bool
+
+
+      Whether part of this job's recorded history could not be read.
+
+
+   .. py:method:: as_mapping() -> dict[str, object]
+
+      Return the JSON representation of this record.
+
+
+
+   .. py:method:: from_mapping(value: collections.abc.Mapping[str, object]) -> HarvestRecord
+      :classmethod:
+
+
+      Rebuild one record from the mapping :meth:`as_mapping` produced.
+
+
+
+.. py:function:: declarations_of(job: httk.workflow.models.JobDefinition, payload: pathlib.Path) -> tuple[dict[str, dict[str, collections.abc.Mapping[str, object] | None]], bool]
+
+   Return the declarations of one job and whether any observed one is lost.
+
+   Every name either source knows appears exactly once. ``declared`` is the
+   document ``job.json`` carried, and ``observed`` is the runtime-refined one
+   the job wrote below ``.httk-job/declarations/``; both are carried verbatim
+   and reported side by side, because merging them would require understanding
+   a vocabulary this module deliberately does not implement. An observed
+   document that cannot be read is reported as ``None`` with the damage flag
+   set, exactly like every other unreadable evidence a harvest still reports.
+
+
+.. py:function:: record_of(workspace: httk.workflow.workspace.Workspace, marker: httk.workflow.models.Marker) -> HarvestRecord | None
+
+   Return the harvest record of the one job *marker* names.
+
+   ``None`` means this job has no readable ``job.json`` and therefore no
+   definition to report: the whole contract of a record is the *validated* job
+   behind a result, so an unusable payload is reported through the module logger
+   and left to a workspace tool instead of being described by guesswork.
+
+
+.. py:function:: harvest_kinds(states: collections.abc.Iterable[str]) -> tuple[str, Ellipsis]
+
+   Validate the requested state kinds against what a harvest may read.
+
+
+.. py:function:: harvest(workspace: httk.workflow.workspace.Workspace, *, states: collections.abc.Iterable[str] = DEFAULT_HARVEST_STATES, placement: str | pathlib.PurePosixPath | None = None) -> collections.abc.Iterator[HarvestRecord]
+
+   Yield one :class:`~httk.workflow.harvesting.HarvestRecord` per finished job of *workspace*.
+
+   *states* selects which stopped jobs are reported and defaults to the
+   successful ones; every requested kind is validated against
+   ``HARVESTABLE_KINDS`` before anything is read. *placement* restricts the
+   harvest to the jobs at or below one placement, exactly as
+   ``httk workflow job list --placement`` does.
+
+   The result is a lazy iterator over one scan of the requested state
+   directories. Nothing is materialized, and building a record reads only that
+   job's own ``job.json`` and journal chain, so harvesting is a single pass over
+   a workspace of any size. Attach read-only — ``Workspace(root,
+   mutable=False)`` — when nothing else in the process needs to write.
+
+

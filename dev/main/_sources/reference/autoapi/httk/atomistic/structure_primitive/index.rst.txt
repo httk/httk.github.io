@@ -1,0 +1,65 @@
+httk.atomistic.structure_primitive
+==================================
+
+.. py:module:: httk.atomistic.structure_primitive
+
+.. autoapi-nested-parse::
+
+   Backend wrapping an spglib-like (lattice, positions, numbers) triple.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.structure_primitive.StructurePrimitive
+
+
+Module Contents
+---------------
+
+.. py:class:: StructurePrimitive(obj: Any, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.structure_backend.StructureBackend`
+
+
+   Backend for a crystal structure backed by an spglib-like triple.
+
+   The native representation is a length-3 ``(lattice, positions, numbers)`` list
+   or tuple, where ``lattice`` is 3x3, ``positions`` is Nx3 reduced coordinates,
+   and ``numbers`` is the length-N sequence of atomic numbers. The quartet is
+   derived lazily and cached: ``cell`` is a ``Cell``, ``sites`` a ``Sites``,
+   ``species`` one single-element ``Species`` per distinct atomic number, and
+   ``unwrap`` returns the original triple.
+
+
+   .. py:property:: cell
+      :type: httk.atomistic.cell.Cell
+
+
+
+   .. py:property:: sites
+      :type: httk.atomistic.sites.Sites
+
+
+
+   .. py:property:: species
+      :type: tuple[httk.atomistic.species.Species, Ellipsis]
+
+
+
+   .. py:property:: species_at_sites
+      :type: tuple[str, Ellipsis]
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

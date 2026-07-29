@@ -1,0 +1,58 @@
+httk.atomistic.cell_primitive
+=============================
+
+.. py:module:: httk.atomistic.cell_primitive
+
+.. autoapi-nested-parse::
+
+   Backend wrapping a raw 3x3 cell basis (the matrix of cell vectors).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.cell_primitive.CellPrimitive
+
+
+Module Contents
+---------------
+
+.. py:class:: CellPrimitive(obj: Any, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.cell_backend.CellBackend`
+
+
+   Backend for a cell backed by a raw 3x3 list or tuple of numbers (or any 3x3 vector-like).
+
+   The native representation is preserved verbatim (one cell vector per row); the exact
+   :class:`~httk.core.SurdVector` ``basis`` is built lazily and cached. This representation carries
+   no separate length factor, so ``scale`` is the exact ``1`` and ``unscaled_basis == basis``.
+   ``unwrap`` returns the original raw object.
+
+
+   .. py:property:: basis
+      :type: httk.core.SurdVector
+
+
+
+   .. py:property:: scale
+      :type: httk.core.SurdScalar
+
+
+
+   .. py:property:: unscaled_basis
+      :type: httk.core.SurdVector
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

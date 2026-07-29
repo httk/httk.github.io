@@ -1,0 +1,42 @@
+httk.atomistic.species_class_view
+=================================
+
+.. py:module:: httk.atomistic.species_class_view
+
+.. autoapi-nested-parse::
+
+   A view presenting any species backend as a Species (the class representation).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.species_class_view.SpeciesClassView
+
+
+Module Contents
+---------------
+
+.. py:class:: SpeciesClassView(obj: httk.atomistic.species_like.SpeciesLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.species_view.SpeciesView`, :py:obj:`httk.atomistic.species.Species`
+
+
+   A view presenting an underlying species backend as a ``Species``.
+
+   This view is a genuine frozen ``Species``, so it can be passed anywhere a Species is
+   accepted. Its fields are built eagerly from the backend on construction, with full
+   ``Species`` validation applied at that point.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

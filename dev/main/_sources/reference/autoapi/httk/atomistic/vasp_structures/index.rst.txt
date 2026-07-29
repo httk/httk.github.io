@@ -1,0 +1,99 @@
+httk.atomistic.vasp_structures
+==============================
+
+.. py:module:: httk.atomistic.vasp_structures
+
+.. autoapi-nested-parse::
+
+   Build an exact :class:`~httk.atomistic.Structure` from a neutral POSCAR mapping.
+
+   :func:`structure_from_poscar` consumes the plain, string-preserving mapping
+   produced by ``httk.io.read_poscar`` (format tag ``"vasp-poscar"``) and turns it
+   into an exact :class:`~httk.atomistic.Structure`. It imports nothing from
+   *httk-io* — it only understands the neutral mapping shape — keeping the parsing
+   capability (*httk-io*) and the domain model (*httk-atomistic*) decoupled.
+
+   :func:`structure_from_payload` exposes the payload-to-domain conversion used by
+   the format-adapter registry. :func:`load_structure` is the explicit convenience
+   entry point for callers that want to name the domain operation themselves.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.atomistic.vasp_structures.structure_from_poscar
+   httk.atomistic.vasp_structures.structure_from_payload
+   httk.atomistic.vasp_structures.load_structure
+   httk.atomistic.vasp_structures.load_asu_structure
+
+
+Module Contents
+---------------
+
+.. py:function:: structure_from_poscar(data: collections.abc.Mapping[str, Any]) -> httk.atomistic.structure.Structure
+
+   Build an exact :class:`~httk.atomistic.Structure` from a neutral POSCAR mapping.
+
+   ``data`` is the mapping returned by ``httk.io.read_poscar`` (its ``format``
+   must be ``"vasp-poscar"``). The cell basis is taken exactly from the file's
+   string rows. For a positive universal scaling factor the ``scale`` string is
+   used directly as the cell's exact scale; for a negative scaling factor (a
+   target **volume** ``V``) the scale is the cube root of ``V / |det(basis)|`` —
+   a value outside the exact surd field, so it is a deterministic rational
+   approximation (the basis rows themselves stay exact).
+
+   Direct coordinates become reduced coordinates directly (exact strings).
+   Cartesian coordinates are converted exactly as ``cart * basis.inv()`` under
+   the row-vector convention; because VASP scales *both* the lattice vectors and
+   the Cartesian positions by the universal scaling factor, that factor cancels
+   and the reduced coordinates are exact regardless of the scale/volume case.
+
+   Species come from the VASP-5 species line (one single-element, unattached
+   :class:`~httk.atomistic.Species` of concentration 1.0 per distinct symbol);
+   a VASP-4 file (no species symbols) raises a :class:`ValueError`. Selective
+   dynamics flags, if present, are ignored.
+
+
+.. py:function:: structure_from_payload(data: collections.abc.Mapping[str, Any]) -> httk.atomistic.structure.Structure
+
+   Build a :class:`~httk.atomistic.Structure` from a tagged neutral payload.
+
+   The ``"format"`` tag selects the structure builder. Currently supported
+   payloads are ``"vasp-poscar"`` and single-block ``"cif"`` mappings. A
+   multi-block CIF retains the same :class:`ValueError` as
+   :func:`load_structure`; use :func:`~httk.atomistic.cif_structures.asu_structures_from_cif` for all blocks.
+
+
+.. py:function:: load_structure(path: str) -> httk.atomistic.structure.Structure
+
+   Load a file and build a :class:`~httk.atomistic.Structure` from it.
+
+   ``httk.core.load(path, raw=True)`` selects the reader by file type
+   (transparently decompressing ``.bz2`` / ``.gz`` files); the payload's
+   ``"format"`` tag then selects the matching structure builder. A payload
+   without a recognized ``"format"`` tag raises a clear :class:`ValueError`.
+
+   For a CIF this expands the asymmetric unit into the full cell. Use
+   :func:`load_asu_structure` instead to keep the asymmetric-unit form, which is both
+   smaller and richer — it carries the space group, the Wyckoff assignment of every
+   site, and the setting the file was written in.
+
+
+.. py:function:: load_asu_structure(path: str, **options: Any) -> Any
+
+   Load a file and build an :class:`~httk.atomistic.ASUStructure` from it.
+
+   Currently CIF only, since it is the format that states its own symmetry. Unlike
+   :func:`load_structure` this keeps the asymmetric-unit form rather than expanding it,
+   so the space group, the Wyckoff position of each site, and the file's setting all
+   survive. Expand it at any time with ``UnitcellStructureView(asu)``.
+
+   ``options`` are passed to :func:`~httk.atomistic.asu_structure_from_cif` — notably
+   ``tolerance`` and ``trust_declared_symmetry``, the latter being the way to load a file
+   whose declared Hall symbol or space-group number contradicts its own symmetry
+   operations.
+
+

@@ -1,0 +1,65 @@
+httk.core.vectors.vector_native
+===============================
+
+.. py:module:: httk.core.vectors.vector_native
+
+.. autoapi-nested-parse::
+
+   Backend wrapping plain nested sequences (lists/tuples of numeric or string leaves).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.vectors.vector_native.VectorNative
+
+
+Module Contents
+---------------
+
+.. py:class:: VectorNative(obj: Any, **hints: Any)
+
+   Bases: :py:obj:`httk.core.vectors.vector_backend.VectorBackend`
+
+
+   Backend for a vector backed by plain nested sequences.
+
+   The native representation is a (possibly nested) rectangular list or tuple whose leaves are
+   ``int``, ``float``, :class:`decimal.Decimal`, :class:`fractions.Fraction`, or ``str``.
+   Conversion into the exact ``fractions`` interchange goes through
+   :meth:`~httk.core.vectors.fracvector.FracVector.create`, so string-uncertainty parsing
+   (e.g. ``"0.33342(10)"``) works here too. ``unwrap`` returns the original raw object.
+
+
+   .. py:property:: native
+      :type: Any
+
+
+      The original nested list/tuple this backend wraps, leaves untouched.
+
+      This is the same object returned by :meth:`unwrap`, exposed as a named accessor so the
+      native view can present a natively-held vector's leaves *verbatim* (its preserve-original
+      default) without reaching into private state.
+
+
+   .. py:property:: fractions
+      :type: httk.core.vectors.vector_api.Fractions
+
+
+
+   .. py:property:: dim
+      :type: tuple[int, Ellipsis]
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

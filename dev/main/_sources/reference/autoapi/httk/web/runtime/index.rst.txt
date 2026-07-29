@@ -1,0 +1,29 @@
+httk.web.runtime
+================
+
+.. py:module:: httk.web.runtime
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/web/runtime/asgi/index
+   /reference/autoapi/httk/web/runtime/devserver/index
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.web.runtime.create_app
+
+
+Package Contents
+----------------
+
+.. py:function:: create_app(*, engine: httk.web.engine.site_engine.SiteEngine, debug: bool = False) -> starlette.applications.Starlette
+

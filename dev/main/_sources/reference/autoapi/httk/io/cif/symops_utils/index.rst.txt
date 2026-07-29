@@ -1,0 +1,27 @@
+httk.io.cif.symops_utils
+========================
+
+.. py:module:: httk.io.cif.symops_utils
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.io.cif.symops_utils.compose_ops_with_centerings
+
+
+Module Contents
+---------------
+
+.. py:function:: compose_ops_with_centerings(ops, centerings)
+
+   Compose symmetry operations with centering translations.
+
+   ``ops`` is a list of ``(R, t, time_flag)`` operations and ``centerings`` is a list
+   of ``(c, time_c)`` where ``c`` is a 3-vector fractional translation and ``time_c``
+   is 0 or 1 (0 means no time reversal). Returns a new list of ``(R, t', time')`` where
+   ``t' = t + c`` and ``time' = (time_flag + time_c) % 2``.
+
+

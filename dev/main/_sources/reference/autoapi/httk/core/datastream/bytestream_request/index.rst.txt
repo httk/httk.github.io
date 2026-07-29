@@ -1,0 +1,45 @@
+httk.core.datastream.bytestream_request
+=======================================
+
+.. py:module:: httk.core.datastream.bytestream_request
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.datastream.bytestream_request.BytestreamRequest
+
+
+Module Contents
+---------------
+
+.. py:class:: BytestreamRequest(request: urllib.request.Request, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_common.BytestreamCommon`, :py:obj:`httk.core.datastream.bytestream_backend.BytestreamBackend`
+
+
+   Backend for streaming byte data fetched via a urllib.request.Request.
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: url
+      :type: str
+
+
+
+   .. py:property:: request
+      :type: urllib.request.Request
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+

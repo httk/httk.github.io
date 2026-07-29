@@ -1,0 +1,30 @@
+httk.atomistic.sites_view
+=========================
+
+.. py:module:: httk.atomistic.sites_view
+
+.. autoapi-nested-parse::
+
+   The abstract base class for all sites views in httk-atomistic.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.sites_view.SitesView
+
+
+Module Contents
+---------------
+
+.. py:class:: SitesView
+
+   Bases: :py:obj:`httk.core.View`\ [\ :py:obj:`httk.atomistic.sites_backend.SitesBackend`\ ]
+
+
+   Abstract base class for all views of sites data.
+
+

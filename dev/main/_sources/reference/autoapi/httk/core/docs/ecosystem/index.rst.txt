@@ -1,0 +1,61 @@
+httk.core.docs.ecosystem
+========================
+
+.. py:module:: httk.core.docs.ecosystem
+
+.. autoapi-nested-parse::
+
+   Discover and validate the module pins used by the aggregate documentation site.
+
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   httk.core.docs.ecosystem.EcosystemManifestError
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.docs.ecosystem.build_ecosystem_manifest
+   httk.core.docs.ecosystem.read_ecosystem_manifest
+   httk.core.docs.ecosystem.write_ecosystem_manifest
+   httk.core.docs.ecosystem.verify_ecosystem_manifest
+
+
+Module Contents
+---------------
+
+.. py:exception:: EcosystemManifestError
+
+   Bases: :py:obj:`RuntimeError`
+
+
+   Raised when an ecosystem checkout cannot produce a valid manifest.
+
+
+.. py:function:: build_ecosystem_manifest(submodules_dir: str | pathlib.Path, *, require_release_tags: bool = False) -> dict[str, object]
+
+   Build the sorted manifest for direct Git checkouts under *submodules_dir*.
+
+
+.. py:function:: read_ecosystem_manifest(path: str | pathlib.Path) -> dict[str, object]
+
+   Read a JSON manifest and report malformed files as typed errors.
+
+
+.. py:function:: write_ecosystem_manifest(manifest: collections.abc.Mapping[str, object], output: str | pathlib.Path) -> None
+
+   Write *manifest* as sorted, newline-terminated JSON using an atomic replace.
+
+
+.. py:function:: verify_ecosystem_manifest(submodules_dir: str | pathlib.Path, manifest_path: str | pathlib.Path, *, require_release_tags: bool = False) -> None
+
+   Verify a committed manifest against the current checkout state.
+
+

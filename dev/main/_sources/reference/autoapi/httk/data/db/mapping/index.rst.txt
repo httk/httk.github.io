@@ -1,0 +1,86 @@
+httk.data.db.mapping
+====================
+
+.. py:module:: httk.data.db.mapping
+
+.. autoapi-nested-parse::
+
+   Schema-to-SQL mapping: build SQLAlchemy Core tables from resolved :class:`~httk.data.db.schema.TableSchema` IR.
+
+   :func:`table_for` turns one resolved schema into a :class:`sqlalchemy.Table`
+   registered in a :class:`sqlalchemy.MetaData` (idempotently: an already-built
+   table is returned as-is), recursing into referenced and child-element storable
+   classes so that every foreign-key target exists in the same metadata.
+   :func:`sqlalchemy_metadata` is the convenience wrapper that maps a batch of
+   schemas into one fresh metadata.
+
+   The relational layout produced here is exactly the one the schema IR
+   documents, plus the store-managed columns:
+
+   - every parent table gets an ``sid`` integer primary key (autoincrementing,
+     with an attached ``<table>_sid_seq`` sequence for dialects such as DuckDB
+     that need one; SQLite ignores it) and — only under the ``"content_id"``
+     dedup policy — a unique-indexed ``content_id`` text column;
+   - every child table gets a ``<parent table>_sid`` integer foreign key (NOT
+     NULL, indexed) and a ``<field>_index`` integer ordering column ahead of its
+     element columns; storable elements become a ``<field>_sid`` foreign key to
+     the element class's table.
+
+   Index names are deterministic and table-scoped — ``ix_<table>_<column>`` for
+   plain indexes, ``uq_<table>_<column>`` for unique ones, columns joined by
+   underscores for composites — truncated with a stable hash suffix when they
+   would exceed common identifier-length limits.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.data.db.mapping.SID_COLUMN
+   httk.data.db.mapping.CONTENT_ID_COLUMN
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.data.db.mapping.sqlalchemy_metadata
+   httk.data.db.mapping.table_for
+
+
+Module Contents
+---------------
+
+.. py:data:: SID_COLUMN
+   :type:  Final
+   :value: 'sid'
+
+
+   The store-managed integer primary-key column present on every table.
+
+.. py:data:: CONTENT_ID_COLUMN
+   :type:  Final
+   :value: 'content_id'
+
+
+   The store-managed content-identity column of tables with the ``"content_id"`` dedup policy.
+
+.. py:function:: sqlalchemy_metadata(schemas: collections.abc.Iterable[httk.data.db.schema.TableSchema]) -> sqlalchemy.MetaData
+
+   A fresh :class:`sqlalchemy.MetaData` holding the tables of ``schemas`` (recursively).
+
+
+.. py:function:: table_for(schema: httk.data.db.schema.TableSchema, metadata: sqlalchemy.MetaData) -> sqlalchemy.Table
+
+   The :class:`sqlalchemy.Table` of ``schema`` within ``metadata``, building it on first use.
+
+   Building is idempotent per metadata — if the table is already registered it
+   is returned unchanged — and recursive: the child tables of the schema and
+   the tables of every referenced storable class (reference fields and
+   storable child elements alike) are built into the same metadata, so all
+   foreign keys resolve.
+
+

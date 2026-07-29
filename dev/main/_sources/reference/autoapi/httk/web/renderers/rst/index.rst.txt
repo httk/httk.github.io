@@ -1,0 +1,22 @@
+httk.web.renderers.rst
+======================
+
+.. py:module:: httk.web.renderers.rst
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.web.renderers.rst.RstRenderer
+
+
+Module Contents
+---------------
+
+.. py:class:: RstRenderer
+
+   .. py:method:: render(source_path: pathlib.Path) -> httk.web.renderers.base.RenderResult
+
+

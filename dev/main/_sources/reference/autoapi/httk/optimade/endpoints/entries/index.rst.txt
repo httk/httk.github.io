@@ -1,0 +1,32 @@
+httk.optimade.endpoints.entries
+===============================
+
+.. py:module:: httk.optimade.endpoints.entries
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.optimade.endpoints.entries.RelatedResolver
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.optimade.endpoints.entries.generate_entry_endpoint_reply
+   httk.optimade.endpoints.entries.generate_single_entry_endpoint_reply
+
+
+Module Contents
+---------------
+
+.. py:data:: RelatedResolver
+
+.. py:function:: generate_entry_endpoint_reply(request: httk.optimade.model.request.ValidatedRequest, config: httk.optimade.model.config.OptimadeConfig, data: httk.optimade.model.results.QueryResults, related_resolver: RelatedResolver | None = None) -> dict[str, Any]
+
+.. py:function:: generate_single_entry_endpoint_reply(request: httk.optimade.model.request.ValidatedRequest, config: httk.optimade.model.config.OptimadeConfig, data: httk.optimade.model.results.QueryResults, related_resolver: RelatedResolver | None = None) -> dict[str, Any]
+

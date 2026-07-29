@@ -1,0 +1,132 @@
+httk.core.dataloader
+====================
+
+.. py:module:: httk.core.dataloader
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.core.dataloader.DecodeObjectCallback
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.dataloader.DataRecord
+   httk.core.dataloader.DatasetMeta
+   httk.core.dataloader.DataLoader
+
+
+Module Contents
+---------------
+
+.. py:type:: DecodeObjectCallback
+   :canonical: Callable[[dict[str, Any], str], Any]
+
+
+   Callback invoked as ``(dict_obj, jsonld_url)`` that returns the value to use in place of
+   ``dict_obj`` (return the input unchanged to decline).
+
+.. py:class:: DataRecord(data: dict[str, Any])
+
+   Read-only attribute and mapping view over a ``dict[str, Any]``.
+
+   Top-level keys are reachable both as attributes (``record.name``) and as items
+   (``record["name"]``); the wrapped values are the plain parsed JSON and are not
+   themselves wrapped. Supports iteration over keys, ``len()``, ``in``, and ``keys()``.
+
+
+   .. py:method:: keys() -> collections.abc.KeysView[str]
+
+
+.. py:class:: DatasetMeta
+
+   Header metadata extracted from a structured JSON-LD dataset document.
+
+
+   .. py:attribute:: context
+      :type:  dict[str, Any]
+
+      The raw ``@context`` object.
+
+
+   .. py:attribute:: id
+      :type:  str | None
+
+      The document ``@id``, or ``None`` if absent.
+
+
+   .. py:attribute:: type_
+      :type:  str | None
+
+      The document ``@type``, or ``None`` if absent (trailing underscore avoids the builtin ``type``).
+
+
+   .. py:attribute:: header
+      :type:  dict[str, Any]
+
+      All remaining top-level keys except ``data``, ``indicies``, and ``@``-keys (titles, creator, license, provenance, ...).
+
+
+   .. py:attribute:: dataset_ids
+      :type:  dict[str, str]
+
+      Mapping of dataset name to its ``@id``.
+
+
+   .. py:attribute:: fields
+      :type:  dict[str, dict[str, str]]
+
+      Mapping of dataset name to a mapping of field name to its property URL.
+
+
+.. py:class:: DataLoader(identifier: str, source: httk.core.datastream.TextstreamLike, decode_object: DecodeObjectCallback | None = None, **hints: Any)
+
+   Lazy loader for httk dataset files, resolved only when data is first accessed.
+
+   A ``DataLoader`` is a declare-time placeholder: constructing it records its arguments
+   and performs no I/O. The source is read the first time ``data``, ``meta``, or ``index``
+   is accessed. Files are either plain JSON (any JSON value is exposed as ``data`` with
+   ``meta``/``index`` set to ``None``) or a structured JSON-LD document (with ``@context``,
+   header fields, ``data``, and optional ``indicies``) whose header is exposed via ``meta``,
+   datasets via ``data.<name>``, and lookup indices via ``index.<name>``.
+
+   Loaders that share an ``identifier`` deduplicate through a class-level registry: the
+   first load wins, and later loaders reusing that identifier return the same result while
+   their ``source`` and ``decode_object`` arguments are ignored. Keeping identifiers unique
+   is the caller's responsibility. Not thread-safe.
+
+   Format is resolved from the source name after stripping any compression suffix: a ``.json``
+   name (e.g. ``data.json`` or ``data.json.gz``) is parsed as JSON; any other recognizable
+   suffix raises ``ValueError``; a source with no determinable name is treated as JSON.
+   Compression is handled transparently by the stream layer, so ``.json.gz`` and similar load
+   directly. A ``str``/``Path`` source is interpreted as a filename unless its scheme marks it
+   as a URL (``http``, ``https``, ``ftp``, ``file``); pass ``kind="content"`` for literal
+   content or ``kind="filename"``/``kind="url"`` to force an interpretation.
+
+   .. rubric:: Example
+
+   symmetry_basics = DataLoader("symmetry_basics", "data/spacegroup_symbols.json")
+   spacegroups = symmetry_basics.data.spacegroups  # first access triggers the load
+
+
+   .. py:property:: data
+      :type: Any
+
+
+
+   .. py:property:: meta
+      :type: DatasetMeta | None
+
+
+
+   .. py:property:: index
+      :type: DataRecord | None
+
+
+

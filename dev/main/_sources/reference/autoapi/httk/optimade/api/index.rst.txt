@@ -1,0 +1,28 @@
+httk.optimade.api
+=================
+
+.. py:module:: httk.optimade.api
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.optimade.api.create_asgi_app
+   httk.optimade.api.serve
+
+
+Module Contents
+---------------
+
+.. py:function:: create_asgi_app(adapter: httk.optimade.backend.adapter.BackendAdapter, config: httk.optimade.model.config.OptimadeConfig | None = None, *, baseurl: str | None = None, debug: bool = False) -> starlette.applications.Starlette
+
+   Create an ASGI application serving an OPTIMADE API for the given backend.
+
+
+.. py:function:: serve(adapter: httk.optimade.backend.adapter.BackendAdapter, config: httk.optimade.model.config.OptimadeConfig | None = None, *, host: str = '127.0.0.1', port: int = 8080, baseurl: str | None = None, debug: bool = False) -> None
+
+   Serve an OPTIMADE API for the given backend with a development web server.
+
+

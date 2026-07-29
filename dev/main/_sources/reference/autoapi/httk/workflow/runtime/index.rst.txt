@@ -1,0 +1,174 @@
+httk.workflow.runtime
+=====================
+
+.. py:module:: httk.workflow.runtime
+
+.. autoapi-nested-parse::
+
+   Attempt identity and supervised commands.
+
+   The attempt context and :func:`run_command` are protocol-level facilities every
+   native runner uses; the environment-binding helper below is what the authoring
+   SDK and the Bash bridge both recover an attempt through.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.workflow.runtime.AttemptContext
+   httk.workflow.runtime.CommandResult
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.workflow.runtime.run_command
+
+
+Module Contents
+---------------
+
+.. py:class:: AttemptContext
+
+   The immutable identity and restart evidence for one running attempt.
+
+
+   .. py:attribute:: workspace_id
+      :type:  str
+
+
+   .. py:attribute:: job_id
+      :type:  str
+
+
+   .. py:attribute:: job_key
+      :type:  str
+
+
+   .. py:attribute:: placement
+      :type:  str
+
+
+   .. py:attribute:: step
+      :type:  str
+
+
+   .. py:attribute:: activation_id
+      :type:  str
+
+
+   .. py:attribute:: attempt_id
+      :type:  str
+
+
+   .. py:attribute:: activation_ordinal
+      :type:  int | None
+
+
+   .. py:attribute:: attempt_ordinal
+      :type:  int | None
+
+
+   .. py:attribute:: total_attempts
+      :type:  int | None
+
+
+   .. py:attribute:: is_restart
+      :type:  bool
+
+
+   .. py:attribute:: is_unclean_restart
+      :type:  bool
+
+
+   .. py:attribute:: attempt_reason
+      :type:  str | None
+
+
+   .. py:attribute:: previous_attempt_id
+      :type:  str | None
+
+
+   .. py:attribute:: activation_reason
+      :type:  str | None
+
+
+   .. py:attribute:: workdir_mode
+      :type:  str | None
+
+
+   .. py:attribute:: workdir_reused
+      :type:  bool
+
+
+   .. py:attribute:: unsafe_persistent_takeover
+      :type:  bool
+
+
+   .. py:attribute:: data_generation
+      :type:  int | None
+
+
+   .. py:attribute:: durable
+      :type:  bool
+
+
+   .. py:attribute:: settings
+      :type:  collections.abc.Mapping[str, object]
+
+
+   .. py:attribute:: resources
+      :type:  collections.abc.Mapping[str, object]
+
+
+   .. py:attribute:: join
+      :type:  object
+
+
+   .. py:attribute:: raw
+      :type:  collections.abc.Mapping[str, Any]
+
+
+   .. py:method:: read(path: str | os.PathLike[str]) -> Self
+      :classmethod:
+
+
+      Read and validate a manager-written attempt context.
+
+
+
+.. py:class:: CommandResult
+
+   Result of an argv-only supervised child process.
+
+
+   .. py:attribute:: argv
+      :type:  tuple[str, Ellipsis]
+
+
+   .. py:attribute:: returncode
+      :type:  int
+
+
+   .. py:attribute:: stdout
+      :type:  bytes
+
+
+   .. py:attribute:: stderr
+      :type:  bytes
+
+
+   .. py:attribute:: timed_out
+      :type:  bool
+
+
+.. py:function:: run_command(argv: collections.abc.Sequence[str], *, timeout: float | None = None, cwd: str | os.PathLike[str] | None = None, environment: collections.abc.Mapping[str, str] | None = None, termination_grace: float = 10.0) -> CommandResult
+
+   Run an argv array and terminate its process group on timeout.
+
+

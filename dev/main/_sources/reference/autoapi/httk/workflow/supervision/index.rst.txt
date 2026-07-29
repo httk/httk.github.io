@@ -1,0 +1,316 @@
+httk.workflow.supervision
+=========================
+
+.. py:module:: httk.workflow.supervision
+
+.. autoapi-nested-parse::
+
+   Structured, argv-only process supervision for native runners.
+
+   Every event is dispatched to the in-process monitors and to the executable
+   checkers under one supervisor-wide lock, so a monitor is never entered
+   concurrently with itself or with another monitor, and a checker never receives
+   an interleaved line on its stdin. A monitor therefore does not have to be
+   thread-safe, but it must return quickly: it delays the whole event stream.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.workflow.supervision.DEFAULT_TICK_INTERVAL
+   httk.workflow.supervision.DEFAULT_FOLLOW_INTERVAL
+   httk.workflow.supervision.DEFAULT_CAPTURE_LIMIT
+   httk.workflow.supervision.DEFAULT_TAIL_LIMIT
+   httk.workflow.supervision.DEFAULT_DIAGNOSTIC_LIMIT
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.workflow.supervision.SourceEvent
+   httk.workflow.supervision.Diagnostic
+   httk.workflow.supervision.FollowSource
+   httk.workflow.supervision.CheckerSpec
+   httk.workflow.supervision.ProcessReport
+   httk.workflow.supervision.ProcessSupervisor
+
+
+Module Contents
+---------------
+
+.. py:data:: DEFAULT_TICK_INTERVAL
+   :value: 1.0
+
+
+   Seconds between the ``tick`` events delivered to monitors and checkers.
+
+.. py:data:: DEFAULT_FOLLOW_INTERVAL
+   :value: 0.25
+
+
+   Seconds between polls of a followed file that produced no new data.
+
+.. py:data:: DEFAULT_CAPTURE_LIMIT
+   :value: 4194304
+
+
+   Bytes of a stream retained in the report when no output path is given.
+
+.. py:data:: DEFAULT_TAIL_LIMIT
+   :value: 65536
+
+
+   Bytes of a stream retained in the report when an output path is given.
+
+.. py:data:: DEFAULT_DIAGNOSTIC_LIMIT
+   :value: 512
+
+
+   Diagnostics retained in one report before the middle is dropped.
+
+.. py:class:: SourceEvent
+
+   One event delivered to an in-process or executable checker.
+
+
+   .. py:attribute:: event
+      :type:  Literal['start', 'line', 'tick', 'source-eof', 'process-exit']
+
+
+   .. py:attribute:: source
+      :type:  str
+
+
+   .. py:attribute:: line
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: timestamp
+      :type:  str
+      :value: ''
+
+
+
+   .. py:method:: as_mapping() -> dict[str, object]
+
+
+.. py:class:: Diagnostic
+
+   A structured observation made while supervising a program.
+
+
+   .. py:attribute:: code
+      :type:  str
+
+
+   .. py:attribute:: severity
+      :type:  DiagnosticSeverity
+
+
+   .. py:attribute:: summary
+      :type:  str
+
+
+   .. py:attribute:: source
+      :type:  str
+
+
+   .. py:attribute:: evidence
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: stop
+      :type:  bool
+      :value: False
+
+
+
+   .. py:method:: as_mapping() -> dict[str, object]
+
+
+.. py:class:: FollowSource
+
+   A file to follow while the child process is running.
+
+
+   .. py:attribute:: path
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: name
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: inactivity_timeout
+      :type:  float | None
+      :value: None
+
+
+
+.. py:class:: CheckerSpec
+
+   A versioned executable checker.
+
+
+   .. py:attribute:: argv
+      :type:  tuple[str, Ellipsis]
+
+
+   .. py:attribute:: required
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: sources
+      :type:  tuple[FollowSource, Ellipsis]
+      :value: ()
+
+
+
+   .. py:method:: from_mapping(value: collections.abc.Mapping[str, object]) -> CheckerSpec
+      :classmethod:
+
+
+
+.. py:class:: ProcessReport
+
+   The complete result of one supervised command.
+
+   ``stdout`` and ``stderr`` are bounded: when an output path was given they
+   hold at most the run's tail limit and the file named by ``stdout_path`` or
+   ``stderr_path`` is authoritative; otherwise they hold at most the run's
+   capture limit. ``stdout_bytes`` and ``stderr_bytes`` always count every byte
+   the program produced, and ``stdout_truncated`` and ``stderr_truncated`` say
+   whether anything was dropped from the retained tail.
+
+
+   .. py:attribute:: argv
+      :type:  tuple[str, Ellipsis]
+
+
+   .. py:attribute:: started_at
+      :type:  str
+
+
+   .. py:attribute:: finished_at
+      :type:  str
+
+
+   .. py:attribute:: returncode
+      :type:  int
+
+
+   .. py:attribute:: termination
+      :type:  str
+
+
+   .. py:attribute:: stdout
+      :type:  bytes
+
+
+   .. py:attribute:: stderr
+      :type:  bytes
+
+
+   .. py:attribute:: diagnostics
+      :type:  tuple[Diagnostic, Ellipsis]
+
+
+   .. py:attribute:: stdout_path
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: stderr_path
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: stdout_bytes
+      :type:  int
+      :value: 0
+
+
+
+   .. py:attribute:: stderr_bytes
+      :type:  int
+      :value: 0
+
+
+
+   .. py:attribute:: stdout_truncated
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: stderr_truncated
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: dropped_diagnostics
+      :type:  int
+      :value: 0
+
+
+
+   .. py:property:: timed_out
+      :type: bool
+
+
+
+   .. py:method:: as_mapping() -> dict[str, object]
+
+
+   .. py:method:: write(path: str | os.PathLike[str]) -> pathlib.Path
+
+
+.. py:class:: ProcessSupervisor(*, monitors: collections.abc.Sequence[EventMonitor] = (), checkers: collections.abc.Sequence[CheckerSpec] = (), follow: collections.abc.Sequence[FollowSource] = ())
+
+   Run one command, stream its output, and terminate its process group safely.
+
+   Monitors and checkers observe the same event stream under one lock, so an
+   in-process monitor does not have to be thread-safe. Whatever happens during
+   a run - including an exception raised by the caller's monitor - the signal
+   handlers are restored, the child's process group is terminated and reaped,
+   the reader threads are joined, and the output handles are closed before
+   :meth:`run` returns or propagates.
+
+
+   .. py:attribute:: monitors
+      :value: ()
+
+
+
+   .. py:attribute:: checker_specs
+      :value: ()
+
+
+
+   .. py:attribute:: follow
+      :value: ()
+
+
+
+   .. py:method:: run(argv: collections.abc.Sequence[str], *, timeout: float | None = None, cwd: str | os.PathLike[str] | None = None, environment: collections.abc.Mapping[str, str] | None = None, termination_grace: float = 10.0, stdout_path: str | os.PathLike[str] | None = None, stderr_path: str | os.PathLike[str] | None = None, tick_interval: float = DEFAULT_TICK_INTERVAL, follow_interval: float = DEFAULT_FOLLOW_INTERVAL, capture_limit: int = DEFAULT_CAPTURE_LIMIT, tail_limit: int = DEFAULT_TAIL_LIMIT, diagnostic_limit: int = DEFAULT_DIAGNOSTIC_LIMIT) -> ProcessReport
+
+      Run one command to completion and return its structured report.
+
+
+

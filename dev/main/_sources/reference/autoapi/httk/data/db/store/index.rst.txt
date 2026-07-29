@@ -1,0 +1,155 @@
+httk.data.db.store
+==================
+
+.. py:module:: httk.data.db.store
+
+.. autoapi-nested-parse::
+
+   The SQL store: save and fetch storable frozen dataclasses through a :class:`~httk.data.db.engine.Database`.
+
+   :class:`SqlStore` is the object-level storage API on top of the schema IR
+   (:mod:`httk.data.db.schema`), the value codecs (:mod:`httk.data.db.codecs`),
+   the content identity (:mod:`httk.data.db.identity`), and the SQLAlchemy table
+   mapping (:mod:`httk.data.db.mapping`):
+
+   - :meth:`SqlStore.save` writes an instance (recursing into referenced and
+     child-element storables) and returns its integer ``sid``, deduplicating per
+     the class's :attr:`~httk.core.StorageInfo.dedup` policy;
+   - :meth:`SqlStore.fetch` reconstructs the instance stored under a ``sid`` —
+     exactly, via the ``*_exact`` companion columns for rationals — with an
+     identity guarantee: while an instance is alive, fetching its sid again
+     returns the very same object;
+   - :meth:`SqlStore.transaction` scopes several operations into one database
+     transaction (commit on exit, roll back on exception); outside of it every
+     operation autocommits;
+   - :meth:`SqlStore.referring` finds join-objects (tags, references) pointing at
+     a stored instance, replacing v1's implicit codependent-data machinery;
+   - :meth:`SqlStore.searcher` starts a query through the search DSL
+     (:mod:`httk.data.db.searcher`), implementing the :mod:`httk.data.query`
+     protocols.
+
+   Deduplication semantics (ported from v1): under ``"content_id"`` an equal
+   instance maps to the existing row (children are not re-inserted); under
+   ``"by_value"`` a row matching **all parent-table columns** is reused — child
+   table contents are *not* part of the match, mirroring v1 which matched key
+   columns only; under ``"none"`` every save inserts a new row.
+
+   Two small, documented liberties: an optional child-table field saved as
+   ``None`` comes back as an empty container (the relational layout cannot tell
+   the two apart), and the identity/sid caches are best-effort — instances that
+   cannot be weak-referenced or hashed (e.g. records holding lists) are simply
+   not cached, which affects only :meth:`SqlStore.sid_of` and the same-object
+   guarantee, never storage correctness.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.data.db.store.SqlStore
+
+
+Module Contents
+---------------
+
+.. py:class:: SqlStore(database: httk.data.db.engine.Database, *, create_tables: bool = True)
+
+   Object storage for storable frozen dataclasses in a relational :class:`~httk.data.db.engine.Database`.
+
+   Tables are created on demand (first save/fetch of a class, or explicitly
+   via :meth:`ensure_tables`) unless ``create_tables=False``, in which case the
+   schema is expected to exist already.
+
+
+   .. py:method:: ensure_tables(*classes: type) -> None
+
+      Resolve each class's schema and create its tables (and those it references, transitively).
+
+      Existing tables are left alone. Saving or fetching calls this
+      implicitly, but calling it up front is useful to separate DDL from a
+      data transaction (SQLite rolls back tables created inside a rolled-back
+      transaction along with the data).
+
+
+
+   .. py:method:: transaction() -> contextlib.AbstractContextManager[None]
+
+      Scope the operations of a ``with`` block into one database transaction.
+
+      Every :meth:`save`/:meth:`fetch` (on this thread) inside the block runs
+      on the same open connection; the transaction commits when the block
+      exits normally and rolls back if it raises. On a rollback the identity
+      caches are flushed, since they may name rows that no longer exist.
+      Nesting is flat: an inner ``transaction()`` block simply joins the
+      outer transaction. Outside any transaction block, each operation runs
+      (and autocommits) on its own.
+
+
+
+   .. py:method:: save(obj: Any) -> int
+
+      Store ``obj`` (deduplicating per its class's policy) and return its integer sid.
+
+      Referenced storables and storable child elements are saved recursively
+      first; when deduplication finds an existing row, that row's sid is
+      returned and no children are re-inserted.
+
+
+
+   .. py:method:: fetch[T](cls: type[T], sid: int) -> T
+
+      Reconstruct the ``cls`` instance stored under ``sid``.
+
+      While a previously fetched (or saved) instance for this ``(class,
+      sid)`` is alive, the very same object is returned. Raises
+      :class:`KeyError` (carrying the class and sid) when no such row exists.
+
+
+
+   .. py:method:: fetch_by_content_id[T](cls: type[T], key: str) -> T | None
+
+      The ``cls`` instance whose content identity is ``key``, or None if not stored.
+
+      Only classes with the ``"content_id"`` dedup policy carry a content
+      identity column; :class:`~httk.data.db.schema.SchemaError` is raised
+      for any other class.
+
+
+
+   .. py:method:: sid_of(obj: Any) -> int | None
+
+      The sid under which ``obj`` was saved or fetched through this store, else None.
+
+      This consults the in-memory reverse cache only — it never probes the
+      database — so it knows exactly the instances that passed through
+      :meth:`save` or :meth:`fetch`. Instances that cannot be hashed (a
+      storable class holding a ``list`` field is unhashable) are tracked by
+      identity instead, so they resolve too; only instances that cannot be
+      weak-referenced at all go untracked.
+
+
+
+   .. py:method:: searcher() -> httk.data.db.searcher.SqlSearcher
+
+      A new :class:`~httk.data.db.searcher.SqlSearcher` querying this store.
+
+      The searcher runs on this store's read path — inside an open
+      :meth:`transaction` block it sees uncommitted writes — and
+      reconstructs matched objects through :meth:`fetch`, so the identity
+      cache applies.
+
+
+
+   .. py:method:: referring(cls: type, *, field: str, to: Any) -> list[Any]
+
+      All stored ``cls`` instances whose reference field ``field`` points at ``to``.
+
+      ``field`` must be a reference field of ``cls`` targeting ``to``'s class
+      (:class:`~httk.data.db.schema.SchemaError` otherwise), and ``to`` must
+      be known to this store — saved or fetched through it — else
+      :class:`ValueError` is raised. Results are ordered by sid.
+
+
+

@@ -1,0 +1,37 @@
+httk.core.datastream.bytestream_url_view
+========================================
+
+.. py:module:: httk.core.datastream.bytestream_url_view
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.datastream.bytestream_url_view.BytestreamURLView
+
+
+Module Contents
+---------------
+
+.. py:class:: BytestreamURLView(obj: httk.core.datastream.bytestream_like.BytestreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_view.BytestreamView`, :py:obj:`str`
+
+
+   A view presenting an underlying data streaming backend via a URL string.
+   This view is mostly useful for providing a URL to functions that will open it.
+   Note: this view is not lazy (this is impossible for views inheriting str, since str is immutable).
+
+   Raises TypeError if created with a streaming data source that does not come with a URL.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

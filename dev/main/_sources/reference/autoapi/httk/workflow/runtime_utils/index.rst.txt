@@ -1,0 +1,45 @@
+httk.workflow.runtime_utils
+===========================
+
+.. py:module:: httk.workflow.runtime_utils
+
+.. autoapi-nested-parse::
+
+   Safe replacements for small conveniences used by shell runners.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.workflow.runtime_utils.evaluate_expression
+   httk.workflow.runtime_utils.render_template
+   httk.workflow.runtime_utils.compress_files
+   httk.workflow.runtime_utils.decompress_files
+
+
+Module Contents
+---------------
+
+.. py:function:: evaluate_expression(expression: str) -> int | float | bool
+
+   Evaluate a bounded arithmetic expression without Python ``eval``.
+
+
+.. py:function:: render_template(template_path: str | os.PathLike[str], output_path: str | os.PathLike[str], values: collections.abc.Mapping[str, object]) -> pathlib.Path
+
+   Render ``string.Template`` placeholders from an explicit mapping.
+
+
+.. py:function:: compress_files(paths: collections.abc.Sequence[str | os.PathLike[str]], *, method: str = 'bz2', remove_source: bool = False) -> tuple[pathlib.Path, Ellipsis]
+
+   Compress regular files atomically with a stdlib codec.
+
+
+.. py:function:: decompress_files(paths: collections.abc.Sequence[str | os.PathLike[str]], *, remove_source: bool = False) -> tuple[pathlib.Path, Ellipsis]
+
+   Decompress ``.bz2``, ``.gz``, or ``.xz`` files atomically.
+
+

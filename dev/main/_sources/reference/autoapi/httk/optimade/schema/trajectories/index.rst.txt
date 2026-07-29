@@ -1,0 +1,50 @@
+httk.optimade.schema.trajectories
+=================================
+
+.. py:module:: httk.optimade.schema.trajectories
+
+.. autoapi-nested-parse::
+
+   The ``trajectories`` entry type, derived from the ``structures`` properties.
+
+   A ``trajectories`` entry describes an ordered sequence of structures
+   (frames). Every structures property (other than ``id`` and ``type``) is reused
+   with an extra leading ``dim_frames`` dimension so it can vary per frame; that
+   leading dimension is declared compactable (``constant``) so a server MAY send a
+   single value when the property is constant across frames (see the specification
+   sections "Trajectories Entries" and "Compact list representation"). Two
+   trajectory-specific properties, ``nframes`` and ``reference_frames``, are added.
+
+   The source structures properties are taken from a supplied
+   :class:`~httk.core.EntryTypeDefinition` (its :class:`~httk.core.PropertyDefinition`
+   objects, reduced to the simplified dialect); this module produces the simplified
+   ``{"description", "properties"}`` dialect, which a caller turns into a full
+   ``trajectories`` :class:`~httk.core.EntryTypeDefinition` via
+   :func:`~httk.optimade.schema.served.entry_type_definition_from_simple`.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.optimade.schema.trajectories.trajectories_entry_info
+
+
+Module Contents
+---------------
+
+.. py:function:: trajectories_entry_info(structure_definition: httk.core.EntryTypeDefinition, structure_properties: collections.abc.Sequence[str]) -> dict[str, Any]
+
+   Build the ``trajectories`` entry info from named ``structures`` properties.
+
+   ``structure_definition`` is the ``structures``
+   :class:`~httk.core.EntryTypeDefinition`; ``id`` and ``type`` are copied
+   unwrapped (with ``type``'s description adjusted), every other named
+   structures property is frame-wrapped, and the shared ``last_modified``
+   property plus the trajectory-specific ``nframes`` and ``reference_frames``
+   are added. The result is the simplified ``{"description", "properties"}``
+   dialect.
+
+

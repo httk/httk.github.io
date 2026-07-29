@@ -1,0 +1,19 @@
+httk.optimade.runtime.devserver
+===============================
+
+.. py:module:: httk.optimade.runtime.devserver
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.optimade.runtime.devserver.run_dev_server
+
+
+Module Contents
+---------------
+
+.. py:function:: run_dev_server(*, app: starlette.applications.Starlette, host: str, port: int) -> None
+

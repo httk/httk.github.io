@@ -1,0 +1,50 @@
+httk.optimade.engine
+====================
+
+.. py:module:: httk.optimade.engine
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/optimade/engine/processing/index
+   /reference/autoapi/httk/optimade/engine/validate/index
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.optimade.engine.process
+   httk.optimade.engine.process_init
+   httk.optimade.engine.determine_optimade_version
+   httk.optimade.engine.validate_optimade_request
+
+
+Package Contents
+----------------
+
+.. py:function:: process(request: httk.optimade.model.request.RawRequest, query_function: httk.optimade.model.results.QueryFunction, version: str, config: httk.optimade.model.config.OptimadeConfig, schema: httk.optimade.schema.served.ServedSchema, *, debug: bool = False) -> httk.optimade.model.request.EndpointResponse
+
+   Process an OPTIMADE query.
+
+   ``request`` carries the incoming request; only ``baseurl`` and
+   ``representation`` must be set, missing information is derived from
+   ``representation``. ``query_function`` is the callback used to execute
+   entry queries against the backend. ``schema`` describes the served entry
+   types and properties.
+
+
+.. py:function:: process_init(config: httk.optimade.model.config.OptimadeConfig, query_function: httk.optimade.model.results.QueryFunction, schema: httk.optimade.schema.served.ServedSchema, *, debug: bool = False) -> None
+
+   Precompute the number of available entries per entry endpoint.
+
+
+.. py:function:: determine_optimade_version(request: httk.optimade.model.request.RawRequest) -> str
+
+.. py:function:: validate_optimade_request(request: httk.optimade.model.request.RawRequest, version: str, schema: httk.optimade.schema.served.ServedSchema) -> httk.optimade.model.request.ValidatedRequest
+

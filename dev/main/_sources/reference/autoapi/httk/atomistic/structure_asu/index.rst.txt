@@ -1,0 +1,75 @@
+httk.atomistic.structure_asu
+============================
+
+.. py:module:: httk.atomistic.structure_asu
+
+.. autoapi-nested-parse::
+
+   Backend presenting an ASUStructure through the common structure interface.
+
+   Registering this makes an :class:`~httk.atomistic.ASUStructure` usable anywhere a
+   structure is accepted: ``UnitcellStructureView(asu)`` is the full unit cell, and the
+   OPTIMADE provider, the numeric layer, and everything else follow without changes.
+
+   The expansion is lazy. Building an ASUStructure, inspecting its space group, or writing it
+   back out never generates the cell.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.structure_asu.StructureASU
+
+
+Module Contents
+---------------
+
+.. py:class:: StructureASU(obj: httk.atomistic.asu_structure.ASUStructure, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.structure_backend.StructureBackend`
+
+
+   Backend for a crystal structure carried as its asymmetric unit.
+
+   ``cell`` and ``species`` come straight off the ASU. ``sites`` and ``species_at_sites``
+   are the expansion, generated on first access and cached by the ASUStructure itself.
+
+
+   .. py:property:: cell
+      :type: httk.atomistic.cell.Cell
+
+
+
+   .. py:property:: sites
+      :type: httk.atomistic.sites.Sites
+
+
+
+   .. py:property:: species
+      :type: tuple[httk.atomistic.species.Species, Ellipsis]
+
+
+
+   .. py:property:: species_at_sites
+      :type: tuple[str, Ellipsis]
+
+
+
+   .. py:property:: asu
+      :type: httk.atomistic.asu_structure.ASUStructure
+
+
+      The underlying asymmetric unit, so a view can adopt it without re-deriving it.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+

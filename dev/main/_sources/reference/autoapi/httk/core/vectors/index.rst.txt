@@ -1,0 +1,1440 @@
+httk.core.vectors
+=================
+
+.. py:module:: httk.core.vectors
+
+.. autoapi-nested-parse::
+
+   Exact-rational vectors (:class:`FracVector`/:class:`FracScalar`/:class:`MutableFracVector`) and
+   the Vector backend/view family that lets the same tensor data be viewed as the exact
+   representation, plain nested sequences, or (optionally) numpy arrays.
+
+   The exact-math helpers live in :mod:`httk.core.exactmath` (type-preserving exact transcendentals
+   on Fraction and Decimal) and :mod:`httk.core.vectors.vectormath` (functional math wrappers).
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/core/vectors/fracvector/index
+   /reference/autoapi/httk/core/vectors/leaf_codecs/index
+   /reference/autoapi/httk/core/vectors/mutablefracvector/index
+   /reference/autoapi/httk/core/vectors/numeric/index
+   /reference/autoapi/httk/core/vectors/scalar_like/index
+   /reference/autoapi/httk/core/vectors/surdvector/index
+   /reference/autoapi/httk/core/vectors/vector_api/index
+   /reference/autoapi/httk/core/vectors/vector_backend/index
+   /reference/autoapi/httk/core/vectors/vector_frac/index
+   /reference/autoapi/httk/core/vectors/vector_frac_view/index
+   /reference/autoapi/httk/core/vectors/vector_like/index
+   /reference/autoapi/httk/core/vectors/vector_native/index
+   /reference/autoapi/httk/core/vectors/vector_native_view/index
+   /reference/autoapi/httk/core/vectors/vector_numpy/index
+   /reference/autoapi/httk/core/vectors/vector_numpy_view/index
+   /reference/autoapi/httk/core/vectors/vector_surd/index
+   /reference/autoapi/httk/core/vectors/vector_surd_view/index
+   /reference/autoapi/httk/core/vectors/vector_view/index
+   /reference/autoapi/httk/core/vectors/vectormath/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.core.vectors.NumericVector
+   httk.core.vectors.ScalarLike
+   httk.core.vectors.VectorLike
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.vectors.FracScalar
+   httk.core.vectors.FracVector
+   httk.core.vectors.LeafCodec
+   httk.core.vectors.MutableFracVector
+   httk.core.vectors.SurdScalar
+   httk.core.vectors.SurdVector
+   httk.core.vectors.VectorAPI
+   httk.core.vectors.VectorBackend
+   httk.core.vectors.VectorFrac
+   httk.core.vectors.VectorFracView
+   httk.core.vectors.VectorNative
+   httk.core.vectors.VectorNativeView
+   httk.core.vectors.VectorSurd
+   httk.core.vectors.VectorSurdView
+   httk.core.vectors.VectorView
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.vectors.known_leaf_codecs
+   httk.core.vectors.register_leaf_codec
+   httk.core.vectors.numpy_available
+   httk.core.vectors.to_numeric
+   httk.core.vectors.to_numeric_scalar
+
+
+Package Contents
+----------------
+
+.. py:class:: FracScalar(nom: int, denom: int)
+
+   Bases: :py:obj:`FracVector`
+
+
+   Represents the fractional number ``nom/denom``. This is a subclass of FracVector with the
+   purpose of making it clear when a scalar fracvector is needed/used.
+
+
+   .. py:attribute:: noms
+
+
+   .. py:attribute:: denom
+
+
+   .. py:method:: create(noms: Any, denom: int | None = None, simplify: bool = True, chain: bool = False, min_accuracy: fractions.Fraction | None = fractions.Fraction(1, 10000)) -> Self
+      :classmethod:
+
+
+      Create a FracScalar.
+
+      ``FracScalar.create(something)`` where ``something`` may be any object that can be used
+      in the constructor of the Python Fraction class (also works with strings!).
+
+      For signature compatibility with :meth:`FracVector.create`, this accepts but ignores
+      ``chain`` and ``min_accuracy``, and converts strings exactly via the Fraction constructor.
+
+
+
+.. py:class:: FracVector(noms: Noms, denom: int = 1)
+
+   FracVector is a general *immutable* N-dimensional vector (tensor) class for performing
+   linear algebra with fractional numbers.
+
+   A FracVector consists of a multidimensional tuple of integer nominators, and a single
+   shared integer denominator.
+
+   Since FracVectors are immutable, every operation on a FracVector returns a new FracVector
+   with the result of the operation. A created FracVector never changes. Hence, they are safe
+   to use as keys in dictionaries, to use in sets, etc.
+
+   Note: most methods return FracVector results that are not simplified (i.e., the FracVector
+   returned does *not* have the smallest possible integer denominator). To return a FracVector
+   with the smallest possible denominator, just call :meth:`simplify` at the last step.
+
+
+   .. py:attribute:: nested_map
+      :type:  ClassVar[collections.abc.Callable[Ellipsis, Any]]
+
+
+   .. py:attribute:: nested_map_fractions
+      :type:  ClassVar[collections.abc.Callable[Ellipsis, Any]]
+
+
+   .. py:attribute:: noms
+      :type:  Noms
+
+
+   .. py:attribute:: denom
+      :type:  int
+
+
+   .. py:method:: use(old: Any) -> FracVector
+      :classmethod:
+
+
+      Make sure the variable is a FracVector, and if not, convert it.
+
+
+
+   .. py:method:: create(noms: Any, denom: int | None = None, simplify: bool = True, chain: bool = False, min_accuracy: fractions.Fraction | None = fractions.Fraction(1, 10000)) -> Self
+      :classmethod:
+
+
+      Create a FracVector from various types of sequences.
+
+      Simplest use::
+
+        FracVector.create(some_kind_of_sequence)
+
+      where 'some_kind_of_sequence' can be any nested list or tuple of objects that can be
+      used in the constructor of the Python Fraction class (also works with strings!). If any
+      object found while traveling the items has a ``.to_fractions()`` method, it will be called
+      and is expected to return a fraction or list or tuple of fractions.
+
+      :param noms: any nested sequence of Fraction-constructible objects.
+      :param denom: an optional common denominator to divide all nominators with.
+      :param simplify: if True, return a FracVector with the smallest possible denominator.
+      :param chain: if True, remove the outermost dimension and chain the sub-sequences. I.e.,
+                    if ``input=[[1, 2, 3], [4, 5, 6]]`` then ``FracVector.create(input)`` gives
+                    ``[1, 2, 3, 4, 5, 6]``.
+      :param min_accuracy: the minimum accuracy assumed in string input. The default is
+                           ``1/10000``, i.e. ``0.33 = 0.3300 = 33/100``, whereas ``0.3333 = 1/3``. Set it
+                           to None to assume infinite accuracy, i.e. convert exactly whatever string is
+                           given (unless a standard deviation is given as a parenthesis after the string).
+
+      Note: FracVector itself implements ``.to_fractions()``, and hence the same constructor
+      allows stacking several FracVector objects like this::
+
+          vertical_fracvector = FracVector.create([[fracvector1], [fracvector2]])
+          horizontal_fracvector = FracVector.create([fracvector1, fracvector2], chain=True)
+
+
+
+   .. py:method:: create_fast(noms: Any, common_denom: int = 1, max_denom: int | None = None, denom: int | None = None, simplify: bool = True, chain: bool = False) -> Self
+      :classmethod:
+
+
+      Optimized version of :meth:`create` that takes advantage of the fact that the type of
+      ``noms`` is a nested list of ints (of depth 2 or 3) over a single ``common_denom``.
+
+
+
+   .. py:method:: get_append(other: Any) -> Self
+
+
+   .. py:method:: get_extend(other: Any) -> Self
+
+
+   .. py:method:: get_insert(pos: int, other: Any) -> Self
+
+
+   .. py:method:: get_prepend(other: Any) -> Self
+
+
+   .. py:method:: get_prextend(other: Any) -> Self
+
+
+   .. py:method:: get_stacked(other: Any) -> Self
+
+      Return a new FracVector with ``other`` stacked after ``self`` along a new leading axis.
+
+      ``self`` and ``other`` must have the same shape; the result gains one extra outermost
+      dimension of size two (numpy ``stack``-like). E.g. stacking the row ``[1, 2, 3]`` with
+      ``[4, 5, 6]`` gives ``[[1, 2, 3], [4, 5, 6]]``.
+
+
+
+   .. py:method:: get_prestacked(other: Any) -> Self
+
+      Return a new FracVector with ``other`` stacked before ``self`` along a new leading axis.
+
+      The mirror of :meth:`get_stacked`: stacking ``[1, 2, 3]`` in front with ``[4, 5, 6]``
+      gives ``[[4, 5, 6], [1, 2, 3]]``.
+
+
+
+   .. py:method:: get_stackedinsert(pos: int, other: Any) -> Self
+
+
+   .. py:method:: chain_vecs(vecs: Any) -> Self
+      :classmethod:
+
+
+      Optimized chaining of FracVectors.
+
+      :param vecs: a list (or tuple) of fracvectors that all share the same denominator.
+
+      Returns the same thing as ``FracVector.create(vecs, chain=True)``, i.e., removes the
+      outermost dimension and chains the sub-sequences. If ``input=[[1, 2, 3], [4, 5, 6]]``
+      then it gives ``[1, 2, 3, 4, 5, 6]``, but this method assumes all vectors share the
+      same denominator (it raises an exception if this is not true).
+
+
+
+   .. py:method:: stack_vecs(vecs: Any) -> Self
+      :classmethod:
+
+
+      Optimized stacking of FracVectors.
+
+      :param vecs: a list (or tuple) of fracvectors that all share the same denominator.
+
+      Returns the same thing as ``FracVector.create(vecs)``, but only works if all vectors
+      share the same denominator (raises an exception if this is not true).
+
+
+
+   .. py:method:: eye(dims: tuple[int, Ellipsis]) -> Self
+      :classmethod:
+
+
+      Create a diagonal one-matrix with the given dimensions.
+
+
+
+   .. py:method:: zeros(dims: tuple[int, Ellipsis]) -> Self
+      :classmethod:
+
+
+      Create a zero matrix with the given dimensions.
+
+
+
+   .. py:method:: random(dims: tuple[int, Ellipsis], minnom: int = -100, maxnom: int = 100, denom: int = 100) -> Self
+      :classmethod:
+
+
+      Create a matrix with the given dimensions filled with random rational numbers.
+
+
+
+   .. py:method:: from_tuple(t: tuple[int, Noms]) -> Self
+      :classmethod:
+
+
+      Return a FracVector created from the tuple representation ``(denom, noms)``, as returned
+      by the :meth:`to_tuple` method. ``from_tuple(v.to_tuple())`` reconstructs ``v`` exactly.
+
+
+
+   .. py:method:: from_floats(data: Any, resolution: int = 2**32) -> Self
+      :classmethod:
+
+
+      Create a FracVector from a (nested) list or tuple of floats. You can convert a numpy
+      array with this method if you use ``A.tolist()``.
+
+      :param l: the (nested) list or tuple of floats.
+      :param resolution: the resolution used for interpreting the given floating point numbers.
+                         Default is ``2**32``.
+
+
+
+   .. py:method:: create_cos(data: Any, degrees: bool = False, limit: bool = False, find_best_rational: bool = True, prec: fractions.Fraction = fractions.Fraction(1, 1000000)) -> Self
+      :classmethod:
+
+
+      Create a FracVector as the cosine of the argument ``data``. If ``data`` is composed of
+      strings, the standard deviation of the numbers is taken into account, and the best
+      possible fractional approximation to the cosines of the data is returned within the
+      standard deviation.
+
+      This is not the same as ``FracVector.create(data).cos()``, which creates the best
+      possible fractional approximations of ``data`` and then takes cos on that.
+
+
+
+   .. py:method:: create_sin(data: Any, degrees: bool = False, limit: bool = False, prec: fractions.Fraction = fractions.Fraction(1, 1000000)) -> Self
+      :classmethod:
+
+
+      Create a FracVector as the sine of the argument ``data``. If ``data`` is composed of
+      strings, the standard deviation of the numbers is taken into account, and the best
+      possible fractional approximation to the sines of the data is returned within the
+      standard deviation.
+
+      This is not the same as ``FracVector.create(data).sin()``, which creates the best
+      possible fractional approximations of ``data`` and then takes sin on that.
+
+
+
+   .. py:method:: create_exp(data: Any, prec: fractions.Fraction = fractions.Fraction(1, 1000000), limit: bool = False) -> Self
+      :classmethod:
+
+
+      Create a FracVector as the exponent of the argument ``data``. If ``data`` is composed of
+      strings, the standard deviation of the numbers is taken into account, and the best
+      possible fractional approximation to the exponents of the data is returned within the
+      standard deviation.
+
+      This is not the same as ``FracVector.create(data).exp()``, which creates the best
+      possible fractional approximations of ``data`` and then takes exp on that.
+
+
+
+   .. py:method:: pi(prec: fractions.Fraction = fractions.Fraction(1, 1000000), limit: bool = False) -> Self
+      :classmethod:
+
+
+      Create a scalar FracVector with a rational approximation of pi to precision ``prec``.
+
+
+
+   .. py:property:: dim
+      :type: tuple[int, Ellipsis]
+
+
+      A tuple with the dimensionality of each dimension of the FracVector (the noms are
+      assumed to be a nested list of rectangular shape).
+
+
+   .. py:property:: nom
+      :type: int
+
+
+      Return the integer nominator of a scalar FracVector.
+
+
+   .. py:method:: validate() -> bool
+
+
+   .. py:method:: to_tuple() -> tuple[int, Noms]
+
+      Return the FracVector on tuple representation ``(denom, ...noms...)``.
+
+
+
+   .. py:method:: to_floats() -> Any
+
+      Convert the FracVector to a (nested) list of floats.
+
+
+
+   .. py:method:: to_float() -> float
+
+      Convert a scalar FracVector to a single float.
+
+
+
+   .. py:method:: to_fractions() -> Any
+
+      Convert the FracVector to a (nested) list of fractions.
+
+
+
+   .. py:method:: to_ints() -> Any
+
+      Convert the FracVector to a (nested) list of integers, rounded off as best possible.
+
+
+
+   .. py:method:: to_strings(accuracy: int = 8) -> Any
+
+      Convert the FracVector to a (nested) list of strings.
+
+
+
+   .. py:method:: to_string(accuracy: int = 8) -> str
+
+      Convert a scalar FracVector to a single string.
+
+
+
+   .. py:method:: to_fraction() -> fractions.Fraction
+
+      Convert a scalar FracVector to a fraction.
+
+
+
+   .. py:method:: to_int() -> int
+
+      Convert a scalar FracVector to an integer (truncating as necessary).
+
+
+
+   .. py:method:: flatten() -> Self
+
+      Return a FracVector that has been flattened out to a single row vector.
+
+
+
+   .. py:method:: set_common_denom(A: Any, B: Any) -> tuple[Self, Self, int]
+      :classmethod:
+
+
+      Used internally to combine two different FracVectors.
+
+      Returns a tuple ``(A2, B2, denom)`` where A2 is numerically equal to A, and B2 is
+      numerically equal to B, but A2 and B2 are both set on the same shared denominator
+      ``denom``, which is the *product* of the denominators of A and B.
+
+
+
+   .. py:method:: sign() -> int
+
+      Return the sign of the scalar FracVector: -1, 0 or 1.
+
+
+
+   .. py:method:: T() -> Self
+
+      Return the transpose, ``A^T``.
+
+
+
+   .. py:method:: det() -> Self
+
+      Return the determinant of the FracVector as a scalar FracVector.
+
+
+
+   .. py:method:: inv() -> Self
+
+      Return the matrix inverse, ``A^-1``.
+
+
+
+   .. py:method:: simplify() -> Self
+
+      Return a reduced FracVector. I.e., each element has the same numerical value but the
+      new FracVector represents them using the smallest possible shared denominator.
+
+      The result is *canonical*: two numerically equal FracVectors always simplify to the
+      same ``(denom, noms)`` pair. That requires normalizing the sign as well as reducing
+      by the greatest common divisor, since ``(1, 0, 0)/-2`` and ``(-1, 0, 0)/2`` are the
+      same value and neither is reducible. Canonicality is what ``__hash__`` relies
+      on to stay consistent with ``__eq__``.
+
+
+
+   .. py:method:: simplify_fast(depth: int) -> Self
+
+      Return a reduced FracVector, taking advantage of a known nesting ``depth``. I.e., each
+      element has the same numerical value but the new FracVector represents them using the
+      smallest possible shared denominator.
+
+
+
+   .. py:method:: set_denominator(set_denom: int = 1000000000) -> Self
+
+      Return a FracVector of reduced resolution where every element is the closest numerical
+      approximation using this denominator.
+
+
+
+   .. py:method:: limit_denominator(max_denom: int = 1000000000) -> Self
+
+      Return a FracVector of reduced resolution.
+
+      Each element in the returned FracVector is the closest numerical approximation that is
+      allowed by a fraction with maximally this denominator. Note: since all elements must be
+      put on a common denominator, the result may have a larger denominator than ``max_denom``.
+
+
+
+   .. py:method:: floor() -> int
+
+      Return the integer that is equal to or just below the value stored in a scalar FracVector.
+
+
+
+   .. py:method:: modf() -> tuple[FracVector, FracVector]
+
+      Return the fractional and integer parts of each element as the pair
+      ``(fractional, integer)`` of exact FracVectors sharing this vector's denominator.
+
+      Both parts carry the sign of the element and the integer part truncates toward
+      zero, matching the conventions of :func:`math.modf` (e.g. the value -5/2 splits
+      into -1/2 and -2).
+
+
+
+   .. py:method:: ceil() -> int
+
+      Return the integer that is equal to or just above the value stored in a scalar FracVector.
+
+
+
+   .. py:method:: normalize() -> Self
+
+      Add/remove an integer +/-N to each element to place it in the range [0, 1).
+
+
+
+   .. py:method:: normalize_half() -> Self
+
+      Add/remove an integer +/-N to each element to place it in the range [-1/2, 1/2).
+
+      This is useful to find the shortest vector C between two points A, B in a space with
+      periodic boundary conditions [0, 1)::
+
+         C = (A - B).normalize_half()
+
+
+
+   .. py:method:: mul(other: Any) -> Self
+
+      Return the result of multiplying the vector with ``other`` using matrix multiplication.
+
+      Note that for two 1D FracVectors, ``A.dot(B)`` is *not* the same as ``A.mul(B)``, but
+      rather ``A.mul(B.T())``.
+
+
+
+   .. py:method:: dot(other: FracVector) -> Self
+
+      Return the vector dot product of the 1D vector with the 1D vector ``other``, i.e.,
+      ``A . B``. The same as ``A * B.T()``.
+
+
+
+   .. py:method:: lengthsqr() -> Self
+
+      Return the square of the length of the vector. The same as ``A * A.T()``.
+
+
+
+   .. py:method:: cross(other: FracVector) -> Self
+
+      Return the vector cross product of the 3-element 1D vector with the 3-element 1D vector
+      ``other``, i.e., ``A x B``.
+
+
+
+   .. py:method:: reciprocal() -> Self
+
+      Return the reciprocal matrix of a 3x3 matrix (the rows are the reciprocal vectors,
+      without the ``2*pi`` factor).
+
+
+
+   .. py:method:: metric_product(vecA: FracVector, vecB: FracVector) -> Self
+
+      Return the result of the metric product using the present square FracVector as the
+      metric matrix. The same as ``vecA * self * vecB.T()``.
+
+
+
+   .. py:method:: cos(prec: fractions.Fraction | None = None, degrees: bool = False, limit: bool = False) -> Self
+
+      Return a FracVector where every element is the cosine of the element in the source FracVector.
+
+      :param prec: the precision (should be set as a fraction).
+      :param degrees: if True, interpret the elements in degrees.
+      :param limit: if True, require the denominator to be smaller than or equal to the precision.
+
+
+
+   .. py:method:: sin(prec: fractions.Fraction | None = None, degrees: bool = False, limit: bool = False) -> Self
+
+      Return a FracVector where every element is the sine of the element in the source FracVector.
+
+      :param prec: the precision (should be set as a fraction).
+      :param degrees: if True, interpret the elements in degrees.
+      :param limit: if True, require the denominator to be smaller than or equal to the precision.
+
+
+
+   .. py:method:: acos(prec: fractions.Fraction | None = None, degrees: bool = False, limit: bool = False) -> Self
+
+      Return a FracVector where every element is the arccos of the element in the source FracVector.
+
+      :param prec: the precision (should be set as a fraction).
+      :param degrees: if True, return the result in degrees.
+      :param limit: if True, require the denominator to be smaller than or equal to the precision.
+
+
+
+   .. py:method:: asin(prec: fractions.Fraction | None = None, degrees: bool = False, limit: bool = False) -> Self
+
+      Return a FracVector where every element is the arcsin of the element in the source FracVector.
+
+      :param prec: the precision (should be set as a fraction).
+      :param degrees: if True, return the result in degrees.
+      :param limit: if True, require the denominator to be smaller than or equal to the precision.
+
+
+
+   .. py:method:: exp(prec: fractions.Fraction | None = None, limit: bool = False) -> Self
+
+      Return a FracVector where every element is the exponent of the element in the source FracVector.
+
+      :param prec: the precision (should be set as a fraction).
+      :param limit: if True, require the denominator to be smaller than or equal to the precision.
+
+
+
+   .. py:method:: sqrt(prec: fractions.Fraction | None = None, limit: bool = False) -> Self
+
+      Return a FracVector where every element is the sqrt of the element in the source FracVector.
+
+      :param prec: the precision (should be set as a fraction).
+      :param limit: if True, require the denominator to be smaller than or equal to the precision.
+
+
+
+   .. py:method:: max() -> Self
+
+      Return the maximum element across all dimensions in the FracVector. ``max(fracvector)``
+      works for a 1D vector.
+
+
+
+   .. py:method:: nargmax() -> list[Any]
+
+      Return a list of indices of all maximum elements across all dimensions in the FracVector.
+
+
+
+   .. py:method:: argmax() -> Any
+
+      Return the index of the maximum element across all dimensions in the FracVector.
+
+
+
+   .. py:method:: min() -> Self
+
+      Return the minimum element across all dimensions in the FracVector. ``min(fracvector)``
+      works for a 1D vector.
+
+
+
+   .. py:method:: nargmin() -> list[Any]
+
+      Return a list of indices for all minimum elements across all dimensions in the FracVector.
+
+
+
+   .. py:method:: argmin() -> Any
+
+      Return the index of the minimum element across all dimensions in the FracVector.
+
+
+
+.. py:class:: LeafCodec
+
+   A leaf codec: a documented conversion of one exact :class:`fractions.Fraction` leaf into a
+   presentation leaf.
+
+   A codec is an orthogonal layer beside the vector backends: given a value already reduced to the
+   canonical Fraction hub, it produces the requested element type. Its :attr:`from_fraction`
+   documents both its exactness contract (when the result is exact) and its default conversion
+   (what it does when an exact result is impossible); on data it never raises.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+      Canonical codec name (e.g. ``"int"``); also how an explicit ``leaf=`` hint selects it.
+
+
+   .. py:attribute:: from_fraction
+      :type:  collections.abc.Callable[Ellipsis, Any]
+
+      Convert ``(value: fractions.Fraction, **options) -> leaf`` from the canonical Fraction hub.
+
+
+   .. py:attribute:: check_options
+      :type:  collections.abc.Callable[[dict[str, Any]], None]
+
+      Validate an options mapping eagerly, raising :class:`ValueError` on any invalid option.
+
+
+.. py:function:: known_leaf_codecs() -> list[str]
+
+   Return the registered leaf-codec names, in registration order.
+
+
+.. py:function:: register_leaf_codec(codec: LeafCodec) -> None
+
+   Register (or replace) a codec under its :attr:`~LeafCodec.name`.
+
+
+.. py:class:: MutableFracVector(noms: Any, denom: int = 1)
+
+   Bases: :py:obj:`httk.core.vectors.fracvector.FracVector`
+
+
+   Same as :class:`~httk.core.vectors.fracvector.FracVector`, only this version allows
+   assignment of elements, e.g.::
+
+       mfracvec[2, 7] = 5
+
+   and, e.g.::
+
+       mfracvec[:, 7] = [1, 2, 3, 4]
+
+   Other than this, the FracVector methods exist and do the same, i.e., they return *copies*
+   of the fracvector, rather than modifying it.
+
+   Methods with ``set_*`` prefixes perform mutating operations, e.g.::
+
+      A.set_T()
+
+   replaces A with its own transpose, whereas::
+
+      A.T()
+
+   just returns a new MutableFracVector that is the transpose of A, leaving A unmodified.
+
+
+   .. py:attribute:: nested_map
+      :type:  ClassVar[collections.abc.Callable[Ellipsis, Any]]
+
+
+   .. py:attribute:: nested_inmap
+      :type:  ClassVar[collections.abc.Callable[Ellipsis, Any]]
+
+
+   .. py:attribute:: nested_map_fractions
+      :type:  ClassVar[collections.abc.Callable[Ellipsis, Any]]
+
+
+   .. py:attribute:: noms
+      :type:  Any
+
+
+   .. py:method:: use(old: Any) -> httk.core.vectors.fracvector.FracVector
+      :classmethod:
+
+
+      Make sure the variable is a MutableFracVector, and if not, convert it.
+
+
+
+   .. py:method:: to_FracVector() -> httk.core.vectors.fracvector.FracVector
+
+      Return a FracVector with the values of this MutableFracVector.
+
+
+
+   .. py:method:: from_FracVector(other: httk.core.vectors.fracvector.FracVector) -> MutableFracVector
+      :classmethod:
+
+
+      Create a MutableFracVector from a FracVector.
+
+
+
+   .. py:method:: validate() -> bool
+
+
+   .. py:method:: invalidate() -> None
+
+      Internal method to call when the MutableFracVector is changed in such a way that cached
+      properties are invalidated (e.g., ``_dim``).
+
+
+
+   .. py:method:: set_negative() -> None
+
+      Change the MutableFracVector inline into its own negative: ``self -> -self``.
+
+
+
+   .. py:method:: set_T() -> None
+
+      Change the MutableFracVector inline into its own transpose: ``self -> self.T``.
+
+
+
+   .. py:method:: set_inv() -> Any
+
+      Change the MutableFracVector inline into its own inverse: ``self -> self^-1``.
+
+
+
+   .. py:method:: set_simplify() -> None
+
+      Change the MutableFracVector; reduces any common factor between the denominator and all
+      nominators.
+
+
+
+   .. py:method:: set_set_denominator(resolution: int = 1000000000) -> None
+
+      Change the MutableFracVector; reduces resolution.
+
+      :param resolution: the new denominator; each element becomes the closest numerical
+                         approximation using this denominator.
+
+
+
+   .. py:method:: set_normalize() -> None
+
+      Add/remove an integer +/-N to each element to place it in the range [0, 1).
+
+
+
+   .. py:method:: set_normalize_half() -> None
+
+      Add/remove an integer +/-N to each element to place it in the range [-1/2, 1/2).
+
+      This is useful to find the shortest vector C between two points A, B in a space with
+      periodic boundary conditions [0, 1)::
+
+         C = (A - B).normalize_half()
+
+
+
+.. py:type:: NumericVector
+   :canonical: float | numpy.ndarray
+
+
+.. py:function:: numpy_available() -> bool
+
+   Return whether the optional numpy dependency is available for the numeric helpers.
+
+   This reads the vectors package's ``_numpy_available`` flag freshly on each call (the flag set
+   when :mod:`httk.core.vectors` conditionally imports/registers the numpy backend), so tests may
+   monkeypatch ``httk.core.vectors._numpy_available`` to exercise the numpy-absent path.
+
+
+.. py:function:: to_numeric(obj: httk.core.vectors.vector_like.VectorLike) -> NumericVector
+
+   Present ``obj`` as plain numpy numbers: a :class:`numpy.ndarray` for a tensor, a ``float`` for a
+   scalar.
+
+   A tensor becomes a base-class ``float64`` :class:`numpy.ndarray` (never a view subclass) via
+   :class:`~httk.core.vectors.vector_numpy_view.VectorNumpyView`; a **scalar** input (shape ``()``)
+   returns a plain :class:`float` via :func:`to_numeric_scalar` (never a 0-d array).
+
+   The numeric presentation is numpy-backed, so this **always requires numpy**: it raises
+   :class:`ImportError` (naming the ``httk-core[numpy]`` extra) when numpy is not installed,
+   uniformly, so the contract is predictable regardless of the input shape. Use
+   :func:`to_numeric_scalar` directly for a single float without a numpy requirement.
+
+
+.. py:function:: to_numeric_scalar(obj: Any) -> float
+
+   Convert a single scalar value to a plain :class:`float`, deterministically.
+
+   A :class:`~httk.core.vectors.surdvector.SurdScalar` (or scalar
+   :class:`~httk.core.vectors.surdvector.SurdVector`) and a scalar
+   :class:`~httk.core.vectors.fracvector.FracVector` render through their own exact
+   ``to_float()``; a :class:`~fractions.Fraction`, ``int``, ``float``, or numeric ``str`` render via
+   :func:`~httk.core.exactmath.any_to_fraction`. A non-scalar shape raises
+   :class:`TypeError`.
+
+   Unlike :func:`to_numeric`, this needs **no numpy**: a plain ``float`` conversion has no numpy
+   dependency, so it works unconditionally and never raises for a missing numpy.
+
+
+.. py:type:: ScalarLike
+   :canonical: int | float | str | fractions.Fraction | decimal.Decimal | fracvector.FracScalar | surdvector.SurdScalar
+
+
+.. py:class:: SurdScalar(components: dict[int, httk.core.vectors.fracvector.FracVector], dim: tuple[int, Ellipsis])
+
+   Bases: :py:obj:`SurdVector`
+
+
+   A scalar :class:`SurdVector` (shape ``()``): a single field element
+   :math:`\sum_r q_r\sqrt r`.
+
+   Adds the scalar-only operations — the field inverse, exact sign and ordering, and Decimal
+   rendering — that need a single value rather than a tensor.
+
+
+   .. py:method:: inverse() -> SurdScalar
+
+      The multiplicative inverse ``1/self`` (raises :class:`ZeroDivisionError` on zero).
+
+
+
+   .. py:method:: sign() -> int
+
+      Return the exact sign of the value: ``-1``, ``0`` or ``1``.
+
+      For an irrational value the sign is decided by refining rational lower/upper bounds on each
+      ``sqrt(r)`` (from :func:`~httk.core.exactmath.integer_sqrt` at increasing precision)
+      and summing the weighted intervals until the total interval excludes zero — which always
+      happens in finitely many steps because a nonzero surd is bounded away from zero.
+
+
+
+   .. py:method:: cos_degrees(q: Any) -> SurdScalar | None
+      :classmethod:
+
+
+      Return ``cos(q degrees)`` as an exact :class:`SurdScalar`, or None when it is not a surd.
+
+      The value lies in the squarefree-radical field precisely when the angle, reduced modulo
+      360, is a **multiple of 15 or of 36 degrees** — e.g. :math:`\cos 30° = \tfrac{\sqrt3}2`,
+      :math:`\cos 15° = \tfrac{\sqrt6+\sqrt2}4`, :math:`\cos 36° = \tfrac{1+\sqrt5}4`.
+      ``q`` may be an int, :class:`~fractions.Fraction`, or numeric string (parsed via
+      :func:`~httk.core.exactmath.any_to_fraction`).
+
+      That list is **complete**: :math:`\cos(2\pi a/b)` lies in a field generated by square
+      roots of rationals iff the Galois group :math:`(\mathbb{Z}/b)^\times/\{\pm1\}` of
+      :math:`\mathbb{Q}(\cos 2\pi/b)` has exponent at most 2, which holds exactly for
+      :math:`b \in \{1,2,3,4,5,6,8,10,12,24\}` — the rational-degree angles that are multiples
+      of 15° or 36°. (Niven's theorem is the rational-value special case of this classification.)
+      A ``None`` result is therefore a proof that the exact cosine lies outside
+      :math:`\mathbb{Q}[\sqrt n]` — use :func:`~httk.core.exactmath.cos` with
+      ``degrees=True`` for a deterministic rational approximation in that case.
+
+
+
+   .. py:method:: sin_degrees(q: Any) -> SurdScalar | None
+      :classmethod:
+
+
+      Return ``sin(q degrees)`` as an exact :class:`SurdScalar`, or None when it is irrational.
+
+      Computed as ``cos(90 - q)`` degrees, so exactness follows the same classification as
+      :meth:`cos_degrees` applied to ``90 - q``: exact for all multiples of 15 degrees, otherwise
+      None (a proof that the exact sine is outside the field). Note the asymmetry with
+      :meth:`cos_degrees` for the 36° family: :math:`\cos 36°` is an exact surd but
+      :math:`\sin 36° = \cos 54°` is not (54 is a multiple of neither 15 nor 36).
+
+
+
+   .. py:method:: acos_degrees() -> fractions.Fraction | None
+
+      Return the exact ``arccos`` of this value in **degrees** over :math:`[0, 180]`, or None.
+
+      This is the reverse table lookup: the result is an exact rational number of degrees
+      precisely when the value equals the cosine of a multiple of 15° or 36° (the complete set of
+      rational-degree angles with surd cosines — see :meth:`cos_degrees`), decided by exact surd
+      equality; otherwise None (the exact angle is then irrational in degrees). Raises
+      :class:`ValueError` — decided exactly via :meth:`sign` — when the value lies outside
+      :math:`[-1, 1]`.
+
+
+
+   .. py:method:: to_float(prec: fractions.Fraction = fractions.Fraction(1, 10**30)) -> float
+
+      The value as a float (via a high-precision exact rational approximation).
+
+
+
+   .. py:method:: to_decimal(digits: int | None = None, rounding: str = 'half_even', max_refinements: int | None = None) -> Any
+
+      Render the value as a correctly-rounded :class:`decimal.Decimal`.
+
+      Reuses the exact-math module's Ziv refinement loop
+      (``_to_decimal``): a rational value renders exactly (its
+      finite expansion when it fits, else quantized), and an irrational surd — never on a rational
+      rounding boundary — is rendered by refining the rational approximation until the rounding is
+      determined. ``digits`` (significant digits; default: the active decimal context precision),
+      ``rounding`` (``"half_even"``/``"down"``) and ``max_refinements`` match
+      :func:`~httk.core.exactmath.sqrt` in Decimal mode.
+
+
+
+.. py:class:: SurdVector(components: dict[int, httk.core.vectors.fracvector.FracVector], dim: tuple[int, Ellipsis])
+
+   An *immutable* exact tensor over the squarefree-radical field
+   :math:`\mathbb{Q}[\sqrt n : n\ \text{squarefree}]`.
+
+   A SurdVector is a map ``{squarefree radicand -> FracVector coefficient}`` (all coefficients
+   sharing one ``dim``); radicand ``1`` is the rational part. It is stored **canonically** —
+   coefficients simplified, all-zero coefficients dropped — so the representation is unique and
+   equality/zero-detection are exact. Like :class:`~httk.core.vectors.fracvector.FracVector` it is
+   immutable and hashable.
+
+   See the module docstring for the field facts, the fractional-vs-Cartesian motivation, and the
+   magnitude-vs-linear-structure purpose boundary.
+
+
+   .. py:method:: create(obj: Any) -> SurdVector
+      :classmethod:
+
+
+      Create a SurdVector from a :class:`~httk.core.vectors.fracvector.FracVector`, nested rationals, or another SurdVector.
+
+      A SurdVector is returned unchanged; anything else is built through
+      :meth:`~httk.core.vectors.fracvector.FracVector.create` and embedded exactly at radicand 1 (so every rational value is
+      representable, and a rational input stays rational).
+
+
+
+   .. py:method:: from_radicand_map(mapping: dict[int, Any]) -> SurdVector
+      :classmethod:
+
+
+      Compose a SurdVector from a ``{radicand -> coefficient}`` mapping.
+
+      Radicands are positive integers and need not be squarefree — each is normalized via
+      ``square_part`` (``sqrt(radicand) = s*sqrt(r)``) and the
+      coefficients (FracVector-like, all of one shape) folded together canonically.
+
+
+
+   .. py:method:: sqrt_of(q: Any) -> SurdScalar
+      :classmethod:
+
+
+      Return the exact square root of a nonnegative rational ``q`` as a :class:`SurdScalar`.
+
+      The result is a plain rational when ``q`` is a perfect square (e.g. ``sqrt_of(4/9) == 2/3``)
+      and otherwise a single-radical surd (``sqrt_of(8) == 2*sqrt(2)``). ``sqrt(p/q)`` is
+      normalized as ``sqrt(p*q)/q`` so the stored radicand is always a positive squarefree integer
+      (``sqrt_of(1/2) == sqrt(2)/2``). Raises :class:`ValueError` on a negative argument — there is
+      no exact square root of a surd (no nested radicals), only of a rational.
+
+
+
+   .. py:method:: zero(dim: tuple[int, Ellipsis] = ()) -> SurdVector
+      :classmethod:
+
+
+      The zero SurdVector of shape ``dim`` (a :class:`SurdScalar` for the default ``()``).
+
+
+
+   .. py:method:: one() -> SurdScalar
+      :classmethod:
+
+
+      The scalar ``1``.
+
+
+
+   .. py:property:: dim
+      :type: tuple[int, Ellipsis]
+
+
+      The shape tuple, as for :attr:`~httk.core.vectors.fracvector.FracVector.dim`.
+
+
+   .. py:property:: is_rational
+      :type: bool
+
+
+      True iff the value is purely rational (only the radicand-1 term is present).
+
+
+   .. py:method:: is_zero() -> bool
+
+      True iff the value is exactly zero (empty canonical form).
+
+
+
+   .. py:property:: radicands
+      :type: tuple[int, Ellipsis]
+
+
+      The sorted squarefree radicands present in the canonical form.
+
+
+   .. py:method:: coefficient(radicand: int) -> httk.core.vectors.fracvector.FracVector
+
+      The FracVector coefficient of ``sqrt(radicand)`` (a zero tensor when absent).
+
+
+
+   .. py:method:: T() -> SurdVector
+
+      Return the transpose, transposing each radicand's coefficient tensor.
+
+
+
+   .. py:method:: dot(other: Any) -> SurdScalar
+
+      Vector dot product of two 1-D SurdVectors (``sum a_i b_i``).
+
+
+
+   .. py:method:: lengthsqr() -> SurdScalar
+
+      Return the squared length ``A * A^T`` as a :class:`SurdScalar`.
+
+
+
+   .. py:method:: length() -> SurdScalar
+
+      Return the exact length ``sqrt(lengthsqr)`` as a :class:`SurdScalar`.
+
+      Exact precisely when ``lengthsqr`` is rational — which canonical arithmetic guarantees for a
+      difference of Cartesian sites under a rational metric (the crystallographic case). When
+      ``lengthsqr`` is itself irrational the length would be a nested radical
+      (``sqrt(a + b*sqrt(c))``), which is outside the field, so this raises :class:`ValueError`.
+
+
+
+   .. py:method:: det() -> SurdScalar
+
+      Return the determinant of a 3x3 SurdVector as a :class:`SurdScalar`.
+
+
+
+   .. py:method:: inv() -> SurdVector
+
+      Return the inverse of a 3x3 SurdVector via the adjugate and the scalar field inverse.
+
+
+
+   .. py:method:: to_fractions_approx(prec: fractions.Fraction = fractions.Fraction(1, 10**30)) -> Any
+
+      A deterministic nested list of :class:`fractions.Fraction` within ``prec`` of the true value.
+
+      Exact (not merely within ``prec``) whenever the value is rational. This is the
+      ``compute(prec)``-shaped rational approximation reused by the Decimal rendering.
+
+
+
+   .. py:method:: to_floats(prec: fractions.Fraction = fractions.Fraction(1, 10**30)) -> Any
+
+      A nested list of floats (via a high-precision exact rational approximation).
+
+
+
+.. py:class:: VectorAPI
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Abstract base class for the canonical vector interface.
+
+   It declares the exactness-preserving ``fractions`` accessor (a nested tuple of
+   :class:`fractions.Fraction`, or a bare Fraction for a scalar) that every vector backend
+   produces from its own native representation and every vector view builds its presentation
+   from, together with the ``dim`` shape tuple. This is the single interchange format; there is
+   no pairwise conversion between backends.
+
+   On top of the two abstract accessors it provides the guaranteed float renderings
+   :meth:`to_floats` and :meth:`to_float`, derived from the ``fractions`` hub — so *whatever*
+   object the family hands you, ``.to_floats()`` works. (The exact value types
+   :class:`~httk.core.vectors.fracvector.FracVector` and
+   :class:`~httk.core.vectors.surdvector.SurdVector` honor the same contract with their own
+   implementations.)
+
+
+   .. py:property:: fractions
+      :type: Fractions
+
+      :abstractmethod:
+
+
+
+   .. py:property:: dim
+      :type: tuple[int, Ellipsis]
+
+      :abstractmethod:
+
+
+
+   .. py:method:: to_floats() -> Any
+
+      The value as (possibly nested) plain lists of ``float`` — a bare ``float`` for a scalar.
+
+      Derived from the exact ``fractions`` hub; nested lists match the
+      ``numpy.ndarray.tolist()`` convention and are directly JSON-serializable.
+
+
+
+   .. py:method:: to_float() -> float
+
+      The scalar value as a plain ``float``; raises :class:`TypeError` on a non-scalar.
+
+
+
+.. py:class:: VectorBackend(backend, **hints)
+
+   Bases: :py:obj:`httk.core.views.Backend`\ [\ :py:obj:`VectorBackend`\ ], :py:obj:`httk.core.vectors.vector_api.VectorAPI`
+
+
+   Abstract base class for all backends of vector (tensor) data.
+
+   Concrete backends carry a native representation (an exact FracVector, plain nested
+   sequences, or a numpy array) and produce the canonical exactness-preserving ``fractions``
+   interchange declared by :class:`~httk.core.vectors.vector_api.VectorAPI` from it.
+
+
+   .. py:attribute:: backend_classes
+      :type:  ClassVar[list[type[httk.core.views.Backend[Any]]]]
+
+
+.. py:class:: VectorFrac(obj: httk.core.vectors.fracvector.FracVector, **hints: Any)
+
+   Bases: :py:obj:`httk.core.vectors.vector_backend.VectorBackend`
+
+
+   Backend for a vector backed by an actual :class:`~httk.core.vectors.fracvector.FracVector`
+   (or :class:`~httk.core.vectors.fracvector.FracScalar`).
+
+   Its ``fractions`` accessor produces the exact nested tuple of Fraction, and ``unwrap``
+   returns the wrapped FracVector.
+
+
+   .. py:property:: fractions
+      :type: httk.core.vectors.vector_api.Fractions
+
+
+
+   .. py:property:: dim
+      :type: tuple[int, Ellipsis]
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: VectorFracView(obj: httk.core.vectors.vector_like.VectorLike, denom: Any = _NO_DENOM, **hints: Any)
+
+   Bases: :py:obj:`httk.core.vectors.vector_view.VectorView`, :py:obj:`httk.core.vectors.fracvector.FracVector`
+
+
+   A view presenting an underlying vector backend as an exact
+   :class:`~httk.core.vectors.fracvector.FracVector`.
+
+   This view is a genuine FracVector, so it can be passed anywhere a FracVector is accepted,
+   and it exposes the full exact-rational algebra (``det``/``inv``/``*``/...). It is built
+   eagerly from the backend's exact ``fractions`` interchange on construction, so the
+   round-trip is exactness-preserving for the frac and native backends. (numpy values are
+   binary rationals, so a numpy source round-trips to the exact float64 rational, not
+   necessarily the original decimal fraction.)
+
+   Because inherited FracVector algebra builds its results with the low-level
+   ``self.__class__(noms, denom)`` constructor, this class also accepts that two-argument form;
+   results built that way are plain (backend-less) FracVector values presented through this
+   class.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:type:: VectorLike
+   :canonical: vector_backend.VectorBackend | vector_view.VectorView | fracvector.FracVector | surdvector.SurdVector | tuple[Any, ...] | list[Any] | 'numpy.ndarray'
+
+
+.. py:class:: VectorNative(obj: Any, **hints: Any)
+
+   Bases: :py:obj:`httk.core.vectors.vector_backend.VectorBackend`
+
+
+   Backend for a vector backed by plain nested sequences.
+
+   The native representation is a (possibly nested) rectangular list or tuple whose leaves are
+   ``int``, ``float``, :class:`decimal.Decimal`, :class:`fractions.Fraction`, or ``str``.
+   Conversion into the exact ``fractions`` interchange goes through
+   :meth:`~httk.core.vectors.fracvector.FracVector.create`, so string-uncertainty parsing
+   (e.g. ``"0.33342(10)"``) works here too. ``unwrap`` returns the original raw object.
+
+
+   .. py:property:: native
+      :type: Any
+
+
+      The original nested list/tuple this backend wraps, leaves untouched.
+
+      This is the same object returned by :meth:`unwrap`, exposed as a named accessor so the
+      native view can present a natively-held vector's leaves *verbatim* (its preserve-original
+      default) without reaching into private state.
+
+
+   .. py:property:: fractions
+      :type: httk.core.vectors.vector_api.Fractions
+
+
+
+   .. py:property:: dim
+      :type: tuple[int, Ellipsis]
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: VectorNativeView(obj: httk.core.vectors.vector_like.VectorLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.vectors.vector_view.VectorView`, :py:obj:`tuple`
+
+
+   A view presenting an underlying vector backend as nested tuples, with a selectable *leaf codec*.
+
+   The leaf codec is the element-domain axis (see :mod:`httk.core.vectors.leaf_codecs`); it is
+   chosen with the ``leaf=`` hint plus any codec options (``rounding=``, ``digits=``, ...). There
+   are three modes:
+
+   - **preserve-original** (``leaf=None``, and the source is natively-held data): the backend's
+     original nested leaves are presented *verbatim* — the same objects, only containers tuple-ized
+     (``Decimal``\ s in, the same ``Decimal``\ s out).
+   - **exact default** (``leaf=None``, source crossing from a frac/numpy backend): the ``"exact"``
+     codec — ``int`` when integral, else :class:`fractions.Fraction`, never a float.
+   - **explicit codec** (``leaf="int"``/``"float"``/``"decimal"``/``"fraction"``/...): every element
+     is converted from the backend's exact ``fractions`` interchange through that codec.
+
+   The codec name and its options are validated eagerly at construction (an unknown codec name or
+   invalid option raises :class:`ValueError`); a codec never raises on the *data* — a value it
+   cannot represent exactly takes the codec's documented default conversion, because the backend
+   keeps the exact original. A scalar source is presented as a single-element tuple.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: VectorSurd(obj: httk.core.vectors.surdvector.SurdVector, **hints: Any)
+
+   Bases: :py:obj:`httk.core.vectors.vector_backend.VectorBackend`
+
+
+   Backend for a vector backed by an exact :class:`~httk.core.vectors.surdvector.SurdVector`
+   (or :class:`~httk.core.vectors.surdvector.SurdScalar`), kind ``"surd"``.
+
+   ``unwrap`` returns the exact SurdVector. The canonical ``fractions`` hub is **exact** whenever
+   the value is rational (a surd whose canonical form has only the radicand-1 term), matching the
+   established backend-keeps-the-original principle; when the value is genuinely irrational it is
+   reduced to a *deterministic* rational approximation at the active decimal context precision plus
+   a small guard (lossy but reproducible), and the exact original remains recoverable via
+   ``unwrap``.
+
+
+   .. py:property:: fractions
+      :type: httk.core.vectors.vector_api.Fractions
+
+
+
+   .. py:property:: dim
+      :type: tuple[int, Ellipsis]
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: VectorSurdView(obj: httk.core.vectors.vector_like.VectorLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.vectors.vector_view.VectorView`, :py:obj:`httk.core.vectors.surdvector.SurdVector`
+
+
+   A view presenting an underlying vector backend as an exact
+   :class:`~httk.core.vectors.surdvector.SurdVector`.
+
+   This view is a genuine SurdVector, so it exposes the full exact surd algebra
+   (``det``/``inv``/``*``/``length``/...). It is built **eagerly** on construction, following the
+   eager immutable-subclass pattern of
+   :class:`~httk.core.vectors.vector_frac_view.VectorFracView`: from a surd backend it adopts the
+   exact SurdVector directly, and from a frac/native/numpy backend it embeds the backend's exact
+   rational ``fractions`` at radicand 1 — exactly, since every rational is a surd.
+
+   (numpy values are binary rationals, so a numpy source embeds the exact float64 rational, not
+   necessarily the original decimal fraction — the same caveat as
+   :class:`~httk.core.vectors.vector_frac_view.VectorFracView`.)
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: VectorView
+
+   Bases: :py:obj:`httk.core.views.View`\ [\ :py:obj:`httk.core.vectors.vector_backend.VectorBackend`\ ]
+
+
+   Abstract base class for all views of vector (tensor) data.
+
+

@@ -1,0 +1,106 @@
+httk.atomistic.cif_structures
+=============================
+
+.. py:module:: httk.atomistic.cif_structures
+
+.. autoapi-nested-parse::
+
+   Build an exact :class:`~httk.atomistic.ASUStructure` from a neutral CIF mapping.
+
+   :func:`asu_structure_from_cif` consumes the plain, string-preserving mapping produced by
+   ``httk.io.cif`` (format tag ``"cif"``) and turns it into an exact ASU representation. It
+   imports nothing from *httk-io* — it only understands the neutral mapping shape — keeping
+   the parsing capability and the domain model decoupled, exactly as
+   :func:`~httk.atomistic.structure_from_poscar` already does for POSCAR files.
+
+   A CIF is the natural source for an ASU: it lists one site per orbit and states the symmetry
+   operations that generate the rest. That means no symmetry *search* is needed, and spglib is
+   not involved. The setting is identified by comparing the file's operations against the
+   tabulated ones exactly, so a file written in a non-standard setting is recognized as such
+   rather than silently reinterpreted.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.atomistic.cif_structures.asu_structures_from_cif
+   httk.atomistic.cif_structures.asu_structure_from_cif
+   httk.atomistic.cif_structures.cif_setting
+
+
+Module Contents
+---------------
+
+.. py:function:: asu_structures_from_cif(payload: collections.abc.Mapping[str, Any], **options: Any) -> list[httk.atomistic.asu_structure.ASUStructure]
+
+   Every structure in a loaded CIF payload, one per data block that describes one.
+
+   Accepts either a whole loaded payload (with ``blocks``) or a single block.
+
+   Reading a CIF is tolerant — a file may hold blocks that are not structures at all —
+   but *asking it for structures* is not. If the file yielded none, the reasons the
+   reader recorded are raised here rather than returning an empty list, so a file that
+   could not be interpreted does not read as a file that contained nothing.
+
+
+.. py:function:: asu_structure_from_cif(data: collections.abc.Mapping[str, Any], *, tolerance: float | None = None, limit_denominator: int | None = None, trust_declared_symmetry: bool = True) -> httk.atomistic.asu_structure.ASUStructure
+
+   Build an exact :class:`~httk.atomistic.ASUStructure` from a neutral CIF mapping.
+
+   ``data`` is one block of the mapping returned by ``httk.io.cif`` (its ``format`` must be
+   ``"cif"``).
+
+   The cell is built exactly from the file's ``a, b, c, alpha, beta, gamma`` rather than
+   from the pre-multiplied floating-point basis, so a cubic cell keeps exact right angles
+   and a hexagonal one keeps its ``sqrt(3)`` instead of inheriting rounding noise.
+
+   Coordinates are embedded as the rational the file literally wrote — ``0.3333`` is
+   ``3333/10000``, not the binary value of ``float("0.3333")`` — and are then snapped onto
+   the Wyckoff position they lie within ``tolerance`` of. That snapping is the only
+   tolerant step; see :mod:`~httk.atomistic.asu_recognition` for the full contract.
+
+   ``tolerance`` left unspecified is derived from the precision the file's own digits
+   imply, so a coarsely written file is matched loosely and a carefully written one
+   tightly, without anybody choosing a constant.
+
+   Site occupancies become the composition of the corresponding
+   :class:`~httk.atomistic.Species`, so a half-occupied site survives into the structure
+   instead of being dropped.
+
+   ``trust_declared_symmetry=False`` ignores the file's declared Hall symbol or space-group
+   number and identifies the setting from its symmetry operations alone; see
+   :func:`cif_setting` for when that is the right thing to do.
+
+
+.. py:function:: cif_setting(data: collections.abc.Mapping[str, Any], *, trust_declared_symmetry: bool = True) -> httk.atomistic.spacegroup.Spacegroup
+
+   The space-group setting a CIF block is written in.
+
+   The setting is identified from the file's symmetry **operations**, by exact set
+   comparison against the tabulated settings. That is what makes a file written in a
+   non-standard setting come out as itself rather than being silently reinterpreted.
+
+   What the file *declares* — a Hall symbol, or an International Tables number — is treated
+   as a claim to be checked, not a hint to be taken or dropped. A declaration that names no
+   known setting, or that names one whose operations are not the file's, is a genuine
+   inconsistency in the file and raises rather than being worked around: the two halves of
+   the file disagree, and quietly believing one of them is how a wrong structure gets built.
+
+   Pass ``trust_declared_symmetry=False`` to ignore the declaration entirely and identify
+   the setting from the operations alone. That is the escape hatch for a file whose symbols
+   are known to be wrong but whose operations are good.
+
+   The Hermann-Mauguin symbol is deliberately **not** checked. It has too many legitimate
+   spellings, and OPTIMADE itself notes that it does not unambiguously communicate the axis,
+   cell, or origin choice, so treating a mismatch there as an error would reject good files.
+
+   Raises :class:`ValueError` when the block states no operations, when a declaration is
+   inconsistent with them, or when the operations match no tabulated setting at all. In the
+   last case the transform to the standard setting genuinely cannot be *derived* — infinitely
+   many are equally valid and they describe different crystals — so such a file has to be
+   built with an explicit :class:`~httk.atomistic.SettingTransform`.
+
+

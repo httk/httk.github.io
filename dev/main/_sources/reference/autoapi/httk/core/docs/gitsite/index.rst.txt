@@ -1,0 +1,86 @@
+httk.core.docs.gitsite
+======================
+
+.. py:module:: httk.core.docs.gitsite
+
+.. autoapi-nested-parse::
+
+   Create the single orphan commit used by a generated documentation site.
+
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   httk.core.docs.gitsite.GitSiteError
+   httk.core.docs.gitsite.GitUnavailableError
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.docs.gitsite.CommitSiteResult
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.docs.gitsite.commit_site
+
+
+Module Contents
+---------------
+
+.. py:exception:: GitSiteError
+
+   Bases: :py:obj:`RuntimeError`
+
+
+   Raised when a generated site cannot be committed to a Git repository.
+
+
+.. py:exception:: GitUnavailableError
+
+   Bases: :py:obj:`GitSiteError`
+
+
+   Raised when the ``git`` executable is not available.
+
+
+.. py:class:: CommitSiteResult
+
+   Summary of a site commit operation.
+
+
+   .. py:attribute:: repository
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: branch
+      :type:  str
+
+
+   .. py:attribute:: commit
+      :type:  str
+
+
+   .. py:attribute:: tree
+      :type:  str
+
+
+.. py:function:: commit_site(site_directory: str | pathlib.Path, branch: str, message: str, *, repository: str | pathlib.Path | None = None, author_name: str | None = None, author_email: str | None = None, committer_name: str | None = None, committer_email: str | None = None) -> CommitSiteResult
+
+   Replace *branch* with one parentless commit containing *site_directory*.
+
+   The site is converted directly into Git objects, so the caller's index and
+   checked-out files are not changed. Ref leases for concurrent publishers
+   remain the caller's responsibility when pushing the resulting branch. Git
+   dates remain ambient, so commit IDs are intentionally not deterministic.
+
+

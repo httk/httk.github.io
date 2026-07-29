@@ -1,0 +1,35 @@
+httk.core.datastream.bytestream_filename
+========================================
+
+.. py:module:: httk.core.datastream.bytestream_filename
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.datastream.bytestream_filename.BytestreamFilename
+
+
+Module Contents
+---------------
+
+.. py:class:: BytestreamFilename(filename: str | pathlib.Path, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_common.BytestreamCommon`, :py:obj:`httk.core.datastream.bytestream_backend.BytestreamBackend`
+
+
+   Backend for streaming byte data via operations on a file specified by a filename.
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+

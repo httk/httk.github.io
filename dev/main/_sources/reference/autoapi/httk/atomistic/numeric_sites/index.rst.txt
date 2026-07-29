@@ -1,0 +1,57 @@
+httk.atomistic.numeric_sites
+============================
+
+.. py:module:: httk.atomistic.numeric_sites
+
+.. autoapi-nested-parse::
+
+   The NumericSites presentation: a Sites object exposed as plain numpy numbers.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.numeric_sites.NumericSites
+
+
+Module Contents
+---------------
+
+.. py:class:: NumericSites(sites: httk.atomistic.sites_like.SitesLike)
+
+   A plain-numpy presentation of a :class:`~httk.atomistic.Sites` object.
+
+   Where a ``Sites`` holds its reduced coordinates exactly (an Nx3 rational
+   :class:`~httk.core.FracVector`), a ``NumericSites`` mirrors that interface but returns plain
+   ``float64`` numpy arrays, for callers who do not need exact arithmetic and just want numpy arrays.
+   It is len/iter/indexable over its rows, each yielded as a ``(3,)`` numpy array.
+
+   The presentation is numpy-backed, so constructing a ``NumericSites`` **requires numpy** (the
+   ``httk-atomistic[numpy]`` extra) and raises :class:`ImportError` eagerly when it is unavailable.
+   The exact object is always one hop away via :attr:`exact`.
+
+
+   .. py:property:: precision
+      :type: float | None
+
+
+      The exact fractional coordinate precision as a plain float, or ``None``.
+
+
+   .. py:property:: reduced_coords
+      :type: httk.core.NumericVector
+
+
+      The Nx3 reduced site coordinates as a ``float64`` numpy array.
+
+
+   .. py:property:: exact
+      :type: httk.atomistic.sites.Sites
+
+
+      The exact :class:`~httk.atomistic.Sites` this presentation wraps.
+
+

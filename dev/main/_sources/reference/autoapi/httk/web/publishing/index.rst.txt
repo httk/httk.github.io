@@ -1,0 +1,28 @@
+httk.web.publishing
+===================
+
+.. py:module:: httk.web.publishing
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/web/publishing/static/index
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.web.publishing.publish_site
+
+
+Package Contents
+----------------
+
+.. py:function:: publish_site(*, engine: httk.web.engine.site_engine.SiteEngine, outdir: str | pathlib.Path) -> httk.web.model.page.PublishReport
+

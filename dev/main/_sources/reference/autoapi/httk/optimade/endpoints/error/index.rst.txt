@@ -1,0 +1,19 @@
+httk.optimade.endpoints.error
+=============================
+
+.. py:module:: httk.optimade.endpoints.error
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.optimade.endpoints.error.format_optimade_error
+
+
+Module Contents
+---------------
+
+.. py:function:: format_optimade_error(ex: Exception, request: httk.optimade.model.request.RawRequest, config: httk.optimade.model.config.OptimadeConfig, version: str = optimade_default_version) -> httk.optimade.model.request.EndpointResponse
+

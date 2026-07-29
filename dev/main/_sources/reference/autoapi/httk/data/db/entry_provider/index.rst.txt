@@ -1,0 +1,179 @@
+httk.data.db.entry_provider
+===========================
+
+.. py:module:: httk.data.db.entry_provider
+
+.. autoapi-nested-parse::
+
+   Serve stored dataclasses through the httk-core entry-provider contract.
+
+   :class:`StoreEntryProvider` bridges the SQL storage layer to the neutral
+   :class:`~httk.core.EntryProvider` contract: it serves the rows of one or more
+   storable classes in a :class:`~httk.data.db.store.SqlStore` as described,
+   JSON-able entry-type records, so a serving module (such as *httk-optimade*)
+   can expose a database as an OPTIMADE API without either side depending on the
+   other.
+
+   For each served class the provider either passes through a supplied
+   :class:`~httk.core.EntryTypeDefinition` (validated to describe every served
+   property) or auto-generates one from the class's resolved
+   :class:`~httk.data.db.schema.TableSchema`: the OPTIMADE core ``id``/``type``
+   properties plus one :meth:`~httk.core.PropertyDefinition.from_simple`
+   definition per servable stored field, each named with a registered
+   database-specific ``prefix`` (default ``"_httk_"``) and merged in via
+   :meth:`~httk.core.EntryTypeDefinition.extended` — the same construction route
+   the other httk entry providers use.
+
+   The schema-to-OPTIMADE type mapping is:
+
+   - ``str``/``int``/``bool``/``float`` fields — ``string``/``integer``/
+     ``boolean``/``float``;
+   - rational fields (:class:`fractions.Fraction`, :class:`~httk.core.FracScalar`,
+     :class:`~httk.core.SurdScalar`) — ``float``, served as the nearest float
+     (stored values themselves remain exact; only the *served* value is
+     approximate);
+   - :class:`datetime.datetime` fields — ``timestamp``, served as ISO-8601 text;
+   - fixed-shape (``Shape(r, c)``) and variable-rows (``Shape(0, c)``)
+     :class:`~httk.core.FracVector` fields — ``list of list of float`` (the fixed
+     shape also declares its dimension sizes);
+   - ``list``/``tuple`` fields of scalars or of the codec types above — ``list
+     of`` the mapped element type.
+
+   Not every stored field can be served as a property: ``bytes`` fields (and
+   fields encoded by a custom, non-built-in value codec) have no OPTIMADE value
+   representation and are skipped, while reference fields and child fields of
+   storable elements surface through :meth:`StoreEntryProvider.relationships`
+   instead — when their target class is itself served, each record declares its
+   related entries as a flat tuple of :class:`~httk.core.RelatedEntry` values,
+   carrying the ``role``/``description`` metadata of an optional
+   :class:`~httk.core.Related` field marker (``Related(serve=False)`` suppresses
+   the field as a relationship). Class-level
+   :class:`~httk.core.RelationshipLink` declarations contribute further
+   relationships: each stored row of the declaring class — a served class, or an
+   unserved join class passed via ``link_classes`` — expresses one FROM→TO
+   relationship between the entries its link endpoints resolve to, carrying the
+   link's metadata.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.data.db.entry_provider.StoreEntryProvider
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.data.db.entry_provider.served_specs
+   httk.data.db.entry_provider.auto_definition
+
+
+Module Contents
+---------------
+
+.. py:function:: served_specs(schema: httk.data.db.schema.TableSchema, prefix: str) -> list[tuple[str, httk.data.db.schema.FieldSpec, str]]
+
+   The served ``(property name, field spec, fulltype)`` triples of a storable class.
+
+   One triple per servable stored field of ``schema`` (see the module
+   docstring for which fields are servable and how their types map), each
+   named ``{prefix}{field}``.
+
+
+.. py:function:: auto_definition(entry_type: str, schema: httk.data.db.schema.TableSchema, prefix: str) -> httk.core.EntryTypeDefinition
+
+   Auto-generate the :class:`~httk.core.EntryTypeDefinition` of a storable class.
+
+   The definition carries the OPTIMADE core ``id``/``type`` properties plus
+   one :meth:`~httk.core.PropertyDefinition.from_simple` definition per triple
+   of :func:`served_specs`, merged in via
+   :meth:`~httk.core.EntryTypeDefinition.extended` (so ``prefix`` must be a
+   registered definition prefix).
+
+
+.. py:class:: StoreEntryProvider(store: httk.data.db.store.SqlStore, classes: collections.abc.Mapping[str, type], *, definitions: collections.abc.Mapping[str, httk.core.EntryTypeDefinition] | None = None, prefix: str = '_httk_', id_of: collections.abc.Callable[[str, int, Any], str] | None = None, link_classes: collections.abc.Iterable[type] = ())
+
+   Bases: :py:obj:`httk.core.EntryProvider`
+
+
+   Serves the stored rows of storable classes as httk-core entry types.
+
+   ``classes`` maps each served entry-type name to its storable dataclass;
+   the classes' tables are read through ``store``. ``definitions`` optionally
+   supplies the :class:`~httk.core.EntryTypeDefinition` of an entry type
+   (validated: it must describe every property the provider serves for it);
+   entry types without a supplied definition get one auto-generated from the
+   class's schema, with every schema-derived property name carrying
+   ``prefix`` (which must be registered, see
+   :func:`~httk.core.register_definition_prefix`). ``id_of`` maps
+   ``(entry_type, sid, instance)`` to the served entry id; the default is
+   ``"<entry_type>-<sid>"``. ``link_classes`` names storable *join-object*
+   classes that are not served as entries themselves but whose
+   :class:`~httk.core.RelationshipLink` declarations contribute relationships
+   between served entries; every link endpoint (on a served class or a link
+   class) must resolve to a served entry type, and a link class without link
+   declarations is rejected.
+
+   See the module docstring for which stored fields are served as properties
+   (and how their types map), which are skipped, and which surface through
+   :meth:`relationships` instead.
+
+
+   .. py:method:: entry_types() -> collections.abc.Mapping[str, httk.core.EntryTypeDefinition]
+
+      Return the served entry types keyed by name.
+
+      Each value is an
+      :class:`~httk.core.property_definitions.EntryTypeDefinition` describing
+      the entry type and its properties. The subset a provider actually serves
+      is named by :meth:`property_keys`; a definition may describe more
+      properties than are served.
+
+
+
+   .. py:method:: property_keys(entry_type: str) -> collections.abc.Mapping[str, str]
+
+      Return the served-property-name to record-key map for ``entry_type``.
+
+      The mapping MUST include entries for at least ``id`` and ``type``. Every
+      key names a property described by :meth:`entry_types`; every value names
+      the key under which that property's value is found in a record from
+      :meth:`records`.
+
+
+
+   .. py:method:: records(entry_type: str) -> collections.abc.Iterator[collections.abc.Mapping[str, Any]]
+
+      Yield the records for ``entry_type`` as plain JSON-able mappings.
+
+      Each record is a mapping keyed by the record keys named in
+      :meth:`property_keys`; values are JSON-able (strings, numbers, booleans,
+      ``None``, or nested lists/dicts of the same).
+
+
+
+   .. py:method:: relationships(entry_type: str) -> collections.abc.Mapping[str, tuple[httk.core.RelatedEntry, Ellipsis]]
+
+      Return the related entries for each record of ``entry_type``.
+
+      The result maps an entry id to a flat tuple of :class:`~httk.core.RelatedEntry`
+      values, e.g. ``{"struct-1": (RelatedEntry("references", "ref-1"),
+      RelatedEntry("references", "ref-2", description="Cites the method"))}``.
+      Grouping the related entries by related entry type is the serving
+      layer's concern (JSON:API groups them at render time). This is the
+      neutral source of an OPTIMADE **relationships** block: a consumer turns
+      each related entry into a resource identifier under its entry type
+      (carrying the ``description``/``role`` metadata when present), and an
+      ``include=<type>`` request then embeds those related resources. The
+      default implementation returns an empty mapping (no relationships); a
+      provider overrides it to declare them. Ids referring to records this
+      provider (or a sibling provider serving the related type) does not supply
+      are simply not resolvable by the consumer.
+
+
+

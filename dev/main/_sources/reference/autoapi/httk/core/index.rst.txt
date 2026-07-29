@@ -1,0 +1,3587 @@
+httk.core
+=========
+
+.. py:module:: httk.core
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/core/cli/index
+   /reference/autoapi/httk/core/cli_context/index
+   /reference/autoapi/httk/core/dataloader/index
+   /reference/autoapi/httk/core/datastream/index
+   /reference/autoapi/httk/core/docs/index
+   /reference/autoapi/httk/core/ed25519/index
+   /reference/autoapi/httk/core/entry_provider/index
+   /reference/autoapi/httk/core/entry_types/index
+   /reference/autoapi/httk/core/exactmath/index
+   /reference/autoapi/httk/core/loading/index
+   /reference/autoapi/httk/core/optimade_filter/index
+   /reference/autoapi/httk/core/precision/index
+   /reference/autoapi/httk/core/project/index
+   /reference/autoapi/httk/core/property_definitions/index
+   /reference/autoapi/httk/core/register/index
+   /reference/autoapi/httk/core/storage_markers/index
+   /reference/autoapi/httk/core/vectors/index
+   /reference/autoapi/httk/core/views/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.core.DecodeObjectCallback
+   httk.core.BytestreamLike
+   httk.core.TextstreamLike
+   httk.core.derive_ed25519_public_key
+   httk.core.generate_ed25519_seed
+   httk.core.sign_ed25519
+   httk.core.verify_ed25519
+   httk.core.FilterAst
+   httk.core.STORAGE_INFO_ATTRIBUTE
+   httk.core.DedupPolicy
+   httk.core.NumericVector
+   httk.core.ScalarLike
+   httk.core.VectorLike
+   httk.core.Coercer
+   httk.core.subpackages
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   httk.core.ParserError
+   httk.core.ParserSyntaxError
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.CLIContext
+   httk.core.DataLoader
+   httk.core.DataRecord
+   httk.core.DatasetMeta
+   httk.core.BytestreamBackend
+   httk.core.BytestreamBytes
+   httk.core.BytestreamBytesView
+   httk.core.BytestreamCommon
+   httk.core.BytestreamFile
+   httk.core.BytestreamFilename
+   httk.core.BytestreamFilenameView
+   httk.core.BytestreamFileView
+   httk.core.BytestreamRequest
+   httk.core.BytestreamRequestView
+   httk.core.BytestreamURL
+   httk.core.BytestreamURLView
+   httk.core.BytestreamView
+   httk.core.CompressionCodec
+   httk.core.TextstreamBackend
+   httk.core.TextstreamCommon
+   httk.core.TextstreamFile
+   httk.core.TextstreamFilename
+   httk.core.TextstreamFilenameView
+   httk.core.TextstreamFileView
+   httk.core.TextstreamRequest
+   httk.core.TextstreamRequestView
+   httk.core.TextstreamString
+   httk.core.TextstreamStringView
+   httk.core.TextstreamURL
+   httk.core.TextstreamURLView
+   httk.core.TextstreamView
+   httk.core.EntryProvider
+   httk.core.RelatedEntry
+   httk.core.Calculation
+   httk.core.File
+   httk.core.Reference
+   httk.core.EntryTypeDefinition
+   httk.core.PropertyDefinition
+   httk.core.Indexed
+   httk.core.Related
+   httk.core.RelationshipLink
+   httk.core.Shape
+   httk.core.Skip
+   httk.core.StorageInfo
+   httk.core.Unique
+   httk.core.stored_property
+   httk.core.FracScalar
+   httk.core.FracVector
+   httk.core.LeafCodec
+   httk.core.MutableFracVector
+   httk.core.SurdScalar
+   httk.core.SurdVector
+   httk.core.VectorAPI
+   httk.core.VectorBackend
+   httk.core.VectorFrac
+   httk.core.VectorFracView
+   httk.core.VectorNative
+   httk.core.VectorNativeView
+   httk.core.VectorSurd
+   httk.core.VectorSurdView
+   httk.core.VectorView
+   httk.core.Backend
+   httk.core.View
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.known_compressions
+   httk.core.register_compression
+   httk.core.ed25519_backend_available
+   httk.core.ed25519_generate_seed
+   httk.core.ed25519_public_key
+   httk.core.ed25519_sign
+   httk.core.ed25519_verify
+   httk.core.load
+   httk.core.parse_optimade_filter
+   httk.core.combined_precision
+   httk.core.decimal_precision
+   httk.core.known_definition_prefixes
+   httk.core.load_entry_type_definition
+   httk.core.register_definition_prefix
+   httk.core.standard_entry_type
+   httk.core.known_cli_commands
+   httk.core.known_entry_providers
+   httk.core.known_format_adapters
+   httk.core.register_cli_command
+   httk.core.register_entry_provider
+   httk.core.register_format_adapter
+   httk.core.known_leaf_codecs
+   httk.core.numpy_available
+   httk.core.register_leaf_codec
+   httk.core.to_numeric
+   httk.core.to_numeric_scalar
+   httk.core.coerce
+   httk.core.register_coercer
+   httk.core.unwrap
+
+
+Package Contents
+----------------
+
+.. py:class:: CLIContext
+
+   Invocation context passed to a registered top-level command.
+
+
+   .. py:attribute:: program
+      :type:  str
+
+
+   .. py:attribute:: cwd
+      :type:  pathlib.Path
+
+
+.. py:class:: DataLoader(identifier: str, source: httk.core.datastream.TextstreamLike, decode_object: DecodeObjectCallback | None = None, **hints: Any)
+
+   Lazy loader for httk dataset files, resolved only when data is first accessed.
+
+   A ``DataLoader`` is a declare-time placeholder: constructing it records its arguments
+   and performs no I/O. The source is read the first time ``data``, ``meta``, or ``index``
+   is accessed. Files are either plain JSON (any JSON value is exposed as ``data`` with
+   ``meta``/``index`` set to ``None``) or a structured JSON-LD document (with ``@context``,
+   header fields, ``data``, and optional ``indicies``) whose header is exposed via ``meta``,
+   datasets via ``data.<name>``, and lookup indices via ``index.<name>``.
+
+   Loaders that share an ``identifier`` deduplicate through a class-level registry: the
+   first load wins, and later loaders reusing that identifier return the same result while
+   their ``source`` and ``decode_object`` arguments are ignored. Keeping identifiers unique
+   is the caller's responsibility. Not thread-safe.
+
+   Format is resolved from the source name after stripping any compression suffix: a ``.json``
+   name (e.g. ``data.json`` or ``data.json.gz``) is parsed as JSON; any other recognizable
+   suffix raises ``ValueError``; a source with no determinable name is treated as JSON.
+   Compression is handled transparently by the stream layer, so ``.json.gz`` and similar load
+   directly. A ``str``/``Path`` source is interpreted as a filename unless its scheme marks it
+   as a URL (``http``, ``https``, ``ftp``, ``file``); pass ``kind="content"`` for literal
+   content or ``kind="filename"``/``kind="url"`` to force an interpretation.
+
+   .. rubric:: Example
+
+   symmetry_basics = DataLoader("symmetry_basics", "data/spacegroup_symbols.json")
+   spacegroups = symmetry_basics.data.spacegroups  # first access triggers the load
+
+
+   .. py:property:: data
+      :type: Any
+
+
+
+   .. py:property:: meta
+      :type: DatasetMeta | None
+
+
+
+   .. py:property:: index
+      :type: DataRecord | None
+
+
+
+.. py:class:: DataRecord(data: dict[str, Any])
+
+   Read-only attribute and mapping view over a ``dict[str, Any]``.
+
+   Top-level keys are reachable both as attributes (``record.name``) and as items
+   (``record["name"]``); the wrapped values are the plain parsed JSON and are not
+   themselves wrapped. Supports iteration over keys, ``len()``, ``in``, and ``keys()``.
+
+
+   .. py:method:: keys() -> collections.abc.KeysView[str]
+
+
+.. py:class:: DatasetMeta
+
+   Header metadata extracted from a structured JSON-LD dataset document.
+
+
+   .. py:attribute:: context
+      :type:  dict[str, Any]
+
+      The raw ``@context`` object.
+
+
+   .. py:attribute:: id
+      :type:  str | None
+
+      The document ``@id``, or ``None`` if absent.
+
+
+   .. py:attribute:: type_
+      :type:  str | None
+
+      The document ``@type``, or ``None`` if absent (trailing underscore avoids the builtin ``type``).
+
+
+   .. py:attribute:: header
+      :type:  dict[str, Any]
+
+      All remaining top-level keys except ``data``, ``indicies``, and ``@``-keys (titles, creator, license, provenance, ...).
+
+
+   .. py:attribute:: dataset_ids
+      :type:  dict[str, str]
+
+      Mapping of dataset name to its ``@id``.
+
+
+   .. py:attribute:: fields
+      :type:  dict[str, dict[str, str]]
+
+      Mapping of dataset name to a mapping of field name to its property URL.
+
+
+.. py:type:: DecodeObjectCallback
+   :canonical: Callable[[dict[str, Any], str], Any]
+
+
+   Callback invoked as ``(dict_obj, jsonld_url)`` that returns the value to use in place of
+   ``dict_obj`` (return the input unchanged to decline).
+
+.. py:class:: BytestreamBackend(backend, **hints)
+
+   Bases: :py:obj:`httk.core.views.Backend`\ [\ :py:obj:`BytestreamBackend`\ ], :py:obj:`httk.core.datastream.bytestream_api.BytestreamAPI`
+
+
+   Abstract base class for all backends of streaming byte data.
+
+
+   .. py:attribute:: backend_classes
+      :type:  ClassVar[list[type[httk.core.views.Backend[Any]]]]
+
+
+.. py:class:: BytestreamBytes(content: bytes | bytearray, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_common.BytestreamCommon`, :py:obj:`httk.core.datastream.bytestream_backend.BytestreamBackend`
+
+
+   Backend for streaming byte data backed by an actual bytes object.
+
+
+   .. py:attribute:: b
+      :type:  bytes
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: BytestreamBytesView(obj: httk.core.datastream.bytestream_like.BytestreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_view.BytestreamView`, :py:obj:`bytes`
+
+
+   A view presenting underlying streaming byte data as bytes.
+   This view can be used both to pass bytes in place of streaming data, and for reading streaming data into bytes.
+   Note: this view is not lazy (this is impossible for views inheriting bytes, since bytes is immutable), hence all
+   streaming data is read immediately upon creating this view.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: BytestreamCommon
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Common superclass for many of the implementations of backends for streaming byte data.
+
+
+   .. py:method:: unwrap() -> io.IOBase
+
+
+   .. py:method:: read(size: int = -1) -> bytes
+
+
+   .. py:method:: close() -> None
+
+
+   .. py:method:: seek(offset: int, whence: int = os.SEEK_SET) -> int
+
+
+   .. py:method:: tell() -> int
+
+
+.. py:class:: BytestreamFile(obj: io.IOBase, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_common.BytestreamCommon`, :py:obj:`httk.core.datastream.bytestream_backend.BytestreamBackend`
+
+
+   Backend for file-based (io.IOBase-conforming) streaming byte data.
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: BytestreamFilename(filename: str | pathlib.Path, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_common.BytestreamCommon`, :py:obj:`httk.core.datastream.bytestream_backend.BytestreamBackend`
+
+
+   Backend for streaming byte data via operations on a file specified by a filename.
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: BytestreamFilenameView(obj: httk.core.datastream.bytestream_like.BytestreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_view.BytestreamView`, :py:obj:`str`
+
+
+   A view presenting an underlying data streaming backend via a filename.
+   This view is mostly useful for providing filenames to functions that will open them.
+   Note: this view is not lazy (this is impossible for views inheriting str, since str is immutable).
+
+   Raises TypeError if created with a streaming data source that does not come with a name.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: BytestreamFileView(obj: httk.core.datastream.bytestream_like.BytestreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_view.BytestreamView`, :py:obj:`io.IOBase`, :py:obj:`httk.core.datastream.bytestream_api.BytestreamAPI`
+
+
+   A view presenting an underlying data streaming backend via an io.IOBase-like API.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+   .. py:method:: close() -> None
+
+      Flush and close the IO object.
+
+      This method has no effect if the file is already closed.
+
+
+
+   .. py:method:: readable() -> bool
+
+      Return whether object was opened for reading.
+
+      If False, read() will raise OSError.
+
+
+
+   .. py:method:: writable() -> bool
+
+      Return whether object was opened for writing.
+
+      If False, write() will raise OSError.
+
+
+
+   .. py:method:: seekable() -> bool
+
+      Return whether object supports random access.
+
+      If False, seek(), tell() and truncate() will raise OSError.
+      This method may need to do a test seek().
+
+
+
+   .. py:method:: flush() -> None
+
+      Flush write buffers, if applicable.
+
+      This is not implemented for read-only and non-blocking streams.
+
+
+
+   .. py:method:: read(size: int | None = -1) -> bytes
+
+
+   .. py:method:: readline(size: int | None = -1) -> bytes
+
+      Read and return a line from the stream.
+
+      If size is specified, at most size bytes will be read.
+
+      The line terminator is always b'\n' for binary files; for text
+      files, the newlines argument to open can be used to select the line
+      terminator(s) recognized.
+
+
+
+   .. py:method:: readlines(hint: int = -1) -> list[bytes]
+
+      Return a list of lines from the stream.
+
+      hint can be specified to control the number of lines read: no more
+      lines will be read if the total size (in bytes/characters) of all
+      lines so far exceeds hint.
+
+
+
+   .. py:method:: seek(offset: int, whence: int = io.SEEK_SET) -> int
+
+      Change the stream position to the given byte offset.
+
+        offset
+          The stream position, relative to 'whence'.
+        whence
+          The relative position to seek from.
+
+      The offset is interpreted relative to the position indicated by whence.
+      Values for whence are:
+
+      * os.SEEK_SET or 0 -- start of stream (the default); offset should be zero or positive
+      * os.SEEK_CUR or 1 -- current stream position; offset may be negative
+      * os.SEEK_END or 2 -- end of stream; offset is usually negative
+
+      Return the new absolute position.
+
+
+
+   .. py:method:: tell() -> int
+
+      Return current stream position.
+
+
+
+   .. py:method:: detach() -> NoReturn
+
+
+.. py:type:: BytestreamLike
+   :canonical: bytestream_backend.BytestreamBackend | bytestream_view.BytestreamView | io.IOBase | io.BytesIO | bytes | bytearray | str | pathlib.Path | urllib.request.Request
+
+
+.. py:class:: BytestreamRequest(request: urllib.request.Request, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_common.BytestreamCommon`, :py:obj:`httk.core.datastream.bytestream_backend.BytestreamBackend`
+
+
+   Backend for streaming byte data fetched via a urllib.request.Request.
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: url
+      :type: str
+
+
+
+   .. py:property:: request
+      :type: urllib.request.Request
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: BytestreamRequestView(obj: httk.core.datastream.bytestream_like.BytestreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_view.BytestreamView`, :py:obj:`urllib.request.Request`
+
+
+   A view presenting an underlying data streaming backend via a urllib.request.Request.
+   This view is mostly useful for providing a Request to functions that will open it.
+   Note: this view is not lazy (it does not fetch); it only mirrors the underlying request/URL.
+
+   Raises TypeError if created with a streaming data source that does not come with a URL.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: BytestreamURL(url: str, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_common.BytestreamCommon`, :py:obj:`httk.core.datastream.bytestream_backend.BytestreamBackend`
+
+
+   Backend for streaming byte data fetched from a URL string.
+   A bare string is interpreted as a URL when its scheme is one of http, https, ftp, or file,
+   or when an explicit kind="url" hint is given.
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: url
+      :type: str
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: BytestreamURLView(obj: httk.core.datastream.bytestream_like.BytestreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.bytestream_view.BytestreamView`, :py:obj:`str`
+
+
+   A view presenting an underlying data streaming backend via a URL string.
+   This view is mostly useful for providing a URL to functions that will open it.
+   Note: this view is not lazy (this is impossible for views inheriting str, since str is immutable).
+
+   Raises TypeError if created with a streaming data source that does not come with a URL.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: BytestreamView
+
+   Bases: :py:obj:`httk.core.views.View`\ [\ :py:obj:`httk.core.datastream.bytestream_backend.BytestreamBackend`\ ]
+
+
+   Abstract base class for all views of streaming byte data.
+
+
+.. py:class:: CompressionCodec
+
+   A decompression codec for a single container format.
+
+   A codec is an orthogonal layer below the datastream backends: it turns a compressed
+   binary stream into an uncompressed binary stream, independently of where the compressed
+   bytes come from (a filename, an open file, raw bytes, or a remote response).
+
+
+   .. py:attribute:: name
+      :type:  str
+
+      Canonical, lower-case codec name (e.g. ``"gzip"``); also how an explicit hint selects it.
+
+
+   .. py:attribute:: extensions
+      :type:  tuple[str, Ellipsis]
+
+      Recognized filename suffixes including the leading dot (e.g. ``(".gz",)``).
+
+
+   .. py:attribute:: magics
+      :type:  tuple[bytes, Ellipsis]
+
+      Leading magic-byte signatures; an empty tuple means the format cannot be sniffed.
+
+
+   .. py:attribute:: open_stream
+      :type:  collections.abc.Callable[[io.IOBase], io.IOBase]
+
+      Wrap a compressed binary stream and return a readable, decompressed binary stream.
+
+
+.. py:class:: TextstreamBackend(backend, **hints)
+
+   Bases: :py:obj:`httk.core.views.Backend`\ [\ :py:obj:`TextstreamBackend`\ ], :py:obj:`httk.core.datastream.textstream_api.TextstreamAPI`
+
+
+   Abstract base class for all backends of streaming text data.
+
+
+   .. py:attribute:: backend_classes
+      :type:  ClassVar[list[type[httk.core.views.Backend[Any]]]]
+
+
+.. py:class:: TextstreamCommon
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Common superclass for many of the implementations of backends for streaming text data.
+
+
+   .. py:method:: unwrap() -> io.TextIOBase
+
+
+   .. py:method:: read(size: int = -1) -> str
+
+
+   .. py:method:: close() -> None
+
+
+   .. py:method:: seek(offset: int, whence: int = os.SEEK_SET) -> int
+
+
+   .. py:method:: tell() -> int
+
+
+.. py:class:: TextstreamFile(obj: io.TextIOBase, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_common.TextstreamCommon`, :py:obj:`httk.core.datastream.textstream_backend.TextstreamBackend`
+
+
+   Backend for file-based (io.TextIOBase-conforming) streaming text data
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: TextstreamFilename(filename: str | pathlib.Path, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_common.TextstreamCommon`, :py:obj:`httk.core.datastream.textstream_backend.TextstreamBackend`
+
+
+   Backend for streaming text via operations on a file specfied by a filename
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: TextstreamFilenameView(obj: httk.core.datastream.textstream_like.TextstreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_view.TextstreamView`, :py:obj:`str`
+
+
+   A view presenting an underlying data streaming backend via a filename.
+   This view is probably mostly useful for providing filenames to functions that will open them.
+   Note: this view is not lazy (this is impossible for views inherting str, since str is immutable)
+
+   Raises TypeError if created with a streaming data source that does not have a name.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: TextstreamFileView(obj: httk.core.datastream.textstream_like.TextstreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_view.TextstreamView`, :py:obj:`io.TextIOBase`, :py:obj:`httk.core.datastream.textstream_api.TextstreamAPI`
+
+
+   A view presenting an underlying data streaming backend via the full io.TextIOBase API, which is a superset of TextstreamAPI.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+   .. py:method:: close() -> None
+
+      Flush and close the IO object.
+
+      This method has no effect if the file is already closed.
+
+
+
+   .. py:method:: readable() -> bool
+
+      Return whether object was opened for reading.
+
+      If False, read() will raise OSError.
+
+
+
+   .. py:method:: writable() -> bool
+
+      Return whether object was opened for writing.
+
+      If False, write() will raise OSError.
+
+
+
+   .. py:method:: seekable() -> bool
+
+      Return whether object supports random access.
+
+      If False, seek(), tell() and truncate() will raise OSError.
+      This method may need to do a test seek().
+
+
+
+   .. py:method:: flush() -> None
+
+      Flush write buffers, if applicable.
+
+      This is not implemented for read-only and non-blocking streams.
+
+
+
+   .. py:method:: read(size: int | None = -1) -> str
+
+      Read at most size characters from stream.
+
+      Read from underlying buffer until we have size characters or we hit EOF.
+      If size is negative or omitted, read until EOF.
+
+
+
+   .. py:method:: readline(size: int | None = -1) -> str
+
+      Read until newline or EOF.
+
+      Return an empty string if EOF is hit immediately.
+      If size is specified, at most size characters will be read.
+
+
+
+   .. py:method:: readlines(hint: int = -1) -> list[str]
+
+      Return a list of lines from the stream.
+
+      hint can be specified to control the number of lines read: no more
+      lines will be read if the total size (in bytes/characters) of all
+      lines so far exceeds hint.
+
+
+
+   .. py:method:: seek(offset: int, whence: int = io.SEEK_SET) -> int
+
+      Change the stream position to the given byte offset.
+
+        offset
+          The stream position, relative to 'whence'.
+        whence
+          The relative position to seek from.
+
+      The offset is interpreted relative to the position indicated by whence.
+      Values for whence are:
+
+      * os.SEEK_SET or 0 -- start of stream (the default); offset should be zero or positive
+      * os.SEEK_CUR or 1 -- current stream position; offset may be negative
+      * os.SEEK_END or 2 -- end of stream; offset is usually negative
+
+      Return the new absolute position.
+
+
+
+   .. py:method:: tell() -> int
+
+      Return current stream position.
+
+
+
+   .. py:method:: detach() -> NoReturn
+
+      Separate the underlying buffer from the TextIOBase and return it.
+
+      After the underlying buffer has been detached, the TextIO is in an unusable state.
+
+
+
+   .. py:property:: encoding
+      :type: str | None
+
+
+      Encoding of the text stream.
+
+      Subclasses should override.
+
+
+   .. py:property:: errors
+      :type: str | None
+
+
+      The error setting of the decoder or encoder.
+
+      Subclasses should override.
+
+
+   .. py:property:: newlines
+      :type: str | tuple[str, Ellipsis] | None
+
+
+      Line endings translated so far.
+
+      Only line endings translated during reading are considered.
+
+      Subclasses should override.
+
+
+.. py:type:: TextstreamLike
+   :canonical: textstream_backend.TextstreamBackend | textstream_view.TextstreamView | io.TextIOBase | io.StringIO | str | pathlib.Path | urllib.request.Request
+
+
+.. py:class:: TextstreamRequest(request: urllib.request.Request, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_common.TextstreamCommon`, :py:obj:`httk.core.datastream.textstream_backend.TextstreamBackend`
+
+
+   Backend for streaming text fetched via a urllib.request.Request.
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: url
+      :type: str
+
+
+
+   .. py:property:: request
+      :type: urllib.request.Request
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: TextstreamRequestView(obj: httk.core.datastream.textstream_like.TextstreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_view.TextstreamView`, :py:obj:`urllib.request.Request`
+
+
+   A view presenting an underlying data streaming backend via a urllib.request.Request.
+   This view is mostly useful for providing a Request to functions that will open it.
+   Note: this view is not lazy (it does not fetch); it only mirrors the underlying request/URL.
+
+   Raises TypeError if created with a streaming data source that does not come with a URL.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: TextstreamString(content: str, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_common.TextstreamCommon`, :py:obj:`httk.core.datastream.textstream_backend.TextstreamBackend`
+
+
+   Backend for streaming text backed by an actual string
+
+
+   .. py:attribute:: s
+      :type:  str
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: TextstreamStringView(obj: httk.core.datastream.textstream_like.TextstreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_view.TextstreamView`, :py:obj:`str`
+
+
+   A view presenting an underlying data streaming as a string.
+   This view can be used both to pass a string in place of streaming data, and for reading streaming data into a string.
+   Note: this view is not lazy (this is impossible for views inherting str, since str is immutable), hence all the streaming data
+   is read immedately upon creating this view.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: TextstreamURL(url: str, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_common.TextstreamCommon`, :py:obj:`httk.core.datastream.textstream_backend.TextstreamBackend`
+
+
+   Backend for streaming text fetched from a URL string.
+   A bare string is interpreted as a URL when its scheme is one of http, https, ftp, or file,
+   or when an explicit kind="url" hint is given.
+
+
+   .. py:property:: name
+      :type: str | None
+
+
+
+   .. py:property:: url
+      :type: str
+
+
+
+   .. py:property:: closed
+      :type: bool
+
+
+
+.. py:class:: TextstreamURLView(obj: httk.core.datastream.textstream_like.TextstreamLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.datastream.textstream_view.TextstreamView`, :py:obj:`str`
+
+
+   A view presenting an underlying data streaming backend via a URL string.
+   This view is mostly useful for providing a URL to functions that will open it.
+   Note: this view is not lazy (this is impossible for views inheriting str, since str is immutable).
+
+   Raises TypeError if created with a streaming data source that does not come with a URL.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: TextstreamView
+
+   Bases: :py:obj:`httk.core.views.View`\ [\ :py:obj:`httk.core.datastream.textstream_backend.TextstreamBackend`\ ]
+
+
+   Abstract base class for all views of streaming text data.
+
+
+.. py:function:: known_compressions() -> list[str]
+
+   Return the registered codec names, in registration order.
+
+
+.. py:function:: register_compression(codec: CompressionCodec) -> None
+
+   Register (or replace) a codec under its :attr:`~CompressionCodec.name` (case-insensitive).
+
+
+.. py:data:: derive_ed25519_public_key
+
+.. py:function:: ed25519_backend_available(backend: str = 'cryptography') -> bool
+
+   Return whether *backend* can perform Ed25519 operations.
+
+
+.. py:function:: ed25519_generate_seed() -> bytes
+
+   Generate a standard 32-byte Ed25519 private seed.
+
+
+.. py:function:: ed25519_public_key(seed: bytes, *, backend: str | None = None) -> bytes
+
+   Derive the 32-byte public key for a 32-byte private *seed*.
+
+
+.. py:function:: ed25519_sign(seed: bytes, message: bytes, *, backend: str | None = None) -> bytes
+
+   Return an RFC 8032 Ed25519 signature for *message*.
+
+
+.. py:function:: ed25519_verify(public_key: bytes, message: bytes, signature: bytes, *, backend: str | None = None) -> bool
+
+   Return whether *signature* is valid, treating malformed input as false.
+
+
+.. py:data:: generate_ed25519_seed
+
+.. py:data:: sign_ed25519
+
+.. py:data:: verify_ed25519
+
+.. py:class:: EntryProvider
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Supplies described, queryable entry types as plain JSON-able records.
+
+   A provider serves one or more *entry types*, each identified by a name (e.g.
+   ``"structures"``). For every entry type it describes the entry type and its
+   properties, states how each served property maps to a record key, and
+   yields the records themselves.
+
+   Three notions define the contract:
+
+   - **Definitions** (:meth:`entry_types`) are first-class
+     :class:`~httk.core.property_definitions.EntryTypeDefinition` objects — the
+     OPTIMADE property-definition model shared across httk₂ modules. A provider
+     obtains them from the vendored standards (via
+     :func:`~httk.core.property_definitions.standard_entry_type` or
+     :func:`~httk.core.property_definitions.load_entry_type_definition`) or
+     builds them from
+     :meth:`~httk.core.property_definitions.EntryTypeDefinition.from_optimade`
+     and :meth:`~httk.core.property_definitions.PropertyDefinition.from_simple`.
+     A standard definition typically describes more properties than a provider
+     serves; the served subset is exactly the property names in
+     :meth:`property_keys`.
+   - **Property keys** (:meth:`property_keys`) map each served property name to
+     the key under which that property's value is found in a record. Every entry
+     type's property-key map MUST cover at least ``id`` and ``type``, and every
+     served name MUST be described by the entry type's definition (custom
+     properties must therefore live in an
+     :meth:`~httk.core.property_definitions.EntryTypeDefinition.extended`
+     definition).
+   - **Records** (:meth:`records`) are plain JSON-able mappings keyed by the
+     record keys named in :meth:`property_keys` (values are strings, numbers,
+     booleans, ``None``, or nested lists/dicts of the same).
+
+   A consumer combines the three: the definitions become the served schema, the
+   property keys drive both response-field extraction and filter handling, and
+   the records are loaded into a store the consumer queries.
+
+   A provider may additionally declare **relationships**
+   (:meth:`relationships`): a flat tuple of :class:`~httk.core.RelatedEntry` values per
+   entry id, each naming a related entry (and optionally the relationship's
+   ``description``/``role`` metadata) that the consumer serves as the entry's
+   relationships block.
+
+
+   .. py:method:: entry_types() -> collections.abc.Mapping[str, httk.core.property_definitions.EntryTypeDefinition]
+      :abstractmethod:
+
+
+      Return the served entry types keyed by name.
+
+      Each value is an
+      :class:`~httk.core.property_definitions.EntryTypeDefinition` describing
+      the entry type and its properties. The subset a provider actually serves
+      is named by :meth:`property_keys`; a definition may describe more
+      properties than are served.
+
+
+
+   .. py:method:: property_keys(entry_type: str) -> collections.abc.Mapping[str, str]
+      :abstractmethod:
+
+
+      Return the served-property-name to record-key map for ``entry_type``.
+
+      The mapping MUST include entries for at least ``id`` and ``type``. Every
+      key names a property described by :meth:`entry_types`; every value names
+      the key under which that property's value is found in a record from
+      :meth:`records`.
+
+
+
+   .. py:method:: records(entry_type: str) -> collections.abc.Iterable[collections.abc.Mapping[str, Any]]
+      :abstractmethod:
+
+
+      Yield the records for ``entry_type`` as plain JSON-able mappings.
+
+      Each record is a mapping keyed by the record keys named in
+      :meth:`property_keys`; values are JSON-able (strings, numbers, booleans,
+      ``None``, or nested lists/dicts of the same).
+
+
+
+   .. py:method:: relationships(entry_type: str) -> collections.abc.Mapping[str, tuple[RelatedEntry, Ellipsis]]
+
+      Return the related entries for each record of ``entry_type``.
+
+      The result maps an entry id to a flat tuple of :class:`~httk.core.RelatedEntry`
+      values, e.g. ``{"struct-1": (RelatedEntry("references", "ref-1"),
+      RelatedEntry("references", "ref-2", description="Cites the method"))}``.
+      Grouping the related entries by related entry type is the serving
+      layer's concern (JSON:API groups them at render time). This is the
+      neutral source of an OPTIMADE **relationships** block: a consumer turns
+      each related entry into a resource identifier under its entry type
+      (carrying the ``description``/``role`` metadata when present), and an
+      ``include=<type>`` request then embeds those related resources. The
+      default implementation returns an empty mapping (no relationships); a
+      provider overrides it to declare them. Ids referring to records this
+      provider (or a sibling provider serving the related type) does not supply
+      are simply not resolvable by the consumer.
+
+
+
+.. py:class:: RelatedEntry
+
+   One related entry of a record, as reported by :meth:`EntryProvider.relationships`.
+
+   Mirrors the OPTIMADE v1.3 relationships model: a related entry is named by
+   its entry type and id, optionally carrying the per-identifier metadata the
+   standard defines — ``description`` (the human-readable relationship
+   description introduced in OPTIMADE v1.2 as ``meta.description``) and
+   ``role`` (the machine-readable relationship role introduced in OPTIMADE
+   v1.3 as ``meta.role``, e.g. ``"input"``/``"output"`` for the
+   calculations↔files relationship). An absent ``role`` means exactly that —
+   no role is declared and no default is assumed.
+
+
+   .. py:attribute:: entry_type
+      :type:  str
+
+      The entry type of the related entry (e.g. ``"references"``).
+
+
+   .. py:attribute:: id
+      :type:  str
+
+      The id of the related entry.
+
+
+   .. py:attribute:: description
+      :type:  str | None
+      :value: None
+
+
+      A human-readable description of the relationship, if declared.
+
+
+   .. py:attribute:: role
+      :type:  str | None
+      :value: None
+
+
+      The machine-readable role of the relationship, if declared.
+
+
+.. py:class:: Calculation
+
+   One OPTIMADE ``calculations`` record.
+
+   Every field is optional and defaults to ``None``; ``id`` is supplied by the
+   provider's mapping key and ``type`` is the constant ``"calculations"``. The
+   standard ``calculations`` entry type carries only the shared core
+   properties; database-specific results are added by extending the definition.
+
+
+   .. py:attribute:: immutable_id
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: last_modified
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:method:: create(obj: Calculation | Mapping[str, Any]) -> Self
+      :classmethod:
+
+
+
+.. py:class:: File
+
+   One OPTIMADE ``files`` record.
+
+   Every field is optional and defaults to ``None``; ``id`` is supplied by the
+   provider's mapping key and ``type`` is the constant ``"files"``. Timestamps
+   are ISO-8601 strings and ``checksums`` is a mapping of algorithm name to hex
+   digest.
+
+
+   .. py:attribute:: immutable_id
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: last_modified
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: url
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: url_stable_until
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: name
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: size
+      :type:  int | None
+      :value: None
+
+
+
+   .. py:attribute:: media_type
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: version
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: modification_timestamp
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: description
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: checksums
+      :type:  collections.abc.Mapping[str, str] | None
+      :value: None
+
+
+
+   .. py:attribute:: atime
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: ctime
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: mtime
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:method:: create(obj: File | Mapping[str, Any]) -> Self
+      :classmethod:
+
+
+
+.. py:class:: Reference
+
+   One OPTIMADE ``references`` record (a bibliographic reference).
+
+   Every field is optional and defaults to ``None``; ``id`` is supplied by the
+   provider's mapping key and ``type`` is the constant ``"references"``. Author
+   and editor lists are tuples of plain name dictionaries.
+
+
+   .. py:attribute:: immutable_id
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: last_modified
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: address
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: annote
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: booktitle
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: chapter
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: crossref
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: edition
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: howpublished
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: institution
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: journal
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: key
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: month
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: note
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: number
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: organization
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: pages
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: publisher
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: school
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: series
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: title
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: volume
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: year
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: bib_type
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: authors
+      :type:  tuple[collections.abc.Mapping[str, Any], Ellipsis] | None
+      :value: None
+
+
+
+   .. py:attribute:: editors
+      :type:  tuple[collections.abc.Mapping[str, Any], Ellipsis] | None
+      :value: None
+
+
+
+   .. py:attribute:: doi
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: url
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:method:: create(obj: Reference | Mapping[str, Any]) -> Self
+      :classmethod:
+
+
+
+.. py:function:: load(filename: str, *, raw: bool = False, **kwargs: Any) -> Any
+
+   Load ``filename`` and adapt its neutral payload to a domain object.
+
+   Dispatch strips at most one recognized compression suffix (``.gz``,
+   ``.bz2``, ...) to obtain an *inner* name, then selects a loader by that
+   inner name's extension (``.cif``, ``.poscar``, ...) or, failing that, by its
+   exact basename (``POSCAR``, ``CONTCAR``; case-insensitive). The selected
+   loader always receives the **original** ``filename``; loaders open it
+   through the datastream layer, which transparently decompresses. By default,
+   a mapping with a string ``"format"`` tag is passed to the registered domain
+   adapter for that format. ``raw=True`` is the neutral-payload escape hatch.
+   Payloads with unknown formats, and non-mapping loader results, pass through
+   unchanged.
+
+
+.. py:type:: FilterAst
+   :canonical: tuple[Any, ...]
+
+
+.. py:exception:: ParserError
+
+   Bases: :py:obj:`Exception`
+
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: ParserSyntaxError(*args: Any)
+
+   Bases: :py:obj:`ParserError`
+
+
+   Common base class for all non-exit exceptions.
+
+
+   .. py:attribute:: info
+
+
+   .. py:attribute:: line
+
+
+   .. py:attribute:: pos
+
+
+   .. py:attribute:: linestr
+
+
+.. py:function:: parse_optimade_filter(filter_string: str, verbosity: int | Any = 0) -> FilterAst
+
+.. py:function:: combined_precision(values: collections.abc.Iterable[object]) -> fractions.Fraction | None
+
+   The precision of a set of values taken together: the **coarsest** of them.
+
+   A structure is only as precisely stated as its least precisely stated number, so one
+   sloppy ``0.5`` among a table of six-decimal coordinates really does mean the table is
+   good to ``1e-1``. Taking the coarsest is the conservative reading and the one that
+   keeps a derived tolerance from being too tight to match anything.
+
+   Each value may be a literal to be interpreted by :func:`decimal_precision`, or an
+   already-computed precision as a :class:`~fractions.Fraction`, :class:`int`, or
+   :class:`float` — a standard uncertainty read from a file, say. Floats convert through
+   their decimal spelling, so ``0.005`` lands on ``1/200`` rather than a binary
+   approximation of it. Values that state no precision are skipped, and ``None`` is
+   returned when none of them state one.
+
+
+.. py:function:: decimal_precision(text: object) -> fractions.Fraction | None
+
+   The absolute precision implied by how a number was written, or ``None``.
+
+   ``None`` means the literal makes no precision claim, which is a different thing from
+   claiming perfect precision. It is returned for an empty or missing value, for CIF's
+   ``?`` and ``.`` placeholders, for anything that is not a decimal literal, and — this
+   one matters — for an exact rational such as ``"1/3"``, which states a value rather
+   than a measurement and so should not drag a structure's precision down to
+   the width of its last digit.
+
+   Examples, all exact:
+
+   * ``"0.123"`` -> ``1/1000`` — three digits after the point
+   * ``"-0.5"`` -> ``1/10`` — the sign is not part of the claim
+   * ``".25"`` -> ``1/100`` — a leading point is still two digits
+   * ``"5."`` -> ``1`` — a trailing point states no fraction
+   * ``"10"`` -> ``1`` — an integer literal is precise to the unit
+   * ``"1.2e-3"`` -> ``1/10000`` — one digit, then scaled by the exponent
+   * ``"1/3"`` -> ``None`` — exact, not measured
+   * ``"?"`` -> ``None`` — no value at all
+
+
+.. py:class:: EntryTypeDefinition(name: str, description: str, properties: collections.abc.Mapping[str, PropertyDefinition])
+
+   An immutable OPTIMADE entry-type definition.
+
+   Bundles the entry type's ``name`` and ``description`` with an
+   insertion-ordered mapping of :class:`PropertyDefinition` objects (one per
+   described property). A standard definition typically describes more
+   properties than any given deployment serves; the served subset is chosen
+   separately (an :class:`~httk.core.EntryProvider` names it through its
+   :meth:`~httk.core.EntryProvider.property_keys`).
+
+
+   .. py:method:: from_optimade(name: str, entrytype: collections.abc.Mapping[str, Any]) -> Self
+      :classmethod:
+
+
+      Build an entry-type definition from a vendored OPTIMADE entry type.
+
+      ``entrytype`` is the vendored document shape: a ``description`` string
+      and a ``properties`` mapping of property name to full property
+      definition. A clear :class:`ValueError` is raised when either is missing.
+
+
+
+   .. py:property:: name
+      :type: str
+
+
+
+   .. py:property:: description
+      :type: str
+
+
+
+   .. py:property:: properties
+      :type: collections.abc.Mapping[str, PropertyDefinition]
+
+
+
+   .. py:method:: extended(extra: collections.abc.Mapping[str, PropertyDefinition], *, allow_unprefixed: bool = False) -> Self
+
+      Return a copy with ``extra`` custom property definitions merged in.
+
+      Each name in ``extra`` MUST be new (a collision with an existing
+      property raises :class:`ValueError` naming it) and, unless
+      ``allow_unprefixed`` is set, MUST carry a registered database-specific
+      prefix (see :func:`register_definition_prefix` /
+      :func:`known_definition_prefixes`); a custom property that does not is
+      rejected with a :class:`ValueError` explaining the OPTIMADE prefix rule.
+
+
+
+   .. py:method:: as_optimade() -> dict[str, Any]
+
+      Return the entry type as a vendored-shape OPTIMADE document.
+
+
+
+.. py:class:: PropertyDefinition(name: str, payload: collections.abc.Mapping[str, Any])
+
+   An immutable wrapper around one full OPTIMADE property definition.
+
+   Instances are constructed from a vendored definition document
+   (:meth:`from_optimade`) or generated from a compact description
+   (:meth:`from_simple`). The wrapped document is always deep-copied on the way
+   in and out, so an instance never shares mutable state with its inputs or its
+   callers.
+
+
+   .. py:method:: from_optimade(name: str, definition: collections.abc.Mapping[str, Any]) -> Self
+      :classmethod:
+
+
+      Wrap a full vendored OPTIMADE property definition.
+
+      ``definition`` must at least carry ``$id``, ``description``,
+      ``x-optimade-type``, and ``type``; a clear :class:`ValueError` is raised
+      otherwise. The document is deep-copied.
+
+
+
+   .. py:method:: from_simple(name: str, *, description: str, fulltype: str = 'string', unit: str | None = None, dimensions: collections.abc.Mapping[str, Any] | None = None, dict_properties: collections.abc.Mapping[str, str] | None = None, metadata_definition: collections.abc.Mapping[str, Any] | None = None, required_response: bool = False, definition_id: str | None = None) -> Self
+      :classmethod:
+
+
+      Generate a property definition from a compact description.
+
+      This mirrors the OPTIMADE property-definition generator: it emits the
+      ``$schema`` meta-schema reference, a synthesized ``$id`` (under the base
+      registered for a matching prefix via
+      :func:`register_definition_prefix` — e.g. ``httk.org`` for ``_httk_`` /
+      ``_omdb_`` — under ``schemas.optimade.org`` otherwise, unless
+      ``definition_id`` overrides it), a title, the ``description``, the OPTIMADE type derived
+      from ``fulltype`` (``"string"``, ``"integer"``, ``"float"``,
+      ``"boolean"``, ``"timestamp"``, ``"dict"``, or ``"list of ..."``), the
+      ``x-optimade-unit`` (with an ångström unit definition when
+      ``unit == "angstrom"``), the ``x-optimade-definition`` stamp (format
+      ``"1.2"``; see the module docstring), the JSON ``type`` with nullability
+      derived from ``required_response``, ``items`` for lists, a ``date-time``
+      format for timestamps, inner ``properties`` for dicts (from
+      ``dict_properties``), ``x-optimade-dimensions`` from ``dimensions``, and
+      an ``x-optimade-metadata-definition`` (explicit, or a generated
+      ``list_axes`` definition when ``dimensions`` is given).
+
+      The result is implementation-neutral: per-deployment ``sortable`` and
+      ``response-default`` flags are layered on later via
+      :meth:`with_implementation`.
+
+
+
+   .. py:property:: name
+      :type: str
+
+
+
+   .. py:property:: definition_id
+      :type: str
+
+
+
+   .. py:property:: title
+      :type: str | None
+
+
+
+   .. py:property:: description
+      :type: str
+
+
+
+   .. py:property:: optimade_type
+      :type: str
+
+
+
+   .. py:property:: json_type
+      :type: Any
+
+
+
+   .. py:property:: nullable
+      :type: bool
+
+
+
+   .. py:property:: unit
+      :type: str | None
+
+
+
+   .. py:property:: format_version
+      :type: str | None
+
+
+
+   .. py:property:: requirements
+      :type: collections.abc.Mapping[str, Any]
+
+
+
+   .. py:property:: dimensions
+      :type: collections.abc.Mapping[str, Any] | None
+
+
+
+   .. py:property:: metadata_definition
+      :type: collections.abc.Mapping[str, Any] | None
+
+
+
+   .. py:method:: with_implementation(*, sortable: bool | None = None, response_default: bool | None = None) -> Self
+
+      Return a copy carrying this deployment's implementation flags.
+
+      Adds an ``x-optimade-implementation`` object with the ``sortable`` and
+      ``response-default`` keys that are provided (a ``None`` argument leaves
+      that key unset), and — when ``sortable`` is given — mirrors it in a
+      top-level ``sortable`` field. The original instance is untouched.
+
+
+
+   .. py:method:: as_optimade() -> dict[str, Any]
+
+      Return a deep copy of the wrapped property-definition document.
+
+
+
+.. py:function:: known_definition_prefixes() -> tuple[str, Ellipsis]
+
+   Return the registered database-specific property-name prefixes.
+
+   The tuple reflects the current state of the prefix registry (see
+   :func:`register_definition_prefix`); ``_httk_`` and ``_omdb_`` are
+   pre-registered.
+
+
+.. py:function:: load_entry_type_definition(package: str, name: str) -> EntryTypeDefinition
+
+   Load a vendored OPTIMADE entry-type definition JSON from a package.
+
+   Reads ``optimade_defs/<name>.json`` from ``package`` (via
+   :mod:`importlib.resources`) and models it as an
+   :class:`EntryTypeDefinition`. Results are cached per ``(package, name)``.
+
+
+.. py:function:: register_definition_prefix(prefix: str, id_base: str) -> None
+
+   Register a database-specific OPTIMADE property-name ``prefix``.
+
+   A custom property served by a database MUST use such a prefix (see the
+   OPTIMADE specification, "Database-Specific Properties"). Once registered, a
+   property name carrying ``prefix`` gets its ``$id`` synthesized under
+   ``id_base`` by :meth:`PropertyDefinition.from_simple`, and
+   :meth:`EntryTypeDefinition.extended` accepts it as a custom property.
+
+   ``prefix`` must be a lower-case alphanumeric token wrapped in single
+   underscores (matching ``_[a-z0-9]+_``); anything else raises a clear
+   :class:`ValueError`. Re-registering an existing prefix overwrites its base.
+
+
+.. py:function:: standard_entry_type(name: str) -> EntryTypeDefinition
+
+   Return one of httk-core's vendored standard OPTIMADE entry types.
+
+   Supported names are ``"references"``, ``"files"``, and ``"calculations"``;
+   an unknown name raises a :class:`ValueError` listing the known ones. The
+   ``structures`` standard is vendored by *httk-atomistic*, not httk-core.
+
+
+.. py:function:: known_cli_commands() -> list[str]
+
+   Return registered top-level command names without resolving handlers.
+
+
+.. py:function:: known_entry_providers() -> list[str]
+
+.. py:function:: known_format_adapters() -> dict[str, str]
+
+   Return format tags mapped to their registered adapter names.
+
+
+.. py:function:: register_cli_command(name: str, handler: str | collections.abc.Callable[Ellipsis, Any], summary: str) -> None
+
+   Register a lazy top-level :command:`httk` command.
+
+   A handler is either a callable or a lazy ``"module:callable"`` reference
+   with the contract ``(argv: Sequence[str], context: CLIContext) -> int``.
+   Names use lowercase, hyphen-separated command syntax. Registration is
+   intentionally strict: reserved names and duplicate registrations are
+   errors rather than order-dependent overrides.
+
+
+.. py:function:: register_entry_provider(*, name: str, factory: str) -> None
+
+   Register an :class:`~httk.core.entry_provider.EntryProvider` factory under ``name``.
+
+   ``factory`` is a lazy ``"module:callable"`` reference to a callable that
+   constructs a provider (providers need data, so applications call the factory
+   themselves; the registry only records how to reach it). This mirrors
+   ``register_loader``.
+
+
+.. py:function:: register_format_adapter(*, name: str, adapter: str | collections.abc.Callable[Ellipsis, Any], formats: collections.abc.Sequence[str]) -> None
+
+   Register one lazy adapter for each neutral payload format in ``formats``.
+
+   ``adapter`` may be a callable or a lazy ``"module:callable"`` reference.
+   A format tag has one owner: registering it again raises an error naming both
+   the existing and attempted registrants.
+
+
+.. py:data:: STORAGE_INFO_ATTRIBUTE
+   :type:  Final
+   :value: '__httk_storage__'
+
+
+   Class attribute name where a storable class may attach its :class:`StorageInfo`.
+
+.. py:type:: DedupPolicy
+   :canonical: Literal['content_id', 'by_value', 'none']
+
+
+   How a storage layer deduplicates saved instances of a class.
+
+   - ``"content_id"``: reuse an existing row whose stored content identity matches
+     (the default; suited to immutable value objects).
+   - ``"by_value"``: reuse an existing row whose stored columns all match (suited
+     to join-objects such as tags and references, whose identity is their value).
+   - ``"none"``: always insert a new row.
+
+.. py:class:: Indexed
+
+   Field marker: request a single-column index on this field's column(s).
+
+
+.. py:class:: Related
+
+   Field marker: relationship metadata for a reference or list-of-storable field.
+
+   Applies to a field holding another storable class (a *reference* field) or
+   a ``list``/``tuple`` of storable classes. When the field's target class is
+   served alongside the declaring class, the storage layer surfaces the field
+   as a relationship; this marker attaches the OPTIMADE per-identifier
+   metadata that flows into each emitted
+   :class:`~httk.core.entry_provider.RelatedEntry` — ``role`` (machine
+   readable, OPTIMADE v1.3 ``meta.role``) and ``description`` (human readable,
+   OPTIMADE v1.2 ``meta.description``). ``serve=False`` suppresses the field
+   as a relationship entirely.
+
+   :param role: The machine-readable relationship role, if any.
+   :param description: The human-readable relationship description, if any.
+   :param serve: Whether the field is served as a relationship at all.
+
+
+   .. py:attribute:: role
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: description
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: serve
+      :type:  bool
+      :value: True
+
+
+
+.. py:class:: RelationshipLink
+
+   Class-level relationship declaration: each stored row expresses one FROM→TO relationship.
+
+   Declared in :attr:`StorageInfo.links`. ``source`` and ``target`` each name
+   a reference field of the declaring class, or are ``None`` to mean *the
+   declaring class's own entry*: for every stored row, one relationship is
+   declared from the entry the source side resolves to, to the entry the
+   target side resolves to. The two canonical shapes:
+
+   - **join-object**: ``RelationshipLink("structure", "reference")`` on a
+     ``StructureRef`` join class — every ``StructureRef`` row relates its
+     ``structure`` to its ``reference`` (structures → references), without the
+     join class itself being served.
+   - **field-inverse**: ``RelationshipLink("structure", None, role="output")``
+     on a ``Calculation`` class — every ``Calculation`` row relates its
+     ``structure`` to the calculation itself (structures → calculations),
+     i.e. the inverse of the ``structure`` reference field.
+
+   ``role`` and ``description`` carry the same OPTIMADE per-identifier
+   metadata as :class:`Related` into each relationship the link declares.
+
+   :param source: The reference field naming the FROM-side entry, or ``None``
+                  for the declaring class's own entry.
+   :param target: The reference field naming the TO-side entry, or ``None``
+                  for the declaring class's own entry.
+   :param role: The machine-readable relationship role, if any.
+   :param description: The human-readable relationship description, if any.
+
+   :raises ValueError: If both endpoints are ``None`` (the link would relate every
+       entry to itself), or if ``source`` and ``target`` name the same
+       field.
+
+
+   .. py:attribute:: source
+      :type:  str | None
+
+
+   .. py:attribute:: target
+      :type:  str | None
+
+
+   .. py:attribute:: role
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: description
+      :type:  str | None
+      :value: None
+
+
+
+.. py:class:: Shape
+
+   Field marker: fixed or variable shape for a vector-valued field.
+
+   ``rows >= 1`` declares a fixed-shape value stored inline (flattened
+   row-major into columns). ``rows == 0`` declares a variable number of rows
+   with ``cols`` fixed columns each, stored out-of-line (one row per entry,
+   in insertion order).
+
+   :param rows: Number of rows; ``0`` means variable-length.
+   :param cols: Number of columns per row; must be at least ``1``.
+
+
+   .. py:attribute:: rows
+      :type:  int
+
+
+   .. py:attribute:: cols
+      :type:  int
+      :value: 1
+
+
+
+.. py:class:: Skip
+
+   Field marker: the field exists on the dataclass but is not stored.
+
+
+.. py:class:: StorageInfo
+
+   Optional class-level storage declaration for a storable dataclass.
+
+   Attach as the class attribute named by :data:`STORAGE_INFO_ATTRIBUTE`
+   (``__httk_storage__``), annotated ``ClassVar[StorageInfo]`` so dataclass
+   processing ignores it. A storage layer may also accept an instance as an
+   external override for classes that cannot be modified.
+
+   :param storage_name: The name this class is stored under; ``None`` derives one from
+                        the class name. A relational backend uses it as the table name, a document
+                        store as the collection name.
+   :param indexes: Composite indexes, each a tuple of field names.
+   :param dedup: Deduplication policy applied when saving; see :data:`DedupPolicy`.
+   :param links: Class-level relationship declarations; see :class:`RelationshipLink`.
+
+
+   .. py:attribute:: storage_name
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: indexes
+      :type:  tuple[tuple[str, Ellipsis], Ellipsis]
+      :value: ()
+
+
+
+   .. py:attribute:: dedup
+      :type:  DedupPolicy
+      :value: 'content_id'
+
+
+
+   .. py:attribute:: links
+      :type:  tuple[RelationshipLink, Ellipsis]
+      :value: ()
+
+
+
+.. py:class:: Unique
+
+   Field marker: request a unique index on this field's column(s).
+
+
+.. py:class:: stored_property
+
+   Bases: :py:obj:`property`
+
+
+   A derived property that a storage layer stores and makes queryable.
+
+   Use exactly like :class:`property` (getter only). The value type is read
+   from the getter's return annotation. On save, the storage layer evaluates
+   and stores the value alongside the declared fields; on load, the value is
+   recomputed by the property rather than passed to ``__init__``.
+
+
+.. py:class:: FracScalar(nom: int, denom: int)
+
+   Bases: :py:obj:`FracVector`
+
+
+   Represents the fractional number ``nom/denom``. This is a subclass of FracVector with the
+   purpose of making it clear when a scalar fracvector is needed/used.
+
+
+   .. py:attribute:: noms
+
+
+   .. py:attribute:: denom
+
+
+   .. py:method:: create(noms: Any, denom: int | None = None, simplify: bool = True, chain: bool = False, min_accuracy: fractions.Fraction | None = fractions.Fraction(1, 10000)) -> Self
+      :classmethod:
+
+
+      Create a FracScalar.
+
+      ``FracScalar.create(something)`` where ``something`` may be any object that can be used
+      in the constructor of the Python Fraction class (also works with strings!).
+
+      For signature compatibility with :meth:`FracVector.create`, this accepts but ignores
+      ``chain`` and ``min_accuracy``, and converts strings exactly via the Fraction constructor.
+
+
+
+.. py:class:: FracVector(noms: Noms, denom: int = 1)
+
+   FracVector is a general *immutable* N-dimensional vector (tensor) class for performing
+   linear algebra with fractional numbers.
+
+   A FracVector consists of a multidimensional tuple of integer nominators, and a single
+   shared integer denominator.
+
+   Since FracVectors are immutable, every operation on a FracVector returns a new FracVector
+   with the result of the operation. A created FracVector never changes. Hence, they are safe
+   to use as keys in dictionaries, to use in sets, etc.
+
+   Note: most methods return FracVector results that are not simplified (i.e., the FracVector
+   returned does *not* have the smallest possible integer denominator). To return a FracVector
+   with the smallest possible denominator, just call :meth:`simplify` at the last step.
+
+
+   .. py:attribute:: nested_map
+      :type:  ClassVar[collections.abc.Callable[Ellipsis, Any]]
+
+
+   .. py:attribute:: nested_map_fractions
+      :type:  ClassVar[collections.abc.Callable[Ellipsis, Any]]
+
+
+   .. py:attribute:: noms
+      :type:  Noms
+
+
+   .. py:attribute:: denom
+      :type:  int
+
+
+   .. py:method:: use(old: Any) -> FracVector
+      :classmethod:
+
+
+      Make sure the variable is a FracVector, and if not, convert it.
+
+
+
+   .. py:method:: create(noms: Any, denom: int | None = None, simplify: bool = True, chain: bool = False, min_accuracy: fractions.Fraction | None = fractions.Fraction(1, 10000)) -> Self
+      :classmethod:
+
+
+      Create a FracVector from various types of sequences.
+
+      Simplest use::
+
+        FracVector.create(some_kind_of_sequence)
+
+      where 'some_kind_of_sequence' can be any nested list or tuple of objects that can be
+      used in the constructor of the Python Fraction class (also works with strings!). If any
+      object found while traveling the items has a ``.to_fractions()`` method, it will be called
+      and is expected to return a fraction or list or tuple of fractions.
+
+      :param noms: any nested sequence of Fraction-constructible objects.
+      :param denom: an optional common denominator to divide all nominators with.
+      :param simplify: if True, return a FracVector with the smallest possible denominator.
+      :param chain: if True, remove the outermost dimension and chain the sub-sequences. I.e.,
+                    if ``input=[[1, 2, 3], [4, 5, 6]]`` then ``FracVector.create(input)`` gives
+                    ``[1, 2, 3, 4, 5, 6]``.
+      :param min_accuracy: the minimum accuracy assumed in string input. The default is
+                           ``1/10000``, i.e. ``0.33 = 0.3300 = 33/100``, whereas ``0.3333 = 1/3``. Set it
+                           to None to assume infinite accuracy, i.e. convert exactly whatever string is
+                           given (unless a standard deviation is given as a parenthesis after the string).
+
+      Note: FracVector itself implements ``.to_fractions()``, and hence the same constructor
+      allows stacking several FracVector objects like this::
+
+          vertical_fracvector = FracVector.create([[fracvector1], [fracvector2]])
+          horizontal_fracvector = FracVector.create([fracvector1, fracvector2], chain=True)
+
+
+
+   .. py:method:: create_fast(noms: Any, common_denom: int = 1, max_denom: int | None = None, denom: int | None = None, simplify: bool = True, chain: bool = False) -> Self
+      :classmethod:
+
+
+      Optimized version of :meth:`create` that takes advantage of the fact that the type of
+      ``noms`` is a nested list of ints (of depth 2 or 3) over a single ``common_denom``.
+
+
+
+   .. py:method:: get_append(other: Any) -> Self
+
+
+   .. py:method:: get_extend(other: Any) -> Self
+
+
+   .. py:method:: get_insert(pos: int, other: Any) -> Self
+
+
+   .. py:method:: get_prepend(other: Any) -> Self
+
+
+   .. py:method:: get_prextend(other: Any) -> Self
+
+
+   .. py:method:: get_stacked(other: Any) -> Self
+
+      Return a new FracVector with ``other`` stacked after ``self`` along a new leading axis.
+
+      ``self`` and ``other`` must have the same shape; the result gains one extra outermost
+      dimension of size two (numpy ``stack``-like). E.g. stacking the row ``[1, 2, 3]`` with
+      ``[4, 5, 6]`` gives ``[[1, 2, 3], [4, 5, 6]]``.
+
+
+
+   .. py:method:: get_prestacked(other: Any) -> Self
+
+      Return a new FracVector with ``other`` stacked before ``self`` along a new leading axis.
+
+      The mirror of :meth:`get_stacked`: stacking ``[1, 2, 3]`` in front with ``[4, 5, 6]``
+      gives ``[[4, 5, 6], [1, 2, 3]]``.
+
+
+
+   .. py:method:: get_stackedinsert(pos: int, other: Any) -> Self
+
+
+   .. py:method:: chain_vecs(vecs: Any) -> Self
+      :classmethod:
+
+
+      Optimized chaining of FracVectors.
+
+      :param vecs: a list (or tuple) of fracvectors that all share the same denominator.
+
+      Returns the same thing as ``FracVector.create(vecs, chain=True)``, i.e., removes the
+      outermost dimension and chains the sub-sequences. If ``input=[[1, 2, 3], [4, 5, 6]]``
+      then it gives ``[1, 2, 3, 4, 5, 6]``, but this method assumes all vectors share the
+      same denominator (it raises an exception if this is not true).
+
+
+
+   .. py:method:: stack_vecs(vecs: Any) -> Self
+      :classmethod:
+
+
+      Optimized stacking of FracVectors.
+
+      :param vecs: a list (or tuple) of fracvectors that all share the same denominator.
+
+      Returns the same thing as ``FracVector.create(vecs)``, but only works if all vectors
+      share the same denominator (raises an exception if this is not true).
+
+
+
+   .. py:method:: eye(dims: tuple[int, Ellipsis]) -> Self
+      :classmethod:
+
+
+      Create a diagonal one-matrix with the given dimensions.
+
+
+
+   .. py:method:: zeros(dims: tuple[int, Ellipsis]) -> Self
+      :classmethod:
+
+
+      Create a zero matrix with the given dimensions.
+
+
+
+   .. py:method:: random(dims: tuple[int, Ellipsis], minnom: int = -100, maxnom: int = 100, denom: int = 100) -> Self
+      :classmethod:
+
+
+      Create a matrix with the given dimensions filled with random rational numbers.
+
+
+
+   .. py:method:: from_tuple(t: tuple[int, Noms]) -> Self
+      :classmethod:
+
+
+      Return a FracVector created from the tuple representation ``(denom, noms)``, as returned
+      by the :meth:`to_tuple` method. ``from_tuple(v.to_tuple())`` reconstructs ``v`` exactly.
+
+
+
+   .. py:method:: from_floats(data: Any, resolution: int = 2**32) -> Self
+      :classmethod:
+
+
+      Create a FracVector from a (nested) list or tuple of floats. You can convert a numpy
+      array with this method if you use ``A.tolist()``.
+
+      :param l: the (nested) list or tuple of floats.
+      :param resolution: the resolution used for interpreting the given floating point numbers.
+                         Default is ``2**32``.
+
+
+
+   .. py:method:: create_cos(data: Any, degrees: bool = False, limit: bool = False, find_best_rational: bool = True, prec: fractions.Fraction = fractions.Fraction(1, 1000000)) -> Self
+      :classmethod:
+
+
+      Create a FracVector as the cosine of the argument ``data``. If ``data`` is composed of
+      strings, the standard deviation of the numbers is taken into account, and the best
+      possible fractional approximation to the cosines of the data is returned within the
+      standard deviation.
+
+      This is not the same as ``FracVector.create(data).cos()``, which creates the best
+      possible fractional approximations of ``data`` and then takes cos on that.
+
+
+
+   .. py:method:: create_sin(data: Any, degrees: bool = False, limit: bool = False, prec: fractions.Fraction = fractions.Fraction(1, 1000000)) -> Self
+      :classmethod:
+
+
+      Create a FracVector as the sine of the argument ``data``. If ``data`` is composed of
+      strings, the standard deviation of the numbers is taken into account, and the best
+      possible fractional approximation to the sines of the data is returned within the
+      standard deviation.
+
+      This is not the same as ``FracVector.create(data).sin()``, which creates the best
+      possible fractional approximations of ``data`` and then takes sin on that.
+
+
+
+   .. py:method:: create_exp(data: Any, prec: fractions.Fraction = fractions.Fraction(1, 1000000), limit: bool = False) -> Self
+      :classmethod:
+
+
+      Create a FracVector as the exponent of the argument ``data``. If ``data`` is composed of
+      strings, the standard deviation of the numbers is taken into account, and the best
+      possible fractional approximation to the exponents of the data is returned within the
+      standard deviation.
+
+      This is not the same as ``FracVector.create(data).exp()``, which creates the best
+      possible fractional approximations of ``data`` and then takes exp on that.
+
+
+
+   .. py:method:: pi(prec: fractions.Fraction = fractions.Fraction(1, 1000000), limit: bool = False) -> Self
+      :classmethod:
+
+
+      Create a scalar FracVector with a rational approximation of pi to precision ``prec``.
+
+
+
+   .. py:property:: dim
+      :type: tuple[int, Ellipsis]
+
+
+      A tuple with the dimensionality of each dimension of the FracVector (the noms are
+      assumed to be a nested list of rectangular shape).
+
+
+   .. py:property:: nom
+      :type: int
+
+
+      Return the integer nominator of a scalar FracVector.
+
+
+   .. py:method:: validate() -> bool
+
+
+   .. py:method:: to_tuple() -> tuple[int, Noms]
+
+      Return the FracVector on tuple representation ``(denom, ...noms...)``.
+
+
+
+   .. py:method:: to_floats() -> Any
+
+      Convert the FracVector to a (nested) list of floats.
+
+
+
+   .. py:method:: to_float() -> float
+
+      Convert a scalar FracVector to a single float.
+
+
+
+   .. py:method:: to_fractions() -> Any
+
+      Convert the FracVector to a (nested) list of fractions.
+
+
+
+   .. py:method:: to_ints() -> Any
+
+      Convert the FracVector to a (nested) list of integers, rounded off as best possible.
+
+
+
+   .. py:method:: to_strings(accuracy: int = 8) -> Any
+
+      Convert the FracVector to a (nested) list of strings.
+
+
+
+   .. py:method:: to_string(accuracy: int = 8) -> str
+
+      Convert a scalar FracVector to a single string.
+
+
+
+   .. py:method:: to_fraction() -> fractions.Fraction
+
+      Convert a scalar FracVector to a fraction.
+
+
+
+   .. py:method:: to_int() -> int
+
+      Convert a scalar FracVector to an integer (truncating as necessary).
+
+
+
+   .. py:method:: flatten() -> Self
+
+      Return a FracVector that has been flattened out to a single row vector.
+
+
+
+   .. py:method:: set_common_denom(A: Any, B: Any) -> tuple[Self, Self, int]
+      :classmethod:
+
+
+      Used internally to combine two different FracVectors.
+
+      Returns a tuple ``(A2, B2, denom)`` where A2 is numerically equal to A, and B2 is
+      numerically equal to B, but A2 and B2 are both set on the same shared denominator
+      ``denom``, which is the *product* of the denominators of A and B.
+
+
+
+   .. py:method:: sign() -> int
+
+      Return the sign of the scalar FracVector: -1, 0 or 1.
+
+
+
+   .. py:method:: T() -> Self
+
+      Return the transpose, ``A^T``.
+
+
+
+   .. py:method:: det() -> Self
+
+      Return the determinant of the FracVector as a scalar FracVector.
+
+
+
+   .. py:method:: inv() -> Self
+
+      Return the matrix inverse, ``A^-1``.
+
+
+
+   .. py:method:: simplify() -> Self
+
+      Return a reduced FracVector. I.e., each element has the same numerical value but the
+      new FracVector represents them using the smallest possible shared denominator.
+
+      The result is *canonical*: two numerically equal FracVectors always simplify to the
+      same ``(denom, noms)`` pair. That requires normalizing the sign as well as reducing
+      by the greatest common divisor, since ``(1, 0, 0)/-2`` and ``(-1, 0, 0)/2`` are the
+      same value and neither is reducible. Canonicality is what ``__hash__`` relies
+      on to stay consistent with ``__eq__``.
+
+
+
+   .. py:method:: simplify_fast(depth: int) -> Self
+
+      Return a reduced FracVector, taking advantage of a known nesting ``depth``. I.e., each
+      element has the same numerical value but the new FracVector represents them using the
+      smallest possible shared denominator.
+
+
+
+   .. py:method:: set_denominator(set_denom: int = 1000000000) -> Self
+
+      Return a FracVector of reduced resolution where every element is the closest numerical
+      approximation using this denominator.
+
+
+
+   .. py:method:: limit_denominator(max_denom: int = 1000000000) -> Self
+
+      Return a FracVector of reduced resolution.
+
+      Each element in the returned FracVector is the closest numerical approximation that is
+      allowed by a fraction with maximally this denominator. Note: since all elements must be
+      put on a common denominator, the result may have a larger denominator than ``max_denom``.
+
+
+
+   .. py:method:: floor() -> int
+
+      Return the integer that is equal to or just below the value stored in a scalar FracVector.
+
+
+
+   .. py:method:: modf() -> tuple[FracVector, FracVector]
+
+      Return the fractional and integer parts of each element as the pair
+      ``(fractional, integer)`` of exact FracVectors sharing this vector's denominator.
+
+      Both parts carry the sign of the element and the integer part truncates toward
+      zero, matching the conventions of :func:`math.modf` (e.g. the value -5/2 splits
+      into -1/2 and -2).
+
+
+
+   .. py:method:: ceil() -> int
+
+      Return the integer that is equal to or just above the value stored in a scalar FracVector.
+
+
+
+   .. py:method:: normalize() -> Self
+
+      Add/remove an integer +/-N to each element to place it in the range [0, 1).
+
+
+
+   .. py:method:: normalize_half() -> Self
+
+      Add/remove an integer +/-N to each element to place it in the range [-1/2, 1/2).
+
+      This is useful to find the shortest vector C between two points A, B in a space with
+      periodic boundary conditions [0, 1)::
+
+         C = (A - B).normalize_half()
+
+
+
+   .. py:method:: mul(other: Any) -> Self
+
+      Return the result of multiplying the vector with ``other`` using matrix multiplication.
+
+      Note that for two 1D FracVectors, ``A.dot(B)`` is *not* the same as ``A.mul(B)``, but
+      rather ``A.mul(B.T())``.
+
+
+
+   .. py:method:: dot(other: FracVector) -> Self
+
+      Return the vector dot product of the 1D vector with the 1D vector ``other``, i.e.,
+      ``A . B``. The same as ``A * B.T()``.
+
+
+
+   .. py:method:: lengthsqr() -> Self
+
+      Return the square of the length of the vector. The same as ``A * A.T()``.
+
+
+
+   .. py:method:: cross(other: FracVector) -> Self
+
+      Return the vector cross product of the 3-element 1D vector with the 3-element 1D vector
+      ``other``, i.e., ``A x B``.
+
+
+
+   .. py:method:: reciprocal() -> Self
+
+      Return the reciprocal matrix of a 3x3 matrix (the rows are the reciprocal vectors,
+      without the ``2*pi`` factor).
+
+
+
+   .. py:method:: metric_product(vecA: FracVector, vecB: FracVector) -> Self
+
+      Return the result of the metric product using the present square FracVector as the
+      metric matrix. The same as ``vecA * self * vecB.T()``.
+
+
+
+   .. py:method:: cos(prec: fractions.Fraction | None = None, degrees: bool = False, limit: bool = False) -> Self
+
+      Return a FracVector where every element is the cosine of the element in the source FracVector.
+
+      :param prec: the precision (should be set as a fraction).
+      :param degrees: if True, interpret the elements in degrees.
+      :param limit: if True, require the denominator to be smaller than or equal to the precision.
+
+
+
+   .. py:method:: sin(prec: fractions.Fraction | None = None, degrees: bool = False, limit: bool = False) -> Self
+
+      Return a FracVector where every element is the sine of the element in the source FracVector.
+
+      :param prec: the precision (should be set as a fraction).
+      :param degrees: if True, interpret the elements in degrees.
+      :param limit: if True, require the denominator to be smaller than or equal to the precision.
+
+
+
+   .. py:method:: acos(prec: fractions.Fraction | None = None, degrees: bool = False, limit: bool = False) -> Self
+
+      Return a FracVector where every element is the arccos of the element in the source FracVector.
+
+      :param prec: the precision (should be set as a fraction).
+      :param degrees: if True, return the result in degrees.
+      :param limit: if True, require the denominator to be smaller than or equal to the precision.
+
+
+
+   .. py:method:: asin(prec: fractions.Fraction | None = None, degrees: bool = False, limit: bool = False) -> Self
+
+      Return a FracVector where every element is the arcsin of the element in the source FracVector.
+
+      :param prec: the precision (should be set as a fraction).
+      :param degrees: if True, return the result in degrees.
+      :param limit: if True, require the denominator to be smaller than or equal to the precision.
+
+
+
+   .. py:method:: exp(prec: fractions.Fraction | None = None, limit: bool = False) -> Self
+
+      Return a FracVector where every element is the exponent of the element in the source FracVector.
+
+      :param prec: the precision (should be set as a fraction).
+      :param limit: if True, require the denominator to be smaller than or equal to the precision.
+
+
+
+   .. py:method:: sqrt(prec: fractions.Fraction | None = None, limit: bool = False) -> Self
+
+      Return a FracVector where every element is the sqrt of the element in the source FracVector.
+
+      :param prec: the precision (should be set as a fraction).
+      :param limit: if True, require the denominator to be smaller than or equal to the precision.
+
+
+
+   .. py:method:: max() -> Self
+
+      Return the maximum element across all dimensions in the FracVector. ``max(fracvector)``
+      works for a 1D vector.
+
+
+
+   .. py:method:: nargmax() -> list[Any]
+
+      Return a list of indices of all maximum elements across all dimensions in the FracVector.
+
+
+
+   .. py:method:: argmax() -> Any
+
+      Return the index of the maximum element across all dimensions in the FracVector.
+
+
+
+   .. py:method:: min() -> Self
+
+      Return the minimum element across all dimensions in the FracVector. ``min(fracvector)``
+      works for a 1D vector.
+
+
+
+   .. py:method:: nargmin() -> list[Any]
+
+      Return a list of indices for all minimum elements across all dimensions in the FracVector.
+
+
+
+   .. py:method:: argmin() -> Any
+
+      Return the index of the minimum element across all dimensions in the FracVector.
+
+
+
+.. py:class:: LeafCodec
+
+   A leaf codec: a documented conversion of one exact :class:`fractions.Fraction` leaf into a
+   presentation leaf.
+
+   A codec is an orthogonal layer beside the vector backends: given a value already reduced to the
+   canonical Fraction hub, it produces the requested element type. Its :attr:`from_fraction`
+   documents both its exactness contract (when the result is exact) and its default conversion
+   (what it does when an exact result is impossible); on data it never raises.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+      Canonical codec name (e.g. ``"int"``); also how an explicit ``leaf=`` hint selects it.
+
+
+   .. py:attribute:: from_fraction
+      :type:  collections.abc.Callable[Ellipsis, Any]
+
+      Convert ``(value: fractions.Fraction, **options) -> leaf`` from the canonical Fraction hub.
+
+
+   .. py:attribute:: check_options
+      :type:  collections.abc.Callable[[dict[str, Any]], None]
+
+      Validate an options mapping eagerly, raising :class:`ValueError` on any invalid option.
+
+
+.. py:class:: MutableFracVector(noms: Any, denom: int = 1)
+
+   Bases: :py:obj:`httk.core.vectors.fracvector.FracVector`
+
+
+   Same as :class:`~httk.core.vectors.fracvector.FracVector`, only this version allows
+   assignment of elements, e.g.::
+
+       mfracvec[2, 7] = 5
+
+   and, e.g.::
+
+       mfracvec[:, 7] = [1, 2, 3, 4]
+
+   Other than this, the FracVector methods exist and do the same, i.e., they return *copies*
+   of the fracvector, rather than modifying it.
+
+   Methods with ``set_*`` prefixes perform mutating operations, e.g.::
+
+      A.set_T()
+
+   replaces A with its own transpose, whereas::
+
+      A.T()
+
+   just returns a new MutableFracVector that is the transpose of A, leaving A unmodified.
+
+
+   .. py:attribute:: nested_map
+      :type:  ClassVar[collections.abc.Callable[Ellipsis, Any]]
+
+
+   .. py:attribute:: nested_inmap
+      :type:  ClassVar[collections.abc.Callable[Ellipsis, Any]]
+
+
+   .. py:attribute:: nested_map_fractions
+      :type:  ClassVar[collections.abc.Callable[Ellipsis, Any]]
+
+
+   .. py:attribute:: noms
+      :type:  Any
+
+
+   .. py:method:: use(old: Any) -> httk.core.vectors.fracvector.FracVector
+      :classmethod:
+
+
+      Make sure the variable is a MutableFracVector, and if not, convert it.
+
+
+
+   .. py:method:: to_FracVector() -> httk.core.vectors.fracvector.FracVector
+
+      Return a FracVector with the values of this MutableFracVector.
+
+
+
+   .. py:method:: from_FracVector(other: httk.core.vectors.fracvector.FracVector) -> MutableFracVector
+      :classmethod:
+
+
+      Create a MutableFracVector from a FracVector.
+
+
+
+   .. py:method:: validate() -> bool
+
+
+   .. py:method:: invalidate() -> None
+
+      Internal method to call when the MutableFracVector is changed in such a way that cached
+      properties are invalidated (e.g., ``_dim``).
+
+
+
+   .. py:method:: set_negative() -> None
+
+      Change the MutableFracVector inline into its own negative: ``self -> -self``.
+
+
+
+   .. py:method:: set_T() -> None
+
+      Change the MutableFracVector inline into its own transpose: ``self -> self.T``.
+
+
+
+   .. py:method:: set_inv() -> Any
+
+      Change the MutableFracVector inline into its own inverse: ``self -> self^-1``.
+
+
+
+   .. py:method:: set_simplify() -> None
+
+      Change the MutableFracVector; reduces any common factor between the denominator and all
+      nominators.
+
+
+
+   .. py:method:: set_set_denominator(resolution: int = 1000000000) -> None
+
+      Change the MutableFracVector; reduces resolution.
+
+      :param resolution: the new denominator; each element becomes the closest numerical
+                         approximation using this denominator.
+
+
+
+   .. py:method:: set_normalize() -> None
+
+      Add/remove an integer +/-N to each element to place it in the range [0, 1).
+
+
+
+   .. py:method:: set_normalize_half() -> None
+
+      Add/remove an integer +/-N to each element to place it in the range [-1/2, 1/2).
+
+      This is useful to find the shortest vector C between two points A, B in a space with
+      periodic boundary conditions [0, 1)::
+
+         C = (A - B).normalize_half()
+
+
+
+.. py:type:: NumericVector
+   :canonical: float | numpy.ndarray
+
+
+.. py:type:: ScalarLike
+   :canonical: int | float | str | fractions.Fraction | decimal.Decimal | fracvector.FracScalar | surdvector.SurdScalar
+
+
+.. py:class:: SurdScalar(components: dict[int, httk.core.vectors.fracvector.FracVector], dim: tuple[int, Ellipsis])
+
+   Bases: :py:obj:`SurdVector`
+
+
+   A scalar :class:`SurdVector` (shape ``()``): a single field element
+   :math:`\sum_r q_r\sqrt r`.
+
+   Adds the scalar-only operations — the field inverse, exact sign and ordering, and Decimal
+   rendering — that need a single value rather than a tensor.
+
+
+   .. py:method:: inverse() -> SurdScalar
+
+      The multiplicative inverse ``1/self`` (raises :class:`ZeroDivisionError` on zero).
+
+
+
+   .. py:method:: sign() -> int
+
+      Return the exact sign of the value: ``-1``, ``0`` or ``1``.
+
+      For an irrational value the sign is decided by refining rational lower/upper bounds on each
+      ``sqrt(r)`` (from :func:`~httk.core.exactmath.integer_sqrt` at increasing precision)
+      and summing the weighted intervals until the total interval excludes zero — which always
+      happens in finitely many steps because a nonzero surd is bounded away from zero.
+
+
+
+   .. py:method:: cos_degrees(q: Any) -> SurdScalar | None
+      :classmethod:
+
+
+      Return ``cos(q degrees)`` as an exact :class:`SurdScalar`, or None when it is not a surd.
+
+      The value lies in the squarefree-radical field precisely when the angle, reduced modulo
+      360, is a **multiple of 15 or of 36 degrees** — e.g. :math:`\cos 30° = \tfrac{\sqrt3}2`,
+      :math:`\cos 15° = \tfrac{\sqrt6+\sqrt2}4`, :math:`\cos 36° = \tfrac{1+\sqrt5}4`.
+      ``q`` may be an int, :class:`~fractions.Fraction`, or numeric string (parsed via
+      :func:`~httk.core.exactmath.any_to_fraction`).
+
+      That list is **complete**: :math:`\cos(2\pi a/b)` lies in a field generated by square
+      roots of rationals iff the Galois group :math:`(\mathbb{Z}/b)^\times/\{\pm1\}` of
+      :math:`\mathbb{Q}(\cos 2\pi/b)` has exponent at most 2, which holds exactly for
+      :math:`b \in \{1,2,3,4,5,6,8,10,12,24\}` — the rational-degree angles that are multiples
+      of 15° or 36°. (Niven's theorem is the rational-value special case of this classification.)
+      A ``None`` result is therefore a proof that the exact cosine lies outside
+      :math:`\mathbb{Q}[\sqrt n]` — use :func:`~httk.core.exactmath.cos` with
+      ``degrees=True`` for a deterministic rational approximation in that case.
+
+
+
+   .. py:method:: sin_degrees(q: Any) -> SurdScalar | None
+      :classmethod:
+
+
+      Return ``sin(q degrees)`` as an exact :class:`SurdScalar`, or None when it is irrational.
+
+      Computed as ``cos(90 - q)`` degrees, so exactness follows the same classification as
+      :meth:`cos_degrees` applied to ``90 - q``: exact for all multiples of 15 degrees, otherwise
+      None (a proof that the exact sine is outside the field). Note the asymmetry with
+      :meth:`cos_degrees` for the 36° family: :math:`\cos 36°` is an exact surd but
+      :math:`\sin 36° = \cos 54°` is not (54 is a multiple of neither 15 nor 36).
+
+
+
+   .. py:method:: acos_degrees() -> fractions.Fraction | None
+
+      Return the exact ``arccos`` of this value in **degrees** over :math:`[0, 180]`, or None.
+
+      This is the reverse table lookup: the result is an exact rational number of degrees
+      precisely when the value equals the cosine of a multiple of 15° or 36° (the complete set of
+      rational-degree angles with surd cosines — see :meth:`cos_degrees`), decided by exact surd
+      equality; otherwise None (the exact angle is then irrational in degrees). Raises
+      :class:`ValueError` — decided exactly via :meth:`sign` — when the value lies outside
+      :math:`[-1, 1]`.
+
+
+
+   .. py:method:: to_float(prec: fractions.Fraction = fractions.Fraction(1, 10**30)) -> float
+
+      The value as a float (via a high-precision exact rational approximation).
+
+
+
+   .. py:method:: to_decimal(digits: int | None = None, rounding: str = 'half_even', max_refinements: int | None = None) -> Any
+
+      Render the value as a correctly-rounded :class:`decimal.Decimal`.
+
+      Reuses the exact-math module's Ziv refinement loop
+      (``_to_decimal``): a rational value renders exactly (its
+      finite expansion when it fits, else quantized), and an irrational surd — never on a rational
+      rounding boundary — is rendered by refining the rational approximation until the rounding is
+      determined. ``digits`` (significant digits; default: the active decimal context precision),
+      ``rounding`` (``"half_even"``/``"down"``) and ``max_refinements`` match
+      :func:`~httk.core.exactmath.sqrt` in Decimal mode.
+
+
+
+.. py:class:: SurdVector(components: dict[int, httk.core.vectors.fracvector.FracVector], dim: tuple[int, Ellipsis])
+
+   An *immutable* exact tensor over the squarefree-radical field
+   :math:`\mathbb{Q}[\sqrt n : n\ \text{squarefree}]`.
+
+   A SurdVector is a map ``{squarefree radicand -> FracVector coefficient}`` (all coefficients
+   sharing one ``dim``); radicand ``1`` is the rational part. It is stored **canonically** —
+   coefficients simplified, all-zero coefficients dropped — so the representation is unique and
+   equality/zero-detection are exact. Like :class:`~httk.core.vectors.fracvector.FracVector` it is
+   immutable and hashable.
+
+   See the module docstring for the field facts, the fractional-vs-Cartesian motivation, and the
+   magnitude-vs-linear-structure purpose boundary.
+
+
+   .. py:method:: create(obj: Any) -> SurdVector
+      :classmethod:
+
+
+      Create a SurdVector from a :class:`~httk.core.vectors.fracvector.FracVector`, nested rationals, or another SurdVector.
+
+      A SurdVector is returned unchanged; anything else is built through
+      :meth:`~httk.core.vectors.fracvector.FracVector.create` and embedded exactly at radicand 1 (so every rational value is
+      representable, and a rational input stays rational).
+
+
+
+   .. py:method:: from_radicand_map(mapping: dict[int, Any]) -> SurdVector
+      :classmethod:
+
+
+      Compose a SurdVector from a ``{radicand -> coefficient}`` mapping.
+
+      Radicands are positive integers and need not be squarefree — each is normalized via
+      ``square_part`` (``sqrt(radicand) = s*sqrt(r)``) and the
+      coefficients (FracVector-like, all of one shape) folded together canonically.
+
+
+
+   .. py:method:: sqrt_of(q: Any) -> SurdScalar
+      :classmethod:
+
+
+      Return the exact square root of a nonnegative rational ``q`` as a :class:`SurdScalar`.
+
+      The result is a plain rational when ``q`` is a perfect square (e.g. ``sqrt_of(4/9) == 2/3``)
+      and otherwise a single-radical surd (``sqrt_of(8) == 2*sqrt(2)``). ``sqrt(p/q)`` is
+      normalized as ``sqrt(p*q)/q`` so the stored radicand is always a positive squarefree integer
+      (``sqrt_of(1/2) == sqrt(2)/2``). Raises :class:`ValueError` on a negative argument — there is
+      no exact square root of a surd (no nested radicals), only of a rational.
+
+
+
+   .. py:method:: zero(dim: tuple[int, Ellipsis] = ()) -> SurdVector
+      :classmethod:
+
+
+      The zero SurdVector of shape ``dim`` (a :class:`SurdScalar` for the default ``()``).
+
+
+
+   .. py:method:: one() -> SurdScalar
+      :classmethod:
+
+
+      The scalar ``1``.
+
+
+
+   .. py:property:: dim
+      :type: tuple[int, Ellipsis]
+
+
+      The shape tuple, as for :attr:`~httk.core.vectors.fracvector.FracVector.dim`.
+
+
+   .. py:property:: is_rational
+      :type: bool
+
+
+      True iff the value is purely rational (only the radicand-1 term is present).
+
+
+   .. py:method:: is_zero() -> bool
+
+      True iff the value is exactly zero (empty canonical form).
+
+
+
+   .. py:property:: radicands
+      :type: tuple[int, Ellipsis]
+
+
+      The sorted squarefree radicands present in the canonical form.
+
+
+   .. py:method:: coefficient(radicand: int) -> httk.core.vectors.fracvector.FracVector
+
+      The FracVector coefficient of ``sqrt(radicand)`` (a zero tensor when absent).
+
+
+
+   .. py:method:: T() -> SurdVector
+
+      Return the transpose, transposing each radicand's coefficient tensor.
+
+
+
+   .. py:method:: dot(other: Any) -> SurdScalar
+
+      Vector dot product of two 1-D SurdVectors (``sum a_i b_i``).
+
+
+
+   .. py:method:: lengthsqr() -> SurdScalar
+
+      Return the squared length ``A * A^T`` as a :class:`SurdScalar`.
+
+
+
+   .. py:method:: length() -> SurdScalar
+
+      Return the exact length ``sqrt(lengthsqr)`` as a :class:`SurdScalar`.
+
+      Exact precisely when ``lengthsqr`` is rational — which canonical arithmetic guarantees for a
+      difference of Cartesian sites under a rational metric (the crystallographic case). When
+      ``lengthsqr`` is itself irrational the length would be a nested radical
+      (``sqrt(a + b*sqrt(c))``), which is outside the field, so this raises :class:`ValueError`.
+
+
+
+   .. py:method:: det() -> SurdScalar
+
+      Return the determinant of a 3x3 SurdVector as a :class:`SurdScalar`.
+
+
+
+   .. py:method:: inv() -> SurdVector
+
+      Return the inverse of a 3x3 SurdVector via the adjugate and the scalar field inverse.
+
+
+
+   .. py:method:: to_fractions_approx(prec: fractions.Fraction = fractions.Fraction(1, 10**30)) -> Any
+
+      A deterministic nested list of :class:`fractions.Fraction` within ``prec`` of the true value.
+
+      Exact (not merely within ``prec``) whenever the value is rational. This is the
+      ``compute(prec)``-shaped rational approximation reused by the Decimal rendering.
+
+
+
+   .. py:method:: to_floats(prec: fractions.Fraction = fractions.Fraction(1, 10**30)) -> Any
+
+      A nested list of floats (via a high-precision exact rational approximation).
+
+
+
+.. py:class:: VectorAPI
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Abstract base class for the canonical vector interface.
+
+   It declares the exactness-preserving ``fractions`` accessor (a nested tuple of
+   :class:`fractions.Fraction`, or a bare Fraction for a scalar) that every vector backend
+   produces from its own native representation and every vector view builds its presentation
+   from, together with the ``dim`` shape tuple. This is the single interchange format; there is
+   no pairwise conversion between backends.
+
+   On top of the two abstract accessors it provides the guaranteed float renderings
+   :meth:`to_floats` and :meth:`to_float`, derived from the ``fractions`` hub — so *whatever*
+   object the family hands you, ``.to_floats()`` works. (The exact value types
+   :class:`~httk.core.vectors.fracvector.FracVector` and
+   :class:`~httk.core.vectors.surdvector.SurdVector` honor the same contract with their own
+   implementations.)
+
+
+   .. py:property:: fractions
+      :type: Fractions
+
+      :abstractmethod:
+
+
+
+   .. py:property:: dim
+      :type: tuple[int, Ellipsis]
+
+      :abstractmethod:
+
+
+
+   .. py:method:: to_floats() -> Any
+
+      The value as (possibly nested) plain lists of ``float`` — a bare ``float`` for a scalar.
+
+      Derived from the exact ``fractions`` hub; nested lists match the
+      ``numpy.ndarray.tolist()`` convention and are directly JSON-serializable.
+
+
+
+   .. py:method:: to_float() -> float
+
+      The scalar value as a plain ``float``; raises :class:`TypeError` on a non-scalar.
+
+
+
+.. py:class:: VectorBackend(backend, **hints)
+
+   Bases: :py:obj:`httk.core.views.Backend`\ [\ :py:obj:`VectorBackend`\ ], :py:obj:`httk.core.vectors.vector_api.VectorAPI`
+
+
+   Abstract base class for all backends of vector (tensor) data.
+
+   Concrete backends carry a native representation (an exact FracVector, plain nested
+   sequences, or a numpy array) and produce the canonical exactness-preserving ``fractions``
+   interchange declared by :class:`~httk.core.vectors.vector_api.VectorAPI` from it.
+
+
+   .. py:attribute:: backend_classes
+      :type:  ClassVar[list[type[httk.core.views.Backend[Any]]]]
+
+
+.. py:class:: VectorFrac(obj: httk.core.vectors.fracvector.FracVector, **hints: Any)
+
+   Bases: :py:obj:`httk.core.vectors.vector_backend.VectorBackend`
+
+
+   Backend for a vector backed by an actual :class:`~httk.core.vectors.fracvector.FracVector`
+   (or :class:`~httk.core.vectors.fracvector.FracScalar`).
+
+   Its ``fractions`` accessor produces the exact nested tuple of Fraction, and ``unwrap``
+   returns the wrapped FracVector.
+
+
+   .. py:property:: fractions
+      :type: httk.core.vectors.vector_api.Fractions
+
+
+
+   .. py:property:: dim
+      :type: tuple[int, Ellipsis]
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: VectorFracView(obj: httk.core.vectors.vector_like.VectorLike, denom: Any = _NO_DENOM, **hints: Any)
+
+   Bases: :py:obj:`httk.core.vectors.vector_view.VectorView`, :py:obj:`httk.core.vectors.fracvector.FracVector`
+
+
+   A view presenting an underlying vector backend as an exact
+   :class:`~httk.core.vectors.fracvector.FracVector`.
+
+   This view is a genuine FracVector, so it can be passed anywhere a FracVector is accepted,
+   and it exposes the full exact-rational algebra (``det``/``inv``/``*``/...). It is built
+   eagerly from the backend's exact ``fractions`` interchange on construction, so the
+   round-trip is exactness-preserving for the frac and native backends. (numpy values are
+   binary rationals, so a numpy source round-trips to the exact float64 rational, not
+   necessarily the original decimal fraction.)
+
+   Because inherited FracVector algebra builds its results with the low-level
+   ``self.__class__(noms, denom)`` constructor, this class also accepts that two-argument form;
+   results built that way are plain (backend-less) FracVector values presented through this
+   class.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:type:: VectorLike
+   :canonical: vector_backend.VectorBackend | vector_view.VectorView | fracvector.FracVector | surdvector.SurdVector | tuple[Any, ...] | list[Any] | 'numpy.ndarray'
+
+
+.. py:class:: VectorNative(obj: Any, **hints: Any)
+
+   Bases: :py:obj:`httk.core.vectors.vector_backend.VectorBackend`
+
+
+   Backend for a vector backed by plain nested sequences.
+
+   The native representation is a (possibly nested) rectangular list or tuple whose leaves are
+   ``int``, ``float``, :class:`decimal.Decimal`, :class:`fractions.Fraction`, or ``str``.
+   Conversion into the exact ``fractions`` interchange goes through
+   :meth:`~httk.core.vectors.fracvector.FracVector.create`, so string-uncertainty parsing
+   (e.g. ``"0.33342(10)"``) works here too. ``unwrap`` returns the original raw object.
+
+
+   .. py:property:: native
+      :type: Any
+
+
+      The original nested list/tuple this backend wraps, leaves untouched.
+
+      This is the same object returned by :meth:`unwrap`, exposed as a named accessor so the
+      native view can present a natively-held vector's leaves *verbatim* (its preserve-original
+      default) without reaching into private state.
+
+
+   .. py:property:: fractions
+      :type: httk.core.vectors.vector_api.Fractions
+
+
+
+   .. py:property:: dim
+      :type: tuple[int, Ellipsis]
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: VectorNativeView(obj: httk.core.vectors.vector_like.VectorLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.vectors.vector_view.VectorView`, :py:obj:`tuple`
+
+
+   A view presenting an underlying vector backend as nested tuples, with a selectable *leaf codec*.
+
+   The leaf codec is the element-domain axis (see :mod:`httk.core.vectors.leaf_codecs`); it is
+   chosen with the ``leaf=`` hint plus any codec options (``rounding=``, ``digits=``, ...). There
+   are three modes:
+
+   - **preserve-original** (``leaf=None``, and the source is natively-held data): the backend's
+     original nested leaves are presented *verbatim* — the same objects, only containers tuple-ized
+     (``Decimal``\ s in, the same ``Decimal``\ s out).
+   - **exact default** (``leaf=None``, source crossing from a frac/numpy backend): the ``"exact"``
+     codec — ``int`` when integral, else :class:`fractions.Fraction`, never a float.
+   - **explicit codec** (``leaf="int"``/``"float"``/``"decimal"``/``"fraction"``/...): every element
+     is converted from the backend's exact ``fractions`` interchange through that codec.
+
+   The codec name and its options are validated eagerly at construction (an unknown codec name or
+   invalid option raises :class:`ValueError`); a codec never raises on the *data* — a value it
+   cannot represent exactly takes the codec's documented default conversion, because the backend
+   keeps the exact original. A scalar source is presented as a single-element tuple.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: VectorSurd(obj: httk.core.vectors.surdvector.SurdVector, **hints: Any)
+
+   Bases: :py:obj:`httk.core.vectors.vector_backend.VectorBackend`
+
+
+   Backend for a vector backed by an exact :class:`~httk.core.vectors.surdvector.SurdVector`
+   (or :class:`~httk.core.vectors.surdvector.SurdScalar`), kind ``"surd"``.
+
+   ``unwrap`` returns the exact SurdVector. The canonical ``fractions`` hub is **exact** whenever
+   the value is rational (a surd whose canonical form has only the radicand-1 term), matching the
+   established backend-keeps-the-original principle; when the value is genuinely irrational it is
+   reduced to a *deterministic* rational approximation at the active decimal context precision plus
+   a small guard (lossy but reproducible), and the exact original remains recoverable via
+   ``unwrap``.
+
+
+   .. py:property:: fractions
+      :type: httk.core.vectors.vector_api.Fractions
+
+
+
+   .. py:property:: dim
+      :type: tuple[int, Ellipsis]
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: VectorSurdView(obj: httk.core.vectors.vector_like.VectorLike, **hints: Any)
+
+   Bases: :py:obj:`httk.core.vectors.vector_view.VectorView`, :py:obj:`httk.core.vectors.surdvector.SurdVector`
+
+
+   A view presenting an underlying vector backend as an exact
+   :class:`~httk.core.vectors.surdvector.SurdVector`.
+
+   This view is a genuine SurdVector, so it exposes the full exact surd algebra
+   (``det``/``inv``/``*``/``length``/...). It is built **eagerly** on construction, following the
+   eager immutable-subclass pattern of
+   :class:`~httk.core.vectors.vector_frac_view.VectorFracView`: from a surd backend it adopts the
+   exact SurdVector directly, and from a frac/native/numpy backend it embeds the backend's exact
+   rational ``fractions`` at radicand 1 — exactly, since every rational is a surd.
+
+   (numpy values are binary rationals, so a numpy source embeds the exact float64 rational, not
+   necessarily the original decimal fraction — the same caveat as
+   :class:`~httk.core.vectors.vector_frac_view.VectorFracView`.)
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: VectorView
+
+   Bases: :py:obj:`httk.core.views.View`\ [\ :py:obj:`httk.core.vectors.vector_backend.VectorBackend`\ ]
+
+
+   Abstract base class for all views of vector (tensor) data.
+
+
+.. py:function:: known_leaf_codecs() -> list[str]
+
+   Return the registered leaf-codec names, in registration order.
+
+
+.. py:function:: numpy_available() -> bool
+
+   Return whether the optional numpy dependency is available for the numeric helpers.
+
+   This reads the vectors package's ``_numpy_available`` flag freshly on each call (the flag set
+   when :mod:`httk.core.vectors` conditionally imports/registers the numpy backend), so tests may
+   monkeypatch ``httk.core.vectors._numpy_available`` to exercise the numpy-absent path.
+
+
+.. py:function:: register_leaf_codec(codec: LeafCodec) -> None
+
+   Register (or replace) a codec under its :attr:`~LeafCodec.name`.
+
+
+.. py:function:: to_numeric(obj: httk.core.vectors.vector_like.VectorLike) -> NumericVector
+
+   Present ``obj`` as plain numpy numbers: a :class:`numpy.ndarray` for a tensor, a ``float`` for a
+   scalar.
+
+   A tensor becomes a base-class ``float64`` :class:`numpy.ndarray` (never a view subclass) via
+   :class:`~httk.core.vectors.vector_numpy_view.VectorNumpyView`; a **scalar** input (shape ``()``)
+   returns a plain :class:`float` via :func:`to_numeric_scalar` (never a 0-d array).
+
+   The numeric presentation is numpy-backed, so this **always requires numpy**: it raises
+   :class:`ImportError` (naming the ``httk-core[numpy]`` extra) when numpy is not installed,
+   uniformly, so the contract is predictable regardless of the input shape. Use
+   :func:`to_numeric_scalar` directly for a single float without a numpy requirement.
+
+
+.. py:function:: to_numeric_scalar(obj: Any) -> float
+
+   Convert a single scalar value to a plain :class:`float`, deterministically.
+
+   A :class:`~httk.core.vectors.surdvector.SurdScalar` (or scalar
+   :class:`~httk.core.vectors.surdvector.SurdVector`) and a scalar
+   :class:`~httk.core.vectors.fracvector.FracVector` render through their own exact
+   ``to_float()``; a :class:`~fractions.Fraction`, ``int``, ``float``, or numeric ``str`` render via
+   :func:`~httk.core.exactmath.any_to_fraction`. A non-scalar shape raises
+   :class:`TypeError`.
+
+   Unlike :func:`to_numeric`, this needs **no numpy**: a plain ``float`` conversion has no numpy
+   dependency, so it works unconditionally and never raises for a missing numpy.
+
+
+.. py:class:: Backend[BackendT: Backend](backend, **hints)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Abstract base class to be subclassed into classes that keep track of alternative
+   representations of certain types of data, all adhering to a common API interface.
+
+   The class variable backend_classes is a list of all classes that can carry the kind of data the subclass represents.
+
+   A system of "hints" are used primarily to disambiguate between multiple valid interpretations of the same input object.
+   Unless otherwise documented for a specific backend, extra hints that do not affect this interpretation are ignored.
+
+   A set of backends are meant to be combined with a set of Views.
+
+
+   .. py:attribute:: backend_classes
+      :type:  ClassVar[list[type[Backend[Any]]]]
+
+
+   .. py:method:: create(obj: Any, **hints: Any) -> Self
+      :classmethod:
+
+
+      Given a source data (obj) and a set of hints, create a backend from one of the alternatives in the class variable `backend_classes`.
+
+      By design this creation depends heavily on order of the classes in `backend_classes`.
+      Each class is tried in the order they appear until one of them is successful, in the sense that their `__new__` does not return None.
+      Sometimes multiple backend classes can handle the same input type. In that case, dispatch is guided by keyword arguments `**hints`,
+      with the convention that:
+
+      * if a hint named `kind` is given, a backend class should accept the object only if it matches that `kind`;
+      * when `kind` matches, additional unrecognized hints may be ignored.
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:type:: Coercer
+   :canonical: Callable[[Any, type], Any | None]
+
+
+.. py:class:: View[BackendT: httk.core.views.backend.Backend]
+
+   A set of views allow manipulating data and state of a backend through different interfaces.
+   Hence, creating a View from a Backend, or from another View, allows to read and operate on the data through the interface of that view,
+   even if it is not the natural representation of the underlying data.
+
+   Important: views are always meant to reference the data and state of *the same* underlying object, hence, e.g.:
+
+   * If a function is given an X object, and the function applies an Xvariant1View and then calls, e.g., close() via that view,
+     the expectation should be that the original X object is also closed.
+   * When, e.g., a TextstreamStringView is created on an already partially read stream, only the unread data will appear through that string interface.
+
+   All backends and views of the same kind of data (X) should be combined into a type union XLike that functions use to declare they support this kind of data.
+   Such functions should start with creating a View on the passed data, giving them access to the data in a single desired format.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:function:: coerce(value: Any, target: Any) -> Any
+
+   Coerce ``value`` to a target class or prototype instance.
+
+   The exact string ``"natural"`` is a documented sentinel that returns ``value`` unchanged.
+   Otherwise, a class target is used directly and an instance target is treated as a prototype,
+   using its type. Values already matching the target are returned unchanged. Registered coercers
+   are then tried in registration order, and the first non-``None`` result wins. If none succeeds,
+   ``TypeError`` is raised naming the value type and target. Coercion is best effort and favors
+   lossless view wrapping; individual coercers document any deliberately lossy conversion.
+
+
+.. py:function:: register_coercer(coercer: Coercer) -> None
+
+   Append ``coercer`` to the registry, preserving registration order.
+
+
+.. py:function:: unwrap(obj: Any) -> Any
+
+   Given a Backend or a View, return the most raw representation possible, i.e., if the backend has an internal representaion -
+   or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+   that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+.. py:data:: subpackages
+

@@ -1,0 +1,85 @@
+httk.core.docs.sitetree
+=======================
+
+.. py:module:: httk.core.docs.sitetree
+
+.. autoapi-nested-parse::
+
+   Compose immutable release and replaceable development documentation trees.
+
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   httk.core.docs.sitetree.ComposeError
+   httk.core.docs.sitetree.ImmutabilityError
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.core.docs.sitetree.ComposeResult
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.core.docs.sitetree.compose_site
+
+
+Module Contents
+---------------
+
+.. py:exception:: ComposeError
+
+   Bases: :py:obj:`RuntimeError`
+
+
+   Raised when a documentation tree contains unsafe or unsupported entries.
+
+
+.. py:exception:: ImmutabilityError
+
+   Bases: :py:obj:`RuntimeError`
+
+
+   Raised when a rebuild differs from an already published release tree.
+
+
+.. py:class:: ComposeResult
+
+   Summary of one site composition operation.
+
+
+   .. py:attribute:: changed
+      :type:  bool
+
+
+   .. py:attribute:: unchanged
+      :type:  bool
+
+
+   .. py:attribute:: default_target
+      :type:  str
+
+
+   .. py:attribute:: versions
+      :type:  tuple[str, Ellipsis]
+
+
+.. py:function:: compose_site(site_root: pathlib.Path, build_html: pathlib.Path, *, slug: str, site_url: str, source_commit: str | None, target: httk.core.docs.semver.Version | Literal['dev'], repair: bool = False) -> ComposeResult
+
+   Compose a docs-site tree while preserving all existing release directories.
+
+   ``repair=True`` is reserved for replacing an existing release after an
+   approved manual repair. The replacement uses the same rename transaction
+   as the development swap and never removes the live release in place.
+
+

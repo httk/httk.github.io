@@ -1,0 +1,199 @@
+httk.workflow.projects
+======================
+
+.. py:module:: httk.workflow.projects
+
+.. autoapi-nested-parse::
+
+   Compatibility shim over the project anchor, now owned by :mod:`httk.core.project`.
+
+   The project anchor — the ``.httk-project`` directory, ``project.json`` and its
+   validation, upward discovery, the identity key, and key pinning and trust —
+   moved to *httk-core* as :mod:`httk.core.project` so a core-only installation has
+   projects. This module re-exports that API unchanged (this is an internal move,
+   so no deprecation is warranted and every public name keeps working) and keeps
+   the pieces that are workflow policy rather than anchor:
+
+   * :data:`DEFAULT_MANIFEST_EXCLUSIONS` and :func:`project_exclusions` — what a
+     signed manifest never records, which is a property of the manifest format and
+     therefore stays here beside :mod:`httk.workflow.manifests`.
+   * :func:`initialize_project` and :func:`import_v1_project` — the anchor plus the
+     detached-transfer *workspace* a workflow project also needs. Creating a
+     workspace at ``init`` time is revisited in Phase 10; for now the behavior is
+     exactly what it was before the anchor moved.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.workflow.projects.PROJECT_DIRECTORY
+   httk.workflow.projects.PROJECT_FILE
+   httk.workflow.projects.PUBLIC_KEY_PREFIX
+   httk.workflow.projects.DEFAULT_MANIFEST_EXCLUSIONS
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.workflow.projects.canonical_public_key
+   httk.workflow.projects.discover_project
+   httk.workflow.projects.format_public_key
+   httk.workflow.projects.key_fingerprint
+   httk.workflow.projects.parse_public_key
+   httk.workflow.projects.pin_project_key
+   httk.workflow.projects.pinned_project_key
+   httk.workflow.projects.project_public_key_path
+   httk.workflow.projects.read_project
+   httk.workflow.projects.read_project_section
+   httk.workflow.projects.read_public_key_file
+   httk.workflow.projects.require_project
+   httk.workflow.projects.trust_project_key
+   httk.workflow.projects.trusted_project_keys
+   httk.workflow.projects.write_project_section
+   httk.workflow.projects.initialize_project
+   httk.workflow.projects.import_v1_project
+   httk.workflow.projects.project_exclusions
+
+
+Module Contents
+---------------
+
+.. py:data:: PROJECT_DIRECTORY
+   :value: '.httk-project'
+
+
+.. py:data:: PROJECT_FILE
+   :value: 'project.json'
+
+
+.. py:data:: PUBLIC_KEY_PREFIX
+   :value: 'ed25519:'
+
+
+.. py:function:: canonical_public_key(value: str) -> str
+
+   Normalize any accepted public key spelling to the recorded one.
+
+
+.. py:function:: discover_project(start: str | os.PathLike[str] | None = None) -> pathlib.Path | None
+
+   Find the nearest project root at or above *start*.
+
+
+.. py:function:: format_public_key(raw: bytes) -> str
+
+   Return the recorded representation of one raw Ed25519 public key.
+
+
+.. py:function:: key_fingerprint(value: str) -> str
+
+   Return the stable display fingerprint of one public key.
+
+
+.. py:function:: parse_public_key(value: str) -> bytes
+
+   Decode a recorded public key, accepting the bare base64 spelling too.
+
+
+.. py:function:: pin_project_key(root: str | os.PathLike[str] | None = None) -> dict[str, object]
+
+   Adopt the project's current ``keys/project.pub`` as its trust anchor.
+
+   Pinning is always an explicit act. Verification trusts the key recorded in
+   ``project.json`` and never the key a manifest carries in its own header, so
+   adopting the key that is in the tree right now is exactly the decision an
+   operator has to make consciously for an older project that has no pin.
+
+
+.. py:function:: pinned_project_key(metadata: collections.abc.Mapping[str, object]) -> str | None
+
+   Return the project's own pinned public key, or ``None`` when absent.
+
+
+.. py:function:: project_public_key_path(root: str | os.PathLike[str]) -> pathlib.Path
+
+   Return where a project keeps its own signing key's public half.
+
+
+.. py:function:: read_project(root: str | os.PathLike[str]) -> dict[str, object]
+
+   Read and validate the ``project.json`` of the project rooted at *root*.
+
+
+.. py:function:: read_project_section(root: str | os.PathLike[str], name: str) -> dict[str, object]
+
+   Return one named object member of ``project.json``, empty when absent.
+
+   A *section* is a top-level member of the project manifest that some layer
+   above the anchor owns — the workflow workspace registry, a campaign map —
+   and reads and writes as a whole. The anchor does not interpret the member;
+   it only guarantees that what a caller stores under a name comes back as the
+   object it was, and refuses a member that some other writer has left as a
+   non-object so a caller never silently reads a scalar as a mapping.
+
+
+.. py:function:: read_public_key_file(path: str | os.PathLike[str]) -> str
+
+   Read one ``*.pub`` file and return its recorded public key.
+
+
+.. py:function:: require_project(start: str | os.PathLike[str] | None = None) -> pathlib.Path
+
+   Return the nearest project root, refusing when there is none.
+
+
+.. py:function:: trust_project_key(root: str | os.PathLike[str] | None, key: str) -> dict[str, object]
+
+   Adopt one further public key as a trust anchor of this project.
+
+
+.. py:function:: trusted_project_keys(metadata: collections.abc.Mapping[str, object]) -> tuple[str, Ellipsis]
+
+   Return every key *metadata* pins: the project's own and any adopted one.
+
+   The pinned key of ``project.json`` is the trust anchor a manifest is checked
+   against. ``trusted_keys`` carries the additional anchors an operator has
+   adopted deliberately — most often the legacy identities an imported *httk*
+   v1 project signed its old manifests with.
+
+
+.. py:function:: write_project_section(root: str | os.PathLike[str], name: str, value: collections.abc.Mapping[str, object]) -> dict[str, object]
+
+   Store one named object member of ``project.json`` and return the metadata.
+
+   The write is an ordinary read-modify-write of the validated manifest, so the
+   members the anchor owns are preserved untouched and only the named section is
+   replaced. The section must be a mapping; the anchor stores its members
+   verbatim without interpreting them.
+
+
+.. py:data:: DEFAULT_MANIFEST_EXCLUSIONS
+   :value: ('.httk-project/project.json', '.httk-project/keys/*.seed', '.httk-project/keys/*.priv',...
+
+
+.. py:function:: initialize_project(root: str | os.PathLike[str], *, name: str, description: str = '', default_queue: str | None = None, manifest_exclusions: collections.abc.Iterable[str] = ()) -> dict[str, object]
+
+   Initialize the project anchor and its detached-transfer workspace.
+
+   The anchor is created by :func:`httk.core.project.initialize_project`; a workflow
+   project additionally gets a ``detached-transfer-v1`` workspace. Creating the
+   workspace at init time is the behavior Phase 10 revisits — the anchor and the
+   workspace need not be born together — but it is preserved unchanged here.
+
+
+.. py:function:: import_v1_project(root: str | os.PathLike[str], *, source: str | os.PathLike[str] | None = None, name: str | None = None) -> dict[str, object]
+
+   Create v2 project metadata from a legacy ``ht.project`` directory.
+
+   The anchor and its adopted legacy identities come from
+   :func:`httk.core.project.import_v1_project`; this adds the workflow workspace on
+   top, exactly as it did before the anchor moved.
+
+
+.. py:function:: project_exclusions(metadata: dict[str, object]) -> tuple[str, Ellipsis]
+

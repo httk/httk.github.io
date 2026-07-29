@@ -1,0 +1,125 @@
+httk.web.templating
+===================
+
+.. py:module:: httk.web.templating
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/web/templating/base/index
+   /reference/autoapi/httk/web/templating/httk_compat/index
+   /reference/autoapi/httk/web/templating/jinja2_engine/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.web.templating.TemplateEngine
+   httk.web.templating.TemplateRenderInput
+   httk.web.templating.HttkCompatTemplateEngine
+   httk.web.templating.JinjaTemplateEngine
+
+
+Package Contents
+----------------
+
+.. py:class:: TemplateEngine
+
+   Bases: :py:obj:`Protocol`
+
+
+   Base class for protocol classes.
+
+   Protocol classes are defined as::
+
+       class Proto(Protocol):
+           def meth(self) -> int:
+               ...
+
+   Such classes are primarily used with static type checkers that recognize
+   structural subtyping (static duck-typing).
+
+   For example::
+
+       class C:
+           def meth(self) -> int:
+               return 0
+
+       def func(x: Proto) -> int:
+           return x.meth()
+
+       func(C())  # Passes static type check
+
+   See PEP 544 for details. Protocol classes decorated with
+   @typing.runtime_checkable act as simple-minded runtime protocols that check
+   only the presence of given attributes, ignoring their type signatures.
+   Protocol classes can be generic, they are defined as::
+
+       class GenProto[T](Protocol):
+           def meth(self) -> T:
+               ...
+
+
+   .. py:method:: render(render_input: TemplateRenderInput) -> str
+
+
+   .. py:method:: render_fragment(*, template_name: str, context: dict[str, object]) -> str | None
+
+
+.. py:class:: TemplateRenderInput
+
+   .. py:attribute:: content_html
+      :type:  str
+
+
+   .. py:attribute:: template_name
+      :type:  str | None
+
+
+   .. py:attribute:: base_template_name
+      :type:  str | None
+
+
+   .. py:attribute:: context
+      :type:  dict[str, object]
+
+
+.. py:class:: HttkCompatTemplateEngine(template_dir: pathlib.Path)
+
+   Bases: :py:obj:`httk.web.templating.jinja2_engine.JinjaTemplateEngine`
+
+
+   Legacy-oriented template resolution for old httkweb projects.
+
+   The compatibility engine keeps Jinja rendering but prioritizes legacy
+   template suffixes so old `.httkweb.html` files resolve first.
+
+
+   .. py:method:: render(render_input: httk.web.templating.base.TemplateRenderInput) -> str
+
+
+   .. py:method:: render_fragment(*, template_name: str, context: dict[str, object]) -> str | None
+
+
+.. py:class:: JinjaTemplateEngine(template_dir: pathlib.Path, *, template_suffixes: tuple[str, Ellipsis] = TEMPLATE_SUFFIXES)
+
+   .. py:attribute:: template_dir
+
+
+   .. py:attribute:: template_suffixes
+      :value: ('.html.j2', '.jinja', '.j2', '.html', '.httkweb.html')
+
+
+
+   .. py:method:: render(render_input: httk.web.templating.base.TemplateRenderInput) -> str
+
+
+   .. py:method:: render_fragment(*, template_name: str, context: dict[str, object]) -> str | None
+
+

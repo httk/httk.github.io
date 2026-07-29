@@ -1,0 +1,26 @@
+httk.atomistic.cell_like
+========================
+
+.. py:module:: httk.atomistic.cell_like
+
+.. autoapi-nested-parse::
+
+   The accepted-input union for cell functions in httk-atomistic.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.atomistic.cell_like.CellLike
+
+
+Module Contents
+---------------
+
+.. py:type:: CellLike
+   :canonical: cell_backend.CellBackend | cell_view.CellView | cell.Cell | httk.core.VectorLike
+
+

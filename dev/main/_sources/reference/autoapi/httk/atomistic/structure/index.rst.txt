@@ -1,0 +1,165 @@
+httk.atomistic.structure
+========================
+
+.. py:module:: httk.atomistic.structure
+
+.. autoapi-nested-parse::
+
+   The Simple structure representation for httk-atomistic.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.structure.Structure
+
+
+Module Contents
+---------------
+
+.. py:class:: Structure(cell: httk.atomistic.cell_like.CellLike, sites: httk.atomistic.sites_like.SitesLike, species: collections.abc.Sequence[httk.atomistic.species_like.SpeciesLike], species_at_sites: collections.abc.Sequence[str])
+
+   A crystal structure in the Unitcell representation.
+
+   A Structure holds a ``cell`` (a ``Cell`` of 3x3 cell vectors), ``sites`` (a ``Sites``
+   of Nx3 reduced coordinates), a list of ``species`` (each a ``Species``), and a
+   length-N ``species_at_sites`` giving the species name occupying each site. Inputs are
+   normalized on construction through the component families: the cell, sites, and each
+   species are passed through their ``*Like`` unions, and every ``species_at_sites`` name
+   must match one of the (uniquely named) species.
+
+   The numeric model is exact and split by purpose. The fractional frame — reduced coordinates
+   and symmetry — is rational and lives in ``sites`` as a :class:`~httk.core.FracVector`. The
+   Cartesian frame — where radicals such as the hexagonal ``sqrt(3)`` appear — is exact in the
+   squarefree-radical field: ``cell.basis`` is a :class:`~httk.core.SurdVector` and
+   :meth:`cartesian_sites` returns the exact Cartesian positions. Pure magnitudes (bond-length
+   comparisons) stay rational-exact via ``cell.metric()``. Floats appear only at the presentation
+   and JSON boundaries.
+
+
+   .. py:property:: cell
+      :type: httk.atomistic.cell.Cell
+
+
+      The cell (3x3 cell vectors) as a ``Cell``.
+
+
+   .. py:property:: sites
+      :type: httk.atomistic.sites.Sites
+
+
+      The site coordinates (Nx3 reduced coordinates) as a ``Sites``.
+
+
+   .. py:property:: species
+      :type: tuple[httk.atomistic.species.Species, Ellipsis]
+
+
+      The distinct species of this structure.
+
+
+   .. py:property:: species_at_sites
+      :type: tuple[str, Ellipsis]
+
+
+      The species name occupying each site, in site order.
+
+
+   .. py:property:: coordinate_precision
+      :type: fractions.Fraction | None
+
+
+      How precisely the reduced coordinates were stated, in fractional units, or ``None``.
+
+      Read through from :attr:`sites`. Dimensionless — see :meth:`cartesian_precision`
+      for the corresponding length.
+
+
+   .. py:property:: basis_precision
+      :type: fractions.Fraction | None
+
+
+      How precisely the cell basis was stated, as an absolute length, or ``None``.
+
+      Read through from :attr:`cell`.
+
+
+   .. py:property:: periodicity
+      :type: tuple[bool, bool, bool]
+
+
+      Which of the three basis rows is a genuine lattice translation.
+
+      Read through from :attr:`cell`, where the full account lives. ``(True, True, True)``
+      for an ordinary crystal, which is what a structure built without saying otherwise is.
+
+
+   .. py:property:: nperiodic_dimensions
+      :type: int
+
+
+      How many of the three directions are periodic, from 0 to 3.
+
+
+   .. py:method:: cartesian_precision() -> fractions.Fraction | None
+
+      The coordinate precision as a length, or ``None`` if it is unknown.
+
+      This is the number a real tolerance wants — an interatomic matching tolerance or an
+      spglib ``symprec`` is a distance, and a fractional precision is not. A coordinate
+      good to ``1e-4`` of a cell edge means something quite different in a 3 Å cell and a
+      30 Å one.
+
+      Computed as the fractional precision times the *longest* cell edge, which is the
+      conservative choice: it is the largest displacement that fractional uncertainty can
+      produce along any axis. The cell's own precision is folded in as well, since a cell
+      stated to ``1e-3`` cannot place an atom better than that however many digits the
+      coordinates carry.
+
+
+
+   .. py:method:: cartesian_sites() -> httk.core.SurdVector
+
+      The exact Cartesian site positions as an ``(N, 3)`` :class:`~httk.core.SurdVector`.
+
+      Under the row-vector convention this is ``reduced_coords * cell.basis`` (each Cartesian
+      position is the sum over lattice vectors ``sum_k reduced[k] * basis[k]``). The reduced
+      coordinates are rational (a ``FracVector``), the cell basis carries the radicals (a
+      ``SurdVector``), so the product is exact in the surd field — the hexagonal ``sqrt(3)``
+      survives into the Cartesian positions.
+
+
+
+   .. py:method:: numeric() -> httk.atomistic.numeric_unitcell_structure_view.NumericUnitcellStructureView
+
+      A plain-numpy presentation of this structure (requires the ``httk-atomistic[numpy]`` extra).
+
+
+
+   .. py:method:: supercell(transformation: httk.core.VectorLike, *, max_sites: int | None = 100000) -> httk.atomistic.supercell.SupercellResult
+
+      Build an exact supercell from an integer 3x3 transformation.
+
+
+
+   .. py:method:: orthogonal_supercell(multiplier: int | None = None, *, tolerance: fractions.Fraction | str | float | None = None, max_multiplier: int | None = None, search_radius: int = 1, max_sites: int | None = 100000) -> httk.atomistic.supercell.SupercellResult
+
+      Build a deterministically selected orthogonal supercell.
+
+
+
+   .. py:method:: cubic_supercell(multiplier: int | None = None, *, tolerance: fractions.Fraction | str | float | None = None, max_multiplier: int | None = None, search_radius: int = 1, max_sites: int | None = 100000) -> httk.atomistic.supercell.SupercellResult
+
+      Build a deterministically selected cubic supercell.
+
+
+
+   .. py:method:: conventional_cell(*, tolerance: float | None = None, limit_denominator: int | None = None) -> httk.atomistic.standardization.ConventionalCellResult
+
+      Express this structure in its space group's IT standard-setting conventional cell.
+
+
+

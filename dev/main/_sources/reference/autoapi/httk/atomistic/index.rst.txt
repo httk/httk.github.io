@@ -1,0 +1,3485 @@
+httk.atomistic
+==============
+
+.. py:module:: httk.atomistic
+
+.. autoapi-nested-parse::
+
+   httk-atomistic: crystal structure representations for httk v2.
+
+   Provides the Structure domain and its component families (Cell, Sites, Species),
+   each following the httk-core view/backend pattern. A Structure holds a ``cell``, a
+   ``sites``, a tuple of ``species``, and a ``species_at_sites``; each component has a
+   class representation and a primitive representation convertible through views.
+
+   Crystal symmetry is modelled exactly over the rationals: :class:`Spacegroup` carries a
+   space-group *setting* with its symmetry operations and Wyckoff table, and
+   :class:`SettingTransform` relates any setting to the International Tables standard one,
+   so a structure in an arbitrary non-standard setting can be represented without loss.
+   The underlying tables ship in :mod:`httk.atomistic.data`.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /reference/autoapi/httk/atomistic/affine_operation/index
+   /reference/autoapi/httk/atomistic/ase_atoms_view/index
+   /reference/autoapi/httk/atomistic/asu_recognition/index
+   /reference/autoapi/httk/atomistic/asu_structure/index
+   /reference/autoapi/httk/atomistic/asu_structure_view/index
+   /reference/autoapi/httk/atomistic/cell/index
+   /reference/autoapi/httk/atomistic/cell_api/index
+   /reference/autoapi/httk/atomistic/cell_backend/index
+   /reference/autoapi/httk/atomistic/cell_class/index
+   /reference/autoapi/httk/atomistic/cell_class_view/index
+   /reference/autoapi/httk/atomistic/cell_like/index
+   /reference/autoapi/httk/atomistic/cell_numeric_view/index
+   /reference/autoapi/httk/atomistic/cell_params/index
+   /reference/autoapi/httk/atomistic/cell_params_view/index
+   /reference/autoapi/httk/atomistic/cell_primitive/index
+   /reference/autoapi/httk/atomistic/cell_primitive_view/index
+   /reference/autoapi/httk/atomistic/cell_view/index
+   /reference/autoapi/httk/atomistic/cif_structures/index
+   /reference/autoapi/httk/atomistic/compat/index
+   /reference/autoapi/httk/atomistic/data/index
+   /reference/autoapi/httk/atomistic/elements/index
+   /reference/autoapi/httk/atomistic/httk_definitions/index
+   /reference/autoapi/httk/atomistic/numeric_cell/index
+   /reference/autoapi/httk/atomistic/numeric_sites/index
+   /reference/autoapi/httk/atomistic/numeric_unitcell_structure_backend/index
+   /reference/autoapi/httk/atomistic/numeric_unitcell_structure_view/index
+   /reference/autoapi/httk/atomistic/phase_diagram/index
+   /reference/autoapi/httk/atomistic/precision_entries/index
+   /reference/autoapi/httk/atomistic/setting_transform/index
+   /reference/autoapi/httk/atomistic/sites/index
+   /reference/autoapi/httk/atomistic/sites_api/index
+   /reference/autoapi/httk/atomistic/sites_backend/index
+   /reference/autoapi/httk/atomistic/sites_class/index
+   /reference/autoapi/httk/atomistic/sites_class_view/index
+   /reference/autoapi/httk/atomistic/sites_like/index
+   /reference/autoapi/httk/atomistic/sites_numeric_view/index
+   /reference/autoapi/httk/atomistic/sites_primitive/index
+   /reference/autoapi/httk/atomistic/sites_primitive_view/index
+   /reference/autoapi/httk/atomistic/sites_view/index
+   /reference/autoapi/httk/atomistic/spacegroup/index
+   /reference/autoapi/httk/atomistic/species/index
+   /reference/autoapi/httk/atomistic/species_api/index
+   /reference/autoapi/httk/atomistic/species_backend/index
+   /reference/autoapi/httk/atomistic/species_class/index
+   /reference/autoapi/httk/atomistic/species_class_view/index
+   /reference/autoapi/httk/atomistic/species_like/index
+   /reference/autoapi/httk/atomistic/species_primitive/index
+   /reference/autoapi/httk/atomistic/species_primitive_view/index
+   /reference/autoapi/httk/atomistic/species_view/index
+   /reference/autoapi/httk/atomistic/standardization/index
+   /reference/autoapi/httk/atomistic/structure/index
+   /reference/autoapi/httk/atomistic/structure_api/index
+   /reference/autoapi/httk/atomistic/structure_asu/index
+   /reference/autoapi/httk/atomistic/structure_backend/index
+   /reference/autoapi/httk/atomistic/structure_comparison/index
+   /reference/autoapi/httk/atomistic/structure_entries/index
+   /reference/autoapi/httk/atomistic/structure_like/index
+   /reference/autoapi/httk/atomistic/structure_primitive/index
+   /reference/autoapi/httk/atomistic/structure_primitive_view/index
+   /reference/autoapi/httk/atomistic/structure_record/index
+   /reference/autoapi/httk/atomistic/structure_record_backend/index
+   /reference/autoapi/httk/atomistic/structure_view/index
+   /reference/autoapi/httk/atomistic/supercell/index
+   /reference/autoapi/httk/atomistic/symmetry_entries/index
+   /reference/autoapi/httk/atomistic/unitcell_structure_backend/index
+   /reference/autoapi/httk/atomistic/unitcell_structure_view/index
+   /reference/autoapi/httk/atomistic/vasp_structures/index
+   /reference/autoapi/httk/atomistic/wyckoff/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   httk.atomistic.DEFAULT_TOLERANCE
+   httk.atomistic.CellLike
+   httk.atomistic.SYMBOLS
+   httk.atomistic.SitesLike
+   httk.atomistic.SpeciesLike
+   httk.atomistic.StructureLike
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.AffineOperation
+   httk.atomistic.ASUSite
+   httk.atomistic.ASUStructure
+   httk.atomistic.ASUStructureView
+   httk.atomistic.Cell
+   httk.atomistic.CellAPI
+   httk.atomistic.CellBackend
+   httk.atomistic.CellClass
+   httk.atomistic.CellClassView
+   httk.atomistic.CellNumericView
+   httk.atomistic.CellParams
+   httk.atomistic.CellParamsView
+   httk.atomistic.CellPrimitive
+   httk.atomistic.CellPrimitiveView
+   httk.atomistic.CellView
+   httk.atomistic.ASEAtomsBackend
+   httk.atomistic.ASEAtomsProtocol
+   httk.atomistic.NumericCell
+   httk.atomistic.NumericSites
+   httk.atomistic.NumericUnitcellStructureBackend
+   httk.atomistic.NumericUnitcellStructureView
+   httk.atomistic.PhaseDiagram
+   httk.atomistic.SettingTransform
+   httk.atomistic.Sites
+   httk.atomistic.SitesAPI
+   httk.atomistic.SitesBackend
+   httk.atomistic.SitesClass
+   httk.atomistic.SitesClassView
+   httk.atomistic.SitesNumericView
+   httk.atomistic.SitesPrimitive
+   httk.atomistic.SitesPrimitiveView
+   httk.atomistic.SitesView
+   httk.atomistic.Spacegroup
+   httk.atomistic.Species
+   httk.atomistic.SpeciesAPI
+   httk.atomistic.SpeciesBackend
+   httk.atomistic.SpeciesClass
+   httk.atomistic.SpeciesClassView
+   httk.atomistic.SpeciesPrimitive
+   httk.atomistic.SpeciesPrimitiveView
+   httk.atomistic.SpeciesView
+   httk.atomistic.ConventionalCellResult
+   httk.atomistic.Structure
+   httk.atomistic.StructureAPI
+   httk.atomistic.StructureASU
+   httk.atomistic.StructureBackend
+   httk.atomistic.StructureEntryProvider
+   httk.atomistic.StructurePrimitive
+   httk.atomistic.StructurePrimitiveView
+   httk.atomistic.SpeciesRecord
+   httk.atomistic.StructureRecord
+   httk.atomistic.StructureRecordBackend
+   httk.atomistic.StructureView
+   httk.atomistic.SupercellResult
+   httk.atomistic.UnitcellStructureBackend
+   httk.atomistic.UnitcellStructureView
+   httk.atomistic.WyckoffBranch
+   httk.atomistic.WyckoffPosition
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.atomistic.recognize_asu
+   httk.atomistic.structure_tolerance
+   httk.atomistic.asu_structure_from_cif
+   httk.atomistic.asu_structures_from_cif
+   httk.atomistic.cif_setting
+   httk.atomistic.atomic_number
+   httk.atomistic.symbol_of
+   httk.atomistic.precision_definitions
+   httk.atomistic.precision_properties
+   httk.atomistic.wyckoff_letter_map
+   httk.atomistic.conventional_cell
+   httk.atomistic.same_crystal
+   httk.atomistic.build_supercell
+   httk.atomistic.cubic_supercell
+   httk.atomistic.orthogonal_supercell
+   httk.atomistic.setting_definitions
+   httk.atomistic.symmetry_properties
+   httk.atomistic.load_asu_structure
+   httk.atomistic.load_structure
+   httk.atomistic.structure_from_payload
+   httk.atomistic.structure_from_poscar
+   httk.atomistic.wyckoff_positions
+
+
+Package Contents
+----------------
+
+.. py:class:: AffineOperation(matrix: Any, vector: Any = (0, 0, 0))
+
+   An exact affine map ``x -> W x + w`` on fractional coordinates.
+
+   Two operations compare equal when their matrix and translation are exactly equal.
+   Equality is *not* modulo lattice translations — use :meth:`wrapped` first when
+   comparing symmetry operations as members of a space group, since ``x+1/2`` and
+   ``x+3/2`` are the same operation there but different objects here.
+
+
+   .. py:method:: identity() -> Self
+      :classmethod:
+
+
+      The identity operation.
+
+
+
+   .. py:method:: from_record(record: dict[str, Any]) -> Self
+      :classmethod:
+
+
+      Build from a vendored ``affine_transformation`` record.
+
+      The record's ``matrix`` and ``vector`` hold exact rational strings (``"1/2"``,
+      ``"-1"``), which embed exactly.
+
+
+
+   .. py:method:: from_symop_record(record: dict[str, Any]) -> Self
+      :classmethod:
+
+
+      Build from a vendored ``symops`` entry (which nests its affine part).
+
+
+
+   .. py:property:: matrix
+      :type: httk.core.FracVector
+
+
+      The 3x3 rotation part ``W``, in the column-vector convention.
+
+
+   .. py:property:: vector
+      :type: httk.core.FracVector
+
+
+      The translation part ``w``.
+
+
+   .. py:method:: determinant() -> fractions.Fraction
+
+      The determinant of the rotation part, exactly.
+
+      For a symmetry operation this is ``+1`` (proper) or ``-1`` (improper). For a
+      change of basis it is the ratio of cell volumes, so a value other than ``±1``
+      means the operation changes the lattice.
+
+
+
+   .. py:method:: is_identity() -> bool
+
+
+   .. py:method:: apply(coords: Any) -> httk.core.FracVector
+
+      Map reduced coordinates through this operation, exactly.
+
+      ``coords`` is a single ``(3,)`` coordinate or an ``(N, 3)`` block of them; the
+      result has the same shape. No wrapping is applied — see :meth:`apply_wrapped`.
+
+
+
+   .. py:method:: apply_wrapped(coords: Any) -> httk.core.FracVector
+
+      :meth:`apply`, then wrap every component into ``[0, 1)``.
+
+
+
+   .. py:method:: inverse() -> AffineOperation
+
+      The inverse map, exactly. Raises :class:`ZeroDivisionError` if singular.
+
+
+
+   .. py:method:: conjugated_by(change: AffineOperation) -> AffineOperation
+
+      This operation seen through a change of basis: ``change * self * change^-1``.
+
+      If ``self`` is a symmetry operation expressed in one setting and ``change`` maps
+      that setting's coordinates into another, the result is the same symmetry operation
+      expressed in the other setting.
+
+
+
+   .. py:method:: wrapped() -> AffineOperation
+
+      The same operation with its translation reduced into ``[0, 1)``.
+
+      Two symmetry operations of a space group are the same element modulo lattice
+      translations exactly when their wrapped forms are equal, which is what makes
+      symop *sets* comparable.
+
+
+
+   .. py:method:: to_xyz() -> str
+
+      The operation in ``x,y,z`` notation, e.g. ``"-x+1/2,y,-z+1/2"``.
+
+
+
+.. py:data:: DEFAULT_TOLERANCE
+   :value: 0.001
+
+
+.. py:function:: recognize_asu(structure: httk.atomistic.structure_like.StructureLike, *, setting: httk.atomistic.spacegroup.Spacegroup | None = None, standard: httk.atomistic.spacegroup.Spacegroup | None = None, transform: httk.atomistic.setting_transform.SettingTransform | None = None, tolerance: float | None = None, limit_denominator: int | None = None) -> httk.atomistic.asu_structure.ASUStructure
+
+   Build an :class:`~httk.atomistic.ASUStructure` from a full structure.
+
+   The space group can be supplied three ways, in decreasing order of preference:
+
+   * ``setting`` — the structure's own tabulated setting, as when a CIF names its group.
+     Nothing is searched for and spglib is not involved.
+   * ``standard`` together with ``transform`` — for a structure in a setting that appears
+     in no table. Also spglib-free.
+   * neither — the symmetry is found with spglib, which must be installed
+     (``pip install httk-atomistic[default]``).
+
+   ``tolerance`` is a Cartesian distance, measured in the real cell, so it means the same
+   thing along a short axis and a long one; a fractional tolerance would not. Left
+   unspecified it is **derived from how precisely the structure was stated** — see
+   :func:`structure_tolerance` — falling back to :data:`DEFAULT_TOLERANCE` for a structure
+   that does not say. Pass a value to override that.
+
+   Raises :class:`ValueError` if a site cannot be placed on any Wyckoff position within
+   the tolerance, or if the sites do not group into complete orbits — both of which mean
+   the structure does not actually have the symmetry it was said to have.
+
+
+.. py:function:: structure_tolerance(structure: httk.atomistic.structure_like.StructureLike, *, fallback: float = DEFAULT_TOLERANCE) -> float
+
+   A matching tolerance derived from how precisely the structure was stated.
+
+   This is the point of recording precision at all: instead of a constant somebody
+   guessed, the tolerance follows the data. Coordinates written to four decimals in a 5 A
+   cell are good to about ``5e-4``, and the tolerance comes out near ``1e-3``; the same
+   coordinates in a 30 A cell justify a tolerance six times larger, and coordinates written
+   to two decimals justify one a hundred times larger.
+
+   Returns ``fallback`` when the structure does not state a precision — a structure built
+   by hand, or read from a format that does not write its numbers to a definite number of
+   digits. A caller that needs to know whether that happened can compare the result against
+   the structure's own ``cartesian_precision()``.
+
+   The value is capped so that it can never reach half the smallest distance between two
+   sites, which is what would let genuinely distinct atoms be merged. Minimum separation
+   bounds a tolerance from above; treating it as precision could make a structure with
+   accidentally close atoms look far more precisely stated than it is.
+
+
+.. py:class:: ASUSite
+
+   One symmetry-distinct site: a Wyckoff position, its free parameters, and a species.
+
+   ``wyckoff`` is a bare letter (``"e"``, not ``"4e"``) naming a position of the
+   **standard setting**, and ``free_params`` holds one exact value per degree of freedom
+   of that position — none at all for a fixed position such as an inversion centre.
+   ``species`` names one of the owning structure's species.
+
+   Partial occupancy needs nothing special here: it lives in the referenced
+   :class:`~httk.atomistic.Species`, which already carries a composition.
+
+
+   .. py:attribute:: wyckoff
+      :type:  str
+
+
+   .. py:attribute:: free_params
+      :type:  httk.core.FracVector
+
+
+   .. py:attribute:: species
+      :type:  str
+
+
+   .. py:property:: free_count
+      :type: int
+
+
+      How many free parameters this site carries.
+
+
+.. py:class:: ASUStructure(cell: httk.atomistic.cell_like.CellLike, spacegroup: httk.atomistic.spacegroup.Spacegroup | int, asu_sites: collections.abc.Sequence[ASUSite], species: collections.abc.Sequence[httk.atomistic.species_like.SpeciesLike], transform: httk.atomistic.setting_transform.SettingTransform | None = None, coordinate_precision: Any = None)
+
+   A crystal structure represented by its asymmetric unit.
+
+   Holds the cell in the structure's own setting, the space group as its **standard**
+   setting, a transform from that standard setting to the structure's own, one
+   :class:`ASUSite` per symmetry-distinct site, and the species they name.
+
+
+   .. py:property:: cell
+      :type: httk.atomistic.cell.Cell
+
+
+      The cell, in the structure's own setting.
+
+
+   .. py:property:: spacegroup
+      :type: httk.atomistic.spacegroup.Spacegroup
+
+
+      The space group, as its IT standard setting.
+
+
+   .. py:property:: transform
+      :type: httk.atomistic.setting_transform.SettingTransform
+
+
+      The change of basis from the standard setting to this structure's own.
+
+
+   .. py:property:: asu_sites
+      :type: tuple[ASUSite, Ellipsis]
+
+
+      The symmetry-distinct sites.
+
+
+   .. py:property:: species
+      :type: tuple[httk.atomistic.species.Species, Ellipsis]
+
+
+      The species referenced by the sites.
+
+
+   .. py:property:: coordinate_precision
+      :type: fractions.Fraction | None
+
+
+      How precisely the coordinates behind this structure were stated, or ``None``.
+
+      Fractional, and expressed in **this structure's own setting** — the frame the data
+      arrived in — so it needs no transforming on the way to the expanded sites. Recording
+      it here is what lets an asymmetric unit say how good the data behind it was, rather
+      than leaving that to be guessed again downstream.
+
+      It is provenance, never an operating parameter: expansion remains exact and uses no
+      tolerance at all.
+
+
+   .. py:property:: asu
+      :type: ASUStructure
+
+
+      Self, so a view can recognize a backend that already holds an ASU and pass it through.
+
+
+   .. py:property:: is_standard_setting
+      :type: bool
+
+
+      Whether the structure is written in the IT standard setting of its space group.
+
+
+   .. py:method:: setting() -> httk.atomistic.spacegroup.Spacegroup | None
+
+      The tabulated setting this structure is written in, or ``None`` if untabulated.
+
+      A structure in an arbitrary setting is perfectly representable but has no tabulated
+      name; that is the point of storing the transform rather than a setting label.
+
+      A transform looked up from the tables remembers which setting it came from, but one
+      that was constructed directly does not, so an equal transform is also matched
+      against the group's tabulated settings. An identity transform means the structure is
+      in the standard setting, which is of course tabulated — reporting it as nameless
+      would be simply wrong.
+
+
+
+   .. py:method:: expand_sites() -> httk.atomistic.sites.Sites
+
+      Every site of the unit cell, as exact reduced coordinates in this structure's setting.
+
+      The orbit of each asymmetric-unit site is generated in the standard setting, mapped
+      through the setting transform, wrapped into ``[0, 1)``, and deduplicated by exact
+      equality. Deduplication is not a formality: when the transform shrinks the cell — as
+      it does for the seven rhombohedral-axes settings, where ``det M == 3`` — the standard
+      setting's orbit is three times too large and the surplus points coincide exactly.
+      The opposite case, a transform onto a larger cell, is covered by
+      :meth:`~httk.atomistic.SettingTransform.lattice_cosets`.
+
+
+
+   .. py:method:: expand_species_at_sites() -> tuple[str, Ellipsis]
+
+      The species name occupying each site produced by :meth:`expand_sites`, in order.
+
+
+
+   .. py:method:: multiplicities() -> tuple[int, Ellipsis]
+
+      How many cell sites each asymmetric-unit site generates, in order.
+
+      Usually the Wyckoff position's tabulated multiplicity, but not always: a setting
+      transform that changes the cell volume changes the count too, by a factor of three
+      for the rhombohedral-axes settings.
+
+
+
+   .. py:method:: to_structure() -> Any
+
+      The equivalent full-cell :class:`~httk.atomistic.Structure`.
+
+      Equivalent to ``UnitcellStructureView(asu_structure)``; provided as a plain method so
+      the common case needs no knowledge of the view machinery.
+
+
+
+.. py:class:: ASUStructureView(obj: httk.atomistic.structure_like.StructureLike, **kwargs: Any)
+
+   Bases: :py:obj:`httk.atomistic.structure_view.StructureView`, :py:obj:`httk.atomistic.asu_structure.ASUStructure`
+
+
+   A view presenting an underlying structure backend as an :class:`~httk.atomistic.ASUStructure`.
+
+   This view is a genuine ASUStructure, so it can be passed anywhere one is accepted.
+
+   Unlike the other structure views, building it can require *work* rather than a change
+   of presentation: a backend that already carries an asymmetric unit is adopted as-is,
+   but a plain list of atoms has to have its symmetry recognized first. That step is
+   tolerant where everything else in this package is exact — see
+   :mod:`~httk.atomistic.asu_recognition` — and needs spglib unless the space group is
+   supplied through ``setting`` or ``standard``/``transform``.
+
+   ``tolerance`` left unspecified is derived from how precisely the structure was stated.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: Cell(basis: httk.core.VectorLike, scale: Any = 1, precision: Any = None, periodicity: Any = None)
+
+   A crystallographic cell: its basis, the 3x3 matrix of cell vectors, held **exactly**.
+
+   The lattice vectors are the rows of ``basis``. Internally a Cell factors that basis into a
+   positive :class:`~httk.core.SurdScalar` ``scale`` times an ``unscaled_basis``
+   (a :class:`~httk.core.SurdVector` of shape ``(3, 3)``), with ``basis == scale * unscaled_basis``.
+   The split lets an overall length factor be carried symbolically: a hexagonal cell of lattice
+   parameter ``a`` and ratio ``c/a`` is the exact ``unscaled`` rows ``(1, 0, 0)``,
+   ``(-1/2, sqrt(3)/2, 0)``, ``(0, 0, c/a)`` scaled by ``a`` — so the ``sqrt(3)`` stays exact
+   regardless of ``a``. A cell built from an absolute basis simply has ``scale == 1``.
+
+   Numbers embed exactly: rationals (and rational-valued floats) stay rational, and a
+   :class:`~httk.core.SurdVector` basis keeps its radicals. Derived quantities are exact whenever
+   the geometry is metric-rational (the crystallographic case): ``lengths`` come from
+   :meth:`~httk.core.SurdVector.sqrt_of` of the rational squared row lengths, ``angles`` (degrees)
+   from the exact reverse-Niven :meth:`~httk.core.SurdScalar.acos_degrees` where possible,
+   ``volume`` from the exact determinant, and ``metric`` is the exact rational Gram matrix. When a
+   squared length happens to be irrational, ``lengths``/``angles`` fall back to a deterministic
+   rational approximation (documented per accessor). Exact accessors return vector objects —
+   render them with ``.to_floats()`` (nested plain-float lists, numpy-free), ``float(...)`` on
+   scalars, :meth:`numeric` (true numpy arrays), or a view of your choice.
+
+   A cell also records its :attr:`periodicity`, which defaults to periodic in all three
+   directions. Where it is not, the basis stops being purely a lattice and becomes partly a
+   *coordinate frame*: see :attr:`periodicity` for what that means and
+   :attr:`periodic_measure` for the quantity that replaces :attr:`volume`.
+
+
+   .. py:property:: scale
+      :type: httk.core.SurdScalar
+
+
+      The overall (strictly positive) length factor, as an exact ``SurdScalar``.
+
+
+   .. py:property:: unscaled_basis
+      :type: httk.core.SurdVector
+
+
+      The 3x3 cell vectors before applying ``scale``, as an exact ``SurdVector``.
+
+
+   .. py:property:: basis
+      :type: httk.core.SurdVector
+
+
+      The 3x3 lattice vectors ``scale * unscaled_basis`` (one vector per row), exact.
+
+
+   .. py:property:: precision
+      :type: fractions.Fraction | None
+
+
+      How precisely this basis was stated, as an absolute length, or ``None`` if unknown.
+
+      In the same units as the basis itself, so for ordinary crystallographic data it is
+      an ångström. Derived from the source's written digits and any stated uncertainty —
+      a CIF cell edge of ``5.6402(3)`` is precise to ``3e-4``, not to the ``1e-4`` its
+      four decimals alone would suggest.
+
+      ``None`` means unknown, which is not the same as exact. It is what a cell built by
+      hand or from a bare matrix reports.
+
+
+   .. py:property:: periodicity
+      :type: tuple[bool, bool, bool]
+
+
+      Which of the three basis rows is a genuine lattice translation.
+
+      ``(True, True, True)`` — the default, and what every ordinary crystal is. A slab is
+      ``(True, True, False)``, a nanowire has one ``True``, and an isolated molecule is
+      ``(False, False, False)``.
+
+      A row flagged ``False`` is **not** a lattice vector. It is only a frame: it says
+      what a fractional coordinate means along that direction, and nothing more.
+      Coordinates there are unbounded — freely below 0 or above 1 — and are never wrapped
+      into ``[0, 1)``. There is no vacuum and no padding involved, so making that row a
+      unit vector simply means the coordinate along it *is* a length in the basis's units.
+
+      This is the same notion, in the same order, as OPTIMADE's ``dimension_types``.
+
+
+   .. py:property:: nperiodic_dimensions
+      :type: int
+
+
+      How many of the three directions are periodic, from 0 to 3.
+
+
+   .. py:method:: numeric() -> httk.atomistic.numeric_cell.NumericCell
+
+      A plain-numpy presentation of this cell (requires the ``httk-atomistic[numpy]`` extra).
+
+
+
+   .. py:method:: metric() -> httk.core.SurdVector
+
+      The exact Gram matrix ``matrix * matrix^T`` (rational for a metric-rational cell).
+
+
+
+   .. py:property:: lengths
+      :type: tuple[httk.core.SurdScalar, Ellipsis]
+
+
+      The lengths of the three cell vectors (the scaled row norms).
+
+      Exact via :meth:`~httk.core.SurdVector.sqrt_of` whenever the row's squared length is
+      rational (the crystallographic case); otherwise a deterministic rational-approximation
+      ``SurdScalar`` at ``_FALLBACK_PREC`` (the length would be a nested radical, outside the
+      surd field).
+
+
+   .. py:property:: angles
+      :type: tuple[fractions.Fraction, Ellipsis]
+
+
+      The cell angles ``(alpha, beta, gamma)`` in degrees, as exact ``Fraction`` values.
+
+      Following the crystallographic convention, ``alpha`` is the angle between rows ``b`` and
+      ``c``, ``beta`` between ``a`` and ``c``, and ``gamma`` between ``a`` and ``b``. Angles are
+      scale-independent, so they are computed from the unscaled basis. The cosine is formed
+      exactly in the surd field and reversed through the Niven table
+      (:meth:`~httk.core.SurdScalar.acos_degrees`) for an exact answer; a non-Niven angle falls
+      back to a deterministic :func:`~httk.core.exactmath.acos` at ``_FALLBACK_PREC``.
+
+
+   .. py:property:: volume
+      :type: httk.core.SurdScalar
+
+
+      The cell volume, the exact absolute determinant of ``basis``.
+
+      Defined only for a fully periodic cell, and raises :class:`ValueError` otherwise.
+      For anything less, the determinant mixes real lattice vectors with frame vectors,
+      so it is not a volume: it changes when a frame vector is rescaled, even though
+      nothing about the material did. Any density or packing fraction derived from it
+      would inherit that. See :attr:`periodic_measure` for the quantity that *is* defined.
+
+
+   .. py:property:: periodic_measure
+      :type: httk.core.SurdScalar
+
+
+      The size of the repeating unit, whatever its dimension.
+
+      A volume for a crystal, an area for a slab, a length for a nanowire. For a fully
+      non-periodic cell there is no repeating unit and this is the empty product, ``1``,
+      which is dimensionless rather than a length of any kind.
+
+      Exact in the crystallographic case. The 3D case is the determinant and needs no
+      square root at all; the 2D and 1D cases take the same square root that
+      :attr:`lengths` does, so they are exact whenever the squared measure is a rational
+      with a small radicand and fall back to a deterministic rational approximation
+      otherwise.
+
+
+.. py:class:: CellAPI
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Abstract base class for the canonical cell interface.
+
+   It declares the exact accessors that every cell backend produces from its own native
+   representation and every cell view builds its presentation from: the ``basis`` of 3x3 lattice
+   vectors (``scale * unscaled_basis``), the positive ``scale``, and the ``unscaled_basis``. All
+   three are exact httk-core vectors; this is the single interchange format, with no pairwise
+   conversion between backends.
+
+
+   .. py:property:: basis
+      :type: httk.core.SurdVector
+
+      :abstractmethod:
+
+
+
+   .. py:property:: scale
+      :type: httk.core.SurdScalar
+
+      :abstractmethod:
+
+
+
+   .. py:property:: unscaled_basis
+      :type: httk.core.SurdVector
+
+      :abstractmethod:
+
+
+
+   .. py:property:: precision
+      :type: fractions.Fraction | None
+
+
+      How precisely the basis was stated, as an absolute length, or ``None`` if unknown.
+
+      A backend that knows its source's precision overrides this; one that does not — a
+      bare matrix of numbers with no provenance — inherits ``None``.
+
+
+   .. py:property:: periodicity
+      :type: tuple[bool, bool, bool]
+
+
+      Which of the three basis rows is a genuine lattice translation.
+
+      A backend that knows its periodicity overrides this; one that does not inherit
+      ``(True, True, True)``. A cell described only by six lattice parameters or a bare
+      matrix is interpreted as a fully periodic crystal.
+
+
+.. py:class:: CellBackend(backend, **hints)
+
+   Bases: :py:obj:`httk.core.Backend`\ [\ :py:obj:`CellBackend`\ ], :py:obj:`httk.atomistic.cell_api.CellAPI`
+
+
+   Abstract base class for all backends of cell data.
+
+   Concrete backends carry a native representation and produce the canonical 3x3
+   ``basis`` declared by ``CellAPI`` from it.
+
+
+   .. py:attribute:: backend_classes
+      :type:  ClassVar[list[type[httk.core.Backend[Any]]]]
+
+
+.. py:class:: CellClass(obj: httk.atomistic.cell.Cell, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.cell_backend.CellBackend`
+
+
+   Backend for a cell backed by an actual ``Cell`` object.
+
+   Its exact accessors delegate to the wrapped Cell (preserving its ``scale``/``unscaled_basis``
+   split), and ``unwrap`` returns that Cell.
+
+
+   .. py:property:: basis
+      :type: httk.core.SurdVector
+
+
+
+   .. py:property:: scale
+      :type: httk.core.SurdScalar
+
+
+
+   .. py:property:: precision
+      :type: fractions.Fraction | None
+
+
+      How precisely the basis was stated, as an absolute length, or ``None`` if unknown.
+
+      A backend that knows its source's precision overrides this; one that does not — a
+      bare matrix of numbers with no provenance — inherits ``None``.
+
+
+   .. py:property:: periodicity
+      :type: tuple[bool, bool, bool]
+
+
+      Which of the three basis rows is a genuine lattice translation.
+
+      A backend that knows its periodicity overrides this; one that does not inherit
+      ``(True, True, True)``. A cell described only by six lattice parameters or a bare
+      matrix is interpreted as a fully periodic crystal.
+
+
+   .. py:property:: unscaled_basis
+      :type: httk.core.SurdVector
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: CellClassView(obj: httk.atomistic.cell_like.CellLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.cell_view.CellView`, :py:obj:`httk.atomistic.cell.Cell`
+
+
+   A view presenting an underlying cell backend as a ``Cell``.
+
+   This view is a genuine ``Cell``, so it can be passed anywhere a Cell is accepted.
+   Its basis is built eagerly from the backend on construction.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:type:: CellLike
+   :canonical: cell_backend.CellBackend | cell_view.CellView | cell.Cell | httk.core.VectorLike
+
+
+.. py:class:: CellNumericView(obj: httk.atomistic.cell_like.CellLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.cell_view.CellView`, :py:obj:`httk.atomistic.numeric_cell.NumericCell`
+
+
+   A view presenting an underlying cell backend as a ``NumericCell``.
+
+   This view is a genuine ``NumericCell``, so it can be passed anywhere one is accepted. Its exact
+   ``Cell`` is built eagerly from the backend on construction, preserving the scale/unscaled split.
+   Like a ``NumericCell`` it requires numpy (raising :class:`ImportError` otherwise).
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: CellParams(obj: Any, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.cell_backend.CellBackend`
+
+
+   Backend for a cell backed by cell parameters ``(a, b, c, alpha, beta, gamma)``.
+
+   The native representation is a flat length-6 vector-like of the cell-vector lengths
+   ``a``/``b``/``c`` and the angles ``alpha``/``beta``/``gamma`` in degrees, stored as exact
+   :class:`~fractions.Fraction` values (parsed via
+   :func:`~httk.core.exactmath.any_to_fraction`). The exact ``basis`` is derived lazily and
+   cached using the standard crystallographic orientation convention (first cell vector along x,
+   second in the xy-plane); for the common Niven angles it is exact (radicals intact). Since
+   parameters carry no separate length factor, ``scale`` is the exact ``1`` and
+   ``unscaled_basis == basis``. Parameters carry no orientation, so a cell → parameters → cell
+   round-trip reproduces lengths, angles, and volume, but not the original orientation.
+   ``unwrap`` returns the original raw object.
+
+
+   .. py:property:: basis
+      :type: httk.core.SurdVector
+
+
+
+   .. py:property:: scale
+      :type: httk.core.SurdScalar
+
+
+
+   .. py:property:: unscaled_basis
+      :type: httk.core.SurdVector
+
+
+
+   .. py:property:: params
+      :type: tuple[fractions.Fraction, Ellipsis]
+
+
+      The stored ``(a, b, c, alpha, beta, gamma)`` as exact Fractions (angles in degrees).
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: CellParamsView(obj: httk.atomistic.cell_like.CellLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.cell_view.CellView`, :py:obj:`tuple`
+
+
+   A view presenting an underlying cell backend as cell parameters.
+
+   This view is a genuine flat 6-tuple ``(a, b, c, alpha, beta, gamma)`` with the
+   angles in degrees, built eagerly and immutable, with the elements also available
+   as the named properties ``a``/``b``/``c``/``alpha``/``beta``/``gamma``.
+   Parameters carry no orientation, so converting a cell to parameters is lossy:
+   reconstructing a cell from this view reproduces the lengths, angles, and volume,
+   but not the original cell-vector orientation.
+
+
+   .. py:property:: a
+      :type: float
+
+
+      The length of the first cell vector.
+
+
+   .. py:property:: b
+      :type: float
+
+
+      The length of the second cell vector.
+
+
+   .. py:property:: c
+      :type: float
+
+
+      The length of the third cell vector.
+
+
+   .. py:property:: alpha
+      :type: float
+
+
+      The angle between the second and third cell vectors, in degrees.
+
+
+   .. py:property:: beta
+      :type: float
+
+
+      The angle between the first and third cell vectors, in degrees.
+
+
+   .. py:property:: gamma
+      :type: float
+
+
+      The angle between the first and second cell vectors, in degrees.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: CellPrimitive(obj: Any, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.cell_backend.CellBackend`
+
+
+   Backend for a cell backed by a raw 3x3 list or tuple of numbers (or any 3x3 vector-like).
+
+   The native representation is preserved verbatim (one cell vector per row); the exact
+   :class:`~httk.core.SurdVector` ``basis`` is built lazily and cached. This representation carries
+   no separate length factor, so ``scale`` is the exact ``1`` and ``unscaled_basis == basis``.
+   ``unwrap`` returns the original raw object.
+
+
+   .. py:property:: basis
+      :type: httk.core.SurdVector
+
+
+
+   .. py:property:: scale
+      :type: httk.core.SurdScalar
+
+
+
+   .. py:property:: unscaled_basis
+      :type: httk.core.SurdVector
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: CellPrimitiveView(obj: httk.atomistic.cell_like.CellLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.cell_view.CellView`, :py:obj:`tuple`
+
+
+   A view presenting an underlying cell backend as the raw 3x3 basis matrix of floats.
+
+   This view is a genuine tuple of three cell-vector rows (the scaled lattice vectors rendered to
+   floats from the exact ``basis``), built eagerly and immutable.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: CellView
+
+   Bases: :py:obj:`httk.core.View`\ [\ :py:obj:`httk.atomistic.cell_backend.CellBackend`\ ]
+
+
+   Abstract base class for all views of cell data.
+
+
+.. py:function:: asu_structure_from_cif(data: collections.abc.Mapping[str, Any], *, tolerance: float | None = None, limit_denominator: int | None = None, trust_declared_symmetry: bool = True) -> httk.atomistic.asu_structure.ASUStructure
+
+   Build an exact :class:`~httk.atomistic.ASUStructure` from a neutral CIF mapping.
+
+   ``data`` is one block of the mapping returned by ``httk.io.cif`` (its ``format`` must be
+   ``"cif"``).
+
+   The cell is built exactly from the file's ``a, b, c, alpha, beta, gamma`` rather than
+   from the pre-multiplied floating-point basis, so a cubic cell keeps exact right angles
+   and a hexagonal one keeps its ``sqrt(3)`` instead of inheriting rounding noise.
+
+   Coordinates are embedded as the rational the file literally wrote — ``0.3333`` is
+   ``3333/10000``, not the binary value of ``float("0.3333")`` — and are then snapped onto
+   the Wyckoff position they lie within ``tolerance`` of. That snapping is the only
+   tolerant step; see :mod:`~httk.atomistic.asu_recognition` for the full contract.
+
+   ``tolerance`` left unspecified is derived from the precision the file's own digits
+   imply, so a coarsely written file is matched loosely and a carefully written one
+   tightly, without anybody choosing a constant.
+
+   Site occupancies become the composition of the corresponding
+   :class:`~httk.atomistic.Species`, so a half-occupied site survives into the structure
+   instead of being dropped.
+
+   ``trust_declared_symmetry=False`` ignores the file's declared Hall symbol or space-group
+   number and identifies the setting from its symmetry operations alone; see
+   :func:`cif_setting` for when that is the right thing to do.
+
+
+.. py:function:: asu_structures_from_cif(payload: collections.abc.Mapping[str, Any], **options: Any) -> list[httk.atomistic.asu_structure.ASUStructure]
+
+   Every structure in a loaded CIF payload, one per data block that describes one.
+
+   Accepts either a whole loaded payload (with ``blocks``) or a single block.
+
+   Reading a CIF is tolerant — a file may hold blocks that are not structures at all —
+   but *asking it for structures* is not. If the file yielded none, the reasons the
+   reader recorded are raised here rather than returning an empty list, so a file that
+   could not be interpreted does not read as a file that contained nothing.
+
+
+.. py:function:: cif_setting(data: collections.abc.Mapping[str, Any], *, trust_declared_symmetry: bool = True) -> httk.atomistic.spacegroup.Spacegroup
+
+   The space-group setting a CIF block is written in.
+
+   The setting is identified from the file's symmetry **operations**, by exact set
+   comparison against the tabulated settings. That is what makes a file written in a
+   non-standard setting come out as itself rather than being silently reinterpreted.
+
+   What the file *declares* — a Hall symbol, or an International Tables number — is treated
+   as a claim to be checked, not a hint to be taken or dropped. A declaration that names no
+   known setting, or that names one whose operations are not the file's, is a genuine
+   inconsistency in the file and raises rather than being worked around: the two halves of
+   the file disagree, and quietly believing one of them is how a wrong structure gets built.
+
+   Pass ``trust_declared_symmetry=False`` to ignore the declaration entirely and identify
+   the setting from the operations alone. That is the escape hatch for a file whose symbols
+   are known to be wrong but whose operations are good.
+
+   The Hermann-Mauguin symbol is deliberately **not** checked. It has too many legitimate
+   spellings, and OPTIMADE itself notes that it does not unambiguously communicate the axis,
+   cell, or origin choice, so treating a mismatch there as an error would reject good files.
+
+   Raises :class:`ValueError` when the block states no operations, when a declaration is
+   inconsistent with them, or when the operations match no tabulated setting at all. In the
+   last case the transform to the standard setting genuinely cannot be *derived* — infinitely
+   many are equally valid and they describe different crystals — so such a file has to be
+   built with an explicit :class:`~httk.atomistic.SettingTransform`.
+
+
+.. py:class:: ASEAtomsBackend(obj: ASEAtomsProtocol, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.structure_backend.StructureBackend`
+
+
+   Backend for ASE ``Atoms`` and compatible duck-typed objects.
+
+   Conversion is eager because reading the four methods and normalizing their values is
+   real work. The original object remains available through :meth:`unwrap`.
+
+
+   .. py:property:: cell
+      :type: httk.atomistic.cell.Cell
+
+
+      The exact cell converted from the native cell rows.
+
+
+   .. py:property:: sites
+      :type: httk.atomistic.sites.Sites
+
+
+      The exact reduced coordinates converted from the native positions.
+
+
+   .. py:property:: species
+      :type: tuple[httk.atomistic.species.Species, Ellipsis]
+
+
+      The distinct single-element species in first-appearance order.
+
+
+   .. py:property:: species_at_sites
+      :type: tuple[str, Ellipsis]
+
+
+      The species name occupying each site.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the original Atoms-like object.
+
+
+
+.. py:class:: ASEAtomsProtocol
+
+   Bases: :py:obj:`Protocol`
+
+
+   The minimal method surface needed to treat an object as ASE ``Atoms``.
+
+   This is a runtime-checkable, duck-typed protocol. ASE is not required: any object
+   providing these four methods qualifies for :class:`ASEAtomsBackend`.
+
+
+   .. py:method:: get_cell() -> Any
+
+      Return the cell vectors as rows.
+
+
+
+   .. py:method:: get_scaled_positions() -> Any
+
+      Return the reduced positions.
+
+
+
+   .. py:method:: get_atomic_numbers() -> Any
+
+      Return one atomic number per site.
+
+
+
+   .. py:method:: get_pbc() -> Any
+
+      Return one periodicity flag per cell row.
+
+
+
+.. py:data:: SYMBOLS
+   :type:  tuple[str, Ellipsis]
+   :value: ('H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl',...
+
+
+   The 118 IUPAC element symbols in atomic-number order (``SYMBOLS[0]`` is hydrogen).
+
+.. py:function:: atomic_number(symbol: str) -> int
+
+   Return the atomic number (1-118) of an element symbol.
+
+   Raises ValueError for anything that is not one of the 118 element symbols
+   (in particular for the ``"X"`` and ``"vacancy"`` pseudo-symbols).
+
+
+.. py:function:: symbol_of(z: int) -> str
+
+   Return the element symbol for the atomic number z (1-118).
+
+   Raises ValueError for atomic numbers outside the 1-118 range.
+
+
+.. py:class:: NumericCell(cell: httk.atomistic.cell_like.CellLike)
+
+   A plain-numpy presentation of a :class:`~httk.atomistic.Cell`.
+
+   Where a ``Cell`` holds its geometry **exactly** (a :class:`~httk.core.SurdVector` basis, exact
+   ``SurdScalar`` lengths/volume, exact ``Fraction`` angles), a ``NumericCell`` mirrors that
+   interface but returns plain numpy numbers — a ``float64`` :class:`numpy.ndarray` for every vector
+   and a plain :class:`float` for every scalar — for callers who do not need exact arithmetic and
+   just want numpy arrays.
+
+   The presentation is numpy-backed, so constructing a ``NumericCell`` **requires numpy** (the
+   ``httk-atomistic[numpy]`` extra) and raises :class:`ImportError` eagerly when it is unavailable.
+   The exact object is always one hop away via :attr:`exact`.
+
+
+   .. py:property:: scale
+      :type: float
+
+
+      The overall length factor as a plain ``float``.
+
+
+   .. py:property:: precision
+      :type: float | None
+
+
+      The exact cell precision as a plain float, or ``None`` if unknown.
+
+
+   .. py:property:: periodicity
+      :type: tuple[bool, bool, bool]
+
+
+      Which of the three basis rows is a genuine lattice translation.
+
+
+   .. py:property:: nperiodic_dimensions
+      :type: int
+
+
+      How many of the three directions are periodic, from 0 to 3.
+
+
+   .. py:property:: unscaled_basis
+      :type: httk.core.NumericVector
+
+
+      The 3x3 cell vectors before applying ``scale`` as a ``float64`` numpy array.
+
+
+   .. py:property:: basis
+      :type: httk.core.NumericVector
+
+
+      The 3x3 lattice vectors ``scale * unscaled_basis`` as a ``float64`` numpy array.
+
+
+   .. py:property:: lengths
+      :type: httk.core.NumericVector
+
+
+      The three cell-vector lengths as a ``(3,)`` ``float64`` numpy array.
+
+
+   .. py:property:: angles
+      :type: httk.core.NumericVector
+
+
+      The cell angles ``(alpha, beta, gamma)`` in degrees as a ``(3,)`` ``float64`` numpy array.
+
+
+   .. py:property:: volume
+      :type: float
+
+
+      The cell volume as a plain ``float``.
+
+
+   .. py:method:: metric() -> httk.core.NumericVector
+
+      The Gram matrix ``basis * basis^T`` as a ``float64`` numpy array.
+
+
+
+   .. py:property:: exact
+      :type: httk.atomistic.cell.Cell
+
+
+      The exact :class:`~httk.atomistic.Cell` this presentation wraps.
+
+
+.. py:class:: NumericSites(sites: httk.atomistic.sites_like.SitesLike)
+
+   A plain-numpy presentation of a :class:`~httk.atomistic.Sites` object.
+
+   Where a ``Sites`` holds its reduced coordinates exactly (an Nx3 rational
+   :class:`~httk.core.FracVector`), a ``NumericSites`` mirrors that interface but returns plain
+   ``float64`` numpy arrays, for callers who do not need exact arithmetic and just want numpy arrays.
+   It is len/iter/indexable over its rows, each yielded as a ``(3,)`` numpy array.
+
+   The presentation is numpy-backed, so constructing a ``NumericSites`` **requires numpy** (the
+   ``httk-atomistic[numpy]`` extra) and raises :class:`ImportError` eagerly when it is unavailable.
+   The exact object is always one hop away via :attr:`exact`.
+
+
+   .. py:property:: precision
+      :type: float | None
+
+
+      The exact fractional coordinate precision as a plain float, or ``None``.
+
+
+   .. py:property:: reduced_coords
+      :type: httk.core.NumericVector
+
+
+      The Nx3 reduced site coordinates as a ``float64`` numpy array.
+
+
+   .. py:property:: exact
+      :type: httk.atomistic.sites.Sites
+
+
+      The exact :class:`~httk.atomistic.Sites` this presentation wraps.
+
+
+.. py:class:: NumericUnitcellStructureBackend(obj: Any, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.structure_backend.StructureBackend`
+
+
+   Backend recognizing the plain-numpy structure quartet.
+
+   The wrapped object must expose ``NumericCell``/``NumericSites`` values through
+   ``cell``/``sites`` and the usual ``species``/``species_at_sites`` attributes.
+   Its exact quartet is taken from an ``exact`` :class:`~httk.atomistic.structure.Structure` when available,
+   then from the component presentations' ``exact`` values. If neither component
+   carries an exact value, the numeric ``basis`` and ``reduced_coords`` arrays are
+   passed through the vector family into ``Cell`` and ``Sites``. That last route is
+   exact embedding of the floats: their binary float64 values, rather than their
+   decimal spellings, become the exact values.
+
+
+   .. py:property:: cell
+      :type: httk.atomistic.cell.Cell
+
+
+      The exact cell quartet component.
+
+
+   .. py:property:: sites
+      :type: httk.atomistic.sites.Sites
+
+
+      The exact sites quartet component.
+
+
+   .. py:property:: species
+      :type: tuple[httk.atomistic.species.Species, Ellipsis]
+
+
+      The exact structure's distinct species.
+
+
+   .. py:property:: species_at_sites
+      :type: tuple[str, Ellipsis]
+
+
+      The exact species name for each site.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the wrapped numeric presentation object.
+
+
+
+.. py:class:: NumericUnitcellStructureView(obj: httk.atomistic.structure_like.StructureLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.structure_view.StructureView`
+
+
+   A plain-numpy presentation of a :class:`~httk.atomistic.Structure`.
+
+   Where a ``Structure`` holds its geometry exactly (a surd ``cell`` basis, rational reduced
+   coordinates, and an exact Cartesian frame), this view mirrors that interface but returns
+   plain numpy numbers: its :attr:`cell` is a :class:`~httk.atomistic.NumericCell`, its
+   :attr:`sites` a :class:`~httk.atomistic.NumericSites`, and :meth:`cartesian_sites` a
+   ``float64`` numpy array. The ``species``/``species_at_sites`` are passed through unchanged.
+   It is for callers who do not need exact arithmetic and just want numpy arrays.
+
+   The presentation is numpy-backed, so constructing it **requires numpy** (the
+   ``httk-atomistic[numpy]`` extra) and raises :class:`ImportError` eagerly when it is unavailable.
+   The exact object is always one hop away via :attr:`exact`.
+
+   This is a view, not a ``Structure`` subclass. Its exact ``Structure`` is built eagerly from
+   the backend quartet during construction.
+
+
+   .. py:property:: cell
+      :type: httk.atomistic.numeric_cell.NumericCell
+
+
+      The cell as a :class:`~httk.atomistic.NumericCell`.
+
+
+   .. py:property:: sites
+      :type: httk.atomistic.numeric_sites.NumericSites
+
+
+      The sites as a :class:`~httk.atomistic.NumericSites`.
+
+
+   .. py:property:: species
+      :type: tuple[httk.atomistic.species.Species, Ellipsis]
+
+
+      The distinct species, passed through unchanged.
+
+
+   .. py:property:: species_at_sites
+      :type: tuple[str, Ellipsis]
+
+
+      The species name occupying each site, passed through unchanged.
+
+
+   .. py:method:: cartesian_sites() -> httk.core.NumericVector
+
+      The Cartesian site positions as an ``(N, 3)`` ``float64`` numpy array.
+
+
+
+   .. py:property:: exact
+      :type: httk.atomistic.structure.Structure
+
+
+      The exact :class:`~httk.atomistic.Structure` this view presents.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the raw object wrapped by the backend.
+
+
+
+.. py:class:: PhaseDiagram(elements: tuple[str, Ellipsis], ids: tuple[str, Ellipsis], compositions: tuple[tuple[float, Ellipsis], Ellipsis], energies_per_atom: tuple[float, Ellipsis], tolerance: float)
+
+   A normalized float convex-hull phase diagram.
+
+   Construct with :meth:`from_compositions` or :meth:`from_structures`. Energies supplied
+   to either factory are total formula-unit or unit-cell energies and are divided by the
+   corresponding atom count. All exposed compositions and energies are plain floats.
+
+   Hull membership uses the requested per-atom energy ``tolerance``. At duplicated
+   compositions only the lowest-energy polymorph is stable, except that every polymorph
+   tied within the tolerance is reported stable. ``None`` decompositions identify stable
+   phases, including uncontested phases whose composition lies outside the convex hull of
+   every other input.
+
+   Tie-lines are every midpoint-supported pair of distinct stable compositions. A stable
+   phase lying genuinely between two others on both their composition and energy segments
+   subsumes the long segment. Distinct pair endpoints are compared exactly; the internal
+   ``1e-9`` composition tolerance is used only to decide whether a third phase lies on
+   their open segment. With four or more exactly coplanar stable phases, crossing diagonals
+   can describe equally valid triangulations; this class reports all midpoint-supported
+   pairs rather than choosing one triangulation.
+
+
+   .. py:method:: from_compositions(compositions: collections.abc.Sequence[collections.abc.Mapping[str, int | float | fractions.Fraction]], energies: collections.abc.Sequence[float], ids: collections.abc.Sequence[str] | None = None, *, tolerance: float = 1e-08) -> Self
+      :classmethod:
+
+
+      Build a diagram from formula-unit compositions and total energies.
+
+      Each composition maps an element label to its count in the formula unit to which
+      the matching total energy refers. Counts must be finite and non-negative, with a
+      strictly positive total atom count. Elements are sorted independently of mapping
+      insertion order before rows are normalized to atomic fractions.
+
+
+
+   .. py:method:: from_structures(structures: collections.abc.Sequence[httk.atomistic.structure_like.StructureLike], energies: collections.abc.Sequence[float], ids: collections.abc.Sequence[str] | None = None, *, tolerance: float = 1e-08) -> Self
+      :classmethod:
+
+
+      Build a diagram from structures and their total unit-cell energies.
+
+      Each site contributes its named species' ``chemical_symbols`` weighted by
+      ``concentration``. ``"vacancy"`` contributes no atoms; ``"X"`` is rejected because
+      an unknown element cannot define a composition coordinate. Default identifiers are
+      deterministic alphabetically sorted labels using the (possibly fractional) unit-cell
+      counts without reducing them.
+
+
+
+   .. py:property:: elements
+      :type: tuple[str, Ellipsis]
+
+
+      Element-coordinate order used by :attr:`compositions`.
+
+
+   .. py:property:: ids
+      :type: tuple[str, Ellipsis]
+
+
+      Phase identifiers in input order.
+
+
+   .. py:property:: compositions
+      :type: tuple[tuple[float, Ellipsis], Ellipsis]
+
+
+      Per-atom composition-fraction rows in :attr:`elements` order.
+
+
+   .. py:property:: energies_per_atom
+      :type: tuple[float, Ellipsis]
+
+
+      Input energies normalized by formula-unit or unit-cell atom count.
+
+
+   .. py:property:: hull_indices
+      :type: tuple[int, Ellipsis]
+
+
+      Stable phase indices in input order.
+
+
+   .. py:property:: energy_above_hull
+      :type: tuple[float, Ellipsis]
+
+
+      Non-negative energy distance from the lower hull in per-atom units.
+
+
+   .. py:property:: phase_lines
+      :type: tuple[tuple[int, int], Ellipsis]
+
+
+      Sorted midpoint-supported stable tie-lines as ``(smaller, larger)`` indices.
+
+
+   .. py:method:: decomposition(index: int) -> tuple[tuple[int, float], Ellipsis] | None
+
+      Optimal stable-phase ``(index, weight)`` pairs, or ``None`` when stable.
+
+
+
+   .. py:method:: is_stable(index: int) -> bool
+
+      Whether the phase at ``index`` is stable within the energy tolerance.
+
+
+
+   .. py:method:: plot(*, ax: Any = None, show_unstable: bool = True, label_stable: bool = True) -> Any
+
+      Plot the phase diagram and return its matplotlib Axes.
+
+      Binary diagrams use the fraction of the second element on the x axis. The y axis is
+      formation energy relative to the lowest stable pure-element endpoints when both are
+      present, and raw energy per atom otherwise. One-element diagrams use raw energy at a
+      single composition point.
+
+      Diagrams with three or more elements use a regular composition polygon whose corner
+      ``k`` is at angle ``2*pi*k/N``. Phase lines are drawn individually in black; stable
+      phases are filled and unstable phases are open. Matplotlib is imported only here and
+      this method never calls ``show`` or writes a file.
+
+
+
+.. py:function:: precision_definitions() -> dict[str, httk.core.PropertyDefinition]
+
+   The vendored precision definitions, keyed by their served name.
+
+
+.. py:function:: precision_properties(structure: Any) -> dict[str, Any]
+
+   How precisely this structure's coordinates and cell were stated.
+
+   Both are ``null`` for a structure that does not say — one built by hand, or read from a
+   source that does not write its numbers to a definite number of digits. That is the
+   honest answer, and it is distinguishable from a claim of exactness.
+
+   Rendered as floats, since that is what a JSON consumer will use them as; they are held
+   exactly on the structure itself.
+
+
+.. py:class:: SettingTransform(matrix: Any, vector: Any = (0, 0, 0), *, hall_entry: str | None = None)
+
+   An exact rational change of basis from the IT standard setting to another setting.
+
+   Wraps an :class:`~httk.atomistic.AffineOperation` and gives it the standard-to-own
+   reading described in the module docstring, plus the cell-basis and symmetry-operation
+   transformations that follow from it.
+
+
+   .. py:method:: identity() -> Self
+      :classmethod:
+
+
+      The transform of a structure already in its IT standard setting.
+
+
+
+   .. py:method:: for_hall_entry(hall_entry: str) -> Self
+      :classmethod:
+
+
+      The tabulated transform for one of the 527 known settings.
+
+      ``hall_entry`` is the normalized Hall symbol of the setting, which names it
+      unambiguously — symbol, axes, and origin choice together.
+
+
+
+   .. py:property:: operation
+      :type: httk.atomistic.affine_operation.AffineOperation
+
+
+      The underlying affine map, standard to own setting.
+
+
+   .. py:property:: matrix
+      :type: httk.core.FracVector
+
+
+      The 3x3 rotation part ``M``.
+
+
+   .. py:property:: vector
+      :type: httk.core.FracVector
+
+
+      The origin shift ``v``.
+
+
+   .. py:property:: hall_entry
+      :type: str | None
+
+
+      The Hall entry this transform was looked up for, if it came from the tables.
+
+
+   .. py:method:: determinant() -> fractions.Fraction
+
+      ``det M``: the ratio of the own cell's volume to the standard cell's, inverted.
+
+      ``1`` for 520 of the 527 tabulated settings. The exceptions are the seven
+      rhombohedral-axes settings (IT numbers 146, 148, 155, 160, 161, 166, 167) where it
+      is ``3``, because the standard hexagonal cell holds three primitive rhombohedral
+      cells. A caller-supplied transform may have any non-zero value.
+
+
+
+   .. py:method:: is_identity() -> bool
+
+      Whether the structure is already in its IT standard setting.
+
+
+
+   .. py:method:: to_setting(coords: Any) -> httk.core.FracVector
+
+      Map standard-setting reduced coordinates into this setting. Not wrapped.
+
+
+
+   .. py:method:: to_standard(coords: Any) -> httk.core.FracVector
+
+      Map this setting's reduced coordinates into the standard setting. Not wrapped.
+
+
+
+   .. py:method:: symop_to_setting(operation: httk.atomistic.affine_operation.AffineOperation) -> httk.atomistic.affine_operation.AffineOperation
+
+      A symmetry operation written in the standard setting, rewritten in this one.
+
+
+
+   .. py:method:: symop_to_standard(operation: httk.atomistic.affine_operation.AffineOperation) -> httk.atomistic.affine_operation.AffineOperation
+
+      A symmetry operation written in this setting, rewritten in the standard one.
+
+
+
+   .. py:method:: basis_to_setting(basis: Any) -> httk.core.SurdVector
+
+      Map a standard-setting cell basis (lattice vectors as rows) into this setting.
+
+      Follows from coordinate invariance: if ``f_own = f_std * M.T()`` then
+      ``B_own = inv(M).T() * B_std``, so that ``f * B`` is the same Cartesian point
+      either way. The transform is rational, so an exact basis stays exact — a
+      hexagonal cell keeps its ``sqrt(3)``.
+
+
+
+   .. py:method:: basis_to_standard(basis: Any) -> httk.core.SurdVector
+
+      Map this setting's cell basis into the standard setting.
+
+
+
+   .. py:method:: lattice_cosets() -> tuple[httk.core.FracVector, Ellipsis]
+
+      Translations of this setting's cell that are standard-lattice translations.
+
+      Expanding an orbit generates points from the standard setting's symmetry
+      operations, which carry the standard lattice's periodicity. When this setting's
+      cell is *larger* than the standard one, that is not enough: points related by a
+      standard lattice translation are genuinely distinct sites here, and the missing
+      ones are recovered by also applying each translation returned by this method.
+
+      The result is the finite subgroup of ``(Q/Z)^3`` generated by the columns of ``M``
+      reduced modulo 1, always including the zero translation. It is trivial (just zero)
+      whenever ``M`` is an integer matrix, which covers **all 527** tabulated settings —
+      including the seven with ``det M == 3``, where this setting's cell is *smaller* and
+      the surplus points collapse under wrapping instead. So this only ever does work for
+      a caller-supplied transform to a supercell setting.
+
+
+
+   .. py:method:: inverse() -> SettingTransform
+
+      The transform in the opposite direction, from this setting to the standard one.
+
+
+
+.. py:class:: Sites(reduced_coords: httk.core.VectorLike, precision: Any = None)
+
+   The sites of a crystal structure: the Nx3 matrix of reduced coordinates, held **exactly**.
+
+   Reduced (fractional) coordinates are the symmetry-native frame: point-group operations are
+   integer matrices and translations are rationals, so no radicals ever appear. They are therefore
+   stored as an exact rational :class:`~httk.core.FracVector` of shape ``(N, 3)``. A Sites object
+   is iterable and indexable over its length-3 coordinate rows (each a ``FracVector``), with
+   ``len`` giving the number of sites.
+
+   Inputs embed exactly: rationals (and rational-valued floats), rational strings, and numpy arrays
+   all land on their exact rational value. An irrational :class:`~httk.core.SurdVector` input is
+   reduced deterministically through the vector family's ``fractions`` hub (never raising on data);
+   the exact Cartesian frame — where radicals belong — is obtained instead via
+   :meth:`~httk.atomistic.Structure.cartesian_sites`.
+
+
+   .. py:property:: reduced_coords
+      :type: httk.core.FracVector
+
+
+      The Nx3 reduced site coordinates as an exact ``FracVector`` (one site per row).
+
+
+   .. py:property:: precision
+      :type: fractions.Fraction | None
+
+
+      How precisely these coordinates were stated, in fractional units, or ``None``.
+
+      Fractional and therefore dimensionless: reduced coordinates are fractions of a cell
+      edge, and a ``Sites`` carries no cell to convert with. Use
+      :meth:`~httk.atomistic.Structure.cartesian_precision` for the corresponding length,
+      which is the number an interatomic tolerance or an spglib ``symprec`` actually
+      wants.
+
+      It is the *coarsest* precision among the coordinates, since a structure is only as
+      precisely stated as its least precisely stated number. ``None`` means unknown.
+
+
+   .. py:method:: numeric() -> httk.atomistic.numeric_sites.NumericSites
+
+      A plain-numpy presentation of these sites (requires the ``httk-atomistic[numpy]`` extra).
+
+
+
+.. py:class:: SitesAPI
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Abstract base class for the canonical sites interface.
+
+   It declares the single ``reduced_coords`` accessor (the exact Nx3 rational
+   :class:`~httk.core.FracVector` of reduced coordinates) that every sites backend produces from
+   its own native representation and every sites view builds its presentation from. This is the
+   single interchange format; there is no pairwise conversion between backends.
+
+
+   .. py:property:: reduced_coords
+      :type: httk.core.FracVector
+
+      :abstractmethod:
+
+
+
+   .. py:property:: precision
+      :type: fractions.Fraction | None
+
+
+      How precisely the coordinates were stated, in fractional units, or ``None``.
+
+      Fractional, not a length: reduced coordinates are dimensionless and a ``Sites`` has
+      no cell to convert with. :meth:`~httk.atomistic.Structure.cartesian_precision`
+      does the conversion, where the cell is known.
+
+      Concrete rather than abstract, so a backend with no source of precision inherits
+      ``None`` instead of breaking.
+
+
+.. py:class:: SitesBackend(backend, **hints)
+
+   Bases: :py:obj:`httk.core.Backend`\ [\ :py:obj:`SitesBackend`\ ], :py:obj:`httk.atomistic.sites_api.SitesAPI`
+
+
+   Abstract base class for all backends of sites data.
+
+   Concrete backends carry a native representation and produce the canonical Nx3
+   ``reduced_coords`` declared by ``SitesAPI`` from it.
+
+
+   .. py:attribute:: backend_classes
+      :type:  ClassVar[list[type[httk.core.Backend[Any]]]]
+
+
+.. py:class:: SitesClass(obj: httk.atomistic.sites.Sites, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.sites_backend.SitesBackend`
+
+
+   Backend for sites backed by an actual ``Sites`` object.
+
+   Its ``reduced_coords`` accessor delegates to the wrapped Sites, and ``unwrap``
+   returns that Sites.
+
+
+   .. py:property:: reduced_coords
+      :type: httk.core.FracVector
+
+
+
+   .. py:property:: precision
+      :type: fractions.Fraction | None
+
+
+      How precisely the coordinates were stated, in fractional units, or ``None``.
+
+      Fractional, not a length: reduced coordinates are dimensionless and a ``Sites`` has
+      no cell to convert with. :meth:`~httk.atomistic.Structure.cartesian_precision`
+      does the conversion, where the cell is known.
+
+      Concrete rather than abstract, so a backend with no source of precision inherits
+      ``None`` instead of breaking.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: SitesClassView(obj: httk.atomistic.sites_like.SitesLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.sites_view.SitesView`, :py:obj:`httk.atomistic.sites.Sites`
+
+
+   A view presenting an underlying sites backend as a ``Sites`` object.
+
+   This view is a genuine ``Sites``, so it can be passed anywhere a Sites is accepted.
+   Its coordinates are built eagerly from the backend on construction.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:type:: SitesLike
+   :canonical: sites_backend.SitesBackend | sites_view.SitesView | sites.Sites | httk.core.VectorLike
+
+
+.. py:class:: SitesNumericView(obj: httk.atomistic.sites_like.SitesLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.sites_view.SitesView`, :py:obj:`httk.atomistic.numeric_sites.NumericSites`
+
+
+   A view presenting an underlying sites backend as a ``NumericSites`` object.
+
+   This view is a genuine ``NumericSites``, so it can be passed anywhere one is accepted. Its exact
+   ``Sites`` is built eagerly from the backend on construction. Like a ``NumericSites`` it requires
+   numpy (raising :class:`ImportError` otherwise).
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: SitesPrimitive(obj: Any, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.sites_backend.SitesBackend`
+
+
+   Backend for sites backed by a raw Nx3 list or tuple of numbers (or any Nx3 vector-like).
+
+   The native representation is preserved verbatim (one site per row); the exact rational
+   :class:`~httk.core.FracVector` ``reduced_coords`` are built lazily and cached, and ``unwrap``
+   returns the original raw object.
+
+
+   .. py:property:: reduced_coords
+      :type: httk.core.FracVector
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: SitesPrimitiveView(obj: httk.atomistic.sites_like.SitesLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.sites_view.SitesView`, :py:obj:`tuple`
+
+
+   A view presenting an underlying sites backend as a raw Nx3 matrix of floats.
+
+   This view is a genuine tuple of reduced-coordinate rows (rendered to floats from the exact
+   ``reduced_coords``), built eagerly and immutable.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: SitesView
+
+   Bases: :py:obj:`httk.core.View`\ [\ :py:obj:`httk.atomistic.sites_backend.SitesBackend`\ ]
+
+
+   Abstract base class for all views of sites data.
+
+
+.. py:class:: Spacegroup(record: dict[str, Any])
+
+   A tabulated space-group setting, built from the vendored symmetry data.
+
+
+   .. py:method:: standard(it_number: int) -> Self
+      :classmethod:
+
+
+      The IT standard (reference) setting for a space-group number.
+
+
+
+   .. py:method:: for_hall_entry(hall_entry: str) -> Self
+      :classmethod:
+
+
+      The setting named by a normalized Hall symbol, e.g. ``"-c_2yc"``.
+
+
+
+   .. py:method:: for_setting(setting_it_nc: str) -> Self
+      :classmethod:
+
+
+      The setting named by IT number and coordinate-system code, e.g. ``"15:c1"``.
+
+
+
+   .. py:method:: for_hm_entry(hm_entry: str) -> Self
+      :classmethod:
+
+
+      The setting named by its Hermann-Mauguin entry, e.g. ``"C 1 2/c 1"``.
+
+
+
+   .. py:property:: record
+      :type: dict[str, Any]
+
+
+      The raw vendored record, for fields this class does not model.
+
+
+   .. py:property:: it_number
+      :type: int
+
+
+      The International Tables space-group number, 1 to 230.
+
+
+   .. py:property:: setting
+      :type: str
+
+
+      The setting name — IT number plus coordinate-system code, e.g. ``"15:c1"``.
+
+
+   .. py:property:: hall_entry
+      :type: str
+
+
+      The normalized Hall symbol, which names the setting unambiguously.
+
+
+   .. py:property:: hall_symbol
+      :type: str
+
+
+      The Hall symbol as conventionally written.
+
+
+   .. py:property:: hermann_mauguin
+      :type: str
+
+
+      The short Hermann-Mauguin symbol for this setting.
+
+
+   .. py:property:: hermann_mauguin_full
+      :type: str
+
+
+      The full Hermann-Mauguin symbol for this setting.
+
+
+   .. py:property:: crystal_system
+      :type: str
+
+
+      The crystal system, e.g. ``"monoclinic"``.
+
+
+   .. py:property:: centring_type
+      :type: str
+
+
+      The lattice centring letter, e.g. ``"P"``, ``"C"``, ``"F"``.
+
+
+   .. py:property:: is_standard_setting
+      :type: bool
+
+
+      Whether this is the IT standard (reference) setting for its space-group number.
+
+
+   .. py:property:: symmetry_operations
+      :type: tuple[httk.atomistic.affine_operation.AffineOperation, Ellipsis]
+
+
+      Every symmetry operation of the group, in this setting's coordinates.
+
+      The full set with centring translations already folded in, so its length is the
+      group order and no separate centring pass is needed.
+
+
+   .. py:property:: centering_translations
+      :type: tuple[httk.core.FracVector, Ellipsis]
+
+
+      The lattice centring translations, including the zero translation.
+
+
+   .. py:property:: wyckoff
+      :type: tuple[httk.atomistic.wyckoff.WyckoffPosition, Ellipsis]
+
+
+      The Wyckoff positions, ordered most specific first.
+
+      Sorted by ``(free_count, multiplicity, letter)``, so identifying a coordinate by
+      walking this order returns the most specific position it lies on.
+
+
+   .. py:method:: wyckoff_position(letter: str) -> httk.atomistic.wyckoff.WyckoffPosition
+
+      The Wyckoff position with the given letter, e.g. ``"e"``.
+
+
+
+   .. py:method:: identify_wyckoff(coordinate: Any) -> tuple[httk.atomistic.wyckoff.WyckoffPosition, httk.core.FracVector] | None
+
+      The most specific Wyckoff position holding an exact coordinate, and its parameters.
+
+      Returns ``None`` when the coordinate lies on no position, which for a complete
+      table means the input was not an exact rational site of this group. Matching is
+      exact: an approximate coordinate must be snapped first (see
+      :class:`~httk.atomistic.ASUStructure`'s recognition path), never passed here in
+      the hope that it lands.
+
+
+
+   .. py:property:: transform_from_standard
+      :type: httk.atomistic.setting_transform.SettingTransform
+
+
+      The change of basis taking the IT standard setting's coordinates into this one.
+
+      The identity exactly when this *is* the standard setting.
+
+
+   .. py:method:: standard_setting() -> Spacegroup
+
+      The IT standard setting for this space-group number.
+
+
+
+.. py:function:: wyckoff_letter_map(standard: Spacegroup, target: Spacegroup) -> dict[str, str]
+
+   How Wyckoff letters of the standard setting name themselves in another setting.
+
+   Almost always the identity — but not always, and the exception is silent. Across all
+   3210 non-reference ``(setting, letter)`` pairs in the vendored tables, exactly one
+   setting permutes letters: in ``224:1`` the standard setting's ``j`` is that setting's
+   ``i`` and vice versa. So a CIF that declares site ``24i`` in setting ``224:1`` does
+   *not* mean standard-setting letter ``i``, and taking the letter at face value across
+   a setting boundary produces the wrong structure with no error.
+
+   Computed rather than hard-coded, so it survives a data refresh: each standard position
+   is evaluated at generic parameters, mapped through the setting transform, and
+   identified in the target's own Wyckoff table.
+
+
+.. py:class:: Species
+
+   A chemical species occupying one or more sites, mirroring the OPTIMADE ``species`` object.
+
+   A species has a ``name`` (unique within a structure; it need not be a chemical
+   symbol), a list of ``chemical_symbols`` composing it, and a matching list of
+   ``concentration`` values. Each chemical symbol is an element symbol, or one of
+   the pseudo-symbols ``"X"`` (unknown) or ``"vacancy"``. The optional ``mass``,
+   ``attached``, ``nattached``, and ``original_name`` fields carry the remaining
+   OPTIMADE species information; ``attached`` and ``nattached`` must be given
+   together and share their length.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: chemical_symbols
+      :type:  tuple[str, Ellipsis]
+
+
+   .. py:attribute:: concentration
+      :type:  tuple[float, Ellipsis]
+
+
+   .. py:attribute:: mass
+      :type:  tuple[float, Ellipsis] | None
+      :value: None
+
+
+
+   .. py:attribute:: original_name
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: attached
+      :type:  tuple[str, Ellipsis] | None
+      :value: None
+
+
+
+   .. py:attribute:: nattached
+      :type:  tuple[int, Ellipsis] | None
+      :value: None
+
+
+
+   .. py:property:: is_single_element
+      :type: bool
+
+
+      Whether this species is a single, unattached, real chemical element.
+
+      True only for a species composed of exactly one element symbol (not ``"X"``
+      or ``"vacancy"``) with no attached particles. Such species are the ones that
+      can be represented as a bare atomic number in the primitive representation.
+
+
+   .. py:method:: create(obj: Species | dict[str, Any] | str | int) -> Species
+      :classmethod:
+
+
+      Return a Species from an existing Species, bare symbol or atomic number, or
+      OPTIMADE species dict.
+
+      A bare element symbol, ``"X"``, or ``"vacancy"`` denotes a fully occupied
+      single-symbol species. A bare atomic number denotes the corresponding element.
+
+
+
+.. py:class:: SpeciesAPI
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Abstract base class for the canonical single-species interface.
+
+   It declares the accessors mirroring the OPTIMADE ``species`` fields that every
+   species backend produces from its own native representation and every species view
+   builds its presentation from: ``name``, ``chemical_symbols``, ``concentration``,
+   and the optional ``mass``, ``attached``, ``nattached``, and ``original_name``.
+
+
+   .. py:property:: name
+      :type: str
+
+      :abstractmethod:
+
+
+
+   .. py:property:: chemical_symbols
+      :type: tuple[str, Ellipsis]
+
+      :abstractmethod:
+
+
+
+   .. py:property:: concentration
+      :type: tuple[float, Ellipsis]
+
+      :abstractmethod:
+
+
+
+   .. py:property:: mass
+      :type: tuple[float, Ellipsis] | None
+
+      :abstractmethod:
+
+
+
+   .. py:property:: attached
+      :type: tuple[str, Ellipsis] | None
+
+      :abstractmethod:
+
+
+
+   .. py:property:: nattached
+      :type: tuple[int, Ellipsis] | None
+
+      :abstractmethod:
+
+
+
+   .. py:property:: original_name
+      :type: str | None
+
+      :abstractmethod:
+
+
+
+.. py:class:: SpeciesBackend(backend, **hints)
+
+   Bases: :py:obj:`httk.core.Backend`\ [\ :py:obj:`SpeciesBackend`\ ], :py:obj:`httk.atomistic.species_api.SpeciesAPI`
+
+
+   Abstract base class for all backends of single-species data.
+
+   Concrete backends carry a native representation and produce the canonical OPTIMADE
+   species accessors declared by ``SpeciesAPI`` from it.
+
+
+   .. py:attribute:: backend_classes
+      :type:  ClassVar[list[type[httk.core.Backend[Any]]]]
+
+
+.. py:class:: SpeciesClass(obj: httk.atomistic.species.Species | str | int, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.species_backend.SpeciesBackend`
+
+
+   Backend for a species backed by an actual ``Species`` object.
+
+   Its accessors delegate to the wrapped Species, and ``unwrap`` returns that Species.
+
+
+   .. py:property:: name
+      :type: str
+
+
+
+   .. py:property:: chemical_symbols
+      :type: tuple[str, Ellipsis]
+
+
+
+   .. py:property:: concentration
+      :type: tuple[float, Ellipsis]
+
+
+
+   .. py:property:: mass
+      :type: tuple[float, Ellipsis] | None
+
+
+
+   .. py:property:: attached
+      :type: tuple[str, Ellipsis] | None
+
+
+
+   .. py:property:: nattached
+      :type: tuple[int, Ellipsis] | None
+
+
+
+   .. py:property:: original_name
+      :type: str | None
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: SpeciesClassView(obj: httk.atomistic.species_like.SpeciesLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.species_view.SpeciesView`, :py:obj:`httk.atomistic.species.Species`
+
+
+   A view presenting an underlying species backend as a ``Species``.
+
+   This view is a genuine frozen ``Species``, so it can be passed anywhere a Species is
+   accepted. Its fields are built eagerly from the backend on construction, with full
+   ``Species`` validation applied at that point.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:type:: SpeciesLike
+   :canonical: species_backend.SpeciesBackend | species_view.SpeciesView | species.Species | dict[str, Any] | str | int
+
+
+.. py:class:: SpeciesPrimitive(obj: dict[str, Any], **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.species_backend.SpeciesBackend`
+
+
+   Backend for a species backed by an OPTIMADE species dict.
+
+   The native representation is a mapping with the OPTIMADE ``species`` fields; the
+   required ``name``/``chemical_symbols``/``concentration`` are validated conservatively
+   on construction. The accessors read the corresponding fields (optional fields absent
+   from the dict read as ``None``), and ``unwrap`` returns the original dict.
+
+
+   .. py:property:: name
+      :type: str
+
+
+
+   .. py:property:: chemical_symbols
+      :type: tuple[str, Ellipsis]
+
+
+
+   .. py:property:: concentration
+      :type: tuple[float, Ellipsis]
+
+
+
+   .. py:property:: mass
+      :type: tuple[float, Ellipsis] | None
+
+
+
+   .. py:property:: attached
+      :type: tuple[str, Ellipsis] | None
+
+
+
+   .. py:property:: nattached
+      :type: tuple[int, Ellipsis] | None
+
+
+
+   .. py:property:: original_name
+      :type: str | None
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: SpeciesPrimitiveView(obj: httk.atomistic.species_like.SpeciesLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.species_view.SpeciesView`, :py:obj:`dict`
+
+
+   A view presenting an underlying species backend as an OPTIMADE species dict.
+
+   This view is a genuine ``dict`` carrying the OPTIMADE ``species`` fields (optional
+   fields that are ``None`` are omitted; list-valued fields are plain lists). Unlike the
+   immutable-subclass views, a dict is mutable, so this view is a detached copy: mutating
+   it does not affect the underlying backend.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: SpeciesView
+
+   Bases: :py:obj:`httk.core.View`\ [\ :py:obj:`httk.atomistic.species_backend.SpeciesBackend`\ ]
+
+
+   Abstract base class for all views of single-species data.
+
+
+.. py:class:: ConventionalCellResult
+
+   A structure in its space group's IT standard-setting conventional cell.
+
+   ``asu`` is the new standard-setting ASU that was expanded to make ``structure``.
+   ``transform`` is the standard-to-own transform from the ASU that was supplied to, or
+   recognized from, the operation; its orientation is :math:`f_own = f_std M^T + v`, so
+   this operation undoes it for the cell basis. ``multiplier`` is the exact ratio of
+   conventional-cell site count to input-cell site count. For the 527 vendored settings
+   it is at least one; an untabulated, caller-supplied supercell transform may still
+   produce a ratio below one.
+
+
+   .. py:attribute:: structure
+      :type:  httk.atomistic.structure.Structure
+
+
+   .. py:attribute:: asu
+      :type:  httk.atomistic.asu_structure.ASUStructure
+
+
+   .. py:attribute:: spacegroup
+      :type:  httk.atomistic.spacegroup.Spacegroup
+
+
+   .. py:attribute:: transform
+      :type:  httk.atomistic.setting_transform.SettingTransform
+
+
+   .. py:attribute:: multiplier
+      :type:  fractions.Fraction
+
+
+.. py:function:: conventional_cell(structure: httk.atomistic.structure_like.StructureLike | httk.atomistic.asu_structure.ASUStructure, *, tolerance: float | None = None, limit_denominator: int | None = None) -> ConventionalCellResult
+
+   Return ``structure`` in its space group's IT standard-setting conventional cell.
+
+   An existing :class:`~httk.atomistic.ASUStructure` (including an
+   :class:`~httk.atomistic.ASUStructureView`, an ASU backend, or a full-cell view backed
+   by one) is used exactly as stored. Supplying ``tolerance`` or ``limit_denominator`` for
+   that path raises :class:`ValueError`, because those arguments belong to recognition.
+   Any other :class:`~httk.atomistic.StructureLike` is first passed to
+   :func:`~httk.atomistic.recognize_asu`. That tolerant step may snap measured coordinates
+   onto symmetry positions and chooses the transform recorded in the result; it does not
+   preserve an unstated input transform or promise a :func:`~httk.atomistic.same_crystal`
+   match to noisy input coordinates. The optional tolerance is a Cartesian matching
+   distance and the optional denominator limit idealises free parameters.
+
+   The returned ``transform`` is the existing ASU's transform, or the transform chosen by
+   recognition for a plain input; the returned ``asu`` has an identity transform.
+   Construction and expansion are exact, including the rhombohedral case where the
+   standard hexagonal cell contains three primitive cells. Basis precision is multiplied by
+   ``M.T()`` and coordinate precision by the maximum absolute column sum of
+   ``inv(M.T())``; unknown precision remains unknown. Requires a fully 3D-periodic
+   structure.
+
+
+.. py:class:: Structure(cell: httk.atomistic.cell_like.CellLike, sites: httk.atomistic.sites_like.SitesLike, species: collections.abc.Sequence[httk.atomistic.species_like.SpeciesLike], species_at_sites: collections.abc.Sequence[str])
+
+   A crystal structure in the Unitcell representation.
+
+   A Structure holds a ``cell`` (a ``Cell`` of 3x3 cell vectors), ``sites`` (a ``Sites``
+   of Nx3 reduced coordinates), a list of ``species`` (each a ``Species``), and a
+   length-N ``species_at_sites`` giving the species name occupying each site. Inputs are
+   normalized on construction through the component families: the cell, sites, and each
+   species are passed through their ``*Like`` unions, and every ``species_at_sites`` name
+   must match one of the (uniquely named) species.
+
+   The numeric model is exact and split by purpose. The fractional frame — reduced coordinates
+   and symmetry — is rational and lives in ``sites`` as a :class:`~httk.core.FracVector`. The
+   Cartesian frame — where radicals such as the hexagonal ``sqrt(3)`` appear — is exact in the
+   squarefree-radical field: ``cell.basis`` is a :class:`~httk.core.SurdVector` and
+   :meth:`cartesian_sites` returns the exact Cartesian positions. Pure magnitudes (bond-length
+   comparisons) stay rational-exact via ``cell.metric()``. Floats appear only at the presentation
+   and JSON boundaries.
+
+
+   .. py:property:: cell
+      :type: httk.atomistic.cell.Cell
+
+
+      The cell (3x3 cell vectors) as a ``Cell``.
+
+
+   .. py:property:: sites
+      :type: httk.atomistic.sites.Sites
+
+
+      The site coordinates (Nx3 reduced coordinates) as a ``Sites``.
+
+
+   .. py:property:: species
+      :type: tuple[httk.atomistic.species.Species, Ellipsis]
+
+
+      The distinct species of this structure.
+
+
+   .. py:property:: species_at_sites
+      :type: tuple[str, Ellipsis]
+
+
+      The species name occupying each site, in site order.
+
+
+   .. py:property:: coordinate_precision
+      :type: fractions.Fraction | None
+
+
+      How precisely the reduced coordinates were stated, in fractional units, or ``None``.
+
+      Read through from :attr:`sites`. Dimensionless — see :meth:`cartesian_precision`
+      for the corresponding length.
+
+
+   .. py:property:: basis_precision
+      :type: fractions.Fraction | None
+
+
+      How precisely the cell basis was stated, as an absolute length, or ``None``.
+
+      Read through from :attr:`cell`.
+
+
+   .. py:property:: periodicity
+      :type: tuple[bool, bool, bool]
+
+
+      Which of the three basis rows is a genuine lattice translation.
+
+      Read through from :attr:`cell`, where the full account lives. ``(True, True, True)``
+      for an ordinary crystal, which is what a structure built without saying otherwise is.
+
+
+   .. py:property:: nperiodic_dimensions
+      :type: int
+
+
+      How many of the three directions are periodic, from 0 to 3.
+
+
+   .. py:method:: cartesian_precision() -> fractions.Fraction | None
+
+      The coordinate precision as a length, or ``None`` if it is unknown.
+
+      This is the number a real tolerance wants — an interatomic matching tolerance or an
+      spglib ``symprec`` is a distance, and a fractional precision is not. A coordinate
+      good to ``1e-4`` of a cell edge means something quite different in a 3 Å cell and a
+      30 Å one.
+
+      Computed as the fractional precision times the *longest* cell edge, which is the
+      conservative choice: it is the largest displacement that fractional uncertainty can
+      produce along any axis. The cell's own precision is folded in as well, since a cell
+      stated to ``1e-3`` cannot place an atom better than that however many digits the
+      coordinates carry.
+
+
+
+   .. py:method:: cartesian_sites() -> httk.core.SurdVector
+
+      The exact Cartesian site positions as an ``(N, 3)`` :class:`~httk.core.SurdVector`.
+
+      Under the row-vector convention this is ``reduced_coords * cell.basis`` (each Cartesian
+      position is the sum over lattice vectors ``sum_k reduced[k] * basis[k]``). The reduced
+      coordinates are rational (a ``FracVector``), the cell basis carries the radicals (a
+      ``SurdVector``), so the product is exact in the surd field — the hexagonal ``sqrt(3)``
+      survives into the Cartesian positions.
+
+
+
+   .. py:method:: numeric() -> httk.atomistic.numeric_unitcell_structure_view.NumericUnitcellStructureView
+
+      A plain-numpy presentation of this structure (requires the ``httk-atomistic[numpy]`` extra).
+
+
+
+   .. py:method:: supercell(transformation: httk.core.VectorLike, *, max_sites: int | None = 100000) -> httk.atomistic.supercell.SupercellResult
+
+      Build an exact supercell from an integer 3x3 transformation.
+
+
+
+   .. py:method:: orthogonal_supercell(multiplier: int | None = None, *, tolerance: fractions.Fraction | str | float | None = None, max_multiplier: int | None = None, search_radius: int = 1, max_sites: int | None = 100000) -> httk.atomistic.supercell.SupercellResult
+
+      Build a deterministically selected orthogonal supercell.
+
+
+
+   .. py:method:: cubic_supercell(multiplier: int | None = None, *, tolerance: fractions.Fraction | str | float | None = None, max_multiplier: int | None = None, search_radius: int = 1, max_sites: int | None = 100000) -> httk.atomistic.supercell.SupercellResult
+
+      Build a deterministically selected cubic supercell.
+
+
+
+   .. py:method:: conventional_cell(*, tolerance: float | None = None, limit_denominator: int | None = None) -> httk.atomistic.standardization.ConventionalCellResult
+
+      Express this structure in its space group's IT standard-setting conventional cell.
+
+
+
+.. py:class:: StructureAPI
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Abstract base class for the canonical structure interface.
+
+   It declares the Unitcell quartet that every structure backend produces from its
+   own native representation and every structure view builds its presentation
+   from: ``cell``, ``sites``, ``species``, and ``species_at_sites``. This is the
+   single interchange format; there is no pairwise conversion between backends.
+
+
+   .. py:property:: cell
+      :type: httk.atomistic.cell.Cell
+
+      :abstractmethod:
+
+
+
+   .. py:property:: sites
+      :type: httk.atomistic.sites.Sites
+
+      :abstractmethod:
+
+
+
+   .. py:property:: species
+      :type: tuple[httk.atomistic.species.Species, Ellipsis]
+
+      :abstractmethod:
+
+
+
+   .. py:property:: species_at_sites
+      :type: tuple[str, Ellipsis]
+
+      :abstractmethod:
+
+
+
+.. py:class:: StructureASU(obj: httk.atomistic.asu_structure.ASUStructure, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.structure_backend.StructureBackend`
+
+
+   Backend for a crystal structure carried as its asymmetric unit.
+
+   ``cell`` and ``species`` come straight off the ASU. ``sites`` and ``species_at_sites``
+   are the expansion, generated on first access and cached by the ASUStructure itself.
+
+
+   .. py:property:: cell
+      :type: httk.atomistic.cell.Cell
+
+
+
+   .. py:property:: sites
+      :type: httk.atomistic.sites.Sites
+
+
+
+   .. py:property:: species
+      :type: tuple[httk.atomistic.species.Species, Ellipsis]
+
+
+
+   .. py:property:: species_at_sites
+      :type: tuple[str, Ellipsis]
+
+
+
+   .. py:property:: asu
+      :type: httk.atomistic.asu_structure.ASUStructure
+
+
+      The underlying asymmetric unit, so a view can adopt it without re-deriving it.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: StructureBackend(backend, **hints)
+
+   Bases: :py:obj:`httk.core.Backend`\ [\ :py:obj:`StructureBackend`\ ], :py:obj:`httk.atomistic.structure_api.StructureAPI`
+
+
+   Abstract base class for all backends of crystal structure data.
+
+   Concrete backends carry a native representation and produce the canonical
+   Unitcell quartet declared by ``StructureAPI`` from it.
+
+
+   .. py:attribute:: backend_classes
+      :type:  ClassVar[list[type[httk.core.Backend[Any]]]]
+
+
+.. py:function:: same_crystal(first: httk.atomistic.structure_like.StructureLike, second: httk.atomistic.structure_like.StructureLike) -> bool
+
+   Whether two structures describe the same crystal.
+
+   True when they have the same cell and the same *multiset* of occupied sites, comparing
+   each site by its species and its reduced coordinate wrapped into ``[0, 1)``. Site order
+   is ignored, and so is which lattice translate of a site was written down.
+
+   The comparison is exact, not approximate: reduced coordinates are exact rationals and
+   cell bases are exact, so two structures that differ by any amount at all compare
+   unequal. There is deliberately no tolerance parameter — a tolerant comparison belongs
+   with the recognition step that snaps a measured structure onto an idealised one, not
+   here.
+
+   Periodicity takes part in two ways. Cells must agree on it, so a slab is never the same
+   crystal as the bulk with the same lattice vectors. And only the periodic directions are
+   wrapped, since along the others there is no lattice translate to be indifferent about —
+   an atom at ``1.05`` really is somewhere else than one at ``0.05``. The comparison stays
+   exact in the frame as written: two descriptions of the same slab that differ in their
+   non-periodic frame vector compare unequal, because reconciling them would need an origin
+   convention this function deliberately does not have.
+
+   Accepts anything structure-like on either side, so a
+   :class:`~httk.atomistic.Structure` may be compared directly against an
+   :class:`~httk.atomistic.ASUStructure` without expanding it by hand.
+
+
+.. py:class:: StructureEntryProvider(entries: collections.abc.Mapping[str, httk.atomistic.structure_like.StructureLike | None], *, extra_definitions: collections.abc.Mapping[str, httk.core.PropertyDefinition] | None = None, properties: collections.abc.Mapping[str, collections.abc.Mapping[str, Any]] | None = None)
+
+   Bases: :py:obj:`httk.core.EntryProvider`
+
+
+   Serves OPTIMADE ``structures`` from a mapping of id to structure.
+
+   ``entries`` maps each entry id to a :class:`~httk.atomistic.Structure` (or
+   any structure exposing the ``cell``/``sites``/``species``/
+   ``species_at_sites`` quartet, or a ``(cell, sites, species,
+   species_at_sites)`` tuple), or to ``None`` for a known entry that has no
+   structure (its structural properties then serve null).
+
+   The always-served structural fields are ``id``, ``type``, ``nsites``,
+   ``elements``, ``nelements``, ``species`` (as OPTIMADE species dicts),
+   ``species_at_sites``, ``lattice_vectors`` (the cell basis rows),
+   ``cartesian_site_positions`` (reduced coordinates times the cell basis), and
+   ``structure_features`` (``disorder`` when any species mixes several chemical
+   symbols; ``site_attachments`` when any species has attached atoms). The
+   standard composition fields ``nperiodic_dimensions``, ``dimension_types``,
+   ``elements_ratios``, ``chemical_formula_reduced`` / ``_anonymous`` /
+   ``_descriptive`` are auto-derived for a fully ordered structure (every
+   species a single, unattached element), else served as null.
+
+   ``extra_definitions`` extends the served entry-type definition with custom
+   database-specific properties (each carrying a registered prefix), and
+   ``properties`` supplies their per-entry values as ``{entry_id: {name:
+   value}}``; every property named there MUST be described by the (extended)
+   definition (a :class:`ValueError` at construction names any offender), and a
+   value absent for an entry is served as null.
+
+
+   .. py:method:: entry_types() -> collections.abc.Mapping[str, httk.core.EntryTypeDefinition]
+
+      Return the served entry types keyed by name.
+
+      Each value is an
+      :class:`~httk.core.property_definitions.EntryTypeDefinition` describing
+      the entry type and its properties. The subset a provider actually serves
+      is named by :meth:`property_keys`; a definition may describe more
+      properties than are served.
+
+
+
+   .. py:method:: property_keys(entry_type: str) -> collections.abc.Mapping[str, str]
+
+      Return the served-property-name to record-key map for ``entry_type``.
+
+      The mapping MUST include entries for at least ``id`` and ``type``. Every
+      key names a property described by :meth:`entry_types`; every value names
+      the key under which that property's value is found in a record from
+      :meth:`records`.
+
+
+
+   .. py:method:: records(entry_type: str) -> collections.abc.Iterable[collections.abc.Mapping[str, Any]]
+
+      Yield the records for ``entry_type`` as plain JSON-able mappings.
+
+      Each record is a mapping keyed by the record keys named in
+      :meth:`property_keys`; values are JSON-able (strings, numbers, booleans,
+      ``None``, or nested lists/dicts of the same).
+
+
+
+.. py:type:: StructureLike
+   :canonical: structure_backend.StructureBackend | structure_view.StructureView | structure.Structure | structure_record.StructureRecord | asu_structure.ASUStructure | compat.ASEAtomsProtocol | tuple[httk.core.VectorLike, httk.core.VectorLike, Any] | list[Any]
+
+
+.. py:class:: StructurePrimitive(obj: Any, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.structure_backend.StructureBackend`
+
+
+   Backend for a crystal structure backed by an spglib-like triple.
+
+   The native representation is a length-3 ``(lattice, positions, numbers)`` list
+   or tuple, where ``lattice`` is 3x3, ``positions`` is Nx3 reduced coordinates,
+   and ``numbers`` is the length-N sequence of atomic numbers. The quartet is
+   derived lazily and cached: ``cell`` is a ``Cell``, ``sites`` a ``Sites``,
+   ``species`` one single-element ``Species`` per distinct atomic number, and
+   ``unwrap`` returns the original triple.
+
+
+   .. py:property:: cell
+      :type: httk.atomistic.cell.Cell
+
+
+
+   .. py:property:: sites
+      :type: httk.atomistic.sites.Sites
+
+
+
+   .. py:property:: species
+      :type: tuple[httk.atomistic.species.Species, Ellipsis]
+
+
+
+   .. py:property:: species_at_sites
+      :type: tuple[str, Ellipsis]
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: StructurePrimitiveView(obj: httk.atomistic.structure_like.StructureLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.structure_view.StructureView`, :py:obj:`tuple`
+
+
+   A view presenting an underlying structure backend as a primitive triple.
+
+   This view is a genuine ``(lattice, positions, numbers)`` tuple, built eagerly
+   and immutable. Because the primitive representation carries only bare atomic
+   numbers, every site's species must be a single, unattached chemical element
+   (see ``Species.is_single_element``); otherwise a TypeError is raised.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: SpeciesRecord
+
+   The storable frozen snapshot of an atomistic :class:`~httk.atomistic.Species`.
+
+   The presence flags preserve ``None`` for optional tuple fields because a relational child
+   table cannot distinguish a missing optional value from an empty tuple when reconstructing.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: chemical_symbols
+      :type:  tuple[str, Ellipsis]
+
+
+   .. py:attribute:: concentration
+      :type:  tuple[float, Ellipsis]
+
+
+   .. py:attribute:: mass
+      :type:  tuple[float, Ellipsis] | None
+      :value: None
+
+
+
+   .. py:attribute:: original_name
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: attached
+      :type:  tuple[str, Ellipsis] | None
+      :value: None
+
+
+
+   .. py:attribute:: nattached
+      :type:  tuple[int, Ellipsis] | None
+      :value: None
+
+
+
+   .. py:attribute:: mass_present
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: attached_present
+      :type:  bool
+      :value: False
+
+
+
+   .. py:method:: from_species(species: httk.atomistic.species.Species) -> SpeciesRecord
+      :classmethod:
+
+
+      Create a storage record containing the exact species metadata.
+
+
+
+   .. py:method:: to_species() -> httk.atomistic.species.Species
+
+      Reconstruct the domain :class:`~httk.atomistic.Species` from this snapshot.
+
+
+
+.. py:class:: StructureRecord
+
+   A storable snapshot of a complete :class:`~httk.atomistic.Structure`.
+
+   This record is a snapshot, not a live proxy: changing a source ``Structure`` does not
+   update it, and changing a record does not update a previously reconstructed structure.
+   Rationals, surd bases, precisions, and periodicity remain exact. Species float fields
+   round-trip at IEEE-double fidelity, with the SQL layer's documented caveat that ``-0.0``
+   may return as ``+0.0``.
+
+   ``periodicity`` is annotated as a list because the storage schema supports homogeneous
+   variable-length sequences, not fixed-length tuples. It is copied and validated here so
+   callers cannot mutate the input list through the record. Construction also builds and
+   discards the domain ``Structure`` once, so invalid domain combinations cannot exist.
+
+
+   .. py:attribute:: basis
+      :type:  tuple[httk.core.SurdScalar, Ellipsis]
+
+
+   .. py:attribute:: reduced_coords
+      :type:  Annotated[httk.core.FracVector, httk.core.storage_markers.Shape(0, 3)]
+
+
+   .. py:attribute:: species
+      :type:  tuple[SpeciesRecord, Ellipsis]
+
+
+   .. py:attribute:: species_at_sites
+      :type:  tuple[str, Ellipsis]
+
+
+   .. py:attribute:: periodicity
+      :type:  list[bool]
+
+
+   .. py:attribute:: basis_precision
+      :type:  fractions.Fraction | None
+
+
+   .. py:attribute:: coordinate_precision
+      :type:  fractions.Fraction | None
+
+
+   .. py:method:: from_structure(structure: httk.atomistic.structure_like.StructureLike) -> StructureRecord
+      :classmethod:
+
+
+      Take a canonical snapshot of any :data:`~httk.atomistic.StructureLike` input.
+
+
+
+   .. py:method:: to_structure() -> httk.atomistic.structure.Structure
+
+      Rebuild the exact :class:`~httk.atomistic.Structure` represented by this snapshot.
+
+
+
+.. py:class:: StructureRecordBackend(obj: httk.atomistic.structure_record.StructureRecord, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.structure_backend.StructureBackend`
+
+
+   Backend exposing a ``StructureRecord`` through the structure quartet.
+
+
+   .. py:property:: cell
+      :type: httk.atomistic.cell.Cell
+
+
+
+   .. py:property:: sites
+      :type: httk.atomistic.sites.Sites
+
+
+
+   .. py:property:: species
+      :type: tuple[httk.atomistic.species.Species, Ellipsis]
+
+
+
+   .. py:property:: species_at_sites
+      :type: tuple[str, Ellipsis]
+
+
+
+   .. py:method:: unwrap() -> httk.atomistic.structure_record.StructureRecord
+
+      Return the stored snapshot rather than the reconstructed structure.
+
+
+
+.. py:class:: StructureView
+
+   Bases: :py:obj:`httk.core.View`\ [\ :py:obj:`httk.atomistic.structure_backend.StructureBackend`\ ]
+
+
+   Abstract base class for all views of crystal structure data.
+
+
+.. py:class:: SupercellResult
+
+   A materialized supercell together with its exact construction metadata.
+
+   ``orthogonality_score`` is the sum of the squared pairwise cosines between
+   cell vectors. ``cubicity_score`` is the squared Frobenius distance between
+   the trace-normalized Gram matrix and the identity. Both are exact
+   :class:`~httk.core.SurdScalar` values; zero proves the ideal shape exactly.
+
+
+   .. py:attribute:: structure
+      :type:  httk.atomistic.structure.Structure
+
+
+   .. py:attribute:: transformation
+      :type:  httk.core.FracVector
+
+
+   .. py:attribute:: multiplier
+      :type:  int
+
+
+   .. py:attribute:: orthogonality_score
+      :type:  httk.core.SurdScalar
+
+
+   .. py:attribute:: cubicity_score
+      :type:  httk.core.SurdScalar
+
+
+.. py:function:: build_supercell(structure: httk.atomistic.structure_like.StructureLike, transformation: httk.core.VectorLike, *, max_sites: int | None = DEFAULT_MAX_SITES) -> SupercellResult
+
+   Build the exact supercell selected by an integer transformation matrix.
+
+   Lattice vectors are rows and the returned basis is ``transformation * basis``.
+   Reduced coordinates are transformed by the inverse matrix and wrapped into
+   ``[0, 1)``. Any input representation is first presented as a full
+   :class:`~httk.atomistic.structure.Structure`.
+
+   Requires a fully 3D-periodic structure. Repeating a slab within its own plane is a
+   perfectly sensible operation, but it is not this one: the transformation matrix here
+   mixes all three rows and the coordinates are wrapped in all three directions, so applied
+   to a reduced-periodicity cell it would generate images along a direction that has no
+   lattice translation. Refused rather than half-supported.
+
+
+.. py:function:: cubic_supercell(structure: httk.atomistic.structure_like.StructureLike, multiplier: int | None = None, *, tolerance: fractions.Fraction | str | float | None = None, max_multiplier: int | None = None, search_radius: int = 1, max_sites: int | None = DEFAULT_MAX_SITES) -> SupercellResult
+
+   Build the most cubic supercell in the bounded candidate set.
+
+   Exactly one of ``multiplier`` and ``tolerance`` must be provided. With
+   ``multiplier``, it is the exact number of source cells in the result.
+   With ``tolerance``, the multiplier is increased from one until the exact
+   cubicity score is at most the given bound, up to ``max_multiplier``.
+   Candidate matrices are centered on the ideal cubic real-valued transform
+   and vary each integer entry by at most ``search_radius`` (0--2); diagonal
+   factorizations provide guaranteed determinant-matching fallbacks.
+
+
+.. py:function:: orthogonal_supercell(structure: httk.atomistic.structure_like.StructureLike, multiplier: int | None = None, *, tolerance: fractions.Fraction | str | float | None = None, max_multiplier: int | None = None, search_radius: int = 1, max_sites: int | None = DEFAULT_MAX_SITES) -> SupercellResult
+
+   Build the most orthogonal supercell in the bounded candidate set.
+
+   Exactly one of ``multiplier`` and ``tolerance`` must be provided. With
+   ``multiplier``, it is the exact number of source cells in the result.
+   With ``tolerance``, the multiplier is increased from one until the exact
+   orthogonality score is at most the given bound, up to ``max_multiplier``.
+   Candidate matrices are centered on the ideal cubic real-valued transform
+   and vary each integer entry by at most ``search_radius`` (0--2); diagonal
+   factorizations provide guaranteed determinant-matching fallbacks. Exact
+   orthogonality is ranked first and cubicity breaks equal-shape ties.
+
+
+.. py:function:: setting_definitions() -> dict[str, httk.core.PropertyDefinition]
+
+   The vendored setting definitions, keyed by their served name.
+
+   Loaded verbatim, so each keeps the ``$id`` under ``schemas.httk.org`` that makes it
+   resolvable. Cached, since the documents are immutable.
+
+
+.. py:function:: symmetry_properties(structure: Any) -> dict[str, Any]
+
+   Every symmetry property for one structure, standard and provider-specific alike.
+
+   A structure that is not an :class:`~httk.atomistic.ASUStructure` carries no symmetry, so
+   everything but ``fractional_site_positions`` serves null. That is the honest answer:
+   inferring a space group here would mean running a symmetry search behind the caller's
+   back, with a tolerance nobody chose, on every record served.
+
+
+.. py:class:: UnitcellStructureBackend(obj: httk.atomistic.structure.Structure, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.structure_backend.StructureBackend`
+
+
+   Backend for a crystal structure backed by an actual ``Structure`` object.
+
+   Its quartet accessors delegate to the wrapped Structure, and ``unwrap`` returns
+   that Structure.
+
+
+   .. py:property:: cell
+      :type: httk.atomistic.cell.Cell
+
+
+
+   .. py:property:: sites
+      :type: httk.atomistic.sites.Sites
+
+
+
+   .. py:property:: species
+      :type: tuple[httk.atomistic.species.Species, Ellipsis]
+
+
+
+   .. py:property:: species_at_sites
+      :type: tuple[str, Ellipsis]
+
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this backend, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:class:: UnitcellStructureView(obj: httk.atomistic.structure_like.StructureLike, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.structure_view.StructureView`, :py:obj:`httk.atomistic.structure.Structure`
+
+
+   A view presenting an underlying structure backend as a ``Structure``.
+
+   This view is a genuine ``Structure``, so it can be passed anywhere a Structure
+   is accepted. Its quartet is built eagerly from the backend on construction.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the most raw representation possible of this view, i.e., if it uses a backend with an internal representaion -
+      or if it can (possibly lossly) convert itself into a more raw representation that still would be recognized as a <Something>Like type,
+      that representation will be returned. If this is not possible, the instance itself is returned.
+
+
+
+.. py:function:: load_asu_structure(path: str, **options: Any) -> Any
+
+   Load a file and build an :class:`~httk.atomistic.ASUStructure` from it.
+
+   Currently CIF only, since it is the format that states its own symmetry. Unlike
+   :func:`load_structure` this keeps the asymmetric-unit form rather than expanding it,
+   so the space group, the Wyckoff position of each site, and the file's setting all
+   survive. Expand it at any time with ``UnitcellStructureView(asu)``.
+
+   ``options`` are passed to :func:`~httk.atomistic.asu_structure_from_cif` — notably
+   ``tolerance`` and ``trust_declared_symmetry``, the latter being the way to load a file
+   whose declared Hall symbol or space-group number contradicts its own symmetry
+   operations.
+
+
+.. py:function:: load_structure(path: str) -> httk.atomistic.structure.Structure
+
+   Load a file and build a :class:`~httk.atomistic.Structure` from it.
+
+   ``httk.core.load(path, raw=True)`` selects the reader by file type
+   (transparently decompressing ``.bz2`` / ``.gz`` files); the payload's
+   ``"format"`` tag then selects the matching structure builder. A payload
+   without a recognized ``"format"`` tag raises a clear :class:`ValueError`.
+
+   For a CIF this expands the asymmetric unit into the full cell. Use
+   :func:`load_asu_structure` instead to keep the asymmetric-unit form, which is both
+   smaller and richer — it carries the space group, the Wyckoff assignment of every
+   site, and the setting the file was written in.
+
+
+.. py:function:: structure_from_payload(data: collections.abc.Mapping[str, Any]) -> httk.atomistic.structure.Structure
+
+   Build a :class:`~httk.atomistic.Structure` from a tagged neutral payload.
+
+   The ``"format"`` tag selects the structure builder. Currently supported
+   payloads are ``"vasp-poscar"`` and single-block ``"cif"`` mappings. A
+   multi-block CIF retains the same :class:`ValueError` as
+   :func:`load_structure`; use :func:`~httk.atomistic.cif_structures.asu_structures_from_cif` for all blocks.
+
+
+.. py:function:: structure_from_poscar(data: collections.abc.Mapping[str, Any]) -> httk.atomistic.structure.Structure
+
+   Build an exact :class:`~httk.atomistic.Structure` from a neutral POSCAR mapping.
+
+   ``data`` is the mapping returned by ``httk.io.read_poscar`` (its ``format``
+   must be ``"vasp-poscar"``). The cell basis is taken exactly from the file's
+   string rows. For a positive universal scaling factor the ``scale`` string is
+   used directly as the cell's exact scale; for a negative scaling factor (a
+   target **volume** ``V``) the scale is the cube root of ``V / |det(basis)|`` —
+   a value outside the exact surd field, so it is a deterministic rational
+   approximation (the basis rows themselves stay exact).
+
+   Direct coordinates become reduced coordinates directly (exact strings).
+   Cartesian coordinates are converted exactly as ``cart * basis.inv()`` under
+   the row-vector convention; because VASP scales *both* the lattice vectors and
+   the Cartesian positions by the universal scaling factor, that factor cancels
+   and the reduced coordinates are exact regardless of the scale/volume case.
+
+   Species come from the VASP-5 species line (one single-element, unattached
+   :class:`~httk.atomistic.Species` of concentration 1.0 per distinct symbol);
+   a VASP-4 file (no species symbols) raises a :class:`ValueError`. Selective
+   dynamics flags, if present, are ignored.
+
+
+.. py:class:: WyckoffBranch(operation: httk.atomistic.affine_operation.AffineOperation, free: collections.abc.Sequence[int])
+
+   One member of a Wyckoff position's orbit: an affine map of the free parameters.
+
+   A position of multiplicity *m* has *m* branches. The representative branch is the
+   first, but a coordinate may lie on any of them, which is why
+   :meth:`WyckoffPosition.parameters_of` tries them all.
+
+
+   .. py:property:: operation
+      :type: httk.atomistic.affine_operation.AffineOperation
+
+
+      The affine map from a full ``(x, y, z)`` parameter triple to this branch's coordinate.
+
+
+   .. py:property:: free
+      :type: tuple[int, Ellipsis]
+
+
+      Indices into ``(x, y, z)`` of the free parameters, ascending.
+
+
+   .. py:method:: coordinate(parameters: Any) -> httk.core.FracVector
+
+      The coordinate this branch places at the given free-parameter values.
+
+      ``parameters`` has one entry per free parameter. Because the non-free columns of
+      the matrix are zero, the values placed at the non-free positions are irrelevant.
+
+
+
+   .. py:method:: parameters_of(coordinate: Any) -> httk.core.FracVector | None
+
+      The free-parameter values putting this branch on ``coordinate``, or ``None``.
+
+      ``None`` means the coordinate does not lie on this branch — for *any* lattice
+      translation, not merely the one given. That completeness is what the row-Hermite
+      form buys: with ``U`` unimodular over the integers, ``A t = d (mod Z^3)`` holds iff
+      ``U A t = U d (mod Z^3)``, and the zero rows of ``U A`` turn the lattice-membership
+      question into "are these components integers?" with no search over translations.
+
+      The returned parameters are reduced into ``[0, 1)``, which is canonical: the pivot
+      block has determinant ``±1`` throughout the vendored tables, so the solution is
+      unique modulo one. The result is verified by re-evaluating the branch, so a table
+      that ever violated that assumption would yield a clean miss rather than a wrong
+      answer.
+
+
+
+   .. py:method:: nearest_parameters(coordinate: Any) -> httk.core.FracVector
+
+      The free-parameter values putting this branch as close to ``coordinate`` as it goes.
+
+      Unlike :meth:`parameters_of` this always returns a value: the free directions are
+      solved exactly and any discrepancy is left in the *fixed* directions, where the
+      branch's own coordinates win. It is the projection used when recognizing a measured
+      structure, whose coordinates carry rounding and do not lie exactly on any position.
+
+      The projection is taken along the branch's own lattice basis rather than being
+      minimised in the cell metric, so for a strongly oblique cell it is a near-optimal
+      rather than provably optimal choice. That is safe because the caller measures the
+      resulting Cartesian displacement and rejects anything beyond its tolerance — the
+      method can cost a match, never grant a wrong one.
+
+
+
+.. py:class:: WyckoffPosition(record: dict[str, Any])
+
+   A Wyckoff position of one space-group setting: a letter and its orbit.
+
+
+   .. py:method:: from_record(record: dict[str, Any]) -> Self
+      :classmethod:
+
+
+
+   .. py:property:: letter
+      :type: str
+
+
+      The Wyckoff letter, e.g. ``"e"``. Bare, with no multiplicity prefix.
+
+
+   .. py:property:: multiplicity
+      :type: int
+
+
+      How many sites one set of free-parameter values generates in the unit cell.
+
+
+   .. py:property:: site_symmetry
+      :type: str
+
+
+      The site-symmetry group in Hermann-Mauguin notation, e.g. ``"2"`` or ``"-1"``.
+
+
+   .. py:property:: free
+      :type: tuple[int, Ellipsis]
+
+
+      Indices into ``(x, y, z)`` of the free parameters.
+
+
+   .. py:property:: free_count
+      :type: int
+
+
+      How many degrees of freedom the position has, from 0 for a fixed position to 3.
+
+
+   .. py:property:: branches
+      :type: tuple[WyckoffBranch, Ellipsis]
+
+
+      The orbit, one branch per equivalent site. Complete and already deduplicated.
+
+
+   .. py:property:: representative
+      :type: WyckoffBranch
+
+
+      The first orbit member, the one the tables print as ``first_orbit``.
+
+
+   .. py:method:: coordinates(parameters: Any) -> httk.core.FracVector
+
+      Every coordinate of the orbit, as an exact ``(multiplicity, 3)`` block.
+
+      Not wrapped and not deduplicated: within one setting the tabulated orbit is
+      already distinct, so wrapping is the caller's business (and matters only once a
+      setting transform enters).
+
+
+
+   .. py:method:: parameters_of(coordinate: Any) -> httk.core.FracVector | None
+
+      The free-parameter values placing *some* branch on ``coordinate``, or ``None``.
+
+      Tries every branch, not only the representative. That matters: across the vendored
+      tables, 11673 of the 20639 non-representative orbit members lie on a different
+      branch than the representative, so a matcher that only tested ``first_orbit``
+      would reject a majority of legitimate orbit points.
+
+
+
+.. py:function:: wyckoff_positions(record: dict[str, Any]) -> tuple[WyckoffPosition, Ellipsis]
+
+   The Wyckoff positions of a setting record, most specific first.
+
+   Ordered by ``(free_count, multiplicity, letter)`` so that the first match found when
+   identifying a coordinate is the most specific position it lies on. Ties do not arise:
+   positions are affine subspaces, so a coordinate on two distinct positions of the same
+   dimension also lies on their lower-dimensional intersection, which is covered by an
+   earlier entry.
+
+

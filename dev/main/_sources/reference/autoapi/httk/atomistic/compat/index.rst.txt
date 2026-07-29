@@ -1,0 +1,108 @@
+httk.atomistic.compat
+=====================
+
+.. py:module:: httk.atomistic.compat
+
+.. autoapi-nested-parse::
+
+   ASE interoperability for the :mod:`httk.atomistic` structure family.
+
+   The protocol deliberately describes only the four ASE ``Atoms`` methods needed for
+   conversion. ASE is optional: duck-typed objects can be converted without installing
+   ASE, while :class:`~httk.atomistic.ase_atoms_view.ASEAtomsView` is available only when
+   ASE itself is installed.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.atomistic.compat.ASEAtomsProtocol
+   httk.atomistic.compat.ASEAtomsBackend
+
+
+Module Contents
+---------------
+
+.. py:class:: ASEAtomsProtocol
+
+   Bases: :py:obj:`Protocol`
+
+
+   The minimal method surface needed to treat an object as ASE ``Atoms``.
+
+   This is a runtime-checkable, duck-typed protocol. ASE is not required: any object
+   providing these four methods qualifies for :class:`ASEAtomsBackend`.
+
+
+   .. py:method:: get_cell() -> Any
+
+      Return the cell vectors as rows.
+
+
+
+   .. py:method:: get_scaled_positions() -> Any
+
+      Return the reduced positions.
+
+
+
+   .. py:method:: get_atomic_numbers() -> Any
+
+      Return one atomic number per site.
+
+
+
+   .. py:method:: get_pbc() -> Any
+
+      Return one periodicity flag per cell row.
+
+
+
+.. py:class:: ASEAtomsBackend(obj: ASEAtomsProtocol, **hints: Any)
+
+   Bases: :py:obj:`httk.atomistic.structure_backend.StructureBackend`
+
+
+   Backend for ASE ``Atoms`` and compatible duck-typed objects.
+
+   Conversion is eager because reading the four methods and normalizing their values is
+   real work. The original object remains available through :meth:`unwrap`.
+
+
+   .. py:property:: cell
+      :type: httk.atomistic.cell.Cell
+
+
+      The exact cell converted from the native cell rows.
+
+
+   .. py:property:: sites
+      :type: httk.atomistic.sites.Sites
+
+
+      The exact reduced coordinates converted from the native positions.
+
+
+   .. py:property:: species
+      :type: tuple[httk.atomistic.species.Species, Ellipsis]
+
+
+      The distinct single-element species in first-appearance order.
+
+
+   .. py:property:: species_at_sites
+      :type: tuple[str, Ellipsis]
+
+
+      The species name occupying each site.
+
+
+   .. py:method:: unwrap() -> Any
+
+      Return the original Atoms-like object.
+
+
+
