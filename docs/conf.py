@@ -151,6 +151,7 @@ nitpick_ignore = [
     ("py:class", "T"),
     # The data query API exposes this bare alias.
     ("py:class", "FilterAst"),
+    ("py:class", "_Context"),
 ]
 copybutton_prompt_text = r">>> |\.\.\. |\$ "
 copybutton_prompt_is_regexp = True

@@ -2,7 +2,7 @@
 
 In v1, `httk.load()` returned an atomistic structure directly. With
 *httk-atomistic* installed, v2 provides the same one-call experience through a
-format adapter registered during handler discovery:
+format adapter registered during registry discovery:
 
 ```python
 from httk.core import load

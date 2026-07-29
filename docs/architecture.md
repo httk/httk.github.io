@@ -11,10 +11,10 @@ definitions, entry-provider contracts, record models, and `DataLoader` — witho
 external dependencies. Parsing, data management, protocol serving, and workflow
 execution remain capabilities in other repositories.
 
-Modules expose capabilities through handler packages such as
-`httk.handlers.io`. Import-time discovery finds these packages and lets them
-register loaders or entry providers with core. A feature module and its handler
-registration package can consequently remain separate while sharing the core
+Modules expose capabilities through registry packages such as
+`httk.registry.io`. Import-time discovery finds these packages and lets them
+register loaders or entry providers with core. A feature module and its registry
+package can consequently remain separate while sharing the core
 registry contracts.
 
 One typical integration path is `httk-io` → `httk-atomistic` → `httk-optimade`:

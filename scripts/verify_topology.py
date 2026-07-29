@@ -49,7 +49,10 @@ def main() -> int:
     source_root = root / "src" / "httk"
     submodules = root / "submodules"
     shortnames = {name.removeprefix("httk-") for name in _EXPECTED_MODULES}
-    expected_root_entries = shortnames | {"handlers"}
+    stale_handler_root = source_root / "handlers"
+    if stale_handler_root.exists() or stale_handler_root.is_symlink():
+        _fail(f"stale src/httk/handlers must not exist: {stale_handler_root}")
+    expected_root_entries = shortnames | {"registry"}
     actual_root_entries = {entry.name for entry in source_root.iterdir()}
     unexpected = sorted(actual_root_entries - expected_root_entries)
     if unexpected:
@@ -61,23 +64,23 @@ def main() -> int:
             _fail(f"module checkout is missing: {module_root}")
         _inside(source_root / shortname, module_root, f"module source link for {name}")
 
-    handler_root = source_root / "handlers"
-    if not handler_root.is_dir() or handler_root.is_symlink():
-        _fail(f"src/httk/handlers must be a real directory: {handler_root}")
-    expected_handlers = {
+    registry_root = source_root / "registry"
+    if not registry_root.is_dir() or registry_root.is_symlink():
+        _fail(f"src/httk/registry must be a real directory: {registry_root}")
+    expected_registry = {
         name.removeprefix("httk-")
         for name in modules
-        if (submodules / name / "src" / "httk" / "handlers" / name.removeprefix("httk-")).exists()
+        if (submodules / name / "src" / "httk" / "registry" / name.removeprefix("httk-")).exists()
     }
-    actual_handlers = {entry.name for entry in handler_root.iterdir()}
-    unexpected_handlers = sorted(actual_handlers - expected_handlers)
-    if unexpected_handlers:
-        _fail("unexpected entries under src/httk/handlers: " + ", ".join(unexpected_handlers))
+    actual_registry = {entry.name for entry in registry_root.iterdir()}
+    unexpected_registry = sorted(actual_registry - expected_registry)
+    if unexpected_registry:
+        _fail("unexpected entries under src/httk/registry: " + ", ".join(unexpected_registry))
     for name in sorted(modules):
         shortname = name.removeprefix("httk-")
-        target = submodules / name / "src" / "httk" / "handlers" / shortname
+        target = submodules / name / "src" / "httk" / "registry" / shortname
         if target.exists():
-            _inside(handler_root / shortname, submodules / name, f"handler link for {name}")
+            _inside(registry_root / shortname, submodules / name, f"registry link for {name}")
     print("topology matches docs/ecosystem.json")
     return 0
 

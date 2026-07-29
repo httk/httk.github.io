@@ -8,7 +8,7 @@ scaffolding, versioned documentation publishing, and CI/release workflows.
 Keep the conventions that make modules composable: use `httk-core` for shared
 contracts and dependency-free models, put external-dependency capabilities in
 the appropriate module, follow the Backend/View representation pattern, and
-keep data exact and immutable by default. Add a handler package when the module
+keep data exact and immutable by default. Add a registry package when the module
 needs import-time registration with a core registry. Describe public fields with
 the relevant OPTIMADE definitions and keep the module's documentation lock and
 release metadata current.
