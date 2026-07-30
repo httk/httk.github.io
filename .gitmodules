@@ -14,13 +14,9 @@
 	path = submodules/httk-data
 	url = https://github.com/httk/httk-data
 	branch = main
-[submodule "submodules/httk-optimade"]
-	path = submodules/httk-optimade
-	url = https://github.com/httk/httk-optimade
-	branch = main
-[submodule "submodules/httk-web"]
-	path = submodules/httk-web
-	url = https://github.com/httk/httk-web
+[submodule "submodules/httk-serve"]
+	path = submodules/httk-serve
+	url = https://github.com/httk/httk-serve
 	branch = main
 [submodule "submodules/httk-workflow"]
 	path = submodules/httk-workflow

@@ -17,7 +17,7 @@ register loaders or entry providers with core. A feature module and its registry
 package can consequently remain separate while sharing the core
 registry contracts.
 
-One typical integration path is `httk-io` → `httk-atomistic` → `httk-optimade`:
+One typical integration path is `httk-io` → `httk-atomistic` → `httk-serve`:
 the I/O module reads a neutral file-format mapping, atomistic turns it into an
 exact structure model, and an OPTIMADE adapter serves described records through
 the provider contract. The layers communicate through stable core types rather

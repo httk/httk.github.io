@@ -1,6 +1,6 @@
 # Module directory
 
-The seven runtime modules share the `httk.*` namespace. Their aggregate API
+The six runtime modules share the `httk.*` namespace. Their aggregate API
 reference is pinned to this site's submodule revisions; each module also has a
 separate documentation subsite.
 
@@ -38,21 +38,13 @@ contracts. Import path: `httk.data`.
 - API reference: {doc}`httk.data </reference/autoapi/httk/data/index>`
 - Repository: <https://github.com/httk/httk-data>
 
-### httk-optimade
+### httk-serve
 
-OPTIMADE protocol serving and adaptation capabilities. Import path:
-`httk.optimade`.
+Web-facing application and OPTIMADE protocol serving capabilities. Import paths:
+`httk.serve.web` and `httk.serve.optimade`.
 
-- API reference: {doc}`httk.optimade </reference/autoapi/httk/optimade/index>`
-- Repository: <https://github.com/httk/httk-optimade>
-
-### httk-web
-
-Web-facing application capabilities built around the httk module ecosystem.
-Import path: `httk.web`.
-
-- API reference: {doc}`httk.web </reference/autoapi/httk/web/index>`
-- Repository: <https://github.com/httk/httk-web>
+- API reference: {doc}`httk.serve </reference/autoapi/httk/serve/index>`
+- Repository: <https://github.com/httk/httk-serve>
 
 ### httk-workflow
 

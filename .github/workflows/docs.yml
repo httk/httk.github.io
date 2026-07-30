@@ -53,21 +53,20 @@ jobs:
           pip install -e submodules/httk-atomistic --no-deps
           pip install -e submodules/httk-io --no-deps
           pip install -e submodules/httk-data --no-deps
-          pip install -e submodules/httk-optimade --no-deps
-          pip install -e submodules/httk-web --no-deps
+          pip install -e submodules/httk-serve --no-deps
           pip install -e submodules/httk-workflow --no-deps
           # Install the site extra after editable modules so only external dependencies resolve.
           pip install -e ".[docs]"
           pip check
       - name: Verify aggregate source resolution
         run: |
-          PYTHONPATH="$GITHUB_WORKSPACE/submodules/httk-core/src:$GITHUB_WORKSPACE/submodules/httk-atomistic/src:$GITHUB_WORKSPACE/submodules/httk-io/src:$GITHUB_WORKSPACE/submodules/httk-data/src:$GITHUB_WORKSPACE/submodules/httk-optimade/src:$GITHUB_WORKSPACE/submodules/httk-web/src:$GITHUB_WORKSPACE/submodules/httk-workflow/src" python - <<'PY'
+          PYTHONPATH="$GITHUB_WORKSPACE/submodules/httk-core/src:$GITHUB_WORKSPACE/submodules/httk-atomistic/src:$GITHUB_WORKSPACE/submodules/httk-io/src:$GITHUB_WORKSPACE/submodules/httk-data/src:$GITHUB_WORKSPACE/submodules/httk-serve/src:$GITHUB_WORKSPACE/submodules/httk-workflow/src" python - <<'PY'
           import importlib.util
           import os
           from pathlib import Path
 
           root = (Path(os.environ["GITHUB_WORKSPACE"]) / "submodules").resolve()
-          for module in ("core", "atomistic", "io", "data", "optimade", "web", "workflow"):
+          for module in ("core", "atomistic", "io", "data", "serve", "workflow"):
               spec = importlib.util.find_spec(f"httk.{module}")
               if spec is None or not spec.submodule_search_locations:
                   raise SystemExit(f"cannot resolve httk.{module}")

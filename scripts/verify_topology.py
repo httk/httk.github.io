@@ -1,12 +1,9 @@
 """Verify that the aggregate source tree follows the committed ecosystem manifest."""
 
-from __future__ import annotations
-
 import json
 import sys
 from pathlib import Path
 from typing import NoReturn
-
 
 _EXPECTED_MODULES = frozenset(
     {
@@ -14,11 +11,23 @@ _EXPECTED_MODULES = frozenset(
         "httk-atomistic",
         "httk-io",
         "httk-data",
-        "httk-optimade",
-        "httk-web",
+        "httk-serve",
         "httk-workflow",
     }
 )
+
+_EXPECTED_REGISTRY_LINKS = {
+    Path("atomistic"): "httk-atomistic",
+    Path("io"): "httk-io",
+    Path("workflow"): "httk-workflow",
+    Path("cli/core"): "httk-core",
+    Path("cli/serve"): "httk-serve",
+    Path("entries/atomistic"): "httk-atomistic",
+    Path("entries/core"): "httk-core",
+    Path("entries/data"): "httk-data",
+    Path("schemas/atomistic"): "httk-atomistic",
+    Path("schemas/core"): "httk-core",
+}
 
 
 def _fail(message: str) -> NoReturn:
@@ -31,20 +40,24 @@ def _inside(path: Path, root: Path, label: str) -> None:
     try:
         path.resolve(strict=True).relative_to(root.resolve(strict=True))
     except (FileNotFoundError, ValueError):
-        _fail(f"{label} resolves outside its module checkout: {path} -> {path.resolve()}")
+        _fail(
+            f"{label} resolves outside its module checkout: {path} -> {path.resolve()}"
+        )
 
 
 def main() -> int:
     root = Path(__file__).resolve().parents[1]
     try:
-        document = json.loads((root / "docs" / "ecosystem.json").read_text(encoding="utf-8"))
+        document = json.loads(
+            (root / "docs" / "ecosystem.json").read_text(encoding="utf-8")
+        )
         modules = document["modules"]
     except (OSError, json.JSONDecodeError, KeyError, TypeError) as exc:
         _fail(f"cannot read valid docs/ecosystem.json: {exc}")
     if not isinstance(modules, dict) or not modules:
         _fail("docs/ecosystem.json has no modules")
     if set(modules) != _EXPECTED_MODULES:
-        _fail("ecosystem module set does not contain exactly the seven expected modules")
+        _fail("ecosystem module set does not contain exactly the six expected modules")
 
     source_root = root / "src" / "httk"
     submodules = root / "submodules"
@@ -67,20 +80,44 @@ def main() -> int:
     registry_root = source_root / "registry"
     if not registry_root.is_dir() or registry_root.is_symlink():
         _fail(f"src/httk/registry must be a real directory: {registry_root}")
-    expected_registry = {
-        name.removeprefix("httk-")
-        for name in modules
-        if (submodules / name / "src" / "httk" / "registry" / name.removeprefix("httk-")).exists()
-    }
+    expected_registry = {path.parts[0] for path in _EXPECTED_REGISTRY_LINKS}
     actual_registry = {entry.name for entry in registry_root.iterdir()}
-    unexpected_registry = sorted(actual_registry - expected_registry)
-    if unexpected_registry:
-        _fail("unexpected entries under src/httk/registry: " + ", ".join(unexpected_registry))
-    for name in sorted(modules):
-        shortname = name.removeprefix("httk-")
-        target = submodules / name / "src" / "httk" / "registry" / shortname
-        if target.exists():
-            _inside(registry_root / shortname, submodules / name, f"registry link for {name}")
+    if actual_registry != expected_registry:
+        _fail(
+            "src/httk/registry entries do not match the expected namespace: "
+            + ", ".join(sorted(actual_registry))
+        )
+    nested_registry_roots = {
+        path.parts[0] for path in _EXPECTED_REGISTRY_LINKS if len(path.parts) == 2
+    }
+    for parent in sorted(nested_registry_roots):
+        namespace_root = registry_root / parent
+        if not namespace_root.is_dir() or namespace_root.is_symlink():
+            _fail(
+                f"src/httk/registry/{parent} must be a real directory: {namespace_root}"
+            )
+        expected_children = {
+            path.parts[1]
+            for path in _EXPECTED_REGISTRY_LINKS
+            if path.parts[0] == parent
+        }
+        actual_children = {entry.name for entry in namespace_root.iterdir()}
+        if actual_children != expected_children:
+            _fail(
+                f"src/httk/registry/{parent} entries do not match the expected namespace: "
+                + ", ".join(sorted(actual_children))
+            )
+    for relative, name in sorted(
+        _EXPECTED_REGISTRY_LINKS.items(), key=lambda item: str(item[0])
+    ):
+        target = submodules / name / "src" / "httk" / "registry" / relative
+        if not target.is_dir():
+            _fail(f"registry source is missing for {name}: {target}")
+        _inside(
+            registry_root / relative,
+            submodules / name,
+            f"registry link for {name}:{relative}",
+        )
     print("topology matches docs/ecosystem.json")
     return 0
 

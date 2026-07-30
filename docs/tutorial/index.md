@@ -37,7 +37,7 @@ python -m pip install httk2 "httk-data[db]" ase
 | 12 | Draw a phase diagram | Available | `httk-atomistic` |
 | 13 | Store custom data | Available with frozen dataclasses | `httk-data` |
 | 14 | Publish a project centrally | Gap; signed local manifests are available | `httk-workflow` |
-| 15 | Query OMDB directly | Gap; v2 currently provides OPTIMADE serving | `httk-optimade` |
+| 15 | Query OMDB directly | Gap; v2 currently provides OPTIMADE serving | `httk-serve` |
 
 ```{toctree}
 :maxdepth: 1

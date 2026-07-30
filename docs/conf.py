@@ -114,7 +114,7 @@ autoapi_root = "reference/autoapi"
 autoapi_ignore = []  # include everything
 
 autoapi_type = "python"
-# The merged httk namespace tree is made from committed symlinks into all seven
+# The merged httk namespace tree is made from committed symlinks into all six
 # submodule checkouts, so AutoAPI parses the runtime distributions as one PEP 420
 # httk root and cross-module references resolve in the aggregate inventory.
 autoapi_dirs = ["../src/httk"]
@@ -149,6 +149,13 @@ nitpick_ignore = [
     ("py:class", "sqlalchemy.FromClause"),
     # PEP 695 method type parameters are not classes.
     ("py:class", "T"),
+    # Member-module AutoAPI artifacts: these are intentionally unresolved
+    # bare aliases, private types, or protocol-member references. Their
+    # qualified public objects remain indexed in the aggregate tree.
+    ("py:obj", "FrozenJson"),
+    ("py:class", "Decimal"),
+    ("py:meth", "one"),
+    ("py:class", "_RemoteVariable"),
     # The data query API exposes this bare alias.
     ("py:class", "FilterAst"),
     ("py:class", "_Context"),
@@ -207,7 +214,7 @@ nitpick_ignore_regex = [
 ]
 
 
-_module_names = ("httk-core", "httk-atomistic", "httk-io", "httk-data", "httk-optimade", "httk-web", "httk-workflow")
+_module_names = ("httk-core", "httk-atomistic", "httk-io", "httk-data", "httk-serve", "httk-workflow")
 
 
 # Aggregate-only AutoAPI artifact: workflow_cli imports CLIContext (and its

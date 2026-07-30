@@ -11,11 +11,11 @@ release.
 
 What v2 does provide is the opposite side of the standard interface:
 *httk-atomistic* and *httk-data* expose `EntryProvider`s, and
-*httk-optimade* turns them into an OPTIMADE HTTP service.
+*httk-serve* turns them into an OPTIMADE HTTP service.
 
 ```python
 from httk.atomistic import StructureEntryProvider
-from httk.optimade import OptimadeConfig, adapter_from_providers, serve
+from httk.serve.optimade import OptimadeConfig, adapter_from_providers, serve
 
 provider = StructureEntryProvider({"example": structure})
 serve(adapter_from_providers([provider]), OptimadeConfig(), port=8080)

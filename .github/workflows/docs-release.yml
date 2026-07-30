@@ -49,8 +49,7 @@ jobs:
           pip install -e submodules/httk-atomistic --no-deps
           pip install -e submodules/httk-io --no-deps
           pip install -e submodules/httk-data --no-deps
-          pip install -e submodules/httk-optimade --no-deps
-          pip install -e submodules/httk-web --no-deps
+          pip install -e submodules/httk-serve --no-deps
           pip install -e submodules/httk-workflow --no-deps
           pip install -e ".[docs]" --no-deps
           pip check
