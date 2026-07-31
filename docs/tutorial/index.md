@@ -11,9 +11,9 @@ checklist.
 
 ## Install the pieces used by the tutorial
 
-The `httk2` metapackage installs the core, I/O, atomistic, and workflow modules.
-Database examples additionally need *httk-data*'s SQL extra; ASE is used only
-for the two visualization/interchange steps.
+The `httk2` metapackage installs the core, I/O, atomistic, analysis, and
+workflow modules. Database examples additionally need *httk-data*'s SQL extra;
+ASE is used only for the two visualization/interchange steps.
 
 ```console
 python -m pip install httk2 "httk-data[db]" ase
@@ -34,7 +34,7 @@ python -m pip install httk2 "httk-data[db]" ase
 | 9 | Generate a batch | Available as explicit job payloads | `httk-workflow` |
 | 10 | Send and run remotely | Available through remote adapters | `httk-workflow` |
 | 11 | Read results into the database | Available as explicit extraction + record storage | `httk-workflow` + `httk-data` |
-| 12 | Draw a phase diagram | Available | `httk-atomistic` |
+| 12 | Draw a phase diagram | Available | `httk-analyse` |
 | 13 | Store custom data | Available with frozen dataclasses | `httk-data` |
 | 14 | Publish a project centrally | Gap; signed local manifests are available | `httk-workflow` |
 | 15 | Query OMDB directly | Gap; v2 currently provides OPTIMADE serving | `httk-serve` |

@@ -15,7 +15,7 @@ docs-live:
 docs-clean:
 	rm -rf docs/_build docs/reference/autoapi docs/_generated
 
-# The aggregate has no internal dependency pins: all six module checkouts are
+# The aggregate has no internal dependency pins: all seven module checkouts are
 # installed separately, while this lock contains only external docs requirements.
 docs-lock:
 	$(PYTHON) -m httk.core.docs lock
@@ -29,6 +29,7 @@ docs-lock-check: docs-clean
 	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" -m pip install -r docs/requirements.lock; \
 	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" -m pip install -e submodules/httk-core --no-deps; \
 	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" -m pip install -e submodules/httk-atomistic --no-deps; \
+	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" -m pip install -e submodules/httk-analyse --no-deps; \
 	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" -m pip install -e submodules/httk-io --no-deps; \
 	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" -m pip install -e submodules/httk-data --no-deps; \
 	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" -m pip install -e submodules/httk-serve --no-deps; \

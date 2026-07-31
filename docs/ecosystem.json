@@ -1,7 +1,12 @@
 {
   "modules": {
+    "httk-analyse": {
+      "commit": "93eb9c2586dfefab79ffb1789a07c0f3797b871d",
+      "distribution_version": "0.1.0",
+      "version": null
+    },
     "httk-atomistic": {
-      "commit": "5bf8ec707acc8fff653683dd255986e508c66e4c",
+      "commit": "96aa62bb4d2c475031771f1692673e997f47f2e7",
       "distribution_version": "0.2.0",
       "version": null
     },

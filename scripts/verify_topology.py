@@ -9,6 +9,7 @@ _EXPECTED_MODULES = frozenset(
     {
         "httk-core",
         "httk-atomistic",
+        "httk-analyse",
         "httk-io",
         "httk-data",
         "httk-serve",
@@ -57,7 +58,7 @@ def main() -> int:
     if not isinstance(modules, dict) or not modules:
         _fail("docs/ecosystem.json has no modules")
     if set(modules) != _EXPECTED_MODULES:
-        _fail("ecosystem module set does not contain exactly the six expected modules")
+        _fail("ecosystem module set does not contain exactly the seven expected modules")
 
     source_root = root / "src" / "httk"
     submodules = root / "submodules"

@@ -81,7 +81,7 @@ myst_enable_extensions = [
 myst_heading_anchors = 3
 
 # Execute the example notebooks as part of the strict docs build, so that an
-# example incompatible with the httk-core / httk-atomistic API fails the build.
+# example incompatible with the httk-core / httk-atomistic APIs fails the build.
 nb_execution_mode = "force"
 # Cells default to myst-nb's 30 s timeout, which sits too close to the legitimate
 # runtime of the heavier example notebooks under machine load; the timeout's job
@@ -114,7 +114,7 @@ autoapi_root = "reference/autoapi"
 autoapi_ignore = []  # include everything
 
 autoapi_type = "python"
-# The merged httk namespace tree is made from committed symlinks into all six
+# The merged httk namespace tree is made from committed symlinks into all seven
 # submodule checkouts, so AutoAPI parses the runtime distributions as one PEP 420
 # httk root and cross-module references resolve in the aggregate inventory.
 autoapi_dirs = ["../src/httk"]
@@ -214,7 +214,15 @@ nitpick_ignore_regex = [
 ]
 
 
-_module_names = ("httk-core", "httk-atomistic", "httk-io", "httk-data", "httk-serve", "httk-workflow")
+_module_names = (
+    "httk-core",
+    "httk-atomistic",
+    "httk-analyse",
+    "httk-io",
+    "httk-data",
+    "httk-serve",
+    "httk-workflow",
+)
 
 
 # Aggregate-only AutoAPI artifact: workflow_cli imports CLIContext (and its

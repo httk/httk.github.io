@@ -5,7 +5,7 @@ query or stored calculation record produced. Counts and energies are normalized
 to per-atom values before the convex hull is built.
 
 ```python
-from httk.atomistic import PhaseDiagram
+from httk.analyse.matsci import PhaseDiagram
 
 # These could equally be assembled from queried httk-data records.
 compositions = [
@@ -52,3 +52,6 @@ simplex enforces both composition and sum-of-weights normalization. Its
 v1 renderer could omit. With four or more exactly coplanar stable phases, all
 supported pairs are reported, so crossing diagonals may represent more than one
 equally valid triangulation.
+
+See the materials phase-diagram API in the versioned *httk-analyse*
+documentation listed by the {doc}`module directory <../modules>`.

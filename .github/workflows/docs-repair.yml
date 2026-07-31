@@ -42,6 +42,7 @@ jobs:
           pip install -r docs/requirements.lock
           pip install -e submodules/httk-core --no-deps
           pip install -e submodules/httk-atomistic --no-deps
+          pip install -e submodules/httk-analyse --no-deps
           pip install -e submodules/httk-io --no-deps
           pip install -e submodules/httk-data --no-deps
           pip install -e submodules/httk-serve --no-deps

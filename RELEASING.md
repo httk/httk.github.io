@@ -2,7 +2,7 @@
 
 The top-site release is an ecosystem snapshot. First release each runtime module
 and make sure its exact release tag is available. In this repository, update all
-six submodule pointers to those tags, then run and commit both generated
+seven submodule pointers to those tags, then run and commit both generated
 inputs:
 
 ```console

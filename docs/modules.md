@@ -1,6 +1,6 @@
 # Module directory
 
-The six runtime modules share the `httk.*` namespace. Their aggregate API
+The seven runtime modules share the `httk.*` namespace. Their aggregate API
 reference is pinned to this site's submodule revisions; each module also has a
 separate documentation subsite.
 
@@ -21,6 +21,14 @@ Exact crystal-structure and symmetry representations. Import path:
 
 - API reference: {doc}`httk.atomistic </reference/autoapi/httk/atomistic/index>`
 - Repository: <https://github.com/httk/httk-atomistic>
+
+### httk-analyse
+
+Generic lower-convex-hull construction and materials-science phase-diagram
+analysis. Import path: `httk.analyse`.
+
+- API reference: {doc}`httk.analyse </reference/autoapi/httk/analyse/index>`
+- Repository: <https://github.com/httk/httk-analyse>
 
 ### httk-io
 

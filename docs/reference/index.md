@@ -8,4 +8,5 @@ This section documents the supported public API.
 
 autoapi/httk/core/index
 autoapi/httk/atomistic/index
+autoapi/httk/analyse/index
 ```

@@ -22,3 +22,7 @@
 	path = submodules/httk-workflow
 	url = https://github.com/httk/httk-workflow
 	branch = main
+[submodule "submodules/httk-analyse"]
+	path = submodules/httk-analyse
+	url = https://github.com/httk/httk-analyse
+	branch = main
