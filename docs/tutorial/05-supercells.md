@@ -10,8 +10,8 @@ from httk.atomistic import load_structure
 structure = load_structure("POSCAR")
 
 general = structure.supercell([[2, 0, 0], [0, 2, 0], [0, 0, 1]])
-orthogonal = structure.orthogonal_supercell(multiplier=4)
-cubic = structure.cubic_supercell(multiplier=8)
+orthogonal = structure.orthogonal_supercell(tolerance="1/100")
+cubic = structure.cubic_supercell(tolerance="1/100")
 
 print(len(general.structure.sites), general.transformation)
 print(orthogonal.orthogonality_score)
