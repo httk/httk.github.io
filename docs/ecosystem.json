@@ -16,7 +16,7 @@
       "version": null
     },
     "httk-data": {
-      "commit": "ff74f2a307dec6021987d8e372b8d2a4fc635346",
+      "commit": "1f3f935d8a160ebdfdcd8a20c72233f528a67b8f",
       "distribution_version": "0.2.0",
       "version": null
     },
@@ -26,7 +26,7 @@
       "version": null
     },
     "httk-serve": {
-      "commit": "4b4910b3510b4845f293f112e89856208d70cd59",
+      "commit": "c6c1fc6a8c331e96dba5856cc8a0e3463cb50116",
       "distribution_version": "0.2.0",
       "version": null
     },
