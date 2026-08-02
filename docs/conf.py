@@ -143,6 +143,7 @@ nitpick_ignore = [
     # SQLAlchemy is optional, and these internal-facing signatures have no vendored
     # external inventory.
     ("py:class", "sqlalchemy.Engine"),
+    ("py:class", "sqlalchemy.Connection"),
     ("py:class", "sqlalchemy.MetaData"),
     ("py:class", "sqlalchemy.Table"),
     ("py:class", "sqlalchemy.ColumnElement"),
@@ -159,6 +160,10 @@ nitpick_ignore = [
     # The data query API exposes this bare alias.
     ("py:class", "FilterAst"),
     ("py:class", "_Context"),
+    ("py:class", "_BackingPlan"),
+    # StoredEntrySource is lazily re-exported from httk.data.db; AutoAPI keeps
+    # the public annotation but indexes its defining module instead.
+    ("py:class", "httk.data.db.StoredEntrySource"),
 ]
 copybutton_prompt_text = r">>> |\.\.\. |\$ "
 copybutton_prompt_is_regexp = True

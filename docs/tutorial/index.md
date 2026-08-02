@@ -28,7 +28,7 @@ python -m pip install httk2 "httk-data[db]" ase
 | 3 | Visualize a structure | Available through ASE; no built-in viewer | `httk-atomistic` |
 | 4 | Convert to/from ASE | Available through structure/ASE views | `httk-atomistic` |
 | 5 | Build general, orthogonal, and cubic supercells | Available | `httk-atomistic` |
-| 6 | Store structure data in SQLite | Available through `StructureRecord` | `httk-data` |
+| 6 | Store structure data in SQLite | Available through representation-specific Records | `httk-data` |
 | 7 | Search the local database | Available | `httk-data` |
 | 8 | Prepare a VASP calculation | Partial: workdir preparation, no structure writer | `httk-workflow` |
 | 9 | Generate a batch | Available as explicit job payloads | `httk-workflow` |

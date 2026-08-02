@@ -6,17 +6,17 @@
       "version": null
     },
     "httk-atomistic": {
-      "commit": "96aa62bb4d2c475031771f1692673e997f47f2e7",
+      "commit": "d5ef7b45b8806c8d991d338d242aa38a6cc389f8",
       "distribution_version": "0.2.0",
       "version": null
     },
     "httk-core": {
-      "commit": "355593c12fbe1daf4a710bc3654008b953a9524b",
+      "commit": "ddba926691311299f7cfa2a0c1a1f8267e80c68b",
       "distribution_version": "2.0.2",
       "version": null
     },
     "httk-data": {
-      "commit": "1abd1252e18516a9b8819ce090f79352a048fafd",
+      "commit": "ff74f2a307dec6021987d8e372b8d2a4fc635346",
       "distribution_version": "0.2.0",
       "version": null
     },
@@ -26,7 +26,7 @@
       "version": null
     },
     "httk-serve": {
-      "commit": "f36e4cce0183d0fa679316290fad8e63124782e9",
+      "commit": "4b4910b3510b4845f293f112e89856208d70cd59",
       "distribution_version": "0.2.0",
       "version": null
     },

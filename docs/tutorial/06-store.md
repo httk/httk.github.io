@@ -1,23 +1,41 @@
 # Store data in SQLite
 
 ```python
-from httk.atomistic import StructureRecord, load_structure
+from httk.atomistic import (
+    StructureEntry,
+    UnitcellStructureRecord,
+    UnitcellStructureView,
+    load_structure,
+)
 from httk.data.db import Database, SqlStore
 
 structure = load_structure("example.cif")
-record = StructureRecord.from_structure(structure)
 
-store = SqlStore(Database.sqlite("presentation.sqlite"))
-sid = store.save(record)
-fetched = store.fetch(StructureRecord, sid)
-restored = fetched.to_structure()
-print("Saved row", sid)
+store = SqlStore(
+    Database.sqlite("presentation.sqlite"),
+    entry_backings={StructureEntry: UnitcellStructureRecord},
+)
+sid = store.save(structure)
+fetched = store.fetch(UnitcellStructureRecord, sid)
+restored = UnitcellStructureView(fetched)
+print("Saved row", sid, "with stable structure id", restored.id)
 ```
 
-`StructureRecord` is a frozen, hashable snapshot. Its constructor validates the
-record's component and cross-component invariants directly; it does not build
-a temporary `Structure`. `save()` and `fetch()` are unchanged, and
-`fetched.to_structure()` reconstructs the exact domain object when needed.
+The first opening of an entry store declares the durable representations it may
+contain. Here every stored `StructureEntry` uses the concrete, normalized
+`UnitcellStructureRecord` layout. `save()` accepts the natural `Structure` and
+projects its nested cell, sites, species, composition, and metadata recursively;
+there is no manual record-conversion step and no temporary record graph.
+
+Most httk APIs accept the appropriate `*Like` source or construct a View
+automatically. Storage asks for an explicit Record representation because that
+choice fixes a durable database layout and should never be surprising.
+`UnitcellStructureView(fetched)` exposes the exact fetched Record as a normal
+unit-cell structure while retaining that Record as its backend.
+
+The hexadecimal `.id` is structural and stable across equivalent objects and
+stores. The integer `sid` is only a local relational identifier: the same Record
+may have a different SID in another store without changing its `.id`.
 
 `Database.sqlite()` without a filename creates an in-memory database. Rationals,
 surd bases, precisions, and periodicity are stored exactly. Species float fields
