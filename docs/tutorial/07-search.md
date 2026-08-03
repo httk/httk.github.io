@@ -41,9 +41,9 @@ References chain into automatic joins, and two variables of the same class form
 a self-join.
 
 That concrete class is the natural key for low-level searches in this
-single-backing store. `StructureEntry` is different: it is a non-instantiable
+single-record store. `StructureEntry` is different: it is a non-instantiable
 logical query/fetch key for an entry family. A store configured with unit-cell,
-fundamental-domain, and ASU backings can use
+fundamental-domain, and ASU records can use
 `store.fetch_entry(StructureEntry, structure_id)` and returns whichever concrete
 Record actually owns that structural ID.
 
@@ -51,7 +51,7 @@ A first-time store containing only private custom dataclasses must say so
 explicitly; reopening it later loads the persisted declaration:
 
 ```python
-custom_store = SqlStore(Database.sqlite("custom.sqlite"), entry_backings={})
+custom_store = SqlStore(Database.sqlite("custom.sqlite"), entry_records={})
 ```
 
 The explicit empty mapping prevents an old or unversioned database from being

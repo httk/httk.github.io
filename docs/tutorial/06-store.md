@@ -13,7 +13,7 @@ structure = load_structure("example.cif")
 
 store = SqlStore(
     Database.sqlite("presentation.sqlite"),
-    entry_backings={StructureEntry: UnitcellStructureRecord},
+    entry_records={StructureEntry: UnitcellStructureRecord},
 )
 sid = store.save(structure)
 fetched = store.fetch(UnitcellStructureRecord, sid)

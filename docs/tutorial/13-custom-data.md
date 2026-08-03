@@ -15,7 +15,7 @@ class StructureIsEdible:
     is_edible: bool
 
 
-store = SqlStore(Database.sqlite("presentation.sqlite"))
+store = SqlStore(Database.sqlite("presentation.sqlite"), entry_records={})
 store.save(StructureIsEdible("ClNa", True))
 store.save(StructureIsEdible("As", False))
 ```
