@@ -17,6 +17,18 @@ print("Species at sites:", structure.species_at_sites)
 print("Reduced coordinates:", structure.sites.reduced_coords)
 ```
 
+Views provide the lazy form: construction checks the source configuration, and parsing
+waits until the first property is accessed.
+
+```python
+from httk.atomistic import ASUStructureView, UnitcellStructureView
+
+structure = UnitcellStructureView("example.cif")
+asu = ASUStructureView("example.cif")
+```
+
+For a remote source, pass an explicit `httk.core.DatastreamURL` consent token.
+
 The split is architectural: *httk-io* parses file formats and returns neutral
 payloads, *httk-atomistic* owns `UnitcellStructure` and `ASUStructure`, and *httk-core* dispatches between
 them. The adapter registration makes the one-call domain-loading experience
