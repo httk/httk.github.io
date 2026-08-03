@@ -50,14 +50,11 @@ python -m pip install -e .
 Each module is its own repository and can be installed independently; the shared
 `httk.*` namespace lets them compose at import time.
 
-## Small usage example
+## Module layout
 
-```python
-from httk.core import subpackages
-
-# The httk.* subpackages discovered in the current environment.
-print(subpackages)
-```
+The public namespace is split across independently installable distributions:
+`httk-core` (`httk.core`), `httk-data` (`httk.data`), `httk-io` (`httk.io`),
+`httk-atomistic` (`httk.atomistic`), and `httk-serve` (`httk.serve`).
 
 ```{toctree}
 :maxdepth: 2

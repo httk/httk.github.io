@@ -2,7 +2,7 @@
 
 httk₂ is a PEP 420 native namespace package. The top-level `httk` package has no
 implementation of its own; independently released repositories contribute
-subpackages such as `httk.core`, `httk.io`, and `httk.atomistic`.
+modules such as `httk.core`, `httk.io`, and `httk.atomistic`.
 
 The layering rule is simple: contracts and models belong in `httk-core`, while
 capabilities belong in the modules that implement them. Core therefore provides
