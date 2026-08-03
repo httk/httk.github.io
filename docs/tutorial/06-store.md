@@ -5,11 +5,11 @@ from httk.atomistic import (
     StructureEntry,
     UnitcellStructureRecord,
     UnitcellStructureView,
-    load_structure,
 )
+from httk.core import load
 from httk.data.db import Database, SqlStore
 
-structure = load_structure("example.cif")
+structure = UnitcellStructureView(load("example.cif"))
 
 store = SqlStore(
     Database.sqlite("presentation.sqlite"),
@@ -23,7 +23,8 @@ print("Saved row", sid, "with stable structure id", restored.id)
 
 The first opening of an entry store declares the durable representations it may
 contain. Here every stored `StructureEntry` uses the concrete, normalized
-`UnitcellStructureRecord` layout. `save()` accepts the natural `Structure` and
+`UnitcellStructureRecord` layout. The view converts the CIF-native ASU into the
+declared unit-cell family; `save()` then accepts the natural `UnitcellStructure` and
 projects its nested cell, sites, species, composition, and metadata recursively;
 there is no manual record-conversion step and no temporary record graph.
 

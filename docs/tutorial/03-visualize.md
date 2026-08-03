@@ -11,12 +11,13 @@ viewer such as ASE.
 ```python
 from ase import Atoms
 from ase.visualize import view
-from httk.atomistic import StructurePrimitiveView, load_structure
+from httk.atomistic import PlainStructureView
+from httk.core import load
 
-lattice, positions, numbers = StructurePrimitiveView(load_structure("POSCAR"))
+lattice, positions, numbers = PlainStructureView(load("POSCAR"))
 view(Atoms(numbers=numbers, cell=lattice, scaled_positions=positions, pbc=True))
 ```
 
-`StructurePrimitiveView` is an immutable, float-valued
+`PlainStructureView` is an immutable, float-valued
 `(lattice, positions, atomic_numbers)` tuple. It is the intended interoperability
 boundary for libraries that use the common spglib-style representation.

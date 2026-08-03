@@ -4,9 +4,9 @@ The v2 constructor takes a cell, reduced sites, and the species at each site.
 The distinct species are inferred in first-occurrence order.
 
 ```python
-from httk.atomistic import Structure
+from httk.atomistic import UnitcellStructure
 
-structure = Structure(
+structure = UnitcellStructure(
     cell=[[1, 0, 0], [0, 1, 0], [0, 0, 1]],
     sites=[
         ["1/2", "1/2", "1/2"],
@@ -22,7 +22,7 @@ structure = Structure(
 Bare atomic numbers are equivalent:
 
 ```python
-structure = Structure(
+structure = UnitcellStructure(
     cell=[[1, 0, 0], [0, 1, 0], [0, 0, 1]],
     sites=[["1/2", "1/2", "1/2"], [0, 0, 0], ["1/2", 0, 0], [0, "1/2", 0], [0, 0, "1/2"]],
     species_at_sites=[82, 22, 8, 8, 8],
@@ -32,9 +32,9 @@ structure = Structure(
 Use full `Species` objects when occupancies or disorder need to be expressed:
 
 ```python
-from httk.atomistic import Species
+from httk.atomistic import Species, UnitcellStructure
 
-structure = Structure(
+structure = UnitcellStructure(
     cell=[[1, 0, 0], [0, 1, 0], [0, 0, 1]],
     sites=[
         ["1/2", "1/2", "1/2"],
@@ -62,3 +62,6 @@ has positive z. Reduced site coordinates refer to these basis vectors.
 
 See the complete construction example in the versioned *httk-atomistic*
 documentation listed by the {doc}`module directory <../modules>`.
+
+`httk.core.load("example.cif")` returns an `ASUStructure`, the native
+fundamental-domain representation of a CIF.

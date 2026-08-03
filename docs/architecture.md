@@ -7,7 +7,7 @@ subpackages such as `httk.core`, `httk.io`, and `httk.atomistic`.
 The layering rule is simple: contracts and models belong in `httk-core`, while
 capabilities belong in the modules that implement them. Core therefore provides
 the shared vocabulary used in signatures — vectors, datastreams, OPTIMADE
-definitions, entry-provider contracts, record models, and `DataLoader` — without
+definitions, entry-provider contracts, record models, and `DatasetLoader` — without
 external dependencies. Parsing, data management, protocol serving, and workflow
 execution remain capabilities in other repositories.
 

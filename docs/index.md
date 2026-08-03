@@ -5,7 +5,7 @@ It is not a single package: the `httk.*` import namespace is a PEP 420 native
 namespace shared by a set of independently developed and released module repositories.
 Installing the `httk` namespace by itself provides no functionality; you install the
 modules you need — starting with `httk-core`, which supplies the shared primitives
-(type dispatch, datastreams, the `DataLoader`), and adding domain modules such as
+(type dispatch, datastreams, the `DatasetLoader`), and adding domain modules such as
 `httk-atomistic` for crystal-structure representations. See the
 {doc}`versioned module directory <modules>` for snapshot-specific documentation links.
 

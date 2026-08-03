@@ -9,6 +9,7 @@ from httk.core import load
 
 structure = load("example.cif")
 # POSCAR, CONTCAR, and compressed variants such as "CONTCAR.bz2" work too.
+# CIF loads return ASUStructure; POSCAR/CONTCAR loads return UnitcellStructure.
 
 print("Formula:", structure.formula)
 print("Volume:", float(structure.cell.volume))
@@ -17,7 +18,7 @@ print("Reduced coordinates:", structure.sites.reduced_coords)
 ```
 
 The split is architectural: *httk-io* parses file formats and returns neutral
-payloads, *httk-atomistic* owns `Structure`, and *httk-core* dispatches between
+payloads, *httk-atomistic* owns `UnitcellStructure` and `ASUStructure`, and *httk-core* dispatches between
 them. The adapter registration makes the one-call domain-loading experience
 work when *httk-atomistic* is installed. Code that needs the neutral reader
 result can use the explicit escape hatch `load("example.cif", raw=True)`.

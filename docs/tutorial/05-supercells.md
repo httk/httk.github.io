@@ -1,13 +1,13 @@
 # Build supercells
 
-The three v1 operations are direct `Structure` methods in v2. Each returns a
+The three v1 operations are direct `UnitcellStructure` methods in v2. Each returns a
 `SupercellResult`; its `.structure` is the expanded cell and the result also
 records the selected integer transform and exact shape scores.
 
 ```python
-from httk.atomistic import load_structure
+from httk.core import load
 
-structure = load_structure("POSCAR")
+structure = load("POSCAR")
 
 general = structure.supercell([[2, 0, 0], [0, 2, 0], [0, 0, 1]])
 orthogonal = structure.orthogonal_supercell(tolerance="1/100")

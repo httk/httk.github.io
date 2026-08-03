@@ -4,7 +4,7 @@
 :class: caution
 
 V2 has dependency-free VASP work-directory preparation, but not yet the v1
-one-call path from `Structure` to a complete run directory. In particular,
+one-call path from `UnitcellStructure` to a complete run directory. In particular,
 *httk-io* reads POSCAR but does not write it. Supply `Run/POSCAR` and
 `Run/INCAR`, then prepare the remaining inputs explicitly.
 ```
