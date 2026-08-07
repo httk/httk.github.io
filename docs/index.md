@@ -29,7 +29,24 @@ publishes its own subsite under [docs.httk.org](https://docs.httk.org); the
 
 ## Install
 
-Preferably work in a Python virtual environment. Install `httk-core` first — it
+Preferably work in a Python virtual environment.
+
+The quickest route is the [`httk2` metapackage](https://github.com/httk/httk2),
+which installs the complete standard module set (`httk-core`, `httk-io`,
+`httk-atomistic`, `httk-data`, `httk-serve`, `httk-analyse`, `httk-workflow`),
+each with its recommended `default` feature extras:
+
+```bash
+pip install httk2
+```
+
+The metapackage repository also serves the development workflow: its `dev-main`
+branch installs the latest `main` state of every module directly from GitHub,
+and its `Makefile` can check out all module repositories, run `fetch`/`pull`/`push`
+across them, and editable-install them into your virtual environment in one step.
+See the [`httk2` README](https://github.com/httk/httk2#readme) for the details.
+
+Alternatively, install modules individually. Install `httk-core` first — it
 brings in the `httk` namespace and the shared primitives:
 
 ```bash
@@ -54,7 +71,8 @@ Each module is its own repository and can be installed independently; the shared
 
 The public namespace is split across independently installable distributions:
 `httk-core` (`httk.core`), `httk-data` (`httk.data`), `httk-io` (`httk.io`),
-`httk-atomistic` (`httk.atomistic`), and `httk-serve` (`httk.serve`).
+`httk-atomistic` (`httk.atomistic`), `httk-serve` (`httk.serve`),
+`httk-analyse` (`httk.analyse`), and `httk-workflow` (`httk.workflow`).
 
 ```{toctree}
 :maxdepth: 2
