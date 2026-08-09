@@ -9,4 +9,6 @@ outputs always reflect the current httk-core and httk-atomistic APIs.
 
 example-core
 example-structures
+A small compute campaign <example-campaign>
+From structures to a phase diagram <example-data-analysis>
 ```

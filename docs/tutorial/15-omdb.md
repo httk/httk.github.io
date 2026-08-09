@@ -1,12 +1,11 @@
 # Operate on Open Materials Database data
 
-```{admonition} Porting gap
+```{admonition} Partial port
 :class: warning
 
 There is no v2 equivalent of
-`httk.db.open_materials_database_store`, and no OMDB-specific client. The v1
-presentation itself marked this example as unavailable in its then-current
-release.
+`httk.db.open_materials_database_store`, and no OMDB-specific client. A generic
+OPTIMADE client is available for compatible remote services.
 ```
 
 What v2 does provide is the opposite side of the standard interface:
@@ -15,11 +14,23 @@ What v2 does provide is the opposite side of the standard interface:
 
 ```python
 from httk.atomistic import StructureEntryProvider
-from httk.serve.optimade import OptimadeConfig, adapter_from_providers, serve
+from httk.serve.optimade import adapter_from_providers, serve
 
 provider = StructureEntryProvider({"example": structure})
-serve(adapter_from_providers([provider]), OptimadeConfig(), port=8080)
+serve(adapter_from_providers([provider]), port=8080)
+```
+
+For remote reads, use the generic client:
+
+```python
+from httk.serve.optimade import OptimadeStore
+
+with OptimadeStore("https://example.org/optimade") as store:
+    for entry_type in store.entry_types:
+        print(entry_type.name, entry_type.definition_id)
 ```
 
 Generic OPTIMADE clients are the interoperability path for remote data; v2 does
-not provide a database-specific store singleton.
+not provide a database-specific OMDB store singleton.
+
+See also the {doc}`/data` topic page for the current data workflow vocabulary.

@@ -65,3 +65,5 @@ documentation listed by the {doc}`module directory <../modules>`.
 
 `httk.core.load("example.cif")` returns an `ASUStructure`, the native
 fundamental-domain representation of a CIF.
+
+See also the {doc}`/structures` topic page for the current structure vocabulary.

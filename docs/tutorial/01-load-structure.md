@@ -41,3 +41,5 @@ remains exact until the explicit `float(...)` used for display.
 
 See the full *httk-atomistic* loading example in the versioned module
 documentation listed by the {doc}`module directory <../modules>`.
+
+See also the {doc}`/structures` topic page for the current structure vocabulary.

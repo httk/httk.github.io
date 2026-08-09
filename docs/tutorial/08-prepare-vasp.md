@@ -7,6 +7,7 @@ calculation.
 
 ```console
 httk project init --name tutorial
+httk workflow workspace init . --name default
 httk workflow workspace settings set vasp.command vasp_std
 httk workflow workspace settings set vasp.pseudo_library /path/to/potpaw_PBE
 ```
@@ -14,19 +15,19 @@ httk workflow workspace settings set vasp.pseudo_library /path/to/potpaw_PBE
 Create and run the calculation:
 
 ```console
-httk workflow job new --template vasp-static \
-    --parameter-from structure example.cif --tag example
+httk workflow job new --workflow vasp-static \
+    --input structure=example.cif --parameter 'incar_tags={"ENCUT": 520}' --tag example
 httk workflow run
 ```
 
 `job new` scaffolds and submits one job from the packaged `vasp-static`
-template (`vasp-relax` and `vasp-relax-static` work the same way). The
-`structure` parameter is loaded from the CIF and written as `files/POSCAR`.
+workflow (`vasp-relax` and `vasp-relax-static` work the same way). The
+`structure` input is loaded from the CIF and written as `files/POSCAR`.
 The runner's `prepare` step derives the k-point grid, assembles the POTCAR
 from the pseudopotential library, and fills in `MAGMOM` and `NBANDS`, with any
-explicit `--input incar_tags=...` winning over derived values. `run` executes
+explicit `--parameter 'incar_tags={"ENCUT": 520}'` winning over derived values. `run` executes
 the manager until nothing is ready, driving the job through prepare, run, and
-collect; the results and logs end up in the payload directory the `job new`
+publish; the results and logs end up in the payload directory the `job new`
 command printed.
 
 The same job can be created in Python:
@@ -39,7 +40,7 @@ workspace = Workspace.default()
 job = new_job(
     workspace,
     "vasp-static",
-    parameters={"structure": load("example.cif")},
+    inputs={"structure": load("example.cif")},
     tag="example",
 )
 ```
@@ -50,3 +51,5 @@ override and wins over the workspace setting.
 
 See the quickstart and the packaged VASP runner guide in the versioned
 *httk-workflow* documentation listed by the {doc}`module directory <../modules>`.
+
+See also the {doc}`/campaigns` topic page for the current workflow vocabulary.

@@ -34,7 +34,8 @@ the raw result values retained by the result set.
 
 The backend-neutral low-level form still supports `search.output(...)` and
 `for (values,), names in search`; see the complete *httk-data* database guide
-for that portable protocol and for `cursor()`'s expiry contract.
+for that portable protocol and for `cursor()`'s expiry contract. The same query
+vocabulary is shared by `SqlStore` and `MongoStore`.
 
 List fields have explicit set operations: `has_any`, `has_only`, and `is_in`.
 References chain into automatic joins, and two variables of the same class form
@@ -59,3 +60,5 @@ silently mistaken for the current storage protocol.
 
 See the complete query DSL example in the versioned *httk-data* documentation
 listed by the {doc}`module directory <../modules>`.
+
+See also the {doc}`/data` topic page for the current storage and querying vocabulary.

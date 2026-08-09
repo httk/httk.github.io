@@ -55,3 +55,5 @@ equally valid triangulation.
 
 See the materials phase-diagram API in the versioned *httk-analyse*
 documentation listed by the {doc}`module directory <../modules>`.
+
+See also the {doc}`/analysis` topic page for the current analysis vocabulary.

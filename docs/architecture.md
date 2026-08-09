@@ -73,3 +73,5 @@ storage backend instead of leaking into the models or their callers.
 Most views convert from their backend only when data is actually requested.
 Constructing a view does not eagerly convert the underlying data, which avoids
 unnecessary conversions when a view is only passed along or partially used.
+
+Read next: {doc}`structures`, {doc}`data`, {doc}`campaigns`, and {doc}`analysis`.

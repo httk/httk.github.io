@@ -20,12 +20,18 @@ publishes its own subsite under [docs.httk.org](https://docs.httk.org); the
 ```{admonition} Quick links
 :class: tip
 
+- **Working with httk₂**:
+  {doc}`structures`, {doc}`data`, {doc}`campaigns`, and {doc}`analysis` — the
+  ecosystem-level path from input files to results and analysis.
 - **Module directory**: {doc}`modules` — every *httk₂* module and where its docs live.
 - **API reference**: {doc}`reference/index` — the aggregate reference for the published modules on this site.
 - **Tutorial**: {doc}`tutorial/index` — the original short
   example sequence translated to current APIs, including the remaining gaps.
 - **Example notebooks**: {doc}`notebooks/index` — runnable tours of the core and cross-module APIs.
 ```
+
+The topic pages are short and practical; they link onward to the module
+documentation for the complete guides and API details.
 
 ## Install
 
@@ -80,6 +86,10 @@ The public namespace is split across independently installable distributions:
 
 modules
 architecture
+structures
+data
+campaigns
+analysis
 authoring
 tutorial/index
 reference/index

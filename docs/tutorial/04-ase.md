@@ -27,3 +27,5 @@ atoms = ASEAtomsView(structure)
 
 For a visualization workflow, see the
 {doc}`visualization step <03-visualize>`.
+
+See also the {doc}`/structures` topic page for the current structure vocabulary.

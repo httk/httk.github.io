@@ -21,3 +21,5 @@ httk workflow project manifest verify
 The manifest records paths, sizes, hashes, empty directories, and symlink
 targets, then signs the canonical body with the project's Ed25519 key. It is
 suitable as publisher input without redefining project identity.
+
+See also the [versioned *httk-workflow* CLI guide](https://docs.httk.org/httk-workflow/dev/main/details/workflow_cli/) for the project manifest commands.

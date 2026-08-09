@@ -21,3 +21,5 @@ view(Atoms(numbers=numbers, cell=lattice, scaled_positions=positions, pbc=True))
 `PlainStructureView` is an immutable, float-valued
 `(lattice, positions, atomic_numbers)` tuple. It is the intended interoperability
 boundary for libraries that use the common spglib-style representation.
+
+See also the {doc}`/structures` topic page for the current structure vocabulary.

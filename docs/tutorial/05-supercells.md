@@ -27,3 +27,5 @@ exact.
 
 See the full supercell example in the versioned *httk-atomistic* documentation
 listed by the {doc}`module directory <../modules>`.
+
+See also the {doc}`/structures` topic page for the current structure vocabulary.

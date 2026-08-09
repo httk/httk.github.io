@@ -43,5 +43,12 @@ surd bases, precisions, and periodicity are stored exactly. Species float fields
 round-trip at IEEE-double fidelity; the SQL layer may normalize `-0.0` to `+0.0`.
 User-defined frozen dataclasses remain the model for custom data.
 
+The same neutral store vocabulary is also available through `MongoStore` when
+MongoDB is the operational backend. For SQL stores, `store.bulk_ingest()` is
+the faster append/build path than a `save()` loop for a large stream; the
+regular loop remains the simpler choice for small writes.
+
 See the database guide in the versioned *httk-data* documentation listed by the
 {doc}`module directory <../modules>`.
+
+See also the {doc}`/data` topic page for the current storage and querying vocabulary.

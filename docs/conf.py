@@ -142,6 +142,13 @@ nitpick_ignore = [
     ("py:obj", "ase.Atoms"),
     # The workflow CLI exposes argparse's private parser-action type.
     ("py:class", "argparse._SubParsersAction"),
+    # pymatgen is an optional dependency surfaced by the integrations layer.
+    ("py:class", "pymatgen.core.Structure"),
+    ("py:obj", "pymatgen.core.Structure"),
+    # AutoAPI renders this TYPE_CHECKING-only record annotation without its
+    # module qualification; the concrete record remains documented in the
+    # storage records module.
+    ("py:class", "NormalizedCompositionRecord"),
     # SQLAlchemy is optional, and these internal-facing signatures have no vendored
     # external inventory.
     ("py:class", "sqlalchemy.Engine"),
@@ -163,6 +170,13 @@ nitpick_ignore = [
     ("py:class", "FilterAst"),
     ("py:class", "_Context"),
     ("py:class", "_BackingPlan"),
+    # PyMongo publishes no usable intersphinx target for its client class; this
+    # targeted ignore follows the sanctioned external-type precedent in httk-core.
+    ("py:class", "pymongo.MongoClient"),
+    # The parallel bulk-ingest merge entry points (bulk_parallel.merge and
+    # ParallelController) carry the module-private worker-manifest type in their
+    # signatures; AutoAPI intentionally omits that implementation dataclass.
+    ("py:class", "_WorkerManifest"),
     # StoredEntrySource is lazily re-exported from httk.data.db; AutoAPI keeps
     # the public annotation but indexes its defining module instead.
     ("py:class", "httk.data.db.StoredEntrySource"),
@@ -193,19 +207,18 @@ _INTERNAL_MODULES = (
     "adapter_runtime",
     "cli",
     "workflow_cli",
-    # Compatibility internals: the engines are public, their runners and the
-    # v1 CLI alias and shared import tail are not.
-    "compat._integration",
-    "compat.cwl.cwl_runner",
-    "compat.pwd.pwd_runner",
-    "compat.v1._runner",
-    "compat.v1.cli",
+    # Language runners are internal; the language registration modules are
+    # public.
+    "languages.cwl.cwl_runner",
+    "languages.pwd.pwd_runner",
+    "languages.jobflow.jobflow_runner",
+    "languages.httk_v1.v1_runner",
     # The VASP facade is public; the cohesive modules it re-exports are not.
     "vasp.inputs",
     "vasp.diagnostics",
     "vasp.remedies",
     "vasp.reports",
-    "vasp.templates",
+    "vasp.workflows",
 )
 nitpick_ignore_regex = [
     # AutoAPI renders these imported helper names as bare _common.* targets in
@@ -255,10 +268,12 @@ _PUBLIC_WORKFLOW_MODULES = frozenset(
         "httk.workflow.sdk",
         "httk.workflow.runtime",
         "httk.workflow.runtime_utils",
+        "httk.workflow.hookapi",
         "httk.workflow.scaffold",
-        "httk.workflow.backends",
+        "httk.workflow.executors",
         "httk.workflow.shell_bridge",
-        "httk.workflow.harvesting",
+        "httk.workflow.collecting",
+        "httk.workflow.provenance",
         "httk.workflow.supervision",
         "httk.workflow.transfers",
         "httk.workflow.manifests",
@@ -270,8 +285,11 @@ _PUBLIC_WORKFLOW_MODULES = frozenset(
         "httk.workflow.vasp",
         "httk.workflow.compat",
         "httk.workflow.compat.v1",
-        "httk.workflow.compat.cwl",
-        "httk.workflow.compat.pwd",
+        "httk.workflow.languages",
+        "httk.workflow.languages.cwl",
+        "httk.workflow.languages.pwd",
+        "httk.workflow.languages.jobflow",
+        "httk.workflow.languages.httk_v1",
     }
 )
 _workflow_exports_cache: dict[str, frozenset[str] | None] = {}
