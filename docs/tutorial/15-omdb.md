@@ -9,7 +9,7 @@ OPTIMADE client is available for compatible remote services.
 ```
 
 What v2 does provide is the opposite side of the standard interface:
-*httk-atomistic* and *httk-data* expose `EntryProvider`s, and
+*httk-atomistic* and *httk-store* expose `EntryProvider`s, and
 *httk-serve* turns them into an OPTIMADE HTTP service.
 
 ```python

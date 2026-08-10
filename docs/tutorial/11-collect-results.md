@@ -9,14 +9,14 @@ For the standard workflow collector, the one-command path is:
 httk workflow collect --into presentation.sqlite
 ```
 
-It stores collected entries, runs, and products through *httk-data*. Use an
+It stores collected entries, runs, and products through *httk-store*. Use an
 explicit extractor when a result needs a custom record or a non-standard file
 interpretation:
 
 ```python
 from dataclasses import dataclass
 
-from httk.data.db import Database, SqlStore
+from httk.store.db import Database, SqlStore
 from httk.workflow.vasp import last_oszicar_energy
 
 

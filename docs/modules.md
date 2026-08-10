@@ -42,14 +42,14 @@ path: `httk.io`.
 - Module documentation: <https://docs.httk.org/httk-io/dev/main/>
 - Repository: <https://github.com/httk/httk-io>
 
-### httk-data
+### httk-store
 
 Data-management capabilities and validation over core's provider and definition
-contracts. Import path: `httk.data`.
+contracts. Import path: `httk.store`.
 
-- API reference: {doc}`httk.data </reference/autoapi/httk/data/index>`
-- Module documentation: <https://docs.httk.org/httk-data/dev/main/>
-- Repository: <https://github.com/httk/httk-data>
+- API reference: {doc}`httk.store </reference/autoapi/httk/store/index>`
+- Module documentation: <https://docs.httk.org/httk-store/dev/main/>
+- Repository: <https://github.com/httk/httk-store>
 
 ### httk-serve
 

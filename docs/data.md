@@ -10,7 +10,7 @@ identifies a row in one store.
 from dataclasses import dataclass
 from tempfile import TemporaryDirectory
 
-from httk.data.db import Database, SqlStore
+from httk.store.db import Database, SqlStore
 
 @dataclass(frozen=True)
 class Result:
@@ -34,7 +34,7 @@ MongoDB uses the same model and store surface when MongoDB is already the
 operational data service:
 
 ```python
-from httk.data.mongo import MongoDatabase, MongoStore
+from httk.store.mongo import MongoDatabase, MongoStore
 
 with MongoDatabase.connect(uri, database="materials") as database:
     store = MongoStore(database, entry_records={})
@@ -55,6 +55,6 @@ For deployment, use `create_asgi_app` as the interface to any ASGI server.
 
 ## Read next
 
-- [Data management](https://docs.httk.org/httk-data/dev/main/data/), [database storage](https://docs.httk.org/httk-data/dev/main/db/), [MongoDB](https://docs.httk.org/httk-data/dev/main/mongo/), and [federation](https://docs.httk.org/httk-data/dev/main/federation/).
-- [Database details](https://docs.httk.org/httk-data/dev/main/details/db/) and [MongoDB details](https://docs.httk.org/httk-data/dev/main/details/mongo/).
+- [Data management](https://docs.httk.org/httk-store/dev/main/data/), [database storage](https://docs.httk.org/httk-store/dev/main/db/), [MongoDB](https://docs.httk.org/httk-store/dev/main/mongo/), and [federation](https://docs.httk.org/httk-store/dev/main/federation/).
+- [Database details](https://docs.httk.org/httk-store/dev/main/details/db/) and [MongoDB details](https://docs.httk.org/httk-store/dev/main/details/mongo/).
 - [OPTIMADE serving](https://docs.httk.org/httk-serve/dev/main/optimade/serving_providers/) and [core definition details](https://docs.httk.org/httk-core/dev/main/details/optimade_definitions/).

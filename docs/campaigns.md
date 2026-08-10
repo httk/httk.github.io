@@ -12,7 +12,7 @@ $ httk workflow collect --into results.sqlite
 ```
 
 The workspace holds durable state and provenance; collection is the boundary
-where finished jobs become records in *httk-data*. Re-collecting is safe and
+where finished jobs become records in *httk-store*. Re-collecting is safe and
 deduplicated. Run `httk workflow precheck WORKSPACE` before starting managers
 to report missing settings, runner references, and machine readiness.
 

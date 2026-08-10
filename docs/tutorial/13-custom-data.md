@@ -6,7 +6,7 @@ plain frozen dataclass:
 ```python
 from dataclasses import dataclass
 
-from httk.data.db import Database, SqlStore
+from httk.store.db import Database, SqlStore
 
 
 @dataclass(frozen=True)
@@ -24,5 +24,5 @@ No ORM base class, decorator, or plugin property is required. Nested frozen
 dataclasses become references; `Annotated` storage markers add indexes,
 uniqueness, skipped fields, and fixed tensor shapes.
 
-See the complete storable-record example in the versioned *httk-data*
+See the complete storable-record example in the versioned *httk-store*
 documentation listed by the {doc}`module directory <../modules>`.

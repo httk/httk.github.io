@@ -12,11 +12,11 @@ checklist.
 ## Install the pieces used by the tutorial
 
 The `httk2` metapackage installs the core, I/O, atomistic, analysis, and
-workflow modules. Database examples additionally need *httk-data*'s SQL extra;
+workflow modules. Database examples additionally need *httk-store*'s SQL extra;
 ASE is used only for the two visualization/interchange steps.
 
 ```console
-python -m pip install httk2 "httk-data[db]" ase
+python -m pip install httk2 "httk-store[db]" ase
 ```
 
 ## Porting map
@@ -28,14 +28,14 @@ python -m pip install httk2 "httk-data[db]" ase
 | 3 | Visualize a structure | Available through ASE; no built-in viewer | `httk-atomistic` |
 | 4 | Convert to/from ASE | Available through structure/ASE views | `httk-atomistic` |
 | 5 | Build general, orthogonal, and cubic supercells | Available | `httk-atomistic` |
-| 6 | Store structure data in SQLite | Available through representation-specific Records in SQL or MongoDB stores | `httk-data` |
-| 7 | Search the local database | Available through the backend-neutral query API | `httk-data` |
+| 6 | Store structure data in SQLite | Available through representation-specific Records in SQL or MongoDB stores | `httk-store` |
+| 7 | Search the local database | Available through the backend-neutral query API | `httk-store` |
 | 8 | Prepare a VASP calculation | Available through packaged templates and the POSCAR writer | `httk-workflow` |
 | 9 | Generate a batch | Available through instantiation parameters and campaign partitioning | `httk-workflow` |
 | 10 | Send and run remotely | Available through remote adapters, precheck, and per-machine runner builds | `httk-workflow` |
-| 11 | Read results into the database | Available through workflow collection or explicit extraction + record storage | `httk-workflow` + `httk-data` |
+| 11 | Read results into the database | Available through workflow collection or explicit extraction + record storage | `httk-workflow` + `httk-store` |
 | 12 | Draw a phase diagram | Available | `httk-analyse` |
-| 13 | Store custom data | Available with frozen dataclasses | `httk-data` |
+| 13 | Store custom data | Available with frozen dataclasses | `httk-store` |
 | 14 | Publish a project centrally | Gap; signed local manifests are available | `httk-workflow` |
 | 15 | Query OMDB directly | Partial; generic OPTIMADE clients and serving are available, but no OMDB-specific client | `httk-serve` |
 

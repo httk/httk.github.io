@@ -7,7 +7,7 @@ to per-atom values before the convex hull is built.
 ```python
 from httk.analyse.matsci import PhaseDiagram
 
-# These could equally be assembled from queried httk-data records.
+# These could equally be assembled from queried httk-store records.
 compositions = [
     {"Li": 1},
     {"O": 1},

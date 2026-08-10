@@ -11,7 +11,7 @@ _EXPECTED_MODULES = frozenset(
         "httk-atomistic",
         "httk-analyse",
         "httk-io",
-        "httk-data",
+        "httk-store",
         "httk-serve",
         "httk-workflow",
     }
@@ -25,7 +25,7 @@ _EXPECTED_REGISTRY_LINKS = {
     Path("cli/serve"): "httk-serve",
     Path("entries/atomistic"): "httk-atomistic",
     Path("entries/core"): "httk-core",
-    Path("entries/data"): "httk-data",
+    Path("entries/store"): "httk-store",
     Path("schemas/atomistic"): "httk-atomistic",
     Path("schemas/core"): "httk-core",
 }

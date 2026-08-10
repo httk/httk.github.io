@@ -25,7 +25,7 @@ docs = [
   "sphinx-copybutton",
   "sphinx-autoapi",
   "sphinx-autodoc-typehints",
-  # httk-data runtime
+  # httk-store runtime
   "jsonschema>=4",
   # httk-serve runtime
   "starlette>=0.37",
@@ -51,7 +51,7 @@ docs = [
   "spglib>=2.0",
   # httk-io[default]
   "ase",
-  # httk-data[default] -> [db]
+  # httk-store[default] -> [db]
   "sqlalchemy>=2.0,<3",
   # httk-serve[docs]
   "httpx>=0.27",

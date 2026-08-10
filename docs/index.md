@@ -39,7 +39,7 @@ Preferably work in a Python virtual environment.
 
 The quickest route is the [`httk2` metapackage](https://github.com/httk/httk2),
 which installs the complete standard module set (`httk-core`, `httk-io`,
-`httk-atomistic`, `httk-data`, `httk-serve`, `httk-analyse`, `httk-workflow`),
+`httk-atomistic`, `httk-store`, `httk-serve`, `httk-analyse`, `httk-workflow`),
 each with its recommended `default` feature extras:
 
 ```bash
@@ -76,7 +76,7 @@ Each module is its own repository and can be installed independently; the shared
 ## Module layout
 
 The public namespace is split across independently installable distributions:
-`httk-core` (`httk.core`), `httk-data` (`httk.data`), `httk-io` (`httk.io`),
+`httk-core` (`httk.core`), `httk-store` (`httk.store`), `httk-io` (`httk.io`),
 `httk-atomistic` (`httk.atomistic`), `httk-serve` (`httk.serve`),
 `httk-analyse` (`httk.analyse`), and `httk-workflow` (`httk.workflow`).
 

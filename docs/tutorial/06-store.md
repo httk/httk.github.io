@@ -7,7 +7,7 @@ from httk.atomistic import (
     UnitcellStructureView,
 )
 from httk.core import load
-from httk.data.db import Database, SqlStore
+from httk.store.db import Database, SqlStore
 
 structure = UnitcellStructureView(load("example.cif"))
 
@@ -48,7 +48,7 @@ MongoDB is the operational backend. For SQL stores, `store.bulk_ingest()` is
 the faster append/build path than a `save()` loop for a large stream; the
 regular loop remains the simpler choice for small writes.
 
-See the database guide in the versioned *httk-data* documentation listed by the
+See the database guide in the versioned *httk-store* documentation listed by the
 {doc}`module directory <../modules>`.
 
 See also the {doc}`/data` topic page for the current storage and querying vocabulary.

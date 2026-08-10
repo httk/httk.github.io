@@ -177,9 +177,9 @@ nitpick_ignore = [
     # ParallelController) carry the module-private worker-manifest type in their
     # signatures; AutoAPI intentionally omits that implementation dataclass.
     ("py:class", "_WorkerManifest"),
-    # StoredEntrySource is lazily re-exported from httk.data.db; AutoAPI keeps
+    # StoredEntrySource is lazily re-exported from httk.store.db; AutoAPI keeps
     # the public annotation but indexes its defining module instead.
-    ("py:class", "httk.data.db.StoredEntrySource"),
+    ("py:class", "httk.store.db.StoredEntrySource"),
 ]
 copybutton_prompt_text = r">>> |\.\.\. |\$ "
 copybutton_prompt_is_regexp = True
@@ -239,7 +239,7 @@ _module_names = (
     "httk-atomistic",
     "httk-analyse",
     "httk-io",
-    "httk-data",
+    "httk-store",
     "httk-serve",
     "httk-workflow",
 )

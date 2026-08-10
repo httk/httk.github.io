@@ -33,7 +33,7 @@ fills raise `ExpiredCursorRowError`. The cursor limits hydrated objects, not
 the raw result values retained by the result set.
 
 The backend-neutral low-level form still supports `search.output(...)` and
-`for (values,), names in search`; see the complete *httk-data* database guide
+`for (values,), names in search`; see the complete *httk-store* database guide
 for that portable protocol and for `cursor()`'s expiry contract. The same query
 vocabulary is shared by `SqlStore` and `MongoStore`.
 
@@ -58,7 +58,7 @@ custom_store = SqlStore(Database.sqlite("custom.sqlite"), entry_records={})
 The explicit empty mapping prevents an old or unversioned database from being
 silently mistaken for the current storage protocol.
 
-See the complete query DSL example in the versioned *httk-data* documentation
+See the complete query DSL example in the versioned *httk-store* documentation
 listed by the {doc}`module directory <../modules>`.
 
 See also the {doc}`/data` topic page for the current storage and querying vocabulary.

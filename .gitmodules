@@ -10,9 +10,9 @@
 	path = submodules/httk-io
 	url = https://github.com/httk/httk-io
 	branch = main
-[submodule "submodules/httk-data"]
-	path = submodules/httk-data
-	url = https://github.com/httk/httk-data
+[submodule "submodules/httk-store"]
+	path = submodules/httk-store
+	url = https://github.com/httk/httk-store
 	branch = main
 [submodule "submodules/httk-serve"]
 	path = submodules/httk-serve
