@@ -1,6 +1,6 @@
 # Build a structure in code
 
-The v2 constructor takes a cell, reduced sites, and the species at each site.
+The constructor takes a cell, reduced sites, and the species at each site.
 The distinct species are inferred in first-occurrence order.
 
 ```python

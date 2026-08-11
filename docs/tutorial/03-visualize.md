@@ -1,11 +1,10 @@
 # Visualize a structure
 
-```{admonition} Status
+```{admonition} Visualization boundary
 :class: note
 
-There is no v2 replacement for `structure.vis.show()` or the old Jmol plugin.
-The same result is available through the generic primitive view and an external
-viewer such as ASE.
+httk does not provide a built-in interactive viewer. Use the generic primitive
+view and an external viewer such as ASE instead.
 ```
 
 ```python

@@ -1,7 +1,6 @@
 # Store custom data
 
-V1 required an `HttkObject` subclass and a decorated initializer. V2 stores a
-plain frozen dataclass:
+A plain frozen dataclass is enough for custom stored data:
 
 ```python
 from dataclasses import dataclass

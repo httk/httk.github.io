@@ -1,9 +1,34 @@
-# Send and run a batch remotely
+# Run the batch
 
-A *remote* is one machine the project can reach, named like a `git remote`.
-Workspace names are owned by the machine the workspace lives on: `kappa:runs`
-means "the workspace this user calls `runs` on kappa", resolved on kappa each
-time it is used. Setting up a cluster is a one-time sequence:
+## Local demonstration path
+
+The local manager runs until the workspace is idle. Configure the tutorial mock
+as the VASP command; it writes the same output-file contract as a finished
+`vasp-relax` job, but its numbers are canned demonstration values, not
+physics.
+
+```console
+httk workflow workspace settings set vasp.command \
+    "$PWD/docs/tutorial/data/mock_vasp_catio3.py"
+httk workflow run --workers 2
+```
+
+`run` is the local executor here: it prepares, runs, and publishes every job,
+then exits when no work remains. On a real VASP machine, use the same flow and
+set the command to `vasp_std` or to the site launcher, for example:
+
+```console
+httk workflow workspace settings set vasp.command "srun -n 32 vasp_std"
+httk workflow run --workers 8
+```
+
+The mock deliberately emits demonstration numbers chosen for the phase-diagram
+exercise. They are not calculated material energies.
+
+## Cluster variant
+
+For a real cluster, configure a remote once and transfer the complete batch.
+`--job` is repeatable; list every page-09 job so the whole batch moves:
 
 ```console
 httk workflow remote add kappa --template ssh-slurm
@@ -12,50 +37,17 @@ httk workflow remote configure kappa \
 httk workflow remote install kappa
 httk workflow workspace init kappa:runs
 httk workflow workspace settings set kappa:runs vasp.command "srun -n 32 vasp_std"
-```
 
-`workspace init kappa:runs` runs the same command on kappa that you would type
-there: it creates `runs` under your login home (any path works —
-`kappa:/scratch/rar/runs` names the workspace `runs` too) and registers the
-name in *kappa's* per-user registry. Ssh in and `httk workflow workspace list`
-shows `runs`; any other machine with a remote for kappa can address
-`kappa:runs` with nothing to set up.
-
-After that, each batch is send, run, watch — and one command to bring the
-finished jobs home:
-
-```console
-httk workflow transfer default kappa:runs --job JOB_ID --placement batch
+httk workflow transfer default kappa:runs \
+    --job ca --job cao --job catio3 --job o --job ti --job tio
 httk workflow run kappa:runs --workers 8
 httk workflow workspace status kappa:runs
 httk workflow transfer kappa:runs default
 ```
 
-`transfer` detaches the selected jobs from the local default workspace, pushes
-each sealed bundle, validates its digest, and retires the source only after
-acknowledgement, so a job never exists in two runnable places. `run` on a
-remote workspace submits managers through the remote's scheduler over its
-adapter. The reverse `transfer` pulls home whatever has finished; a local
-`httk workflow collect` then reads the results (next step).
-
-Before starting managers, the read-only readiness report checks the workspace:
-
-```console
-httk workflow precheck WORKSPACE
-```
-
-Workflow packages can also declare `[workflow.build]` for compiled runners.
-Build and register one binary per platform class on the destination, then run
-the package normally:
-
-```console
-httk workflow build WORKSPACE ./my-workflow
-```
-
-The runner SDK family covers Python plus Bash, C, Fortran, Rust, Perl, Ada,
-C++, and Java, so the runner need not be authored in Python.
+The reverse transfer brings finished jobs home; run the local collector in the
+next step. `workspace init kappa:runs` creates the named workspace on kappa,
+so its name is resolved by kappa rather than by the local machine.
 
 See the task manager and workflow CLI guides in the versioned *httk-workflow*
-documentation listed by the {doc}`module directory <../modules>`.
-
-See also the {doc}`/campaigns` topic page for the current workflow vocabulary.
+documentation for cluster-specific options.

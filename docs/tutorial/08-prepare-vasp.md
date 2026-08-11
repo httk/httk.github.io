@@ -1,9 +1,31 @@
 # Prepare a VASP calculation
 
-In v1 this was a Python call (`prepare_single_run`) followed by running
-`vasp` by hand. In v2 the packaged VASP runners do both halves: preparation
-derives every input you do not supply, and the workflow manager runs the
-calculation.
+## Projects and workspaces
+
+A project is the durable identity and configuration scope for one research
+effort. Its `httk_project/` directory is the anchor: it contains
+`project.json`, the project identity, trust anchors, and project metadata.
+Commands discover the nearest anchor by walking up from the current directory.
+Create one anchor once for the effort; it is not a per-run directory.
+
+A workspace is the machine-owned working area where workflow runs happen. It
+contains the workspace UUID, job payloads, state markers, journals, and runner
+files. A workspace is single-user: managers claim jobs whose marker, payload,
+and `job.json` belong to the manager's account. The plain workspace name is
+only a command-line lookup name in the owning machine's registry; a remote
+machine resolves its own names and paths.
+
+The two layers are related but independent. A project can record a default
+workspace name, and that workspace can live outside the project directory. A
+project can also be detached from a workspace, which is useful for project
+metadata and signed manifests; jobs and their joins still belong to a
+workspace. Moving a job between machines detaches a sealed job bundle and
+imports it into the destination workspace.
+
+## Initialize the project and its first workspace
+
+The core project command creates the anchor. The workflow command then creates
+and registers the first local workspace at the project root:
 
 ```console
 httk project init --name tutorial
@@ -12,7 +34,11 @@ httk workflow workspace settings set vasp.command vasp_std
 httk workflow workspace settings set vasp.pseudo_library /path/to/potpaw_PBE
 ```
 
-Create and run the calculation:
+The workspace name `default` is registered on this machine. Commands run from
+this project can resolve it as the local default; a project may explicitly
+record another registered name later with `httk workflow workspace default`.
+
+## Create and run the calculation
 
 ```console
 httk workflow job new --workflow vasp-static \

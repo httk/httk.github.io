@@ -1,41 +1,47 @@
-# Read results into the database
+# Collect the results
 
-Result extraction and persistence are explicit capabilities in separate
-modules. A frozen record makes the relationship searchable:
-
-For the standard workflow collector, the one-command path is:
+The standard VASP collector reads each published `CONTCAR` and `OUTCAR`.
+Collecting into SQLite stores the relaxed structures, total-energy
+`DataRecord`s, provenance `Run`s, and `ProductLink`s that connect each output
+to the structure it describes:
 
 ```console
 httk workflow collect --into presentation.sqlite
 ```
 
-It stores collected entries, runs, and products through *httk-store*. Use an
-explicit extractor when a result needs a custom record or a non-standard file
-interpretation:
+The custom extractor detour is intentionally omitted here. The standard
+collector already publishes the records needed for the phase diagram; custom
+file formats belong in the dedicated workflow and store guides.
+
+Here is a short store query showing what landed. Each collected `Run` carries
+loose output references to its relaxed structure and total-energy record. The
+SQLite table count confirms the `ProductLink`s written alongside them.
 
 ```python
-from dataclasses import dataclass
+import sqlite3
 
+from httk.atomistic import StructureEntry
+from httk.core import DataRecord, Run
 from httk.store.db import Database, SqlStore
-from httk.workflow.vasp import last_oszicar_energy
-
-
-@dataclass(frozen=True)
-class TotalEnergyResult:
-    structure_id: str
-    total_energy: float
-
-
-energy = last_oszicar_energy("Runs/CaTiO3/OSZICAR")
-if energy is None:
-    raise ValueError("OSZICAR contains no completed ionic-step energy")
 
 store = SqlStore(Database.sqlite("presentation.sqlite"))
-store.save(TotalEnergyResult("CaTiO3", energy))
+rows = []
+search = store.searcher()
+run = search.variable(Run)
+runs = list(search.results(run=run).scalars())
+for item in runs:
+    structure_edge = next(edge for edge in item.outputs if edge.entry_type == "structures")
+    energy_edge = next(edge for edge in item.outputs if edge.entry_type == "_httk_records")
+    structure = store.fetch_entry(StructureEntry, structure_edge.entry_id)
+    record = store.fetch_by_content_id(DataRecord, energy_edge.entry_id)
+    assert structure is not None and record is not None
+    rows.append((structure_edge.entry_id, structure, record.value))
+with sqlite3.connect("presentation.sqlite") as database:
+    product_links = database.execute("SELECT COUNT(*) FROM core_product_link_v1").fetchone()[0]
+print("structures", len(rows), "energy records", len(rows))
+print("runs", len(runs), "product links", product_links)
 ```
 
-`last_oszicar_energy` is a small file extractor. A workflow can
-also publish OUTCAR, OSZICAR, and other artifacts transactionally before this
-ingestion step.
-
-See also the {doc}`/campaigns` topic page for the current workflow vocabulary.
+The `rows` values are the exact relaxed structures and the canned total-cell
+energies. Page 12 joins those same identifiers and feeds them to
+`PhaseDiagram.from_structures`.

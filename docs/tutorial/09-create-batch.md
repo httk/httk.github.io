@@ -1,15 +1,25 @@
-# Generate a batch of jobs
+# Create a Ca–Ti–O batch
 
-In Python, database results can stream directly into job creation, which is
-how a batch of any size is built:
+The batch is the six structures bundled with this tutorial. The Python form is
+the primary path because the COD CIFs declare oxidation states. VASP POSCAR
+inputs cannot carry those decorations, and httk never drops them silently, so
+we project them away explicitly at the VASP boundary.
 
 ```python
+from pathlib import Path
+
+from httk.atomistic import UnitcellStructureView
+from httk.core import load
 from httk.workflow import Workspace, new_jobs
+import httk.workflow.vasp  # registers the packaged vasp-relax workflow
 
 workspace = Workspace.default()
 items = (
-    {"inputs": {"structure": row.structure}}
-    for row in results.cursor()
+    {
+        "inputs": {"structure": load(path).without_charges()},
+        "tag": path.stem.lower(),
+    }
+    for path in sorted(Path("docs/tutorial/data/catio3").glob("*.cif"))
 )
 for job in new_jobs(
     workspace,
@@ -21,35 +31,36 @@ for job in new_jobs(
     print(job.job_key)
 ```
 
-The generator and cursor keep memory usage O(1): jobs are created as rows are
-read, without materializing the batch.
+`without_charges()` is an explicit lossy presentation for this VASP input;
+the original loaded structure remains untouched. The six files are copied from
+the Crystallography Open Database and their attribution is in
+`data/catio3/LICENSE.txt`.
 
-The CLI accepts a directory as well. Every readable structure file becomes one
-job, tagged after its file:
+For a directory containing already charge-free inputs, the CLI can create the
+same kind of batch without the Python projection:
 
 ```console
 httk workflow job new --workflow vasp-relax \
-    --input-from structure structures/ --parameter kpoint_density=30.0 \
-    --placement batch
+    --input-from structure charge-free-structures/ \
+    --parameter kpoint_density=30.0 --placement batch
 ```
 
-Because the flag accepts multiple source files, shell globs work too.
+If a charge-bearing file is passed to `--input-from`, the command stops with a
+clear error explaining that POSCAR cannot represent species charges and that
+`structure.without_charges()` is the explicit projection to use.
 
-For a campaign larger than one workspace, define a partition map and submit
-roots through it; child jobs inherit their root's workspace:
+The store-driven alternative is useful when page 07 already supplied a
+search result cursor. It keeps the same projection at the job boundary:
 
-```console
-httk workflow workspace init screening-a --name screening-a
-httk workflow workspace init screening-b --name screening-b
-httk workflow campaign init \
-    --partition north=screening-a \
-    --partition south=screening-b \
-    --assignment hash
-httk workflow campaign submit --workflow vasp-relax --key silicon \
-    --input structure=structures/Si.vasp --tag silicon
+```python
+items = (
+    {"inputs": {"structure": UnitcellStructureView(row.structure).without_charges()}, "tag": row.structure.id[:12]}
+    for row in results.cursor()
+)
+for job in new_jobs(workspace, "vasp-relax", items, placement="batch"):
+    print(job.job_key)
 ```
 
-See the quickstart and the workflow CLI guide in the versioned *httk-workflow*
-documentation listed by the {doc}`module directory <../modules>`.
-
-See also the {doc}`/campaigns` topic page for the current workflow vocabulary.
+The generator streams rows into jobs, so neither the search result nor the
+batch has to be materialized in memory. Continue with the local run in the
+next step.

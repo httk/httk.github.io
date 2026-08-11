@@ -1,8 +1,8 @@
 # Build supercells
 
-The three v1 operations are direct `UnitcellStructure` methods in v2. Each returns a
-`SupercellResult`; its `.structure` is the expanded cell and the result also
-records the selected integer transform and exact shape scores.
+The three supercell operations are direct `UnitcellStructure` methods. Each
+returns a `SupercellResult`; its `.structure` is the expanded cell and the
+result also records the selected integer transform and exact shape scores.
 
 ```python
 from httk.core import load
