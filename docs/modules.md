@@ -53,8 +53,10 @@ contracts. Import path: `httk.store`.
 
 ### httk-serve
 
-Web-facing application and OPTIMADE protocol serving capabilities. Import paths:
-`httk.serve.web` and `httk.serve.optimade`.
+Web-facing application serving, OPTIMADE protocol serving, and generic
+HTTP/OpenAPI protocol serving (including a Data Space Protocol implementation).
+Import paths: `httk.serve.web`, `httk.serve.optimade`, `httk.serve.http`, and
+`httk.serve.dsp`.
 
 - API reference: {doc}`httk.serve </reference/autoapi/httk/serve/index>`
 - Module documentation: <https://docs.httk.org/httk-serve/dev/main/>
