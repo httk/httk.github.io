@@ -53,8 +53,16 @@ serve(adapter_from_providers([provider]), port=8080)
 Construct `adapter_from_providers([provider])` first when testing or embedding the adapter; `serve(...)` is the quick development-server path.
 For deployment, use `create_asgi_app` as the interface to any ASGI server.
 
+Serving is not limited to OPTIMADE. *httk-serve* can also turn a caller-owned
+OpenAPI 3.1 contract into a running application: you supply the JSON Schemas and
+one handler per operation, and the adapter derives the routes, validation, and
+responses from the contract. This is the mechanism behind its Data Space
+Protocol (DSP) support and the way to serve a custom or standardized protocol
+from *httk₂* data.
+
 ## Read next
 
 - [Data management](https://docs.httk.org/httk-store/dev/main/data/), [database storage](https://docs.httk.org/httk-store/dev/main/db/), [MongoDB](https://docs.httk.org/httk-store/dev/main/mongo/), and [federation](https://docs.httk.org/httk-store/dev/main/federation/).
 - [Database details](https://docs.httk.org/httk-store/dev/main/details/db/) and [MongoDB details](https://docs.httk.org/httk-store/dev/main/details/mongo/).
 - [OPTIMADE serving](https://docs.httk.org/httk-serve/dev/main/optimade/serving_providers/) and [core definition details](https://docs.httk.org/httk-core/dev/main/details/optimade_definitions/).
+- [Serving an OpenAPI contract](https://docs.httk.org/httk-serve/dev/main/http/openapi/) turns a JSON schema into an API server (with [details](https://docs.httk.org/httk-serve/dev/main/http/openapi-details/)).
