@@ -180,6 +180,27 @@ nitpick_ignore = [
     # StoredEntrySource is lazily re-exported from httk.store.db; AutoAPI keeps
     # the public annotation but indexes its defining module instead.
     ("py:class", "httk.store.db.StoredEntrySource"),
+    # Current-module signatures render these module-private types (whose defining
+    # classes AutoAPI intentionally omits) and their qualified public objects
+    # remain indexed in the aggregate tree.
+    ("py:class", "_AutomaticBatch"),
+    ("py:class", "_Connector"),
+    ("py:class", "_Resolver"),
+    ("py:class", "_ValidatedASUProof"),
+    # Internal base/provider types exposed in signatures without a public index.
+    ("py:class", "FracVectorBase"),
+    ("py:obj", "FracVectorBase"),
+    ("py:class", "DspProvider"),
+    ("py:class", "EntryStore"),
+    # The ServeApp branded alias (type ServeApp = Starlette) renders as the bare
+    # name Starlette, which the vendored inventory only exposes fully qualified.
+    ("py:class", "Starlette"),
+    # Bare stdlib/external types AutoAPI renders unqualified in signatures.
+    ("py:class", "UUID"),
+    ("py:class", "datetime"),
+    ("py:class", "sqlalchemy.URL"),
+    # Stale cross-reference in the current httk-core FracVector docstring.
+    ("py:meth", "httk.core.FracVector.to_fractions"),
 ]
 copybutton_prompt_text = r">>> |\.\.\. |\$ "
 copybutton_prompt_is_regexp = True
@@ -189,7 +210,7 @@ copybutton_prompt_is_regexp = True
 # after merging the modules' inventories. The installed Sphinx tags missing
 # Python references by their distinct role subtypes (ref.class, ref.meth,
 # ref.func, ref.exc, and ref.attr), so those nitpicky warnings remain fatal.
-suppress_warnings = ["myst.xref_missing", "autoapi.python_import_resolution", "ref.python"]
+suppress_warnings = ["myst.xref_missing", "autoapi.python_import_resolution", "ref.python", "mystnb"]
 
 
 # Workflow-specific rules omit internal modules and resolve public bare-name
