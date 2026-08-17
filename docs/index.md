@@ -27,6 +27,7 @@ publishes its own subsite under [docs.httk.org](https://docs.httk.org); the
 - **API reference**: {doc}`reference/index` — the aggregate reference for the published modules on this site.
 - **Tutorial**: {doc}`tutorial/index` — the original short
   example sequence translated to current APIs, including the remaining gaps.
+- **Coming from httk v1**: {doc}`for_v1_users/index` — what changed since httk v1 and how the calculation lifecycle maps onto httk₂.
 - **Example notebooks**: {doc}`notebooks/index` — runnable tours of the core and cross-module APIs.
 ```
 
@@ -92,6 +93,7 @@ campaigns
 analysis
 authoring
 tutorial/index
+for_v1_users/index
 reference/index
 notebooks/index
 ```

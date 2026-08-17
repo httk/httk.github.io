@@ -24,7 +24,7 @@ httk workflow remote add kappa --template ssh-slurm
 httk workflow remote configure kappa \
     --set host=kappa.example.org --set username=rar \
     --set check_connectivity=yes
-httk workflow remote install kappa
+httk workflow remote check kappa
 httk workflow workspace init kappa:/scratch/rar/httk/runs
 httk workflow workspace settings set kappa:runs slurm.partition batch
 httk workflow workspace settings set kappa:runs vasp.command "srun -n 32 vasp_std"

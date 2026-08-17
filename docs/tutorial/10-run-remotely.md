@@ -34,7 +34,7 @@ For a real cluster, configure a remote once and transfer the complete batch.
 httk workflow remote add kappa --template ssh-slurm
 httk workflow remote configure kappa \
     --set host=kappa.example.org --set username=rar
-httk workflow remote install kappa
+httk workflow remote check kappa
 httk workflow workspace init kappa:runs
 httk workflow workspace settings set kappa:runs vasp.command "srun -n 32 vasp_std"
 
