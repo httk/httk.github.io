@@ -177,9 +177,9 @@ nitpick_ignore = [
     # ParallelController) carry the module-private worker-manifest type in their
     # signatures; AutoAPI intentionally omits that implementation dataclass.
     ("py:class", "_WorkerManifest"),
-    # StoredEntrySource is lazily re-exported from httk.store.db; AutoAPI keeps
-    # the public annotation but indexes its defining module instead.
-    ("py:class", "httk.store.db.StoredEntrySource"),
+    # StoredEntrySource is lazily re-exported from httk.store.backend.sql; AutoAPI
+    # keeps the public annotation but indexes its defining module instead.
+    ("py:class", "httk.store.backend.sql.StoredEntrySource"),
     # Current-module signatures render these module-private types (whose defining
     # classes AutoAPI intentionally omits) and their qualified public objects
     # remain indexed in the aggregate tree.

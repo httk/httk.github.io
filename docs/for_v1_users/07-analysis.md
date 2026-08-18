@@ -41,9 +41,9 @@ with `add()`, names outputs in `results()`, and runs on iteration:
 
 ```python
 from httk.atomistic import UnitcellStructureRecord
-from httk.store.db import Database, SqlStore
+from httk.store import Backend, SqlStore
 
-store = SqlStore(Database.sqlite("presentation.sqlite"))
+store = SqlStore(Backend.sqlite("presentation.sqlite"))
 
 search = store.searcher()
 structure = search.variable(UnitcellStructureRecord)

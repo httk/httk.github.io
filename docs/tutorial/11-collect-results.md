@@ -22,9 +22,9 @@ import sqlite3
 
 from httk.atomistic import StructureEntry
 from httk.core import DataRecord, Run
-from httk.store.db import Database, SqlStore
+from httk.store import Backend, SqlStore
 
-store = SqlStore(Database.sqlite("presentation.sqlite"))
+store = SqlStore(Backend.sqlite("presentation.sqlite"))
 rows = []
 search = store.searcher()
 run = search.variable(Run)

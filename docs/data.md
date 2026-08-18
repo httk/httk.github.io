@@ -10,7 +10,7 @@ identifies a row in one store.
 from dataclasses import dataclass
 from tempfile import TemporaryDirectory
 
-from httk.store.db import Database, SqlStore
+from httk.store import Backend, SqlStore
 
 @dataclass(frozen=True)
 class Result:
@@ -18,7 +18,7 @@ class Result:
 
 record = Result("NaCl")
 with TemporaryDirectory() as directory:
-    db = Database.sqlite(f"{directory}/results.sqlite")
+    db = Backend.sqlite(f"{directory}/results.sqlite")
     store = SqlStore(db, entry_records={})
     with store.transaction():
         sid = store.save(record)
@@ -34,7 +34,7 @@ MongoDB uses the same model and store surface when MongoDB is already the
 operational data service:
 
 ```python
-from httk.store.mongo import MongoDatabase, MongoStore
+from httk.store.backend.mongo import MongoDatabase, MongoStore
 
 with MongoDatabase.connect(uri, database="materials") as database:
     store = MongoStore(database, entry_records={})

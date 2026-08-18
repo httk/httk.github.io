@@ -7,12 +7,12 @@ from httk.atomistic import (
     UnitcellStructureView,
 )
 from httk.core import load
-from httk.store.db import Database, SqlStore
+from httk.store import Backend, SqlStore
 
 structure = UnitcellStructureView(load("example.cif"))
 
 store = SqlStore(
-    Database.sqlite("presentation.sqlite"),
+    Backend.sqlite("presentation.sqlite"),
     entry_records={StructureEntry: UnitcellStructureRecord},
 )
 sid = store.save(structure)
@@ -38,7 +38,7 @@ The hexadecimal `.id` is structural and stable across equivalent objects and
 stores. The integer `sid` is only a local relational identifier: the same Record
 may have a different SID in another store without changing its `.id`.
 
-`Database.sqlite()` without a filename creates an in-memory database. Rationals,
+`Backend.sqlite()` without a filename creates an in-memory database. Rationals,
 surd bases, precisions, and periodicity are stored exactly. Species float fields
 round-trip at IEEE-double fidelity; the SQL layer may normalize `-0.0` to `+0.0`.
 User-defined frozen dataclasses remain the model for custom data.

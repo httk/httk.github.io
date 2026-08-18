@@ -16,13 +16,13 @@ duplicated.
 
 ## The direct store API
 
-To store your own records, open a `Database`, declare a store once, and save
+To store your own records, open a `Backend`, declare a store once, and save
 inside a transaction:
 
 ```python
-from httk.store.db import Database, SqlStore
+from httk.store import Backend, SqlStore
 
-db = Database.sqlite("results.sqlite")
+db = Backend.sqlite("results.sqlite")
 store = SqlStore(db, entry_records={})
 with store.transaction():
     sid = store.save(record)
@@ -56,9 +56,9 @@ up with `store.fetch_by_content_id(cls, key)`.
 
 ## Backends and vocabulary
 
-SQLite, DuckDB, and PostgreSQL sit behind one `Database` API —
-`Database.sqlite(...)`, `Database.duckdb(...)`, `Database.postgres(url)` — with
-the same store surface. MongoDB is available through `httk.store.mongo` when
+SQLite, DuckDB, and PostgreSQL sit behind one `Backend` API —
+`Backend.sqlite(...)`, `Backend.duckdb(...)`, `Backend.postgresql(url)` — with
+the same store surface. MongoDB is available through `httk.store.backend.mongo` when
 MongoDB is already the operational data service. Property and entry-type
 definitions come from the OPTIMADE definition vocabulary, so what you store is
 what you can later serve.

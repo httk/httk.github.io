@@ -5,7 +5,7 @@ A plain frozen dataclass is enough for custom stored data:
 ```python
 from dataclasses import dataclass
 
-from httk.store.db import Database, SqlStore
+from httk.store import Backend, SqlStore
 
 
 @dataclass(frozen=True)
@@ -14,7 +14,7 @@ class StructureIsEdible:
     is_edible: bool
 
 
-store = SqlStore(Database.sqlite("presentation.sqlite"), entry_records={})
+store = SqlStore(Backend.sqlite("presentation.sqlite"), entry_records={})
 store.save(StructureIsEdible("ClNa", True))
 store.save(StructureIsEdible("As", False))
 ```

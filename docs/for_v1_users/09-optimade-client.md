@@ -63,9 +63,9 @@ Remote reads never write local state. To keep a fetched entry for offline work,
 save it into your own store explicitly:
 
 ```python
-from httk.store.db import Database, SqlStore
+from httk.store import Backend, SqlStore
 
-cache = SqlStore(Database.sqlite("optimade-cache.sqlite"), entry_records={})
+cache = SqlStore(Backend.sqlite("optimade-cache.sqlite"), entry_records={})
 sid = cache.save(remote)
 offline = cache.fetch(type(remote), sid)
 ```

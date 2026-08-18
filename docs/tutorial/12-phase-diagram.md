@@ -12,9 +12,9 @@ from math import gcd
 from httk.analyse.matsci import PhaseDiagram
 from httk.atomistic import StructureEntry, UnitcellStructureView
 from httk.core import DataRecord, Run
-from httk.store.db import Database, SqlStore
+from httk.store import Backend, SqlStore
 
-store = SqlStore(Database.sqlite("presentation.sqlite"))
+store = SqlStore(Backend.sqlite("presentation.sqlite"))
 structures, energies, ids = [], [], []
 search = store.searcher()
 run = search.variable(Run)

@@ -123,7 +123,7 @@ fill any component you will need before advancing:
 
 ```python
 from httk.atomistic import UnitcellStructureView
-from httk.store.db import ExpiredCursorRowError
+from httk.store.backend.sql import ExpiredCursorRowError
 
 search = store.searcher()
 structure = search.variable(UnitcellStructureRecord)
@@ -259,10 +259,10 @@ empty mapping explicitly. Reopening the database loads that persisted
 declaration:
 
 ```python
-from httk.store.db import Database, SqlStore
+from httk.store import Backend, SqlStore
 
-custom_store = SqlStore(Database.sqlite("custom.sqlite"), entry_records={})
-reopened_store = SqlStore(Database.sqlite("custom.sqlite"))
+custom_store = SqlStore(Backend.sqlite("custom.sqlite"), entry_records={})
+reopened_store = SqlStore(Backend.sqlite("custom.sqlite"))
 print("custom store reopened", reopened_store is not custom_store)
 ```
 
