@@ -37,7 +37,7 @@ for item in runs:
     assert structure is not None and record is not None
     rows.append((structure_edge.entry_id, structure, record.value))
 with sqlite3.connect("presentation.sqlite") as database:
-    product_links = database.execute("SELECT COUNT(*) FROM core_product_link_v1").fetchone()[0]
+    product_links = database.execute("SELECT COUNT(*) FROM core_product_link").fetchone()[0]
 print("structures", len(rows), "energy records", len(rows))
 print("runs", len(runs), "product links", product_links)
 ```
