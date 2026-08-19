@@ -259,7 +259,6 @@ _module_names = (
     "httk-core",
     "httk-atomistic",
     "httk-analyse",
-    "httk-io",
     "httk-store",
     "httk-serve",
     "httk-workflow",

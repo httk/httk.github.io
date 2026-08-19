@@ -1,9 +1,9 @@
 # Structures and file formats
 
 Load a structure in one call with `UnitcellStructureView("file.cif")`. The
-registered *httk-io* readers cover CIF, POSCAR/CONTCAR, OUTCAR, and WAVECAR;
-use the neutral `httk.io` reader when you need format-level data instead of an
-atomistic structure.
+registered *httk-atomistic* readers cover CIF, POSCAR/CONTCAR, OUTCAR, and
+WAVECAR; use the neutral `httk.atomistic.io` reader when you need format-level
+data instead of an atomistic structure.
 
 Views are immutable, multi-format access to one backend, so a structure can be
 read as a unit cell or as a plain `(lattice, positions, numbers)` triple. The
@@ -56,4 +56,4 @@ making either library the structure model.
 - [Core views](https://docs.httk.org/httk-core/dev/main/view_backend_pattern/) and [view details](https://docs.httk.org/httk-core/dev/main/details/view_backend_pattern/); [datastreams](https://docs.httk.org/httk-core/dev/main/datastreams/) and [details](https://docs.httk.org/httk-core/dev/main/details/datastreams/).
 - [Atomistic structures](https://docs.httk.org/httk-atomistic/dev/main/structures/), [asymmetric units](https://docs.httk.org/httk-atomistic/dev/main/asu/), [precision](https://docs.httk.org/httk-atomistic/dev/main/precision/), and [periodicity](https://docs.httk.org/httk-atomistic/dev/main/periodicity/).
 - [Structure details](https://docs.httk.org/httk-atomistic/dev/main/details/structures/), [ASU details](https://docs.httk.org/httk-atomistic/dev/main/details/asu/), [precision details](https://docs.httk.org/httk-atomistic/dev/main/details/precision/), and [periodicity details](https://docs.httk.org/httk-atomistic/dev/main/details/periodicity/).
-- [POSCAR](https://docs.httk.org/httk-io/dev/main/poscar/), [VASP outputs](https://docs.httk.org/httk-io/dev/main/vasp_outputs/), and [WAVECAR](https://docs.httk.org/httk-io/dev/main/wavecar/) readers.
+- [CIF](https://docs.httk.org/httk-atomistic/dev/main/cif/), [POSCAR](https://docs.httk.org/httk-atomistic/dev/main/poscar/), [VASP outputs](https://docs.httk.org/httk-atomistic/dev/main/vasp_outputs/), and [WAVECAR](https://docs.httk.org/httk-atomistic/dev/main/wavecar/) readers.

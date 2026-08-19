@@ -30,7 +30,6 @@ docs-lock-check: docs-clean
 	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" -m pip install -e submodules/httk-core --no-deps; \
 	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" -m pip install -e submodules/httk-atomistic --no-deps; \
 	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" -m pip install -e submodules/httk-analyse --no-deps; \
-	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" -m pip install -e submodules/httk-io --no-deps; \
 	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" -m pip install -e submodules/httk-store --no-deps; \
 	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" -m pip install -e submodules/httk-serve --no-deps; \
 	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" -m pip install -e submodules/httk-workflow --no-deps; \

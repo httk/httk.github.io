@@ -29,8 +29,9 @@ asu = ASUStructureView("example.cif")
 
 For a remote source, pass an explicit `httk.core.DatastreamURL` consent token.
 
-The split is architectural: *httk-io* parses file formats and returns neutral
-payloads, *httk-atomistic* owns `UnitcellStructure` and `ASUStructure`, and *httk-core* dispatches between
+The split is architectural: *httk-atomistic*'s I/O layer (`httk.atomistic.io`)
+parses file formats and returns neutral payloads, *httk-atomistic* owns
+`UnitcellStructure` and `ASUStructure`, and *httk-core* dispatches between
 them. The adapter registration makes the one-call domain-loading experience
 work when *httk-atomistic* is installed. Code that needs the neutral reader
 result can use the explicit escape hatch `load("example.cif", raw=True)`.

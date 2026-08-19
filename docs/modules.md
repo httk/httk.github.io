@@ -1,6 +1,6 @@
 # Module directory
 
-The seven runtime modules share the `httk.*` namespace. Their aggregate API
+The six runtime modules share the `httk.*` namespace. Their aggregate API
 reference is pinned to this site's submodule revisions; each module also has a
 separate documentation subsite.
 
@@ -17,8 +17,11 @@ registries, and dependency-free record models. Import path: `httk.core`.
 
 ### httk-atomistic
 
-Exact crystal-structure and symmetry representations. Import path:
-`httk.atomistic`.
+Exact crystal-structure and symmetry representations, together with the
+file-format I/O layer (CIF/mCIF, POSCAR/CONTCAR, VASP OUTCAR/XDATCAR/WAVECAR,
+and trajectory JSONL) that previously lived in the retired *httk-io* module.
+Import path: `httk.atomistic` (I/O under `httk.atomistic.io` and
+`httk.atomistic.integrations.vasp`).
 
 - API reference: {doc}`httk.atomistic </reference/autoapi/httk/atomistic/index>`
 - Module documentation: <https://docs.httk.org/httk-atomistic/dev/main/>
@@ -32,15 +35,6 @@ analysis. Import path: `httk.analyse`.
 - API reference: {doc}`httk.analyse </reference/autoapi/httk/analyse/index>`
 - Module documentation: <https://docs.httk.org/httk-analyse/dev/main/>
 - Repository: <https://github.com/httk/httk-analyse>
-
-### httk-io
-
-File-format parsing and writing capabilities, including CIF and POSCAR. Import
-path: `httk.io`.
-
-- API reference: {doc}`httk.io </reference/autoapi/httk/io/index>`
-- Module documentation: <https://docs.httk.org/httk-io/dev/main/>
-- Repository: <https://github.com/httk/httk-io>
 
 ### httk-store
 

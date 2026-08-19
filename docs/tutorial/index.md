@@ -20,7 +20,7 @@ python -m pip install httk2 "httk-store[db]" ase
 
 | Step | Tutorial feature | Current route | Main module |
 | ---: | --- | --- | --- |
-| 1 | Load and inspect a structure | One-call loading and exact inspection | `httk-io` + `httk-atomistic` |
+| 1 | Load and inspect a structure | One-call loading and exact inspection | `httk-atomistic` |
 | 2 | Build a structure in code | Native unit-cell construction | `httk-atomistic` |
 | 3 | Visualize a structure | ASE interchange; no built-in viewer | `httk-atomistic` |
 | 4 | Convert to/from ASE | Structure and ASE views | `httk-atomistic` |

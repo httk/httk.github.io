@@ -2,7 +2,7 @@
 
 httk₂ is a PEP 420 native namespace package. The top-level `httk` package has no
 implementation of its own; independently released repositories contribute
-modules such as `httk.core`, `httk.io`, and `httk.atomistic`.
+modules such as `httk.core`, `httk.atomistic`, and `httk.store`.
 
 The layering rule is simple: contracts and models belong in `httk-core`, while
 capabilities belong in the modules that implement them. Core therefore provides
@@ -17,11 +17,11 @@ register loaders or entry providers with core. A feature module and its registry
 package can consequently remain separate while sharing the core
 registry contracts.
 
-One typical integration path is `httk-io` → `httk-atomistic` → `httk-serve`:
-the I/O module reads a neutral file-format mapping, atomistic turns it into an
-exact structure model, and an OPTIMADE adapter serves described records through
-the provider contract. The layers communicate through stable core types rather
-than importing one another's implementation details.
+One typical integration path is `httk-atomistic` → `httk-serve`: atomistic's
+I/O layer (`httk.atomistic.io`) reads a neutral file-format mapping and turns it
+into an exact structure model, and an OPTIMADE adapter serves described records
+through the provider contract. The layers communicate through stable core types
+rather than importing one another's implementation details.
 
 ## Core design decisions
 

@@ -37,8 +37,8 @@ For a remote source, `httk.core.fetch(url)` takes a plain URL string and is
 itself the explicit network consent. The lazy view/loader path instead gates
 remote access with a `DatastreamURL` token — for example
 `UnitcellStructureView(DatastreamURL(url))`. New formats are added by
-modules through `register_reader`; `httk-io` registers the CIF/mCIF, POSCAR,
-OUTCAR, and WAVECAR readers among others. The ASE bridge works both directions
+modules through `register_reader`; `httk-atomistic` registers the CIF/mCIF,
+POSCAR, OUTCAR, and WAVECAR readers among others. The ASE bridge works both directions
 (`UnitcellStructureView(atoms)` and `ASEAtomsView(structure)`), and a pymatgen
 bridge lives in `httk.atomistic`.
 
@@ -72,6 +72,6 @@ vocabulary — views, asymmetric units, and where exact geometry becomes a float
   the neutral registration pattern.
 - <https://docs.httk.org/httk-atomistic/dev/main/structures/> — the structure
   model and views.
-- <https://docs.httk.org/httk-io/dev/main/poscar/> and
-  <https://docs.httk.org/httk-io/dev/main/vasp_outputs/> — the POSCAR and VASP
-  output readers.
+- <https://docs.httk.org/httk-atomistic/dev/main/poscar/> and
+  <https://docs.httk.org/httk-atomistic/dev/main/vasp_outputs/> — the POSCAR and
+  VASP output readers.

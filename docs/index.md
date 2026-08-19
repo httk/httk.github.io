@@ -39,7 +39,7 @@ documentation for the complete guides and API details.
 Preferably work in a Python virtual environment.
 
 The quickest route is the [`httk2` metapackage](https://github.com/httk/httk2),
-which installs the complete standard module set (`httk-core`, `httk-io`,
+which installs the complete standard module set (`httk-core`,
 `httk-atomistic`, `httk-store`, `httk-serve`, `httk-analyse`, `httk-workflow`),
 each with its recommended `default` feature extras:
 
@@ -77,9 +77,10 @@ Each module is its own repository and can be installed independently; the shared
 ## Module layout
 
 The public namespace is split across independently installable distributions:
-`httk-core` (`httk.core`), `httk-store` (`httk.store`), `httk-io` (`httk.io`),
-`httk-atomistic` (`httk.atomistic`), `httk-serve` (`httk.serve`),
-`httk-analyse` (`httk.analyse`), and `httk-workflow` (`httk.workflow`).
+`httk-core` (`httk.core`), `httk-store` (`httk.store`),
+`httk-atomistic` (`httk.atomistic`, which now also provides the file-format
+I/O layer), `httk-serve` (`httk.serve`), `httk-analyse` (`httk.analyse`), and
+`httk-workflow` (`httk.workflow`).
 
 ```{toctree}
 :maxdepth: 2
