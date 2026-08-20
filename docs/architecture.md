@@ -1,6 +1,6 @@
 # Architecture
 
-httk₂ is a PEP 420 native namespace package. The top-level `httk` package has no
+*httk₂* is a PEP 420 native namespace package. The top-level `httk` package has no
 implementation of its own; independently released repositories contribute
 modules such as `httk.core`, `httk.atomistic`, and `httk.store`.
 

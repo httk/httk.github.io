@@ -1,6 +1,6 @@
-# httk₂ for users coming from httk v1
+# *httk₂* for users coming from httk v1
 
-httk₂ is a ground-up rewrite of the toolkit you know from httk v1 (last
+*httk₂* is a ground-up rewrite of the toolkit you know from httk v1 (last
 released as `httk` v1.2.0). The concepts carry over — a project anchor,
 structures with exact arithmetic, task templates, computers, a database, and
 an OPTIMADE server — but almost every name and boundary has moved. This page
@@ -11,7 +11,7 @@ in v1, from defining a calculation to publishing and re-consuming the results.
 ## One package became many
 
 httk v1 was a single monolithic package you put on `PYTHONPATH` by sourcing
-`init.shell`. httk₂ is a PEP 420 native namespace: `httk-core` supplies the
+`init.shell`. *httk₂* is a PEP 420 native namespace: `httk-core` supplies the
 shared primitives (type dispatch, datastreams, the `DatasetLoader`), and you
 add the capability modules you need — `httk-atomistic`,
 `httk-store`, `httk-serve`, `httk-analyse`, `httk-workflow`. The `httk2`
@@ -26,7 +26,7 @@ See {doc}`../modules` for every module and where its docs live.
 
 ## Python 2.7 became Python 3.12+
 
-The v1 codebase was written to run under Python 2.7. httk₂ requires Python
+The v1 codebase was written to run under Python 2.7. *httk₂* requires Python
 3.12 and is fully typed. The exact-by-default arithmetic that made httk
 trustworthy is retained and strengthened: exact rationals throughout, with a
 view/backend layer that keeps geometry exact until you explicitly ask for a
@@ -42,7 +42,7 @@ keys under `ht.project/keys/`, a `config`, `tags`, and `references`, plus a
 site-level `httk.cfg` (and `~/.httk.cfg`). You edited these files by hand.
 ```
 
-In httk₂ the anchor is a deliberately visible `httk_project/` created by
+In *httk₂* the anchor is a deliberately visible `httk_project/` created by
 `httk project init`, with its manifest at `httk_project/project.json` and its
 Ed25519 identity under `httk_project/keys/`. A legacy anchor is read in place:
 
@@ -66,7 +66,7 @@ in the *name* of the result directory
 (`ht.task.<computer>.<taskid>.<step>...<status>`).
 ```
 
-In httk₂ a workflow is a package: a directory with an `httk_workflow.toml`
+In *httk₂* a workflow is a package: a directory with an `httk_workflow.toml`
 manifest and a runner. Jobs live in a workspace with durable, transactional
 records instead of state-encoding directory names, and everything is driven
 through the single `httk workflow` CLI with managers. See {doc}`01-workflows`
@@ -81,7 +81,7 @@ and {doc}`03-bulk-runs`.
 per-queue `config.<queue>` holding the scheduler details.
 ```
 
-httk₂ models the same machines as remotes. You add, configure, and verify one
+*httk₂* models the same machines as remotes. You add, configure, and verify one
 with `httk workflow remote add`, `remote configure`, and `remote check`, and a
 remote owns a workspace (`kappa:runs`) whose settings include the scheduler
 configuration. See {doc}`04-remote-execution`.
@@ -95,7 +95,7 @@ configuration. See {doc}`04-remote-execution`.
 `@httk.httk_typed_init` to make them storable and queryable.
 ```
 
-httk₂'s `httk-store` gives a content-addressed `SqlStore` over SQLite, DuckDB,
+*httk₂*'s `httk-store` gives a content-addressed `SqlStore` over SQLite, DuckDB,
 or PostgreSQL (and a `MongoStore`), storing plain frozen-dataclass records.
 OPTIMADE property definitions are the shared vocabulary across storage,
 querying, and serving. See {doc}`06-database`.
@@ -109,12 +109,12 @@ querying, and serving. See {doc}`06-database`.
 the built-in OPTIMADE server.
 ```
 
-httk₂ separates serving into `httk-serve`: OPTIMADE serving from one or more
+*httk₂* separates serving into `httk-serve`: OPTIMADE serving from one or more
 providers, arbitrary HTTP from an OpenAPI 3.1 contract (the mechanism behind
 its Data Space Protocol support), and static OPTIMADE-widget websites. See
 {doc}`08-publishing`.
 
-## New in httk₂
+## New in *httk₂*
 
 Some things have no v1 equivalent:
 
@@ -137,7 +137,7 @@ Several import verbs read legacy assets so you do not start from scratch:
 - `httk workflow config import-v1` — imports legacy configuration.
 - `httk workflow v1 collect` — harvests a finished v1 result tree into records.
 - the `httk-v1` workflow language — wraps an existing v1 template as a package
-  (`language = "httk-v1"`), so it runs unchanged under the httk₂ CLI.
+  (`language = "httk-v1"`), so it runs unchanged under the *httk₂* CLI.
 
 Full migration guides:
 <https://docs.httk.org/httk-workflow/dev/main/httk_v1_migration_guide/>,

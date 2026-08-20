@@ -27,7 +27,7 @@ fetch resumes by re-running the exact same `transfer` command.
 `httk-tasks-receive-from-computer kappa Runs/` rsync-pulled the matching
 `ht.finished/` task directories back and deleted the remote copies — no
 digests, no resume, and the job's state lived only in the directory name
-(`ht.task.…finished`, `ht.task.…broken`). httk₂ seals the transfer bundle
+(`ht.task.…finished`, `ht.task.…broken`). *httk₂* seals the transfer bundle
 itself and retires the source only on acknowledgement.
 ```
 
@@ -55,7 +55,7 @@ httk workflow collect --into results.sqlite
 
 "Sealing" in v1 was a *read-time* step: `httk.task.reader()` picked the newest
 `ht.run.<timestamp>` in each `.finished` directory and built a signed
-`ht.manifest.bz2` per run. httk₂ seals the transfer bundle when it moves and
+`ht.manifest.bz2` per run. *httk₂* seals the transfer bundle when it moves and
 records provenance per job at collection, so reading is no longer where
 integrity is established.
 ```
@@ -64,7 +64,7 @@ integrity is established.
 :class: note
 
 Job state was a suffix on the directory name — `finished`, `broken`,
-`stopped` — that you filtered by moving directories. In httk₂ you select job
+`stopped` — that you filtered by moving directories. In *httk₂* you select job
 states directly on the command line with `--state succeeded --state failed`.
 ```
 

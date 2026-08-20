@@ -41,7 +41,7 @@ declares the durable representations it may hold; reopen later with just
 The v1 store was `backend = httk.db.backend.Sqlite('example.sqlite'); store =
 httk.db.store.SqlStore(backend); store.save(struct)`, and a storable result
 class was declared with `@httk.httk_typed_init({...})` on an `HttkObject`
-subclass. httk₂ replaces the typed-init classes with ordinary frozen
+subclass. *httk₂* replaces the typed-init classes with ordinary frozen
 dataclass records carrying storage markers, and the store declaration happens
 once, at the first open.
 ```
@@ -49,7 +49,7 @@ once, at the first open.
 ```{admonition} In httk v1
 :class: note
 
-Deduplication keyed on an object's `hexhash` (`struct.hexhash`). httk₂ uses
+Deduplication keyed on an object's `hexhash` (`struct.hexhash`). *httk₂* uses
 content ids (`content_id`) computed from canonical JSON, and you look a record
 up with `store.fetch_by_content_id(cls, key)`.
 ```
@@ -71,10 +71,10 @@ conditions, declare outputs, iterate. That shape survives in spirit rather
 than being replaced — it moved with the store.
 ```
 
-See {doc}`07-analysis` for querying the stored data with the httk₂ searcher.
+See {doc}`07-analysis` for querying the stored data with the *httk₂* searcher.
 
 If you have an existing v1 database, there is a dedicated migration guide that
-walks every v1 construct beside its httk₂ replacement.
+walks every v1 construct beside its *httk₂* replacement.
 
 ## Read next
 

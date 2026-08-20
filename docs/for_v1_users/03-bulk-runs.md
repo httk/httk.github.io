@@ -3,7 +3,7 @@
 High-throughput work means turning a directory of structures — or a search
 result — into many jobs. In httk v1 you wrote a Python loop that called
 `httk.task.create_batch_task` once per structure and left a differently-named
-directory behind for each. In httk₂ the jobs stream into a workspace with
+directory behind for each. In *httk₂* the jobs stream into a workspace with
 durable records, and creation-time parameters are validated as they are made.
 
 ## From the CLI
@@ -64,7 +64,7 @@ The pattern was a hand-written loop calling
 `httk.task.create_batch_task('Runs/', 't:vasp/batch/vasp-relax-two',
 {"structure": struct}, name=struct.hexhash)`. Each call applied the template,
 ran its `ht.instantiate.py`, and left a directory whose name encoded the state
-(`ht.task.<computer>.<taskid>.<step>...waitstart`). httk₂ jobs live in a
+(`ht.task.<computer>.<taskid>.<step>...waitstart`). *httk₂* jobs live in a
 workspace with durable records instead of state-encoding directory names.
 ```
 
@@ -72,7 +72,7 @@ workspace with durable records instead of state-encoding directory names.
 :class: note
 
 Template variables were passed to `ht.instantiate.py` as globals with no
-schema. In httk₂ they are declared `[workflow.parameters.*]`: a declared parameter
+schema. In *httk₂* they are declared `[workflow.parameters.*]`: a declared parameter
 given a value of the wrong type fails at job creation; an undeclared name is
 kept with a warning, because parameters are deliberately open.
 ```

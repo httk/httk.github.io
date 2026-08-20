@@ -20,14 +20,14 @@ publishes its own subsite under [docs.httk.org](https://docs.httk.org); the
 ```{admonition} Quick links
 :class: tip
 
-- **Working with httk₂**:
+- **Working with *httk₂***:
   {doc}`structures`, {doc}`data`, {doc}`campaigns`, and {doc}`analysis` — the
   ecosystem-level path from input files to results and analysis.
 - **Module directory**: {doc}`modules` — every *httk₂* module and where its docs live.
 - **API reference**: {doc}`reference/index` — the aggregate reference for the published modules on this site.
 - **Tutorial**: {doc}`tutorial/index` — the original short
   example sequence translated to current APIs, including the remaining gaps.
-- **Coming from httk v1**: {doc}`for_v1_users/index` — what changed since httk v1 and how the calculation lifecycle maps onto httk₂.
+- **Coming from httk v1**: {doc}`for_v1_users/index` — what changed since httk v1 and how the calculation lifecycle maps onto *httk₂*.
 - **Example notebooks**: {doc}`notebooks/index` — runnable tours of the core and cross-module APIs.
 ```
 

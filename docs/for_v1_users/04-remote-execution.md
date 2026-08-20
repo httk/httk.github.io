@@ -1,13 +1,13 @@
 # Running on a remote HPC system
 
 Once a bulk set of runs exists (page {doc}`03-bulk-runs`), the next step is to
-push them to a cluster and start managers there. In httk₂ a cluster is a
+push them to a cluster and start managers there. In *httk₂* a cluster is a
 *remote*: a machine definition made from a packaged adapter template, plus a
-workspace that the remote owns. httk₂ never installs software on the cluster
-for you — you log in and set httk₂ up yourself, then httk₂ only verifies that
+workspace that the remote owns. *httk₂* never installs software on the cluster
+for you — you log in and set *httk₂* up yourself, then *httk₂* only verifies that
 it answers.
 
-Install httk₂ on the far side first (log in and, e.g., `pipx install
+Install *httk₂* on the far side first (log in and, e.g., `pipx install
 httk-workflow`), then define and check the remote:
 
 ```console
@@ -31,7 +31,7 @@ httk_command="/proj/venv/bin/httk"` instead.
 `httk-computer-setup ssh-slurm kappa` copied a computer template into
 `ht.project/computers/kappa/` and ran an interactive `make_config`, then
 `httk-computer-install kappa` ran the template's `install` script *on the
-cluster*. httk₂ never installs software remotely: `remote check` only
+cluster*. *httk₂* never installs software remotely: `remote check` only
 verifies. An old computer bundle can be mapped with `httk workflow remote
 import-v1`, which reads its assignment-only `config` — the legacy shell code
 (`push`, `pull`, `install`, `command`) is never executed.
@@ -57,7 +57,7 @@ Scheduler settings live with the workspace, not with the machine:
 :class: note
 
 Per-queue `config.<queue>` files carried the scheduler knobs, and a queue was
-a first-class concept you selected. In httk₂ there are no queues: the same
+a first-class concept you selected. In *httk₂* there are no queues: the same
 knobs are per-workspace settings under the `slurm.*` and `manager.*` names,
 and the remote workspace owns them.
 ```

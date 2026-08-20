@@ -1,10 +1,10 @@
 # Defining workflows for external codes
 
 In httk v1 a calculation was a task-template directory you pointed at with a
-`t:` reference. In httk₂ it is a *workflow package*: a self-contained directory
+`t:` reference. In *httk₂* it is a *workflow package*: a self-contained directory
 whose `httk_workflow.toml` manifest is the httk-owned glue around a runner, and
 whose runner is written against a small SDK. The whole directory is published
-content-addressed and pinned by digest per job, so upgrading httk₂ underneath a
+content-addressed and pinned by digest per job, so upgrading *httk₂* underneath a
 queued campaign cannot change what its jobs execute.
 
 ## The quickstart shape
@@ -32,7 +32,7 @@ the workspace setting. On a real machine you would set it to something like
 The equivalent was a per-code shell layer. `ht_steps` scripts dispatched on
 `$STEP` (start → prerelax → relax1 → relax2 → cleanup) and sourced helpers
 such as `ht_tasks_api.sh` and `vasptools.sh`; the VASP invocation lived in
-shell functions like `VASP_PREPARE_CALC` and `VASP_RUN_CONTROLLED`. In httk₂
+shell functions like `VASP_PREPARE_CALC` and `VASP_RUN_CONTROLLED`. In *httk₂*
 that is the packaged runner plus the one `vasp.command` workspace setting.
 ```
 
@@ -78,7 +78,7 @@ The template directory *was* the interface. A batch template under
 `Execution/tasks-templates/vasp/batch/` carried its INCAR templates inline and
 an `ht.instantiate.py` executed once per structure, and was referenced as
 `t:vasp/batch/vasp-relax-two`. A one-shot run went through
-`httk.iface.vasp_if.prepare_single_run()`. httk₂ replaces the directory
+`httk.iface.vasp_if.prepare_single_run()`. *httk₂* replaces the directory
 convention with a declared manifest and SDK steps.
 ```
 
@@ -86,7 +86,7 @@ convention with a declared manifest and SDK steps.
 :class: note
 
 You do not have to rewrite an existing v1 template to use it. Wrap it
-unchanged as a package with `language = "httk-v1"` and it runs under the httk₂
+unchanged as a package with `language = "httk-v1"` and it runs under the *httk₂*
 CLI — see the migration guide, §15.
 ```
 

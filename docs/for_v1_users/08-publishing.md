@@ -1,7 +1,7 @@
 # Publishing the data
 
 Once results are in a store, publishing makes them available to others. In
-httk₂ everything that serves data lives in *httk-serve*, and everything it
+*httk₂* everything that serves data lives in *httk-serve*, and everything it
 serves is definition-driven: an OPTIMADE API, a static or dynamic website, a
 custom OpenAPI contract, or a Dataspace Protocol catalogue. There is no single
 central database to submit to — you publish the shape that fits your audience.
@@ -24,7 +24,7 @@ Serving straight from a store also works, and for real deployment
 :class: note
 
 httk v1 shipped its own OPTIMADE server, `httk.optimade.serve(store, config,
-port=8080)`, serving directly from a local `httk.db` store. httk₂ serving is
+port=8080)`, serving directly from a local `httk.db` store. *httk₂* serving is
 definition-driven and lives in httk-serve, with entry providers as the neutral
 contract between your data and any served protocol.
 ```
@@ -42,7 +42,7 @@ directly, so the site needs no running backend of its own.
 
 httk v1 built sites with `httk.httkweb.publish(src_dir, public_dir, base_url)`
 from `.httkweb`/rst templates plus `functions/*.py` handlers, and served the
-dynamic form with `httk.httkweb.wsgi`. In httk₂ this is replaced by
+dynamic form with `httk.httkweb.wsgi`. In *httk₂* this is replaced by
 httk-serve's site template and widgets, and by plain static hosting.
 ```
 
@@ -75,7 +75,7 @@ property means without the original environment or a network lookup.
 :class: note
 
 httk v1 published with `httk-project-submit`, which uploaded an Ed25519-signed
-project manifest to the central openmaterialsdb.se. The httk₂ counterparts —
+project manifest to the central openmaterialsdb.se. The *httk₂* counterparts —
 sealed project bundles (`httk project seal`), dataset exports, and the DSP
 catalogue — none assume one central database, and none upload anywhere on their
 own; you choose the distribution channel.

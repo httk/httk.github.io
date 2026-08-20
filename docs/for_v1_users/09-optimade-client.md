@@ -1,7 +1,7 @@
 # Using published data from httk as a client
 
 This closes the loop. Once data is published (see {doc}`08-publishing`), someone
-external — or future you — consumes it with httk₂ itself. httk₂ ships a
+external — or future you — consumes it with *httk₂* itself. *httk₂* ships a
 read-only OPTIMADE client that presents a remote service through exactly the
 same search DSL you use on a local store, so a query you already wrote works
 unchanged against a published endpoint.

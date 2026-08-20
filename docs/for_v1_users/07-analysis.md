@@ -1,7 +1,7 @@
 # Analyzing the data
 
 With runs collected into a store (see {doc}`06-database`), analysis is the step
-that turns records into results. In httk₂ this splits cleanly into two halves:
+that turns records into results. In *httk₂* this splits cleanly into two halves:
 curated scripts that a workflow package ships alongside its runs, and your own
 queries against the store using the search DSL and *httk-analyse*.
 
@@ -29,7 +29,7 @@ description = "write a text and JSON relaxation summary"
 
 Nothing like curated per-workflow postprocess scripts existed. Analysis code
 was shipped ad hoc next to the project — a loose script the author remembered
-to keep near the runs. In httk₂ the package that defines the runs also owns
+to keep near the runs. In *httk₂* the package that defines the runs also owns
 its standard summaries, so they travel with it.
 ```
 
@@ -65,7 +65,7 @@ joins like `search.add(search_total_energy.structure == search_struct)` and
 `search.add_all(search_struct.formula_symbols.is_in('O', 'Ca', 'Ti'))`, feeding
 the result into matplotlib. The searcher DSL survives in httk-store in
 recognizable form — `variable`/`add`/`output` — so this is the most familiar
-corner of httk₂ for a v1 user.
+corner of *httk₂* for a v1 user.
 ```
 
 If you would rather write a query as an OPTIMADE filter string — the same text
@@ -104,7 +104,7 @@ the underlying dimension-agnostic hull, exposing `hull_indices` and
 
 The phase diagram was `httk.atomistic.StructurePhaseDiagram.create(structures,
 energies)`, and you displayed it with `pd.vis.show()` — visualization lived
-inside the structure classes (`httk.atomistic.vis`). In httk₂ it is
+inside the structure classes (`httk.atomistic.vis`). In *httk₂* it is
 `httk.analyse.matsci.PhaseDiagram` with a plain `.plot()`; visualization no
 longer lives inside the structure classes.
 ```

@@ -3,7 +3,7 @@
 Before you can run anything you need to read source files — CIFs from a
 database, POSCARs from an earlier project, outputs from a finished run. In
 httk v1 loading dispatched to a patchwork of format backends, some of them
-external command-line tools configured in `httk.cfg`. In httk₂ there is one
+external command-line tools configured in `httk.cfg`. In *httk₂* there is one
 entry point, the readers are pure Python, and dispatch is by filename.
 
 ## One entry point
@@ -50,7 +50,7 @@ bridge lives in `httk.atomistic`.
 'cif2cell', 'ase', 'platon'])` for CIFs, `httk.iface.vasp_if.poscar_to_structure()`
 for POSCARs. The pure-Python `internal` backend came first; the external tools
 (`cif2cell`, `ase`, `platon`) were optional fallbacks, used only if installed
-and configured in `httk.cfg` under `[paths]`. httk₂ readers are pure Python,
+and configured in `httk.cfg` under `[paths]`. *httk₂* readers are pure Python,
 registered, and chosen by filename with no external-tool configuration.
 ```
 
@@ -58,7 +58,7 @@ registered, and chosen by filename with no external-tool configuration.
 :class: note
 
 You may have loaded through the class method `Structure.io.load("example.cif")`.
-The httk₂ equivalent is `UnitcellStructureView(load(path))` (or passing the
+The *httk₂* equivalent is `UnitcellStructureView(load(path))` (or passing the
 path straight to the view). See {doc}`../structures` for the current structure
 vocabulary — views, asymmetric units, and where exact geometry becomes a float.
 ```
