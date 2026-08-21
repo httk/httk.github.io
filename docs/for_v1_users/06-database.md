@@ -5,7 +5,7 @@ Collected results (page {doc}`05-fetching-results`) become durable records in a
 store.
 
 ```console
-httk workflow collect WORKSPACE --into results.sqlite
+httk workflow collect --workspace WORKSPACE --into results.sqlite
 ```
 
 This stores each collected job's entries plus a provenance `Run` record —

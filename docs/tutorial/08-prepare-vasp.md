@@ -28,10 +28,10 @@ The core project command creates the anchor. The workflow command then creates
 and registers the first local workspace at the project root:
 
 ```console
-httk project init --name tutorial
-httk workflow workspace init . --name default
-httk workflow workspace settings set vasp.command vasp_std
-httk workflow workspace settings set vasp.pseudo_library /path/to/potpaw_PBE
+httk project init --name tutorial .
+httk workflow workspace init --name default .
+httk workflow workspace settings set --key vasp.command --value vasp_std default
+httk workflow workspace settings set --key vasp.pseudo_library --value /path/to/potpaw_PBE default
 ```
 
 The workspace name `default` is registered on this machine. Commands run from

@@ -13,7 +13,7 @@ provider-owned executable that runs once per selected collected job. You invoke
 one by its declared name:
 
 ```console
-$ httk workflow postprocess WORKSPACE --script relaxation-report
+$ httk workflow postprocess --workspace WORKSPACE --script relaxation-report
 ```
 
 For example, a relaxation package might declare:

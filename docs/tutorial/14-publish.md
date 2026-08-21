@@ -67,7 +67,7 @@ directory as an httk project if that was not done earlier, then seal it from
 inside the project:
 
 ```console
-$ httk project init raw-data --name raw-data
+$ httk project init --name raw-data raw-data
 Initialized httk project 'raw-data' in .../raw-data/httk_project
 $ (cd raw-data && httk project seal ../raw-data-sealed.zip)
 sealed project to .../raw-data-sealed.zip

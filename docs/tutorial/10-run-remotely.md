@@ -8,8 +8,8 @@ as the VASP command; it writes the same output-file contract as a finished
 physics.
 
 ```console
-httk workflow workspace settings set vasp.command \
-    "$PWD/docs/tutorial/data/mock_vasp_catio3.py"
+httk workflow workspace settings set --key vasp.command \
+    --value "$PWD/docs/tutorial/data/mock_vasp_catio3.py" default
 httk workflow run --workers 2
 ```
 
@@ -18,7 +18,7 @@ then exits when no work remains. On a real VASP machine, use the same flow and
 set the command to `vasp_std` or to the site launcher, for example:
 
 ```console
-httk workflow workspace settings set vasp.command "srun -n 32 vasp_std"
+httk workflow workspace settings set --key vasp.command --value "srun -n 32 vasp_std" default
 httk workflow run --workers 8
 ```
 
@@ -31,16 +31,16 @@ For a real cluster, configure a remote once and transfer the complete batch.
 `--job` is repeatable; list every page-09 job so the whole batch moves:
 
 ```console
-httk workflow remote add kappa --template ssh-slurm
-httk workflow remote configure kappa \
-    --set host=kappa.example.org --set username=rar
+httk workflow remote add --template ssh-slurm kappa
+httk workflow remote configure \
+    --set host=kappa.example.org --set username=rar kappa
 httk workflow remote check kappa
 httk workflow workspace init kappa:runs
-httk workflow workspace settings set kappa:runs vasp.command "srun -n 32 vasp_std"
+httk workflow workspace settings set --key vasp.command --value "srun -n 32 vasp_std" kappa:runs
 
-httk workflow transfer default kappa:runs \
-    --job ca --job cao --job catio3 --job o --job ti --job tio
-httk workflow run kappa:runs --workers 8
+httk workflow transfer \
+    --job ca --job cao --job catio3 --job o --job ti --job tio default kappa:runs
+httk workflow run --workspace kappa:runs --workers 8
 httk workflow workspace status kappa:runs
 httk workflow transfer kappa:runs default
 ```

@@ -6,7 +6,7 @@ sealed, detached operation: it survives interruption and never corrupts the
 copy in flight.
 
 ```console
-httk workflow transfer kappa:runs default --state succeeded --state failed
+httk workflow transfer --state succeeded --state failed kappa:runs default
 ```
 
 `--state` (repeatable, default `succeeded` and `failed`) chooses which finished

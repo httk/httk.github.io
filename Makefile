@@ -18,7 +18,7 @@ docs-clean:
 # The aggregate has no internal dependency pins: all seven module checkouts are
 # installed separately, while this lock contains only external docs requirements.
 docs-lock:
-	$(PYTHON) -m httk.core.docs lock
+	$(PYTHON) -m httk.core.docs lock .
 	$(PYTHON) scripts/check_lock_members.py
 
 docs-lock-check: docs-clean

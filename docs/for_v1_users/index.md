@@ -47,7 +47,7 @@ In *httk₂* the anchor is a deliberately visible `httk_project/` created by
 Ed25519 identity under `httk_project/keys/`. A legacy anchor is read in place:
 
 ```console
-$ httk project init --name my-project
+$ httk project init --name my-project .
 $ httk project import-v1 PATH     # reads PATH/ht.project
 ```
 

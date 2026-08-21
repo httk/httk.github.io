@@ -5,7 +5,7 @@ job, run its manager, and collect the result. The packaged `vasp-relax`
 workflow accepts a POSCAR and needs no runner authoring:
 
 ```console
-$ httk workflow workspace init . --name default
+$ httk workflow workspace init --name default .
 $ httk workflow job new --workflow vasp-relax --input structure=POSCAR
 $ httk workflow run
 $ httk workflow collect --into results.sqlite
@@ -13,25 +13,25 @@ $ httk workflow collect --into results.sqlite
 
 The workspace holds durable state and provenance; collection is the boundary
 where finished jobs become records in *httk-store*. Re-collecting is safe and
-deduplicated. Run `httk workflow precheck WORKSPACE` before starting managers
+deduplicated. Run `httk workflow precheck --workspace WORKSPACE` before starting managers
 to report missing settings, runner references, and machine readiness.
 
 For a remote, add and configure the machine, initialize its workspace, then
 transfer jobs and run a manager there:
 
 ```console
-httk workflow remote add kappa --template ssh-slurm
-httk workflow remote configure kappa \
+httk workflow remote add --template ssh-slurm kappa
+httk workflow remote configure \
     --set host=kappa.example.org --set username=rar \
-    --set check_connectivity=yes
+    --set check_connectivity=yes kappa
 httk workflow remote check kappa
 httk workflow workspace init kappa:/scratch/rar/httk/runs
-httk workflow workspace settings set kappa:runs slurm.partition batch
-httk workflow workspace settings set kappa:runs vasp.command "srun -n 32 vasp_std"
-httk workflow transfer default kappa:runs --job JOB-ID
-httk workflow precheck kappa:runs
-httk workflow run kappa:runs --workers 8
-httk workflow transfer kappa:runs default --state succeeded --state failed
+httk workflow workspace settings set --key slurm.partition --value batch kappa:runs
+httk workflow workspace settings set --key vasp.command --value "srun -n 32 vasp_std" kappa:runs
+httk workflow transfer --job JOB-ID default kappa:runs
+httk workflow precheck --workspace kappa:runs
+httk workflow run --workspace kappa:runs --workers 8
+httk workflow transfer --state succeeded --state failed kappa:runs default
 ```
 
 The remote workspace owns scheduler settings. A large campaign partitions

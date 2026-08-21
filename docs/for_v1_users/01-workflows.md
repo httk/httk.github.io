@@ -14,10 +14,10 @@ workflow (id `httk.vasp.relax`) runs VASP through three steps — prepare,
 run, publish — and needs only a POSCAR and a `vasp.command` setting.
 
 ```console
-$ httk project init --name quickstart
-$ httk workflow workspace init . --name default
+$ httk project init --name quickstart .
+$ httk workflow workspace init --name default .
 $ httk workflow job new --workflow vasp-relax --input structure=POSCAR --tag silicon
-$ httk workflow workspace settings set vasp.command "$PWD/examples/mock_vasp.py"
+$ httk workflow workspace settings set --key vasp.command --value "$PWD/examples/mock_vasp.py" default
 $ httk workflow run
 ```
 

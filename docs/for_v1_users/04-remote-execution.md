@@ -11,10 +11,10 @@ Install *httk₂* on the far side first (log in and, e.g., `pipx install
 httk-workflow`), then define and check the remote:
 
 ```console
-httk workflow remote add kappa --template ssh-slurm
-httk workflow remote configure kappa \
+httk workflow remote add --template ssh-slurm kappa
+httk workflow remote configure \
     --set host=kappa.example.org --set username=rar \
-    --set check_connectivity=yes
+    --set check_connectivity=yes kappa
 httk workflow remote check kappa
 ```
 
@@ -22,8 +22,8 @@ httk workflow remote check kappa
 *non-interactive* shell and reports its version. This matters: a `module load`
 guarded by an interactivity test in `.bashrc` works when you log in but not in
 the shell the adapter uses. If `httk` is not on the default path there, point
-at a specific binary with `remote configure kappa --set
-httk_command="/proj/venv/bin/httk"` instead.
+at a specific binary with `remote configure --set
+httk_command="/proj/venv/bin/httk" kappa` instead.
 
 ```{admonition} In httk v1
 :class: note
@@ -44,8 +44,8 @@ the remote, then set scheduler and command settings on the workspace itself:
 
 ```console
 httk workflow workspace init kappa:/scratch/rar/httk/runs
-httk workflow workspace settings set kappa:runs slurm.partition batch
-httk workflow workspace settings set kappa:runs vasp.command "srun -n 32 vasp_std"
+httk workflow workspace settings set --key slurm.partition --value batch kappa:runs
+httk workflow workspace settings set --key vasp.command --value "srun -n 32 vasp_std" kappa:runs
 ```
 
 Scheduler settings live with the workspace, not with the machine:
@@ -68,15 +68,15 @@ and the remote workspace owns them.
 up, submit a manager through the scheduler, and read the workspace's markers:
 
 ```console
-httk workflow transfer default kappa:runs --job JOB-ID
-httk workflow precheck kappa:runs
-httk workflow run kappa:runs --workers 8
+httk workflow transfer --job JOB-ID default kappa:runs
+httk workflow precheck --workspace kappa:runs
+httk workflow run --workspace kappa:runs --workers 8
 httk workflow workspace status kappa:runs
 ```
 
 `precheck` reports readiness — declared-environment resolution, runner-reference
 availability and digests, whether a live manager can claim the jobs, and any
-required staged inputs — before you start managers. `run kappa:runs` submits the
+required staged inputs — before you start managers. `run --workspace kappa:runs` submits the
 generated manager through the remote adapter as a batch job; the task manager
 is now a manager submitted through the scheduler rather than a standalone
 daemon. `--workers` fixes its worker count.
