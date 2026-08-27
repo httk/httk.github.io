@@ -81,6 +81,21 @@ generated manager through the remote adapter as a batch job; the task manager
 is now a manager submitted through the scheduler rather than a standalone
 daemon. `--workers` fixes its worker count.
 
+The v1 mindset of one task per manager maps to a worker pool with explicit
+resource capacities: use `--workers` for concurrency and repeat
+`--worker-resource` for the resources each manager can allot. For example:
+
+```console
+httk workflow run --workers 4 \
+  --worker-resource procs 32 --worker-resource mem 128000 \
+  --worker-resource matlab_license_slots 2
+```
+
+Each manager owns its own allotment, so `--count N` starts N managers with
+auto-detected capacities split between them while explicit resource values
+remain per manager. A job requiring a resource a manager lacks is left idle
+and shown in that manager's summary.
+
 ```{admonition} In httk v1
 :class: note
 

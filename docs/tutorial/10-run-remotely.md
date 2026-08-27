@@ -45,6 +45,18 @@ httk workflow workspace status kappa:runs
 httk workflow transfer kappa:runs default
 ```
 
+The manager can advertise the resources available in the cluster allocation:
+
+```console
+httk workflow run --workspace kappa:runs --workers 4 \
+  --worker-resource procs 32 --worker-resource mem 128000 \
+  --worker-resource matlab_license_slots 2
+```
+
+Jobs that require a resource this manager does not have remain idle and are
+listed in its summary; in a SLURM allocation, `procs`, `gpus`, `nodes`, and
+`mem` can be derived from the allocation when not specified.
+
 The reverse transfer brings finished jobs home; run the local collector in the
 next step. `workspace init kappa:runs` creates the named workspace on kappa,
 so its name is resolved by kappa rather than by the local machine.

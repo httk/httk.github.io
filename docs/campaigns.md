@@ -34,6 +34,47 @@ httk workflow run --workspace kappa:runs --workers 8
 httk workflow transfer --state succeeded --state failed kappa:runs default
 ```
 
+Size tasks against the resources a manager advertises. For example, a manager
+with four workers and the following capacities can pack tasks by their actual
+requirements:
+
+```console
+httk workflow run --workers 4 \
+  --worker-resource procs 32 --worker-resource mem 128000 \
+  --worker-resource matlab_license_slots 2
+```
+
+Requirements are `NAME = integer`. `procs` and `mem` are special: a job that
+omits either is assumed to need the manager's fair share (`capacity //
+--workers`), so only jobs declaring both can pack more densely than one per
+worker. A job needing a resource the manager lacks, or has at 0, is never run
+by that manager and appears in its idle summary. With the manager above,
+`relax` runs alone while up to two `analyse` steps run concurrently because
+two `matlab_license_slots` are available. Inside a SLURM allocation, the
+manager derives `procs`, `gpus`, `nodes`, and `mem` from `SLURM_*` unless they
+are given. Each manager owns its own allotment; `--count N` starts N managers,
+splitting auto-detected capacities across them while keeping explicit
+`--worker-resource` values per manager.
+
+Package manifests can declare workflow-wide and per-step resource tables; see
+the [workflow package details](https://docs.httk.org/httk-workflow/dev/main/details/workflow_packages/)
+for the manifest rules:
+
+```toml
+[workflow.resources]
+procs = 4
+mem = 16000            # MB
+
+[workflow.steps.relax]
+resources = { procs = 32, mem = 120000 }
+
+[workflow.steps.analyse]
+resources = { procs = 1, mem = 2000, matlab_license_slots = 1 }
+```
+
+The Python SDK can publish a dynamic requirement for the next activation:
+`a.advance("analyse", resources={"procs": 1, "mem": 2000, "matlab_license_slots": 1})`.
+
 The remote workspace owns scheduler settings. A large campaign partitions
 ordinary workspaces, assigns root jobs by hash, round-robin, or explicit name,
 and keeps spawned children with their parent's partition. Use
