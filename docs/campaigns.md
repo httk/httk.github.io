@@ -16,21 +16,26 @@ where finished jobs become records in *httk-store*. Re-collecting is safe and
 deduplicated. Run `httk workflow precheck --workspace WORKSPACE` before starting managers
 to report missing settings, runner references, and machine readiness.
 
-For a remote, add and configure the machine, initialize its workspace, then
-transfer jobs and run a manager there:
+For a remote, add and configure the SSH machine, initialize its workspace, set
+that workspace's launcher and scheduler settings, then transfer jobs and run
+the workspace there:
 
 ```console
-httk workflow remote add --template ssh-slurm kappa
+httk workflow remote add --template ssh kappa
 httk workflow remote configure \
     --set host=kappa.example.org --set username=rar \
     --set check_connectivity=yes kappa
 httk workflow remote check kappa
 httk workspace init kappa:/scratch/rar/httk/runs
+httk workflow launcher add --template slurm --global cluster
+httk workflow launcher check cluster
+httk workspace settings set --key manager.launch --value cluster kappa:runs
 httk workspace settings set --key slurm.partition --value batch kappa:runs
+httk workspace settings set --key manager.workers --value 8 kappa:runs
 httk workspace settings set --key vasp.command --value "srun -n 32 vasp_std" kappa:runs
 httk workflow transfer --job JOB-ID default kappa:runs
 httk workflow precheck --workspace kappa:runs
-httk workflow run --workspace kappa:runs --workers 8
+httk workflow run --workspace kappa:runs --count 1
 httk workflow transfer --state succeeded --state failed kappa:runs default
 ```
 
@@ -75,11 +80,11 @@ resources = { procs = 1, mem = 2000, matlab_license_slots = 1 }
 The Python SDK can publish a dynamic requirement for the next activation:
 `a.advance("analyse", resources={"procs": 1, "mem": 2000, "matlab_license_slots": 1})`.
 
-The remote workspace owns scheduler settings. A large campaign partitions
+Each workspace owns its launcher and scheduler settings. A large campaign partitions
 ordinary workspaces, assigns root jobs by hash, round-robin, or explicit name,
 and keeps spawned children with their parent's partition. Use
-`campaign init`, `campaign submit`, `campaign start-managers`, and
-`campaign collect` to manage those partitions one at a time or together.
+`campaign init`, `campaign submit`, `workflow run`, and `campaign collect` to
+manage those partitions one at a time or together.
 
 Author reusable workflows as packages with an `httk_workflow.toml` manifest.
 The nine-language SDK family gives the same runner surface from Python, Bash,

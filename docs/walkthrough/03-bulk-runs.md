@@ -73,8 +73,7 @@ Creation-time parameterization goes through `[workflow.parameters.*]` in the
 manifest, validated at job creation and applied by the runner's
 `@run.instantiate` hook. A `placement` string organizes the batch, and — for
 truly large sets — a *campaign* partitions the work across several workspaces
-with `campaign init`, `campaign submit`, `campaign start-managers`, and
-`campaign collect`.
+with `campaign init`, `campaign submit`, `workflow run`, and `campaign collect`.
 
 ```{admonition} In httk v1
 :class: note

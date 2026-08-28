@@ -8,13 +8,13 @@ for you — you log in and set *httk₂* up yourself, then *httk₂* only verifi
 it answers.
 
 Install *httk₂* on the far side first (log in and, e.g., `pipx install
-httk-workflow`), then define and check the remote:
+httk-workflow`), then define and check the SSH remote. A remote only describes
+how to reach a machine; it is not the manager launcher:
 
 ```console
-httk workflow remote add --template ssh-slurm kappa
+httk workflow remote add --template ssh kappa
 httk workflow remote configure \
-    --set host=kappa.example.org --set username=rar \
-    --set check_connectivity=yes kappa
+    --set host=kappa.example.org --set username=rar kappa
 httk workflow remote check kappa
 ```
 
@@ -28,7 +28,7 @@ httk_command="/proj/venv/bin/httk" kappa` instead.
 ```{admonition} In httk v1
 :class: note
 
-`httk-computer-setup ssh-slurm kappa` copied a computer template into
+`httk-computer-setup` copied a scheduler-specific computer template into
 `ht.project/computers/kappa/` and ran an interactive `make_config`, then
 `httk-computer-install kappa` ran the template's `install` script *on the
 cluster*. *httk₂* never installs software remotely: `remote check` only
@@ -37,18 +37,28 @@ import-v1`, which reads its assignment-only `config` — the legacy shell code
 (`push`, `pull`, `install`, `command`) is never executed.
 ```
 
-## Create the remote workspace and its settings
+## Give the workspace a manager launcher
 
 The machine that owns a workspace chooses its path. Initialize the workspace on
-the remote, then set scheduler and command settings on the workspace itself:
+the remote, install/check the Slurm launcher there, then set the launcher and
+scheduler settings on the workspace itself:
 
 ```console
 httk workspace init kappa:/scratch/rar/httk/runs
+httk workflow launcher add --template slurm --global cluster
+httk workflow launcher check cluster
+httk workspace settings set --key manager.launch --value cluster kappa:runs
+httk workspace settings set --key manager.count --value 1 kappa:runs
 httk workspace settings set --key slurm.partition --value batch kappa:runs
+httk workspace settings set --key slurm.time_limit --value 01:00:00 kappa:runs
+httk workspace settings set --key manager.workers --value 8 kappa:runs
+httk workspace settings set --key environment.prelude --value "module load httk vasp" kappa:runs
+httk workspace settings set --key manager.command --value httk kappa:runs
 httk workspace settings set --key vasp.command --value "srun -n 32 vasp_std" kappa:runs
 ```
 
-Scheduler settings live with the workspace, not with the machine:
+The launcher and scheduler settings live with the workspace, not with the
+remote:
 `slurm.account`, `slurm.partition`, `slurm.time_limit`, `slurm.nodes`,
 `slurm.cpus_per_task`, and `slurm.reservation` become batch directives, and
 `manager.workers` supplies the default worker count.
@@ -65,21 +75,23 @@ and the remote workspace owns them.
 ## Transfer, run, and check
 
 `transfer SRC DST` moves jobs whichever way the two names point. Send the batch
-up, submit a manager through the scheduler, and read the workspace's markers:
+up, then run the workspace. The same command works on the login node, through a
+self-addressed `machine_names` name, or from the desk via the remote:
 
 ```console
 httk workflow transfer --job JOB-ID default kappa:runs
 httk workflow precheck --workspace kappa:runs
-httk workflow run --workspace kappa:runs --workers 8
+httk workflow run --workspace kappa:runs --count 1
 httk workspace status kappa:runs
 ```
 
 `precheck` reports readiness — declared-environment resolution, runner-reference
 availability and digests, whether a live manager can claim the jobs, and any
-required staged inputs — before you start managers. `run --workspace kappa:runs` submits the
-generated manager through the remote adapter as a batch job; the task manager
-is now a manager submitted through the scheduler rather than a standalone
-daemon. `--workers` fixes its worker count.
+required staged inputs — before you start managers. `run --workspace
+kappa:runs` reaches the machine through the remote adapter when necessary,
+then runs the workspace's configured launcher there. The workspace settings,
+including `manager.launch`, determine how managers start; the remote itself
+only transfers jobs and runs commands on the machine.
 
 The v1 mindset of one task per manager maps to a worker pool with explicit
 resource capacities: use `--workers` for concurrency and repeat
@@ -114,4 +126,4 @@ are replaced by `transfer`, `run`, and `workspace status`.
 - [Task manager](https://docs.httk.org/httk-workflow/dev/main/taskmanager/) and
   [task-manager details](https://docs.httk.org/httk-workflow/dev/main/details/taskmanager/).
 - [CLI details](https://docs.httk.org/httk-workflow/dev/main/details/workflow_cli/) and
-  [adapter authoring](https://docs.httk.org/httk-workflow/dev/main/details/adapter_authoring/).
+  [launcher authoring](https://docs.httk.org/httk-workflow/dev/main/launcher_authoring/).
