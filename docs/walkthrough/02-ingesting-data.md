@@ -63,6 +63,48 @@ path straight to the view). See {doc}`../structures` for the current structure
 vocabulary — views, asymmetric units, and where exact geometry becomes a float.
 ```
 
+## Into a database
+
+The same source directory can become a queryable DuckDB *httk-store*
+database. `UnitcellStructureView` normalizes each CIF-native asymmetric unit
+to the unit-cell representation declared for the `structures` entry family:
+
+```python
+from pathlib import Path
+
+from httk.atomistic import StructureEntry, UnitcellStructureRecord, UnitcellStructureView
+from httk.core import load
+from httk.store import Backend, EntryIdScheme, SqlStore
+
+db = Backend.duckdb("source.duckdb")
+store = SqlStore(
+    db,
+    entry_records={StructureEntry: UnitcellStructureRecord},
+    entry_ids=EntryIdScheme("httk.source", "1"),
+)
+
+count = 0
+with store.transaction():
+    for path in sorted(Path("structures").glob("*.cif")):
+        structure = UnitcellStructureView(load(path))
+        store.save(structure)
+        count += 1
+
+print(f"Stored {count} structures")
+```
+
+Records are content-addressed and deduplicated, so re-running the ingest is
+idempotent. The same store can later receive calculation results; see
+{doc}`06-database`.
+
+```{admonition} In httk v1
+:class: note
+
+The comparable habit was `store.save(struct)` on
+`httk.db.store.SqlStore`; *httk₂* keeps the save operation but declares the
+durable structure representation when the store is first opened.
+```
+
 ## Read next
 
 - {doc}`../structures` — structures and file formats at ecosystem level.

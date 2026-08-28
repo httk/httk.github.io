@@ -29,19 +29,19 @@ and registers the first local workspace at the project root:
 
 ```console
 httk project init --name tutorial .
-httk workflow workspace init --name default .
-httk workflow workspace settings set --key vasp.command --value vasp_std default
-httk workflow workspace settings set --key vasp.pseudo_library --value /path/to/potpaw_PBE default
+httk workspace init --name default .
+httk workspace settings set --key vasp.command --value vasp_std default
+httk workspace settings set --key vasp.pseudo_library --value /path/to/potpaw_PBE default
 ```
 
 The workspace name `default` is registered on this machine. Commands run from
 this project can resolve it as the local default; a project may explicitly
-record another registered name later with `httk workflow workspace default`.
+record another registered name later with `httk workspace default`.
 
 ## Create and run the calculation
 
 ```console
-httk workflow job new --workflow vasp-static \
+httk job new --workflow vasp-static \
     --input structure=example.cif --parameter 'incar_tags={"ENCUT": 520}' --tag example
 httk workflow run
 ```

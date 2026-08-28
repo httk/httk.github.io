@@ -8,7 +8,7 @@ as the VASP command; it writes the same output-file contract as a finished
 physics.
 
 ```console
-httk workflow workspace settings set --key vasp.command \
+httk workspace settings set --key vasp.command \
     --value "$PWD/docs/tutorial/data/mock_vasp_catio3.py" default
 httk workflow run --workers 2
 ```
@@ -18,7 +18,7 @@ then exits when no work remains. On a real VASP machine, use the same flow and
 set the command to `vasp_std` or to the site launcher, for example:
 
 ```console
-httk workflow workspace settings set --key vasp.command --value "srun -n 32 vasp_std" default
+httk workspace settings set --key vasp.command --value "srun -n 32 vasp_std" default
 httk workflow run --workers 8
 ```
 
@@ -35,13 +35,13 @@ httk workflow remote add --template ssh-slurm kappa
 httk workflow remote configure \
     --set host=kappa.example.org --set username=rar kappa
 httk workflow remote check kappa
-httk workflow workspace init kappa:runs
-httk workflow workspace settings set --key vasp.command --value "srun -n 32 vasp_std" kappa:runs
+httk workspace init kappa:runs
+httk workspace settings set --key vasp.command --value "srun -n 32 vasp_std" kappa:runs
 
 httk workflow transfer \
     --job ca --job cao --job catio3 --job o --job ti --job tio default kappa:runs
 httk workflow run --workspace kappa:runs --workers 8
-httk workflow workspace status kappa:runs
+httk workspace status kappa:runs
 httk workflow transfer kappa:runs default
 ```
 

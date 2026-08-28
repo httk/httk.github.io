@@ -5,8 +5,8 @@ job, run its manager, and collect the result. The packaged `vasp-relax`
 workflow accepts a POSCAR and needs no runner authoring:
 
 ```console
-$ httk workflow workspace init --name default .
-$ httk workflow job new --workflow vasp-relax --input structure=POSCAR
+$ httk workspace init --name default .
+$ httk job new --workflow vasp-relax --input structure=POSCAR
 $ httk workflow run
 $ httk workflow collect --into results.sqlite
 ```
@@ -25,9 +25,9 @@ httk workflow remote configure \
     --set host=kappa.example.org --set username=rar \
     --set check_connectivity=yes kappa
 httk workflow remote check kappa
-httk workflow workspace init kappa:/scratch/rar/httk/runs
-httk workflow workspace settings set --key slurm.partition --value batch kappa:runs
-httk workflow workspace settings set --key vasp.command --value "srun -n 32 vasp_std" kappa:runs
+httk workspace init kappa:/scratch/rar/httk/runs
+httk workspace settings set --key slurm.partition --value batch kappa:runs
+httk workspace settings set --key vasp.command --value "srun -n 32 vasp_std" kappa:runs
 httk workflow transfer --job JOB-ID default kappa:runs
 httk workflow precheck --workspace kappa:runs
 httk workflow run --workspace kappa:runs --workers 8

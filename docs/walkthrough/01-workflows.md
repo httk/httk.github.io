@@ -15,9 +15,9 @@ run, publish — and needs only a POSCAR and a `vasp.command` setting.
 
 ```console
 $ httk project init --name quickstart .
-$ httk workflow workspace init --name default .
-$ httk workflow job new --workflow vasp-relax --input structure=POSCAR --tag silicon
-$ httk workflow workspace settings set --key vasp.command --value "$PWD/examples/mock_vasp.py" default
+$ httk workspace init --name default .
+$ httk job new --workflow vasp-relax --input structure=POSCAR --tag silicon
+$ httk workspace settings set --key vasp.command --value "$PWD/examples/mock_vasp.py" default
 $ httk workflow run
 ```
 

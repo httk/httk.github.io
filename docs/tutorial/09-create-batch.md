@@ -40,7 +40,7 @@ For a directory containing already charge-free inputs, the CLI can create the
 same kind of batch without the Python projection:
 
 ```console
-httk workflow job new --workflow vasp-relax \
+httk job new --workflow vasp-relax \
     --input-from structure charge-free-structures/ \
     --parameter kpoint_density=30.0 --placement batch
 ```

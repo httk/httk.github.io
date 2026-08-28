@@ -43,9 +43,9 @@ The machine that owns a workspace chooses its path. Initialize the workspace on
 the remote, then set scheduler and command settings on the workspace itself:
 
 ```console
-httk workflow workspace init kappa:/scratch/rar/httk/runs
-httk workflow workspace settings set --key slurm.partition --value batch kappa:runs
-httk workflow workspace settings set --key vasp.command --value "srun -n 32 vasp_std" kappa:runs
+httk workspace init kappa:/scratch/rar/httk/runs
+httk workspace settings set --key slurm.partition --value batch kappa:runs
+httk workspace settings set --key vasp.command --value "srun -n 32 vasp_std" kappa:runs
 ```
 
 Scheduler settings live with the workspace, not with the machine:
@@ -71,7 +71,7 @@ up, submit a manager through the scheduler, and read the workspace's markers:
 httk workflow transfer --job JOB-ID default kappa:runs
 httk workflow precheck --workspace kappa:runs
 httk workflow run --workspace kappa:runs --workers 8
-httk workflow workspace status kappa:runs
+httk workspace status kappa:runs
 ```
 
 `precheck` reports readiness — declared-environment resolution, runner-reference

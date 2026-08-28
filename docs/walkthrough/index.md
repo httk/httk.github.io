@@ -1,12 +1,14 @@
-# *httk₂* for users coming from httk v1
+# A walkthrough of *httk₂*
 
-*httk₂* is a ground-up rewrite of the toolkit you know from httk v1 (last
-released as `httk` v1.2.0). The concepts carry over — a project anchor,
-structures with exact arithmetic, task templates, computers, a database, and
-an OPTIMADE server — but almost every name and boundary has moved. This page
-is the map: what changed at the top level, with old→new name pairs and a link
-onward for each. The lifecycle pages that follow walk the same path you took
-in v1, from defining a calculation to publishing and re-consuming the results.
+This walkthrough maps the general *httk₂* calculation lifecycle: establish a
+project and workflow, load and store structures, create and run jobs, collect
+their results, and analyse or publish the resulting data. Each page introduces
+the current vocabulary and points to the detailed module documentation.
+
+The **In httk v1** boxes throughout mark what changed for users of httk v1.
+They keep the old-to-new context close to the corresponding *httk₂* practice,
+so the walkthrough is useful whether you are starting fresh or migrating an
+existing workflow.
 
 ## One package became many
 
