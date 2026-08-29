@@ -59,7 +59,11 @@ if `input_files/` changes later. At run time, `{input}` is filled with the
 absolute path of that staged copy (a placeholder resolves from `--parameter`
 values or `--file` names; a name given to both is an error). The program still
 runs with the job's `run/` directory as its working directory, so relative
-outputs land there as before. `--file` is repeatable for several inputs, as in
+outputs land there as before — and every `--file` input is also copied into
+that directory under its own name before the command starts (never overwriting
+a file that is already there), so a program that reads its input from the
+working directory, such as VASP reading `POSCAR`, needs no placeholder at all:
+`--from-command 'srun … vasp_std' --file POSCAR=POSCAR`. `--file` is repeatable for several inputs, as in
 `--file geometry=… --file settings=…`, and the wrapper it generates is the
 same one shown under "Writing the workflow yourself", with the path
 substituted.
