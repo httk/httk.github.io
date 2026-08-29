@@ -28,6 +28,7 @@ publishes its own subsite under [docs.httk.org](https://docs.httk.org); the
 - **Tutorial**: {doc}`tutorial/index` — the original short
   example sequence translated to current APIs, including the remaining gaps.
 - **Walkthrough**: {doc}`walkthrough/index` — the calculation lifecycle end to end, with notes for users coming from httk v1.
+- **HPC**: {doc}`hpc` — run high-throughput jobs through SLURM with *httk₂*.
 - **Example notebooks**: {doc}`notebooks/index` — runnable tours of the core and cross-module APIs.
 ```
 
@@ -95,6 +96,7 @@ analysis
 authoring
 tutorial/index
 walkthrough/index
+hpc
 reference/index
 notebooks/index
 ```
