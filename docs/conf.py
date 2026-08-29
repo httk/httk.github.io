@@ -33,7 +33,6 @@ extensions = [
     "sphinx.ext.autodoc",        # pull docstrings
     "sphinx.ext.autosummary",    # API summary tables + stub gen
     "sphinx.ext.napoleon",       # Google/NumPy docstrings
-    "sphinx.ext.viewcode",
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",        # math rendering via MathJax
 
@@ -47,6 +46,12 @@ extensions = [
     "autoapi.extension",
     "httk.core.docs.sphinx_ext",
 ]
+
+# Module source pages ("[source]" links) are rendered by viewcode, which
+# re-highlights every module on every build (~8 minutes for the httk tree).
+# `make docs-full` (the published build) enables it; routine `make docs` skips it.
+if os.environ.get("HTTK_DOCS_VIEWCODE", "0") == "1":
+    extensions.append("sphinx.ext.viewcode")
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "**/.ipynb_checkpoints"]
@@ -83,8 +88,10 @@ myst_enable_extensions = [
 myst_heading_anchors = 3
 
 # Execute the example notebooks as part of the strict docs build, so that an
-# example incompatible with the httk-core / httk-atomistic APIs fails the build.
-nb_execution_mode = "force"
+# example incompatible with the httk-core / httk-atomistic APIs fails the build;
+# cache successful execution results under docs/_build so docs-clean removes them.
+nb_execution_mode = "cache"
+nb_execution_cache_path = os.path.join(_project_root, "docs", "_build", ".jupyter_cache")
 # Cells default to myst-nb's 30 s timeout, which sits too close to the legitimate
 # runtime of the heavier example notebooks under machine load; the timeout's job
 # is to catch hangs, not to benchmark, so give it generous headroom.

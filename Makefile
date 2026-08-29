@@ -4,10 +4,13 @@ PYTHON ?= python3
 # between httk repositories (read by docs/conf.py via HTTK_DOCS_BASE_URL).
 DOCS_BASE_URL ?= https://docs.httk.org
 
-.PHONY: docs docs-live docs-clean docs-inventories docs-lock docs-lock-check ecosystem-manifest release-check clean
+.PHONY: docs docs-full docs-live docs-clean docs-inventories docs-lock docs-lock-check ecosystem-manifest release-check clean
 
-docs: docs-clean
-	HTTK_DOCS_BASE_URL=$(DOCS_BASE_URL) $(PYTHON) -m sphinx -E -a -b html -W --keep-going docs docs/_build/html
+docs:
+	HTTK_DOCS_BASE_URL=$(DOCS_BASE_URL) $(PYTHON) -m sphinx -j auto -b html -W --keep-going docs docs/_build/html
+
+docs-full: docs-clean
+	HTTK_DOCS_VIEWCODE=1 HTTK_DOCS_BASE_URL=$(DOCS_BASE_URL) $(PYTHON) -m sphinx -j auto -E -a -b html -W --keep-going docs docs/_build/html
 
 docs-live:
 	HTTK_DOCS_BASE_URL=$(DOCS_BASE_URL) sphinx-autobuild docs docs/_build/html
@@ -37,13 +40,13 @@ docs-lock-check: docs-clean
 	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" -m pip check; \
 	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" scripts/check_lock_members.py; \
 	env -u PYTHONPATH -u PYTHONHOME HTTK_DOCS_BASE_URL="$(DOCS_BASE_URL)" \
-		"$$check_dir/venv/bin/python" -m sphinx -E -a -b html -W --keep-going docs "$$check_dir/html"
+		HTTK_DOCS_VIEWCODE=1 "$$check_dir/venv/bin/python" -m sphinx -j auto -E -a -b html -W --keep-going docs "$$check_dir/html"
 
 ecosystem-manifest:
 	$(PYTHON) -m httk.core.docs ecosystem-manifest \
 		--submodules-dir submodules --out docs/ecosystem.json
 
-release-check: docs
+release-check: docs-full
 	$(MAKE) docs-lock-check
 
 # Refresh the committed intersphinx inventories (the one docs task that uses the

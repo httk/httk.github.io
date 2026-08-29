@@ -11,6 +11,10 @@ make docs-lock
 make release-check
 ```
 
+`make release-check` uses `make docs-full` for the clean, forced aggregate docs
+build; use `make docs-full` directly when that release-style docs build is needed
+without the other release checks.
+
 The top-site `pyproject.toml` version and the tag must match. After the checks
 pass, tag `v<version>` and push the tag. The release workflow checks the tag and
 lock headers, verifies `docs/ecosystem.json` against the pinned release-tagged
