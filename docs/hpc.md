@@ -41,6 +41,29 @@ for n in $(seq 1 1000); do
 done
 ```
 
+### Jobs from a directory of input files
+
+When each run needs its own input file rather than an integer, stage the file
+into the job with `--file` and refer to it in the template by the same name.
+
+```console
+for f in input_files/*; do
+  httk job new --from-command 'srun --ntasks=10 --cpus-per-task=1 my_executable {input}' \
+      --file input="$f" --tag "$(basename "$f" .dat)"
+done
+```
+
+`--file input=PATH` copies the file into the job's payload (`files/input`), so
+the job carries its own immutable copy, providing provenance for the run even
+if `input_files/` changes later. At run time, `{input}` is filled with the
+absolute path of that staged copy (a placeholder resolves from `--parameter`
+values or `--file` names; a name given to both is an error). The program still
+runs with the job's `run/` directory as its working directory, so relative
+outputs land there as before. `--file` is repeatable for several inputs, as in
+`--file geometry=… --file settings=…`, and the wrapper it generates is the
+same one shown under "Writing the workflow yourself", with the path
+substituted.
+
 ## Run and watch the batch
 
 Submit 20 manager allocations and return immediately with their SLURM job
