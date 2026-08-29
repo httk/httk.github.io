@@ -10,21 +10,23 @@ The workspace runs one 24-hour httk manager per `sbatch` allocation. Each
 manager has 10 CPUs and runs its workspace jobs one after another inside that
 allocation; `--count N` starts N allocations in parallel.
 
-## Set up the project, workspace, and launcher
+## Set up the workspace and launcher
 
-Run this once on the cluster:
+Run this once on the cluster. No httk project is needed: the workspace is
+registered under your user, and `--global` stores the launcher under your user
+as well (`~/.config/httk/launchers/`), so it serves every workspace on this
+cluster. The repeatable `--setting KEY=VALUE` options seed application
+settings while the workspace is created.
 
 ```console
 mkdir ~/my_bulk_runs && cd ~/my_bulk_runs
-httk project init --name my_bulk_runs .
-httk workspace init --name my_bulk_runs .
 httk workflow launcher add --template slurm --global arrhenius \
     --set slurm.account=<account> --set slurm.partition=<partition> \
     --set slurm.time_limit=24:00:00 --set slurm.nodes=1 \
     --set slurm.ntasks=10 --set slurm.cpus_per_task=1
-httk workspace settings set --key manager.launch --value arrhenius
-httk workspace settings set --key manager.workers --value 1
-httk workspace settings set --key environment.prelude --value "module load my_stack"   # only if needed
+httk workspace init --name my_bulk_runs \
+    --setting manager.launch=arrhenius --setting manager.workers=1 \
+    --setting environment.prelude="module load my_stack" .     # prelude only if needed
 ```
 
 ## Create the jobs
@@ -51,6 +53,14 @@ httk job list                       # ready / running / succeeded per job
 httk job why jobs/n17--*            # a stuck or failed job
 ```
 
+Here `--count` is the number of **managers** to start: 20 SLURM allocations
+of 10 CPUs each, each running the workspace's jobs one after another.
+`--workers` is how many jobs ONE manager runs concurrently inside its
+allocation; it is 1 here because each `my_executable` uses all 10 CPUs.
+`--count`/`manager.count` and `--workers`/`manager.workers` can also be set
+once on the workspace; command-line options override those settings for one
+run.
+
 Outputs are stored in `jobs/n<N>--<uuid>/run/`, including anything that
 `my_executable` writes there. Its console output is in
 `jobs/n<N>--<uuid>/logs/stdio.out`, with attempt markers.
@@ -58,21 +68,96 @@ Outputs are stored in `jobs/n<N>--<uuid>/run/`, including anything that
 If a job is interrupted by the 24-hour limit, it returns to the queue and a
 later manager retries it. Run `httk workflow run --count 20` again until
 `httk job list` shows every job as succeeded. For individual records, use
-`httk job show` and `httk job log`. If you want the results in a database, run:
+`httk job show` and `httk job log`.
+
+## More advanced steps
+
+### Collecting results into a database
+
+`httk workflow collect` needs the workflow to declare what its outputs are. A
+`--from-command` job has no collector, so collecting it directly would produce
+only generic records. To give `answer.txt` a named output, turn the one-command
+job into a small workflow package:
+
+```text
+my_executable/
+├── httk_workflow.toml
+├── run.sh       # the same wrapper shown below
+└── collect.py
+```
+
+Declare the workflow, runner, output, and collector in
+`my_executable/httk_workflow.toml`:
+
+```toml
+[workflow]
+id = "my_executable"
+description = "Run my_executable for one integer parameter."
+
+[workflow.runner]
+entry = "run.sh"
+steps = ["run"]
+initial_step = "run"
+data_mode = "none"
+workdir_mode = "persistent"
+
+[workflow.outputs.answer]
+entry_type = "strings"
+ref = "https://example.org/types/answer"
+description = "The answer written by my_executable."
+
+[workflow.collect]
+file = "collect.py"
+```
+
+The executable collector runs from the package directory. It reads the
+handshake line on stdin, then one `{"record": ...}` line per job. The complete
+`JobRecord` mapping names the job's run directory as the workspace-relative
+`workdir_path`; combine it with the record's absolute `workspace` path so the
+hook can read `answer.txt` there and return one response line for each input
+record:
+
+```python
+#!/usr/bin/env python3
+import json
+import sys
+from pathlib import Path
+
+handshake = json.loads(next(sys.stdin))
+if handshake != {"format": "httk-workflow-collect-stream", "format_version": 2}:
+    raise ValueError("unexpected collect stream")
+for line in sys.stdin:
+    record = json.loads(line)["record"]
+    try:
+        workdir = Path(record["workspace"]) / record["workdir_path"]
+        value = (workdir / "answer.txt").read_text().strip()
+        response = {"job_id": record["job_id"], "outputs": {"answer": {"value": value}}}
+    except OSError as error:
+        response = {"job_id": record["job_id"], "error": str(error)}
+    print(json.dumps(response), flush=True)
+```
+
+Make `collect.py` executable. The package's `run.sh` is the same runner shown
+in the next subsection. Create jobs from the package in the loop, then collect
+them after the runs finish:
 
 ```console
+for n in $(seq 1 1000); do
+  httk job new --workflow-dir ./my_executable --parameter n=$n --tag n$n
+done
+
 httk workflow collect --into results.sqlite
 ```
 
-See the {doc}`database walkthrough <walkthrough/06-database>` for the
-collection path and database details.
+See the {doc}`database walkthrough <walkthrough/06-database>` and the
+[httk-workflow collecting documentation](https://docs.httk.org/httk-workflow/dev/main/collecting/).
 
-```{admonition} Writing the wrapper yourself
-:class: note
+### Writing the workflow yourself
 
-The shortcut generates this `run.sh`:
+The `--from-command` shortcut generates this `run.sh`, which can also be used
+as the package runner above:
 
-```bash
+```{code-block} bash
 #!/usr/bin/env bash
 set -euo pipefail
 source "$HTTK_WORKFLOW_BASH_API"
@@ -94,14 +179,13 @@ httk job new --from-runner ./run.sh --parameter n=17
 
 Full workflows can declare inputs, resources per step, spawn child jobs,
 publish data transactionally, and be packaged and versioned. See the
-[authoring guide](https://docs.httk.org/httk-workflow/dev/main/details/runtime_helpers/),
+[full workflow authoring guide](https://docs.httk.org/httk-workflow/dev/main/details/runtime_helpers/),
 [workflow packages](https://docs.httk.org/httk-workflow/dev/main/workflow_packages/),
 [Bash SDK](https://docs.httk.org/httk-workflow/dev/main/sdks/native_bash_api/),
 [launchers](https://docs.httk.org/httk-workflow/dev/main/launchers/), and
 [remotes](https://docs.httk.org/httk-workflow/dev/main/remotes/) documentation.
-```
 
-## Faster job creation
+### Faster job creation
 
 For very large sets, use the Python `new_jobs(...)` streaming form; see the
 {doc}`bulk-runs walkthrough <walkthrough/03-bulk-runs>`.
