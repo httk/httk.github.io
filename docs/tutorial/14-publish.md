@@ -1,7 +1,7 @@
 # Publish a dataset or project
 
 There are two local redistribution formats. Export the database when the
-recipient needs the tutorial's data, or seal the raw-data project when the
+recipient needs the tutorial's data, or export the raw-data project when the
 recipient needs the project files and their signed provenance.
 
 ## Export the presentation store
@@ -60,27 +60,27 @@ from httk.store import export_dataset
 export_dataset("presentation.sqlite", "presentation-dataset.zip")
 ```
 
-## Seal the raw-data project
+## Export the raw-data project
 
 To redistribute the raw inputs and project metadata, initialize the raw-data
-directory as an httk project if that was not done earlier, then seal it from
+directory as an httk project if that was not done earlier, then export it from
 inside the project:
 
 ```console
 $ httk project init --name raw-data raw-data
 Initialized httk project 'raw-data' in .../raw-data/httk_project
-$ (cd raw-data && httk project seal ../raw-data-sealed.zip)
-sealed project to .../raw-data-sealed.zip
-$ httk project verify-seal raw-data-sealed.zip
+$ (cd raw-data && httk project export ../raw-data-export.zip)
+exported project to .../raw-data-export.zip
+$ httk project verify-export raw-data-export.zip
 self-consistent but UNAUTHENTICATED (trust-on-first-use)
 public_key: ed25519:Rl+4BdLm5jyGGYiz42zchS1rWewkinzz3LJSI2Tw6lc=
 fingerprint: sha256:1153e1fc042cc6f1d197e8ee5e17ee7163512aeb8bd3aa366bb846b6c448a06d
-$ httk project verify-seal --expect-key sha256:1153e1fc042cc6f1d197e8ee5e17ee7163512aeb8bd3aa366bb846b6c448a06d raw-data-sealed.zip
+$ httk project verify-export --expect-key sha256:1153e1fc042cc6f1d197e8ee5e17ee7163512aeb8bd3aa366bb846b6c448a06d raw-data-export.zip
 authenticated
 ```
 
-The seal contains ordinary project files, `httk_project/project.json`, the
-project public key, `seal/manifest.json`, and `seal/signature`. The manifest
+The export ZIP contains ordinary project files, `httk_project/project.json`, the
+project public key, `export/manifest.json`, and `export/signature`. The manifest
 lists every included file and its SHA-256 plus the deterministic tree digest;
 the signature is Ed25519 and carries the public key used for verification.
 
@@ -100,11 +100,21 @@ trusted key for authentication.
 The Python API is available when a caller needs the report directly:
 
 ```python
-from httk.core.project import seal_project, verify_seal
+from httk.core.project import export_project, verify_export
 
-seal_project("raw-data-sealed.zip")
-print(verify_seal("raw-data-sealed.zip"))
+export_project("raw-data-export.zip")
+print(verify_export("raw-data-export.zip"))
 ```
 
 Neither operation uploads data or publishes to a central service. Upload the
 resulting ZIP through the distribution channel chosen for the project.
+
+If the raw data was produced by an httk-workflow campaign rather than copied
+in by hand, you can also protect the finished jobs and workspace before
+exporting the project. httk-workflow's *sealing* feature signs a manifest of a
+job's, workspace's, or project's contents so any later change to a covered
+byte becomes a detectable discrepancy; `httk job seal`, `httk workspace seal`,
+and `httk workflow project seal` seal each level in turn, and `httk workflow
+seal verify` checks them. This is a different, workflow-side concept from the
+`httk project export` command above — sealing protects a result from silent
+change, exporting packages it for distribution.
