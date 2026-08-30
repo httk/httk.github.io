@@ -132,8 +132,6 @@ Some things have no v1 equivalent:
 Several import verbs read legacy assets so you do not start from scratch:
 
 - `httk project import-v1` — imports a legacy `ht.project` anchor.
-- `httk project import-v1` — the same legacy `ht.project` anchor
-  import, available from the workflow namespace.
 - `httk workflow remote import-v1` — maps a legacy computer bundle to a
   remote; it never runs legacy shell code.
 - `httk workflow config import-v1` — imports legacy configuration.
