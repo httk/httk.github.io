@@ -84,8 +84,7 @@ on their own; you choose the distribution channel.
 Before exporting a project built by an httk-workflow campaign, httk-workflow
 can also *seal* it: a signed manifest recording what a job, workspace, or
 project contained at a moment in time, so any later change to a covered byte
-is detectable. `httk job seal`, `httk workspace seal`, and `httk workflow
-project seal` seal each level bottom-up, and `httk workflow seal verify`
+is detectable. `httk job seal`, `httk workspace seal`, and `httk project seal` seal each level bottom-up, and `httk workflow seal verify`
 checks the result. Sealing is distinct from exporting — it proves a finished
 result was not silently altered, while `httk project export` is what packages
 that result for distribution.
