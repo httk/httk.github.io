@@ -68,6 +68,27 @@ working directory, such as VASP reading `POSCAR`, needs no placeholder at all:
 same one shown under "Writing the workflow yourself", with the path
 substituted.
 
+### Jobs from a directory of input directories
+
+A real VASP run needs several input files together — `INCAR`, `KPOINTS`,
+`POSCAR`, `POTCAR`. Keep one directory per run and stage all of its files at
+once with `--files`:
+
+```console
+for d in inputs/*/; do
+  httk job new --from-command 'srun --ntasks=10 --cpus-per-task=1 vasp_std' \
+      --files "$d" --tag "$(basename "$d")"
+done
+```
+
+`--files DIR` stages every regular file directly inside `DIR` under its own
+name, exactly as one `--file NAME=DIR/NAME` per file would: the copies live in
+the job's `files/` directory, are placed in the working directory before
+`vasp_std` starts, and can be referenced as `{INCAR}`-style placeholders when a
+program takes paths instead. Subdirectories are skipped (with a warning), and a
+name that occurs twice — across two `--files` directories, or in both `--files`
+and `--file` — is an error, so no input can be silently replaced.
+
 ## Run and watch the batch
 
 Submit 20 manager allocations and return immediately with their SLURM job
