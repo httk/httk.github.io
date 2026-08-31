@@ -111,10 +111,10 @@ resulting ZIP through the distribution channel chosen for the project.
 
 If the raw data was produced by an httk-workflow campaign rather than copied
 in by hand, you can also protect the finished jobs and workspace before
-exporting the project. httk-workflow's *sealing* feature signs a manifest of a
-job's, workspace's, or project's contents so any later change to a covered
-byte becomes a detectable discrepancy; `httk job seal`, `httk workspace seal`,
-and `httk project seal` seal each level in turn, and `httk workflow
-seal verify` checks them. This is a different, workflow-side concept from the
-`httk project export` command above — sealing protects a result from silent
-change, exporting packages it for distribution.
+exporting the project. *Sealing* signs a manifest of a job's, workspace's, or
+project's contents so any later change to a covered byte becomes a detectable
+discrepancy; `httk job seal`, `httk workspace seal`, and `httk project seal`
+seal each level in turn, and `httk workflow seal verify` checks them. This is
+a different concept from the `httk project export` command above — sealing
+protects a result from silent change, exporting packages it for
+distribution.
