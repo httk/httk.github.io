@@ -54,6 +54,23 @@ httk workspace status kappa:runs
 httk workflow transfer kappa:runs default
 ```
 
+`ssh` runs the adapter's commands through a non-interactive shell, so
+`module load` lines and virtualenv activation from your login shell don't
+apply there, and `httk` may not even be on `PATH`. Put that setup in the
+remote's `prelude` instead of `~/.bashrc` — it runs under `set -e` ahead of
+every command the adapter sends, including the probe `remote check` uses;
+when only the `httk` binary lives somewhere nonstandard, the narrower
+`httk_command=/path/to/httk` setting is enough. This adapter `prelude` is
+distinct from the `environment.prelude` workspace setting above: the adapter
+prelude bootstraps the shell so `httk` can run at all, while
+`environment.prelude` is applied later by the manager once it is already
+running on kappa.
+
+```console
+httk workflow remote configure --set prelude='module load Python/3.13.5-bundle
+source ~/venv/bin/activate' kappa
+```
+
 The manager can advertise the resources available in the cluster allocation:
 
 ```console

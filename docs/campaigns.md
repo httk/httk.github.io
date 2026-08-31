@@ -39,6 +39,17 @@ httk workflow run --workspace kappa:runs --count 1
 httk workflow transfer --state succeeded --state failed kappa:runs default
 ```
 
+`ssh` runs the adapter's commands through a non-interactive shell, so
+`module load` lines and virtualenv activation your login shell sets up don't
+apply there. Put that setup in the remote's `prelude` instead of
+`~/.bashrc` — it runs under `set -e` ahead of every command the adapter
+sends, including the probe `remote check` uses:
+
+```console
+httk workflow remote configure --set prelude='module load Python/3.13.5-bundle
+source ~/venv/bin/activate' kappa
+```
+
 Size tasks against the resources a manager advertises. For example, a manager
 with four workers and the following capacities can pack tasks by their actual
 requirements:

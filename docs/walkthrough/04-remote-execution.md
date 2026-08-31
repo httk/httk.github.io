@@ -25,6 +25,21 @@ the shell the adapter uses. If `httk` is not on the default path there, point
 at a specific binary with `remote configure --set
 httk_command="/proj/venv/bin/httk" kappa` instead.
 
+More often the whole environment is missing, not just the binary: `ssh` runs
+the adapter's commands through a non-interactive shell, so `module load`
+lines and virtualenv activation that your login shell sets up never run
+there. Put that setup in the remote's `prelude` instead of `~/.bashrc` — it
+runs under `set -e` ahead of every command the adapter sends, including the
+`remote check` probe above — and note it is distinct from the
+`environment.prelude` workspace setting below: the adapter `prelude`
+bootstraps the shell so `httk` can run at all, while `environment.prelude` is
+applied later by the manager once it is already running on kappa.
+
+```console
+httk workflow remote configure --set prelude='module load Python/3.13.5-bundle
+source ~/venv/bin/activate' kappa
+```
+
 ```{admonition} In httk v1
 :class: note
 
