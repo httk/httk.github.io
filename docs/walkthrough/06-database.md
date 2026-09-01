@@ -35,6 +35,13 @@ id of that row and can differ between stores. The first open of a store
 declares the durable representations it may hold; reopen later with just
 `SqlStore(db)`.
 
+Beyond that storage identity, a defined entry family carries store-minted public
+ids: an entry `id` shared by every revision of a lineage, a per-revision
+`immutable_id` written `<id>~<n>`, and named alternative representations
+addressed as `<id>~<kind>`. Searches and revision streams return main entries
+only by default (`only_main_alt=True`); `only_latest=True` narrows to each
+lineage's latest revision.
+
 ```{admonition} In httk v1
 :class: note
 

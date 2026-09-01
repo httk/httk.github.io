@@ -4,7 +4,14 @@
 be stored in SQLite or DuckDB through `SqlStore`, or in MongoDB through
 `MongoStore`; the same records and neutral query protocols travel across those
 backends. Content addressing deduplicates equal records while a local `sid`
-identifies a row in one store.
+identifies a row in one store. That `content_id` is the storage identity; a
+defined entry family additionally carries a human-readable, store-minted entry
+`id` shared by every revision of a lineage, and a per-revision `immutable_id`
+written `<id>~<n>`. Named alternative representations of an entry — a
+conventional cell beside a primitive one, say — share the main's `id` under a
+composite `<id>~<kind>`. Queries and revision streams return main entries only
+by default (`searcher(only_main_alt=True)`); pass `only_latest=True` to narrow
+to each lineage's latest revision.
 
 ```python
 from dataclasses import dataclass

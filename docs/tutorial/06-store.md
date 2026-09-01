@@ -34,9 +34,14 @@ choice fixes a durable database layout and should never be surprising.
 `UnitcellStructureView(fetched)` exposes the exact fetched Record as a normal
 unit-cell structure while retaining that Record as its backend.
 
-The hexadecimal `.id` is structural and stable across equivalent objects and
-stores. The integer `sid` is only a local relational identifier: the same Record
-may have a different SID in another store without changing its `.id`.
+The hexadecimal `.id` shown here is the *content* id: it is structural and
+stable across equivalent objects and stores, and is the storage identity used to
+look a record back up. It is distinct from the human-readable entry id a store
+mints for a defined entry family (`<id>`, shared by every revision, with a
+per-revision `immutable_id` of `<id>~<n>` and named alternatives as
+`<id>~<kind>`; see {doc}`/data`). The integer `sid` is only a local relational
+identifier: the same Record may have a different SID in another store without
+changing its content id.
 
 `Backend.sqlite()` without a filename creates an in-memory database. Rationals,
 surd bases, precisions, and periodicity are stored exactly. Species float fields

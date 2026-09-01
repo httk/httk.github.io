@@ -200,6 +200,7 @@ nitpick_ignore = [
     ("py:obj", "FracVectorBase"),
     ("py:class", "DspProvider"),
     ("py:class", "EntryStore"),
+    ("py:class", "_StoredRecord"),
     # The ServeApp branded alias (type ServeApp = Starlette) renders as the bare
     # name Starlette, which the vendored inventory only exposes fully qualified.
     ("py:class", "Starlette"),

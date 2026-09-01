@@ -20,6 +20,13 @@ serve(adapter_from_providers([provider]), port=8080)
 Serving straight from a store also works, and for real deployment
 `create_asgi_app(...)` returns an app you run behind any ASGI server.
 
+A store-backed service also exposes two endpoint families beyond the
+latest-per-lineage entries. `/_httk_<entry>~revs` serves every revision of every
+lineage, each keyed by its immutable id `<id>~<n>`, while `/_httk_<entry>~alts`
+serves the named alternative representations of every lineage, keyed by the
+composite `<id>~<kind>`. Both are detailed under
+[serving stores](https://docs.httk.org/httk-serve/dev/main/optimade/serving_stores/).
+
 ```{admonition} In httk v1
 :class: note
 

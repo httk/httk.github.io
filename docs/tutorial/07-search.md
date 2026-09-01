@@ -24,6 +24,11 @@ for row in results:
 Result rows are lazy `UnitcellStructureRecord` instances. Calling `results()`
 freezes the query plan; later changes to `search` do not change this result set.
 
+By default `store.searcher()` returns every row of every lineage but only main
+entries — `only_main_alt=True` hides named alternatives. Pass `only_latest=True`
+to restrict root variables to each lineage's latest revision, and
+`only_main_alt=False` to include alternatives.
+
 ## Reuse, slice, and inspect result sets
 
 Result sets can be iterated again, sliced, and indexed. Add a few distinct
