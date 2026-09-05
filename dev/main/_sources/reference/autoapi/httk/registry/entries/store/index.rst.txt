@@ -1,0 +1,35 @@
+httk.registry.entries.store
+===========================
+
+.. py:module:: httk.registry.entries.store
+
+.. autoapi-nested-parse::
+
+   Register entry providers implemented by :mod:`httk.store`.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.registry.entries.store.register_entry_provider
+
+
+Package Contents
+----------------
+
+.. py:function:: register_entry_provider(*, name, factory)
+
+   Register an :class:`~httk.core.entry_provider.EntryProvider` factory under ``name``.
+
+   ``factory`` is a lazy ``"module:callable"`` reference to a callable that
+   constructs a provider (providers need data, so applications call the factory
+   themselves; the registry only records how to reach it). This mirrors
+   ``register_reader``.
+
+   :param name: The provider registry name.
+   :param factory: The lazy ``"module:callable"`` factory reference.
+
+

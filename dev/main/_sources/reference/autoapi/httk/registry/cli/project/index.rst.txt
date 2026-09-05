@@ -1,0 +1,42 @@
+httk.registry.cli.project
+=========================
+
+.. py:module:: httk.registry.cli.project
+
+.. autoapi-nested-parse::
+
+   Teach core's project verbs how to handle a workflow workspace member.
+
+   Core owns ``httk project doctor|manifest|seal|unseal|verify-seal`` and delegates
+   a member's internals to the handler its kind registers. Registering the
+   ``"workspace"`` kind is what makes a workflow workspace a first-class project
+   member those verbs seal, exclude, verify, and check.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.registry.cli.project.register_project_member_kind
+
+
+Package Contents
+----------------
+
+.. py:function:: register_project_member_kind(kind, handler)
+
+   Register the handler that implements one project-member *kind*.
+
+   A *handler* is either a callable or a lazy ``"module:callable"`` reference
+   that takes no arguments and returns an object implementing
+   :class:`~httk.core.project.members.ProjectMemberHandler`. Registering a kind
+   is how an installed module teaches the core seal, manifest, and repair verbs
+   to delegate that member's internals to it. This mirrors
+   :func:`~httk.core.register.entries.register_entry_provider`.
+
+   :param kind: The member kind name to register.
+   :param handler: The handler callable or lazy ``"module:callable"`` reference.
+
+

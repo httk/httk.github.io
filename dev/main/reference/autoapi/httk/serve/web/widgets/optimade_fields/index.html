@@ -1,0 +1,1531 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../../../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../../search.html"><link rel="next" title="httk.serve.web.widgets.optimade_table" href="../optimade_table/index.html"><link rel="prev" title="httk.serve.web.widgets.optimade_assets" href="../optimade_assets/index.html">
+
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>httk.serve.web.widgets.optimade_fields - httk₂ dev:main documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../../_static/selector.css?v=626bada3" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+<div class="announcement">
+  <aside class="announcement-content">
+     Development documentation (dev:main) — content may differ from any release. 
+  </aside>
+</div>
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../../../../../index.html"><div class="brand">httk₂ dev:main documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../../index.html">
+  
+  <span class="sidebar-brand-text">httk₂ dev:main documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../../../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../modules.html">Module directory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../structures.html">Structures and file formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../data.html">Storing, querying, and serving data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../campaigns.html">Compute campaigns, small and large</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../analysis.html">Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../authoring.html">Writing a new httk module</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../../tutorial/index.html">The <em>httk₂</em> tutorial</a><input aria-label="Toggle navigation of The httk₂ tutorial" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../tutorial/01-load-structure.html">1. Load and inspect a structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../tutorial/02-create-structure.html">2. Build a structure in code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../tutorial/03-visualize.html">3. Visualize a structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../tutorial/04-ase.html">4. Build with ASE and convert to <em>httk₂</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../tutorial/05-supercells.html">5. Build supercells</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../tutorial/06-store.html">6. Store data in SQLite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../tutorial/07-search.html">7. Search the local database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../tutorial/08-prepare-vasp.html">8. Prepare a VASP calculation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../tutorial/09-create-batch.html">9. Create a Ca–Ti–O batch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../tutorial/10-run-remotely.html">10. Run the batch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../tutorial/11-collect-results.html">11. Collect the results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../tutorial/12-phase-diagram.html">12. Draw the Ca–Ti–O phase diagram</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../tutorial/13-custom-data.html">13. Store custom data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../tutorial/14-publish.html">14. Publish a dataset or project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../tutorial/15-optimade.html">15. Query an OPTIMADE server</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../../walkthrough/index.html">A walkthrough of <em>httk₂</em></a><input aria-label="Toggle navigation of A walkthrough of httk₂" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../walkthrough/01-workflows.html">Defining workflows for external codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../walkthrough/02-ingesting-data.html">Ingesting source data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../walkthrough/03-bulk-runs.html">Generating a bulk set of runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../walkthrough/04-remote-execution.html">Running on a remote HPC system</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../walkthrough/05-fetching-results.html">Fetching results back</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../walkthrough/06-database.html">Storing data in a database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../walkthrough/07-analysis.html">Analyzing the data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../walkthrough/08-publishing.html">Publishing the data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../walkthrough/09-optimade-client.html">Using published data from httk as a client</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../hpc.html">High-throughput on HPC systems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../index.html">Reference</a><input aria-label="Toggle navigation of Reference" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../core/index.html">httk.core</a><input aria-label="Toggle navigation of httk.core" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/building/index.html">httk.core.building</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/citations/index.html">httk.core.citations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/cli/index.html">httk.core.cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/converting/index.html">httk.core.converting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/crypto/index.html">httk.core.crypto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/data_records/index.html">httk.core.data_records</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/dataset_loader/index.html">httk.core.dataset_loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/datasets/index.html">httk.core.datasets</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/datastream/index.html">httk.core.datastream</a><input aria-label="Toggle navigation of httk.core.datastream" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_api/index.html">httk.core.datastream.bytestream_api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_backend/index.html">httk.core.datastream.bytestream_backend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_bytes/index.html">httk.core.datastream.bytestream_bytes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_bytes_view/index.html">httk.core.datastream.bytestream_bytes_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_common/index.html">httk.core.datastream.bytestream_common</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_file/index.html">httk.core.datastream.bytestream_file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_file_view/index.html">httk.core.datastream.bytestream_file_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_filename/index.html">httk.core.datastream.bytestream_filename</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_filename_view/index.html">httk.core.datastream.bytestream_filename_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_like/index.html">httk.core.datastream.bytestream_like</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_request/index.html">httk.core.datastream.bytestream_request</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_request_view/index.html">httk.core.datastream.bytestream_request_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_url/index.html">httk.core.datastream.bytestream_url</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_url_view/index.html">httk.core.datastream.bytestream_url_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_view/index.html">httk.core.datastream.bytestream_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/compression/index.html">httk.core.datastream.compression</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/datastream_url/index.html">httk.core.datastream.datastream_url</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/network_policy/index.html">httk.core.datastream.network_policy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_api/index.html">httk.core.datastream.textstream_api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_backend/index.html">httk.core.datastream.textstream_backend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_common/index.html">httk.core.datastream.textstream_common</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_file/index.html">httk.core.datastream.textstream_file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_file_view/index.html">httk.core.datastream.textstream_file_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_filename/index.html">httk.core.datastream.textstream_filename</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_filename_view/index.html">httk.core.datastream.textstream_filename_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_like/index.html">httk.core.datastream.textstream_like</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_request/index.html">httk.core.datastream.textstream_request</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_request_view/index.html">httk.core.datastream.textstream_request_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_string/index.html">httk.core.datastream.textstream_string</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_string_view/index.html">httk.core.datastream.textstream_string_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_url/index.html">httk.core.datastream.textstream_url</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_url_view/index.html">httk.core.datastream.textstream_url_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_view/index.html">httk.core.datastream.textstream_view</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/digests/index.html">httk.core.digests</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/docs/index.html">httk.core.docs</a><input aria-label="Toggle navigation of httk.core.docs" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/cli/index.html">httk.core.docs.cli</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/config/index.html">httk.core.docs.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/ecosystem/index.html">httk.core.docs.ecosystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/gitsite/index.html">httk.core.docs.gitsite</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/inventories/index.html">httk.core.docs.inventories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/lockfile/index.html">httk.core.docs.lockfile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/manifests/index.html">httk.core.docs.manifests</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/redirect/index.html">httk.core.docs.redirect</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/release/index.html">httk.core.docs.release</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/semver/index.html">httk.core.docs.semver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/sitetree/index.html">httk.core.docs.sitetree</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/sphinx_ext/index.html">httk.core.docs.sphinx_ext</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/entry_ids/index.html">httk.core.entry_ids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/entry_provider/index.html">httk.core.entry_provider</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/entry_types/index.html">httk.core.entry_types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/exactmath/index.html">httk.core.exactmath</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/fetching/index.html">httk.core.fetching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/files/index.html">httk.core.files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/identity/index.html">httk.core.identity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/identity_cli/index.html">httk.core.identity_cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/loading/index.html">httk.core.loading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/memguard/index.html">httk.core.memguard</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/optimade/index.html">httk.core.optimade</a><input aria-label="Toggle navigation of httk.core.optimade" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/optimade/entries/index.html">httk.core.optimade.entries</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../core/optimade/filter/index.html">httk.core.optimade.filter</a><input aria-label="Toggle navigation of httk.core.optimade.filter" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../core/optimade/filter/parser/index.html">httk.core.optimade.filter.parser</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/optimade/resources/index.html">httk.core.optimade.resources</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/plugins/index.html">httk.core.plugins</a><input aria-label="Toggle navigation of httk.core.plugins" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/plugins/cli/index.html">httk.core.plugins.cli</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/plugins/install/index.html">httk.core.plugins.install</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/plugins/installed/index.html">httk.core.plugins.installed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/plugins/manifest/index.html">httk.core.plugins.manifest</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/precision/index.html">httk.core.precision</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/project/index.html">httk.core.project</a><input aria-label="Toggle navigation of httk.core.project" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/project/anchor/index.html">httk.core.project.anchor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/project/cli/index.html">httk.core.project.cli</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/project/export/index.html">httk.core.project.export</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/project/manifests/index.html">httk.core.project.manifests</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/project/members/index.html">httk.core.project.members</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/project/sealing/index.html">httk.core.project.sealing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/project/templates/index.html">httk.core.project.templates</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/property_definitions/index.html">httk.core.property_definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/provenance/index.html">httk.core.provenance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/records/index.html">httk.core.records</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/register/index.html">httk.core.register</a><input aria-label="Toggle navigation of httk.core.register" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/register/cli/index.html">httk.core.register.cli</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/register/entries/index.html">httk.core.register.entries</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/register/io/index.html">httk.core.register.io</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/register/members/index.html">httk.core.register.members</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/register/schemas/index.html">httk.core.register.schemas</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/report/index.html">httk.core.report</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/saving/index.html">httk.core.saving</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/schema_check/index.html">httk.core.schema_check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/services/index.html">httk.core.services</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/storage/index.html">httk.core.storage</a><input aria-label="Toggle navigation of httk.core.storage" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/storage/identity/index.html">httk.core.storage.identity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/storage/markers/index.html">httk.core.storage.markers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/storage/rational_text/index.html">httk.core.storage.rational_text</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/storage/stored_properties/index.html">httk.core.storage.stored_properties</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/system/index.html">httk.core.system</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/userdirs/index.html">httk.core.userdirs</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/validation/index.html">httk.core.validation</a><input aria-label="Toggle navigation of httk.core.validation" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/validation/iris/index.html">httk.core.validation.iris</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/vectors/index.html">httk.core.vectors</a><input aria-label="Toggle navigation of httk.core.vectors" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/fracvector/index.html">httk.core.vectors.fracvector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/leaf_codecs/index.html">httk.core.vectors.leaf_codecs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/mutablefracvector/index.html">httk.core.vectors.mutablefracvector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/numeric/index.html">httk.core.vectors.numeric</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/scalar_like/index.html">httk.core.vectors.scalar_like</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/surdvector/index.html">httk.core.vectors.surdvector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_api/index.html">httk.core.vectors.vector_api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_backend/index.html">httk.core.vectors.vector_backend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_frac_view/index.html">httk.core.vectors.vector_frac_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_like/index.html">httk.core.vectors.vector_like</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_native_backend/index.html">httk.core.vectors.vector_native_backend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_native_view/index.html">httk.core.vectors.vector_native_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_numpy_backend/index.html">httk.core.vectors.vector_numpy_backend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_numpy_view/index.html">httk.core.vectors.vector_numpy_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_surd_view/index.html">httk.core.vectors.vector_surd_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_view/index.html">httk.core.vectors.vector_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vectormath/index.html">httk.core.vectors.vectormath</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/views/index.html">httk.core.views</a><input aria-label="Toggle navigation of httk.core.views" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/views/backend/index.html">httk.core.views.backend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/views/coercion/index.html">httk.core.views.coercion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/views/unviewing/index.html">httk.core.views.unviewing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/views/unwrapping/index.html">httk.core.views.unwrapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/views/view/index.html">httk.core.views.view</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../atomistic/index.html">httk.atomistic</a><input aria-label="Toggle navigation of httk.atomistic" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../atomistic/cif_structures/index.html">httk.atomistic.cif_structures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../atomistic/cli/index.html">httk.atomistic.cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../atomistic/composition/index.html">httk.atomistic.composition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../atomistic/data/index.html">httk.atomistic.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../atomistic/elements/index.html">httk.atomistic.elements</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../atomistic/entries/index.html">httk.atomistic.entries</a><input aria-label="Toggle navigation of httk.atomistic.entries" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/entries/charge/index.html">httk.atomistic.entries.charge</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/entries/definitions/index.html">httk.atomistic.entries.definitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/entries/moments/index.html">httk.atomistic.entries.moments</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/entries/precision/index.html">httk.atomistic.entries.precision</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/entries/prototypes/index.html">httk.atomistic.entries.prototypes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/entries/structures/index.html">httk.atomistic.entries.structures</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/entries/symmetry/index.html">httk.atomistic.entries.symmetry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/entries/trajectories/index.html">httk.atomistic.entries.trajectories</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../atomistic/integrations/index.html">httk.atomistic.integrations</a><input aria-label="Toggle navigation of httk.atomistic.integrations" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/integrations/ase/index.html">httk.atomistic.integrations.ase</a><input aria-label="Toggle navigation of httk.atomistic.integrations.ase" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/integrations/ase/models/index.html">httk.atomistic.integrations.ase.models</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/integrations/ase/view/index.html">httk.atomistic.integrations.ase.view</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/integrations/pymatgen/index.html">httk.atomistic.integrations.pymatgen</a><input aria-label="Toggle navigation of httk.atomistic.integrations.pymatgen" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/integrations/pymatgen/models/index.html">httk.atomistic.integrations.pymatgen.models</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/integrations/pymatgen/view/index.html">httk.atomistic.integrations.pymatgen.view</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/integrations/vasp/index.html">httk.atomistic.integrations.vasp</a><input aria-label="Toggle navigation of httk.atomistic.integrations.vasp" class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/index.html">httk.atomistic.integrations.vasp.io</a><input aria-label="Toggle navigation of httk.atomistic.integrations.vasp.io" class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/oszicar/index.html">httk.atomistic.integrations.vasp.io.oszicar</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/outcar/index.html">httk.atomistic.integrations.vasp.io.outcar</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/outputs/index.html">httk.atomistic.integrations.vasp.io.outputs</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/poscar_reader/index.html">httk.atomistic.integrations.vasp.io.poscar_reader</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/poscar_writer/index.html">httk.atomistic.integrations.vasp.io.poscar_writer</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/potcar/index.html">httk.atomistic.integrations.vasp.io.potcar</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/volumetric/index.html">httk.atomistic.integrations.vasp.io.volumetric</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/wavecar/index.html">httk.atomistic.integrations.vasp.io.wavecar</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/xdatcar/index.html">httk.atomistic.integrations.vasp.io.xdatcar</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/integrations/vasp/structure/index.html">httk.atomistic.integrations.vasp.structure</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/integrations/vasp/trajectory/index.html">httk.atomistic.integrations.vasp.trajectory</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../atomistic/io/index.html">httk.atomistic.io</a><input aria-label="Toggle navigation of httk.atomistic.io" class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/io/cif/index.html">httk.atomistic.io.cif</a><input aria-label="Toggle navigation of httk.atomistic.io.cif" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/io/cif/cif_parser/index.html">httk.atomistic.io.cif.cif_parser</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/io/cif/cif_reader/index.html">httk.atomistic.io.cif.cif_reader</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/io/cif/cif_tags/index.html">httk.atomistic.io.cif.cif_tags</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/io/cif/cif_writer/index.html">httk.atomistic.io.cif.cif_writer</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/io/cif/mcif_parser/index.html">httk.atomistic.io.cif.mcif_parser</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/io/cif/mcif_writer/index.html">httk.atomistic.io.cif.mcif_writer</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/io/optimade_jsonl/index.html">httk.atomistic.io.optimade_jsonl</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../atomistic/mcif_structures/index.html">httk.atomistic.mcif_structures</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../atomistic/models/index.html">httk.atomistic.models</a><input aria-label="Toggle navigation of httk.atomistic.models" class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/cell/index.html">httk.atomistic.models.cell</a><input aria-label="Toggle navigation of httk.atomistic.models.cell" class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/api/index.html">httk.atomistic.models.cell.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/backend/index.html">httk.atomistic.models.cell.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/cell/index.html">httk.atomistic.models.cell.cell</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/like/index.html">httk.atomistic.models.cell.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/numeric/index.html">httk.atomistic.models.cell.numeric</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/numeric_view/index.html">httk.atomistic.models.cell.numeric_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/params/index.html">httk.atomistic.models.cell.params</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/params_view/index.html">httk.atomistic.models.cell.params_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/plain/index.html">httk.atomistic.models.cell.plain</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/plain_view/index.html">httk.atomistic.models.cell.plain_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/record/index.html">httk.atomistic.models.cell.record</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/view/index.html">httk.atomistic.models.cell.view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/view_base/index.html">httk.atomistic.models.cell.view_base</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/formula/index.html">httk.atomistic.models.formula</a><input aria-label="Toggle navigation of httk.atomistic.models.formula" class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/api/index.html">httk.atomistic.models.formula.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/backend/index.html">httk.atomistic.models.formula.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/composition/index.html">httk.atomistic.models.formula.composition</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/composition_view/index.html">httk.atomistic.models.formula.composition_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/diagnostics/index.html">httk.atomistic.models.formula.diagnostics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/formula/index.html">httk.atomistic.models.formula.formula</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/formula_string/index.html">httk.atomistic.models.formula.formula_string</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/formula_view/index.html">httk.atomistic.models.formula.formula_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/formulatype/index.html">httk.atomistic.models.formula.formulatype</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/formulatype_string/index.html">httk.atomistic.models.formula.formulatype_string</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/formulatype_view/index.html">httk.atomistic.models.formula.formulatype_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/like/index.html">httk.atomistic.models.formula.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/notation/index.html">httk.atomistic.models.formula.notation</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/plain/index.html">httk.atomistic.models.formula.plain</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/record/index.html">httk.atomistic.models.formula.record</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/structure/index.html">httk.atomistic.models.formula.structure</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/view_base/index.html">httk.atomistic.models.formula.view_base</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/wyckoff/index.html">httk.atomistic.models.formula.wyckoff</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/moments/index.html">httk.atomistic.models.moments</a><input aria-label="Toggle navigation of httk.atomistic.models.moments" class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/moments/api/index.html">httk.atomistic.models.moments.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/moments/backend/index.html">httk.atomistic.models.moments.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/moments/cartesian/index.html">httk.atomistic.models.moments.cartesian</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/moments/cartesian_view/index.html">httk.atomistic.models.moments.cartesian_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/moments/collinear/index.html">httk.atomistic.models.moments.collinear</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/moments/crystalaxis/index.html">httk.atomistic.models.moments.crystalaxis</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/moments/crystalaxis_view/index.html">httk.atomistic.models.moments.crystalaxis_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/moments/like/index.html">httk.atomistic.models.moments.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/moments/view_base/index.html">httk.atomistic.models.moments.view_base</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/protostructure/index.html">httk.atomistic.models.protostructure</a><input aria-label="Toggle navigation of httk.atomistic.models.protostructure" class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/api/index.html">httk.atomistic.models.protostructure.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/backend/index.html">httk.atomistic.models.protostructure.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/label/index.html">httk.atomistic.models.protostructure.label</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/label_string/index.html">httk.atomistic.models.protostructure.label_string</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/like/index.html">httk.atomistic.models.protostructure.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/occupation/index.html">httk.atomistic.models.protostructure.occupation</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/protostructure/index.html">httk.atomistic.models.protostructure.protostructure</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/recognized/index.html">httk.atomistic.models.protostructure.recognized</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/view/index.html">httk.atomistic.models.protostructure.view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/view_base/index.html">httk.atomistic.models.protostructure.view_base</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/prototype/index.html">httk.atomistic.models.prototype</a><input aria-label="Toggle navigation of httk.atomistic.models.prototype" class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/api/index.html">httk.atomistic.models.prototype.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/backend/index.html">httk.atomistic.models.prototype.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/derived/index.html">httk.atomistic.models.prototype.derived</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/label/index.html">httk.atomistic.models.prototype.label</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/label_string/index.html">httk.atomistic.models.prototype.label_string</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/like/index.html">httk.atomistic.models.prototype.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/notation/index.html">httk.atomistic.models.prototype.notation</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/occupation/index.html">httk.atomistic.models.prototype.occupation</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/prototype/index.html">httk.atomistic.models.prototype.prototype</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/recognized/index.html">httk.atomistic.models.prototype.recognized</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/view/index.html">httk.atomistic.models.prototype.view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/view_base/index.html">httk.atomistic.models.prototype.view_base</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/sites/index.html">httk.atomistic.models.sites</a><input aria-label="Toggle navigation of httk.atomistic.models.sites" class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" role="switch" type="checkbox"/><label for="toctree-checkbox-31"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/api/index.html">httk.atomistic.models.sites.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/backend/index.html">httk.atomistic.models.sites.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/like/index.html">httk.atomistic.models.sites.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/numeric/index.html">httk.atomistic.models.sites.numeric</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/numeric_view/index.html">httk.atomistic.models.sites.numeric_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/plain/index.html">httk.atomistic.models.sites.plain</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/plain_view/index.html">httk.atomistic.models.sites.plain_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/record/index.html">httk.atomistic.models.sites.record</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/sites/index.html">httk.atomistic.models.sites.sites</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/view/index.html">httk.atomistic.models.sites.view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/view_base/index.html">httk.atomistic.models.sites.view_base</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/species/index.html">httk.atomistic.models.species</a><input aria-label="Toggle navigation of httk.atomistic.models.species" class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" role="switch" type="checkbox"/><label for="toctree-checkbox-32"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/species/api/index.html">httk.atomistic.models.species.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/species/backend/index.html">httk.atomistic.models.species.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/species/like/index.html">httk.atomistic.models.species.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/species/plain/index.html">httk.atomistic.models.species.plain</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/species/plain_view/index.html">httk.atomistic.models.species.plain_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/species/record/index.html">httk.atomistic.models.species.record</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/species/species/index.html">httk.atomistic.models.species.species</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/species/view/index.html">httk.atomistic.models.species.view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/species/view_base/index.html">httk.atomistic.models.species.view_base</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/structure/index.html">httk.atomistic.models.structure</a><input aria-label="Toggle navigation of httk.atomistic.models.structure" class="toctree-checkbox" id="toctree-checkbox-33" name="toctree-checkbox-33" role="switch" type="checkbox"/><label for="toctree-checkbox-33"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/api/index.html">httk.atomistic.models.structure.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/asu/index.html">httk.atomistic.models.structure.asu</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/asu_view/index.html">httk.atomistic.models.structure.asu_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/backend/index.html">httk.atomistic.models.structure.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/comparison/index.html">httk.atomistic.models.structure.comparison</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/datastream/index.html">httk.atomistic.models.structure.datastream</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/like/index.html">httk.atomistic.models.structure.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/modulated/index.html">httk.atomistic.models.structure.modulated</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/numeric/index.html">httk.atomistic.models.structure.numeric</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/numeric_view/index.html">httk.atomistic.models.structure.numeric_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/optimade/index.html">httk.atomistic.models.structure.optimade</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/plain/index.html">httk.atomistic.models.structure.plain</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/plain_view/index.html">httk.atomistic.models.structure.plain_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/record/index.html">httk.atomistic.models.structure.record</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/semantics/index.html">httk.atomistic.models.structure.semantics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/symops/index.html">httk.atomistic.models.structure.symops</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/unitcell/index.html">httk.atomistic.models.structure.unitcell</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/unitcell_view/index.html">httk.atomistic.models.structure.unitcell_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/view/index.html">httk.atomistic.models.structure.view</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/structuretype/index.html">httk.atomistic.models.structuretype</a><input aria-label="Toggle navigation of httk.atomistic.models.structuretype" class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" role="switch" type="checkbox"/><label for="toctree-checkbox-34"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/anonymize/index.html">httk.atomistic.models.structuretype.anonymize</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/anonymized/index.html">httk.atomistic.models.structuretype.anonymized</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/api/index.html">httk.atomistic.models.structuretype.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/backend/index.html">httk.atomistic.models.structuretype.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/fundamental/index.html">httk.atomistic.models.structuretype.fundamental</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/fundamental_view/index.html">httk.atomistic.models.structuretype.fundamental_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/like/index.html">httk.atomistic.models.structuretype.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/structuretype/index.html">httk.atomistic.models.structuretype.structuretype</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/view/index.html">httk.atomistic.models.structuretype.view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/view_base/index.html">httk.atomistic.models.structuretype.view_base</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/trajectory/index.html">httk.atomistic.models.trajectory</a><input aria-label="Toggle navigation of httk.atomistic.models.trajectory" class="toctree-checkbox" id="toctree-checkbox-35" name="toctree-checkbox-35" role="switch" type="checkbox"/><label for="toctree-checkbox-35"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/trajectory/api/index.html">httk.atomistic.models.trajectory.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/trajectory/backend/index.html">httk.atomistic.models.trajectory.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/trajectory/jsonl/index.html">httk.atomistic.models.trajectory.jsonl</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/trajectory/like/index.html">httk.atomistic.models.trajectory.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/trajectory/plain/index.html">httk.atomistic.models.trajectory.plain</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/trajectory/record/index.html">httk.atomistic.models.trajectory.record</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/trajectory/trajectory/index.html">httk.atomistic.models.trajectory.trajectory</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/trajectory/view/index.html">httk.atomistic.models.trajectory.view</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../atomistic/reduction/index.html">httk.atomistic.reduction</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../atomistic/storage/index.html">httk.atomistic.storage</a><input aria-label="Toggle navigation of httk.atomistic.storage" class="toctree-checkbox" id="toctree-checkbox-36" name="toctree-checkbox-36" role="switch" type="checkbox"/><label for="toctree-checkbox-36"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/storage/records/index.html">httk.atomistic.storage.records</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/storage/stored_properties/index.html">httk.atomistic.storage.stored_properties</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../atomistic/supercell/index.html">httk.atomistic.supercell</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../atomistic/symmetry/index.html">httk.atomistic.symmetry</a><input aria-label="Toggle navigation of httk.atomistic.symmetry" class="toctree-checkbox" id="toctree-checkbox-37" name="toctree-checkbox-37" role="switch" type="checkbox"/><label for="toctree-checkbox-37"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/affine_operation/index.html">httk.atomistic.symmetry.affine_operation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/canonical/index.html">httk.atomistic.symmetry.canonical</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/lift/index.html">httk.atomistic.symmetry.lift</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/magnetic/index.html">httk.atomistic.symmetry.magnetic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/paths/index.html">httk.atomistic.symmetry.paths</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/primitive/index.html">httk.atomistic.symmetry.primitive</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/recognition/index.html">httk.atomistic.symmetry.recognition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/setting_transform/index.html">httk.atomistic.symmetry.setting_transform</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/spacegroup/index.html">httk.atomistic.symmetry.spacegroup</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/standardization/index.html">httk.atomistic.symmetry.standardization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/subgroups/index.html">httk.atomistic.symmetry.subgroups</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/symop_key/index.html">httk.atomistic.symmetry.symop_key</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/wyckoff/index.html">httk.atomistic.symmetry.wyckoff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/xyz/index.html">httk.atomistic.symmetry.xyz</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../atomistic/wavefunction/index.html">httk.atomistic.wavefunction</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../analyse/index.html">httk.analyse</a><input aria-label="Toggle navigation of httk.analyse" class="toctree-checkbox" id="toctree-checkbox-38" name="toctree-checkbox-38" role="switch" type="checkbox"/><label for="toctree-checkbox-38"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../analyse/crysviz/index.html">httk.analyse.crysviz</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../analyse/generic/index.html">httk.analyse.generic</a><input aria-label="Toggle navigation of httk.analyse.generic" class="toctree-checkbox" id="toctree-checkbox-39" name="toctree-checkbox-39" role="switch" type="checkbox"/><label for="toctree-checkbox-39"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../analyse/generic/lower_hull/index.html">httk.analyse.generic.lower_hull</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../analyse/matsci/index.html">httk.analyse.matsci</a><input aria-label="Toggle navigation of httk.analyse.matsci" class="toctree-checkbox" id="toctree-checkbox-40" name="toctree-checkbox-40" role="switch" type="checkbox"/><label for="toctree-checkbox-40"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../analyse/matsci/phase_diagrams/index.html">httk.analyse.matsci.phase_diagrams</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../../notebooks/index.html"><em>httk₂</em> notebook examples</a><input aria-label="Toggle navigation of httk₂ notebook examples" class="toctree-checkbox" id="toctree-checkbox-41" name="toctree-checkbox-41" role="switch" type="checkbox"/><label for="toctree-checkbox-41"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../notebooks/example-core.html">httk-core: a short tour</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../notebooks/example-structures.html">Structures: httk-core and httk-atomistic together</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../notebooks/example-campaign.html">A small compute campaign</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../../notebooks/example-data-analysis.html">From structures to a phase diagram</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../../../../index.html">API Reference</a><input aria-label="Toggle navigation of API Reference" checked="" class="toctree-checkbox" id="toctree-checkbox-42" name="toctree-checkbox-42" role="switch" type="checkbox"/><label for="toctree-checkbox-42"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../core/index.html">httk.core</a><input aria-label="Toggle navigation of httk.core" class="toctree-checkbox" id="toctree-checkbox-43" name="toctree-checkbox-43" role="switch" type="checkbox"/><label for="toctree-checkbox-43"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/building/index.html">httk.core.building</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/citations/index.html">httk.core.citations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/cli/index.html">httk.core.cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/converting/index.html">httk.core.converting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/crypto/index.html">httk.core.crypto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/data_records/index.html">httk.core.data_records</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/dataset_loader/index.html">httk.core.dataset_loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/datasets/index.html">httk.core.datasets</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/datastream/index.html">httk.core.datastream</a><input aria-label="Toggle navigation of httk.core.datastream" class="toctree-checkbox" id="toctree-checkbox-44" name="toctree-checkbox-44" role="switch" type="checkbox"/><label for="toctree-checkbox-44"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_api/index.html">httk.core.datastream.bytestream_api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_backend/index.html">httk.core.datastream.bytestream_backend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_bytes/index.html">httk.core.datastream.bytestream_bytes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_bytes_view/index.html">httk.core.datastream.bytestream_bytes_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_common/index.html">httk.core.datastream.bytestream_common</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_file/index.html">httk.core.datastream.bytestream_file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_file_view/index.html">httk.core.datastream.bytestream_file_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_filename/index.html">httk.core.datastream.bytestream_filename</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_filename_view/index.html">httk.core.datastream.bytestream_filename_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_like/index.html">httk.core.datastream.bytestream_like</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_request/index.html">httk.core.datastream.bytestream_request</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_request_view/index.html">httk.core.datastream.bytestream_request_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_url/index.html">httk.core.datastream.bytestream_url</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_url_view/index.html">httk.core.datastream.bytestream_url_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/bytestream_view/index.html">httk.core.datastream.bytestream_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/compression/index.html">httk.core.datastream.compression</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/datastream_url/index.html">httk.core.datastream.datastream_url</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/network_policy/index.html">httk.core.datastream.network_policy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_api/index.html">httk.core.datastream.textstream_api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_backend/index.html">httk.core.datastream.textstream_backend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_common/index.html">httk.core.datastream.textstream_common</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_file/index.html">httk.core.datastream.textstream_file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_file_view/index.html">httk.core.datastream.textstream_file_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_filename/index.html">httk.core.datastream.textstream_filename</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_filename_view/index.html">httk.core.datastream.textstream_filename_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_like/index.html">httk.core.datastream.textstream_like</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_request/index.html">httk.core.datastream.textstream_request</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_request_view/index.html">httk.core.datastream.textstream_request_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_string/index.html">httk.core.datastream.textstream_string</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_string_view/index.html">httk.core.datastream.textstream_string_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_url/index.html">httk.core.datastream.textstream_url</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_url_view/index.html">httk.core.datastream.textstream_url_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/datastream/textstream_view/index.html">httk.core.datastream.textstream_view</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/digests/index.html">httk.core.digests</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/docs/index.html">httk.core.docs</a><input aria-label="Toggle navigation of httk.core.docs" class="toctree-checkbox" id="toctree-checkbox-45" name="toctree-checkbox-45" role="switch" type="checkbox"/><label for="toctree-checkbox-45"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/cli/index.html">httk.core.docs.cli</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/config/index.html">httk.core.docs.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/ecosystem/index.html">httk.core.docs.ecosystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/gitsite/index.html">httk.core.docs.gitsite</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/inventories/index.html">httk.core.docs.inventories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/lockfile/index.html">httk.core.docs.lockfile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/manifests/index.html">httk.core.docs.manifests</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/redirect/index.html">httk.core.docs.redirect</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/release/index.html">httk.core.docs.release</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/semver/index.html">httk.core.docs.semver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/sitetree/index.html">httk.core.docs.sitetree</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/docs/sphinx_ext/index.html">httk.core.docs.sphinx_ext</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/entry_ids/index.html">httk.core.entry_ids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/entry_provider/index.html">httk.core.entry_provider</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/entry_types/index.html">httk.core.entry_types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/exactmath/index.html">httk.core.exactmath</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/fetching/index.html">httk.core.fetching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/files/index.html">httk.core.files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/identity/index.html">httk.core.identity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/identity_cli/index.html">httk.core.identity_cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/loading/index.html">httk.core.loading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/memguard/index.html">httk.core.memguard</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/optimade/index.html">httk.core.optimade</a><input aria-label="Toggle navigation of httk.core.optimade" class="toctree-checkbox" id="toctree-checkbox-46" name="toctree-checkbox-46" role="switch" type="checkbox"/><label for="toctree-checkbox-46"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/optimade/entries/index.html">httk.core.optimade.entries</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../core/optimade/filter/index.html">httk.core.optimade.filter</a><input aria-label="Toggle navigation of httk.core.optimade.filter" class="toctree-checkbox" id="toctree-checkbox-47" name="toctree-checkbox-47" role="switch" type="checkbox"/><label for="toctree-checkbox-47"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../core/optimade/filter/parser/index.html">httk.core.optimade.filter.parser</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/optimade/resources/index.html">httk.core.optimade.resources</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/plugins/index.html">httk.core.plugins</a><input aria-label="Toggle navigation of httk.core.plugins" class="toctree-checkbox" id="toctree-checkbox-48" name="toctree-checkbox-48" role="switch" type="checkbox"/><label for="toctree-checkbox-48"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/plugins/cli/index.html">httk.core.plugins.cli</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/plugins/install/index.html">httk.core.plugins.install</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/plugins/installed/index.html">httk.core.plugins.installed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/plugins/manifest/index.html">httk.core.plugins.manifest</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/precision/index.html">httk.core.precision</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/project/index.html">httk.core.project</a><input aria-label="Toggle navigation of httk.core.project" class="toctree-checkbox" id="toctree-checkbox-49" name="toctree-checkbox-49" role="switch" type="checkbox"/><label for="toctree-checkbox-49"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/project/anchor/index.html">httk.core.project.anchor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/project/cli/index.html">httk.core.project.cli</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/project/export/index.html">httk.core.project.export</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/project/manifests/index.html">httk.core.project.manifests</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/project/members/index.html">httk.core.project.members</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/project/sealing/index.html">httk.core.project.sealing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/project/templates/index.html">httk.core.project.templates</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/property_definitions/index.html">httk.core.property_definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/provenance/index.html">httk.core.provenance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/records/index.html">httk.core.records</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/register/index.html">httk.core.register</a><input aria-label="Toggle navigation of httk.core.register" class="toctree-checkbox" id="toctree-checkbox-50" name="toctree-checkbox-50" role="switch" type="checkbox"/><label for="toctree-checkbox-50"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/register/cli/index.html">httk.core.register.cli</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/register/entries/index.html">httk.core.register.entries</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/register/io/index.html">httk.core.register.io</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/register/members/index.html">httk.core.register.members</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/register/schemas/index.html">httk.core.register.schemas</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/report/index.html">httk.core.report</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/saving/index.html">httk.core.saving</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/schema_check/index.html">httk.core.schema_check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/services/index.html">httk.core.services</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/storage/index.html">httk.core.storage</a><input aria-label="Toggle navigation of httk.core.storage" class="toctree-checkbox" id="toctree-checkbox-51" name="toctree-checkbox-51" role="switch" type="checkbox"/><label for="toctree-checkbox-51"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/storage/identity/index.html">httk.core.storage.identity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/storage/markers/index.html">httk.core.storage.markers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/storage/rational_text/index.html">httk.core.storage.rational_text</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/storage/stored_properties/index.html">httk.core.storage.stored_properties</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/system/index.html">httk.core.system</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../core/userdirs/index.html">httk.core.userdirs</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/validation/index.html">httk.core.validation</a><input aria-label="Toggle navigation of httk.core.validation" class="toctree-checkbox" id="toctree-checkbox-52" name="toctree-checkbox-52" role="switch" type="checkbox"/><label for="toctree-checkbox-52"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/validation/iris/index.html">httk.core.validation.iris</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/vectors/index.html">httk.core.vectors</a><input aria-label="Toggle navigation of httk.core.vectors" class="toctree-checkbox" id="toctree-checkbox-53" name="toctree-checkbox-53" role="switch" type="checkbox"/><label for="toctree-checkbox-53"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/fracvector/index.html">httk.core.vectors.fracvector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/leaf_codecs/index.html">httk.core.vectors.leaf_codecs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/mutablefracvector/index.html">httk.core.vectors.mutablefracvector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/numeric/index.html">httk.core.vectors.numeric</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/scalar_like/index.html">httk.core.vectors.scalar_like</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/surdvector/index.html">httk.core.vectors.surdvector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_api/index.html">httk.core.vectors.vector_api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_backend/index.html">httk.core.vectors.vector_backend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_frac_view/index.html">httk.core.vectors.vector_frac_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_like/index.html">httk.core.vectors.vector_like</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_native_backend/index.html">httk.core.vectors.vector_native_backend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_native_view/index.html">httk.core.vectors.vector_native_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_numpy_backend/index.html">httk.core.vectors.vector_numpy_backend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_numpy_view/index.html">httk.core.vectors.vector_numpy_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_surd_view/index.html">httk.core.vectors.vector_surd_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vector_view/index.html">httk.core.vectors.vector_view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/vectors/vectormath/index.html">httk.core.vectors.vectormath</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/views/index.html">httk.core.views</a><input aria-label="Toggle navigation of httk.core.views" class="toctree-checkbox" id="toctree-checkbox-54" name="toctree-checkbox-54" role="switch" type="checkbox"/><label for="toctree-checkbox-54"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/views/backend/index.html">httk.core.views.backend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/views/coercion/index.html">httk.core.views.coercion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/views/unviewing/index.html">httk.core.views.unviewing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/views/unwrapping/index.html">httk.core.views.unwrapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/views/view/index.html">httk.core.views.view</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../../../index.html">httk.serve</a><input aria-label="Toggle navigation of httk.serve" checked="" class="toctree-checkbox" id="toctree-checkbox-55" name="toctree-checkbox-55" role="switch" type="checkbox"/><label for="toctree-checkbox-55"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../../composition/index.html">httk.serve.composition</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../dsp/index.html">httk.serve.dsp</a><input aria-label="Toggle navigation of httk.serve.dsp" class="toctree-checkbox" id="toctree-checkbox-56" name="toctree-checkbox-56" role="switch" type="checkbox"/><label for="toctree-checkbox-56"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../dsp/api/index.html">httk.serve.dsp.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../dsp/callbacks/index.html">httk.serve.dsp.callbacks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../dsp/catalogue/index.html">httk.serve.dsp.catalogue</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../dsp/config/index.html">httk.serve.dsp.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../dsp/models/index.html">httk.serve.dsp.models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../dsp/provider/index.html">httk.serve.dsp.provider</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../dsp/serializers/index.html">httk.serve.dsp.serializers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../dsp/state/index.html">httk.serve.dsp.state</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../dsp/validation/index.html">httk.serve.dsp.validation</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../http/index.html">httk.serve.http</a><input aria-label="Toggle navigation of httk.serve.http" class="toctree-checkbox" id="toctree-checkbox-57" name="toctree-checkbox-57" role="switch" type="checkbox"/><label for="toctree-checkbox-57"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../http/accept/index.html">httk.serve.http.accept</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../http/api/index.html">httk.serve.http.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../http/apptypes/index.html">httk.serve.http.apptypes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../http/fields/index.html">httk.serve.http.fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../http/identifiers/index.html">httk.serve.http.identifiers</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../http/openapi/index.html">httk.serve.http.openapi</a><input aria-label="Toggle navigation of httk.serve.http.openapi" class="toctree-checkbox" id="toctree-checkbox-58" name="toctree-checkbox-58" role="switch" type="checkbox"/><label for="toctree-checkbox-58"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../http/openapi/app/index.html">httk.serve.http.openapi.app</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../http/openapi/binding/index.html">httk.serve.http.openapi.binding</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../http/openapi/contract/index.html">httk.serve.http.openapi.contract</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../http/openapi/resources/index.html">httk.serve.http.openapi.resources</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../http/openapi/schemas/index.html">httk.serve.http.openapi.schemas</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../http/webhook/index.html">httk.serve.http.webhook</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../jsondata/index.html">httk.serve.jsondata</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../optimade/index.html">httk.serve.optimade</a><input aria-label="Toggle navigation of httk.serve.optimade" class="toctree-checkbox" id="toctree-checkbox-59" name="toctree-checkbox-59" role="switch" type="checkbox"/><label for="toctree-checkbox-59"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../optimade/api/index.html">httk.serve.optimade.api</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../optimade/backend/index.html">httk.serve.optimade.backend</a><input aria-label="Toggle navigation of httk.serve.optimade.backend" class="toctree-checkbox" id="toctree-checkbox-60" name="toctree-checkbox-60" role="switch" type="checkbox"/><label for="toctree-checkbox-60"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/backend/adapter/index.html">httk.serve.optimade.backend.adapter</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/backend/execution/index.html">httk.serve.optimade.backend.execution</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/backend/handlers/index.html">httk.serve.optimade.backend.handlers</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/backend/memory_store/index.html">httk.serve.optimade.backend.memory_store</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/backend/partial/index.html">httk.serve.optimade.backend.partial</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/backend/protocols/index.html">httk.serve.optimade.backend.protocols</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/backend/providers/index.html">httk.serve.optimade.backend.providers</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/backend/stores/index.html">httk.serve.optimade.backend.stores</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/backend/translation/index.html">httk.serve.optimade.backend.translation</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../optimade/client/index.html">httk.serve.optimade.client</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../optimade/endpoints/index.html">httk.serve.optimade.endpoints</a><input aria-label="Toggle navigation of httk.serve.optimade.endpoints" class="toctree-checkbox" id="toctree-checkbox-61" name="toctree-checkbox-61" role="switch" type="checkbox"/><label for="toctree-checkbox-61"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/endpoints/entries/index.html">httk.serve.optimade.endpoints.entries</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/endpoints/error/index.html">httk.serve.optimade.endpoints.error</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/endpoints/info/index.html">httk.serve.optimade.endpoints.info</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/endpoints/meta/index.html">httk.serve.optimade.endpoints.meta</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/endpoints/partial_data/index.html">httk.serve.optimade.endpoints.partial_data</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../optimade/engine/index.html">httk.serve.optimade.engine</a><input aria-label="Toggle navigation of httk.serve.optimade.engine" class="toctree-checkbox" id="toctree-checkbox-62" name="toctree-checkbox-62" role="switch" type="checkbox"/><label for="toctree-checkbox-62"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/engine/processing/index.html">httk.serve.optimade.engine.processing</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/engine/validate/index.html">httk.serve.optimade.engine.validate</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../optimade/filter/index.html">httk.serve.optimade.filter</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../optimade/model/index.html">httk.serve.optimade.model</a><input aria-label="Toggle navigation of httk.serve.optimade.model" class="toctree-checkbox" id="toctree-checkbox-63" name="toctree-checkbox-63" role="switch" type="checkbox"/><label for="toctree-checkbox-63"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/model/config/index.html">httk.serve.optimade.model.config</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/model/errors/index.html">httk.serve.optimade.model.errors</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/model/request/index.html">httk.serve.optimade.model.request</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/model/results/index.html">httk.serve.optimade.model.results</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/model/versions/index.html">httk.serve.optimade.model.versions</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../optimade/remote_query/index.html">httk.serve.optimade.remote_query</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../optimade/runtime/index.html">httk.serve.optimade.runtime</a><input aria-label="Toggle navigation of httk.serve.optimade.runtime" class="toctree-checkbox" id="toctree-checkbox-64" name="toctree-checkbox-64" role="switch" type="checkbox"/><label for="toctree-checkbox-64"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/runtime/asgi/index.html">httk.serve.optimade.runtime.asgi</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/runtime/devserver/index.html">httk.serve.optimade.runtime.devserver</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../optimade/schema/index.html">httk.serve.optimade.schema</a><input aria-label="Toggle navigation of httk.serve.optimade.schema" class="toctree-checkbox" id="toctree-checkbox-65" name="toctree-checkbox-65" role="switch" type="checkbox"/><label for="toctree-checkbox-65"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/schema/served/index.html">httk.serve.optimade.schema.served</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../optimade/schema/trajectories/index.html">httk.serve.optimade.schema.trajectories</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 current has-children"><a class="reference internal" href="../../index.html">httk.serve.web</a><input aria-label="Toggle navigation of httk.serve.web" checked="" class="toctree-checkbox" id="toctree-checkbox-66" name="toctree-checkbox-66" role="switch" type="checkbox"/><label for="toctree-checkbox-66"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../api/index.html">httk.serve.web.api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/index.html">httk.serve.web.cli</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../compat/index.html">httk.serve.web.compat</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../engine/index.html">httk.serve.web.engine</a><input aria-label="Toggle navigation of httk.serve.web.engine" class="toctree-checkbox" id="toctree-checkbox-67" name="toctree-checkbox-67" role="switch" type="checkbox"/><label for="toctree-checkbox-67"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../engine/discovery/index.html">httk.serve.web.engine.discovery</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../engine/site_engine/index.html">httk.serve.web.engine.site_engine</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../functions/index.html">httk.serve.web.functions</a><input aria-label="Toggle navigation of httk.serve.web.functions" class="toctree-checkbox" id="toctree-checkbox-68" name="toctree-checkbox-68" role="switch" type="checkbox"/><label for="toctree-checkbox-68"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../functions/python_module/index.html">httk.serve.web.functions.python_module</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../model/index.html">httk.serve.web.model</a><input aria-label="Toggle navigation of httk.serve.web.model" class="toctree-checkbox" id="toctree-checkbox-69" name="toctree-checkbox-69" role="switch" type="checkbox"/><label for="toctree-checkbox-69"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../model/config/index.html">httk.serve.web.model.config</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../model/errors/index.html">httk.serve.web.model.errors</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../model/page/index.html">httk.serve.web.model.page</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../model/request/index.html">httk.serve.web.model.request</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../providers/index.html">httk.serve.web.providers</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../publishing/index.html">httk.serve.web.publishing</a><input aria-label="Toggle navigation of httk.serve.web.publishing" class="toctree-checkbox" id="toctree-checkbox-70" name="toctree-checkbox-70" role="switch" type="checkbox"/><label for="toctree-checkbox-70"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../publishing/static/index.html">httk.serve.web.publishing.static</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../renderers/index.html">httk.serve.web.renderers</a><input aria-label="Toggle navigation of httk.serve.web.renderers" class="toctree-checkbox" id="toctree-checkbox-71" name="toctree-checkbox-71" role="switch" type="checkbox"/><label for="toctree-checkbox-71"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../renderers/base/index.html">httk.serve.web.renderers.base</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../renderers/html/index.html">httk.serve.web.renderers.html</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../renderers/httkweb_compat/index.html">httk.serve.web.renderers.httkweb_compat</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../renderers/markdown/index.html">httk.serve.web.renderers.markdown</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../renderers/rst/index.html">httk.serve.web.renderers.rst</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../resources/index.html">httk.serve.web.resources</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../runtime/index.html">httk.serve.web.runtime</a><input aria-label="Toggle navigation of httk.serve.web.runtime" class="toctree-checkbox" id="toctree-checkbox-72" name="toctree-checkbox-72" role="switch" type="checkbox"/><label for="toctree-checkbox-72"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../runtime/asgi/index.html">httk.serve.web.runtime.asgi</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runtime/devserver/index.html">httk.serve.web.runtime.devserver</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../templating/index.html">httk.serve.web.templating</a><input aria-label="Toggle navigation of httk.serve.web.templating" class="toctree-checkbox" id="toctree-checkbox-73" name="toctree-checkbox-73" role="switch" type="checkbox"/><label for="toctree-checkbox-73"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../templating/base/index.html">httk.serve.web.templating.base</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../templating/httk_compat/index.html">httk.serve.web.templating.httk_compat</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../templating/jinja2_engine/index.html">httk.serve.web.templating.jinja2_engine</a></li>
+</ul>
+</li>
+<li class="toctree-l4 current has-children"><a class="reference internal" href="../index.html">httk.serve.web.widgets</a><input aria-label="Toggle navigation of httk.serve.web.widgets" checked="" class="toctree-checkbox" id="toctree-checkbox-74" name="toctree-checkbox-74" role="switch" type="checkbox"/><label for="toctree-checkbox-74"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l5"><a class="reference internal" href="../assets/index.html">httk.serve.web.widgets.assets</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../core/index.html">httk.serve.web.widgets.core</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../extraction/index.html">httk.serve.web.widgets.extraction</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../loader/index.html">httk.serve.web.widgets.loader</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../optimade_assets/index.html">httk.serve.web.widgets.optimade_assets</a></li>
+<li class="toctree-l5 current current-page"><a class="current reference internal" href="#">httk.serve.web.widgets.optimade_fields</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../optimade_table/index.html">httk.serve.web.widgets.optimade_table</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../table/index.html">httk.serve.web.widgets.table</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../store/index.html">httk.store</a><input aria-label="Toggle navigation of httk.store" class="toctree-checkbox" id="toctree-checkbox-75" name="toctree-checkbox-75" role="switch" type="checkbox"/><label for="toctree-checkbox-75"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../store/backend/index.html">httk.store.backend</a><input aria-label="Toggle navigation of httk.store.backend" class="toctree-checkbox" id="toctree-checkbox-76" name="toctree-checkbox-76" role="switch" type="checkbox"/><label for="toctree-checkbox-76"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../store/backend/clickhouse/index.html">httk.store.backend.clickhouse</a><input aria-label="Toggle navigation of httk.store.backend.clickhouse" class="toctree-checkbox" id="toctree-checkbox-77" name="toctree-checkbox-77" role="switch" type="checkbox"/><label for="toctree-checkbox-77"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/clickhouse/engine/index.html">httk.store.backend.clickhouse.engine</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/clickhouse/support/index.html">httk.store.backend.clickhouse.support</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../store/backend/codecs/index.html">httk.store.backend.codecs</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../store/backend/duckdb/index.html">httk.store.backend.duckdb</a><input aria-label="Toggle navigation of httk.store.backend.duckdb" class="toctree-checkbox" id="toctree-checkbox-78" name="toctree-checkbox-78" role="switch" type="checkbox"/><label for="toctree-checkbox-78"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/duckdb/engine/index.html">httk.store.backend.duckdb.engine</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/duckdb/hooks/index.html">httk.store.backend.duckdb.hooks</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../store/backend/mongo/index.html">httk.store.backend.mongo</a><input aria-label="Toggle navigation of httk.store.backend.mongo" class="toctree-checkbox" id="toctree-checkbox-79" name="toctree-checkbox-79" role="switch" type="checkbox"/><label for="toctree-checkbox-79"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/mongo/database/index.html">httk.store.backend.mongo.database</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/mongo/documents/index.html">httk.store.backend.mongo.documents</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/mongo/entry_provider/index.html">httk.store.backend.mongo.entry_provider</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/mongo/evaluator/index.html">httk.store.backend.mongo.evaluator</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/mongo/fsck/index.html">httk.store.backend.mongo.fsck</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/mongo/leases/index.html">httk.store.backend.mongo.leases</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/mongo/mapping/index.html">httk.store.backend.mongo.mapping</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/mongo/optimade/index.html">httk.store.backend.mongo.optimade</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/mongo/results/index.html">httk.store.backend.mongo.results</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/mongo/searcher/index.html">httk.store.backend.mongo.searcher</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/mongo/store/index.html">httk.store.backend.mongo.store</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/mongo/stored_properties/index.html">httk.store.backend.mongo.stored_properties</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../store/backend/postgresql/index.html">httk.store.backend.postgresql</a><input aria-label="Toggle navigation of httk.store.backend.postgresql" class="toctree-checkbox" id="toctree-checkbox-80" name="toctree-checkbox-80" role="switch" type="checkbox"/><label for="toctree-checkbox-80"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/postgresql/compiler/index.html">httk.store.backend.postgresql.compiler</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/postgresql/engine/index.html">httk.store.backend.postgresql.engine</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/postgresql/hooks/index.html">httk.store.backend.postgresql.hooks</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../store/backend/schema/index.html">httk.store.backend.schema</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../store/backend/sql/index.html">httk.store.backend.sql</a><input aria-label="Toggle navigation of httk.store.backend.sql" class="toctree-checkbox" id="toctree-checkbox-81" name="toctree-checkbox-81" role="switch" type="checkbox"/><label for="toctree-checkbox-81"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sql/bulk/index.html">httk.store.backend.sql.bulk</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sql/bulk_deferred/index.html">httk.store.backend.sql.bulk_deferred</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sql/bulk_parallel/index.html">httk.store.backend.sql.bulk_parallel</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sql/engine/index.html">httk.store.backend.sql.engine</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sql/entry_provider/index.html">httk.store.backend.sql.entry_provider</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sql/fsck/index.html">httk.store.backend.sql.fsck</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sql/graph/index.html">httk.store.backend.sql.graph</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sql/layout/index.html">httk.store.backend.sql.layout</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sql/mapping/index.html">httk.store.backend.sql.mapping</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sql/optimade/index.html">httk.store.backend.sql.optimade</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sql/paging/index.html">httk.store.backend.sql.paging</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sql/provenance_edges/index.html">httk.store.backend.sql.provenance_edges</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sql/results/index.html">httk.store.backend.sql.results</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sql/rows/index.html">httk.store.backend.sql.rows</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sql/searcher/index.html">httk.store.backend.sql.searcher</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sql/store/index.html">httk.store.backend.sql.store</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sql/stored_federation/index.html">httk.store.backend.sql.stored_federation</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sql/stored_properties/index.html">httk.store.backend.sql.stored_properties</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../store/backend/sqlite/index.html">httk.store.backend.sqlite</a><input aria-label="Toggle navigation of httk.store.backend.sqlite" class="toctree-checkbox" id="toctree-checkbox-82" name="toctree-checkbox-82" role="switch" type="checkbox"/><label for="toctree-checkbox-82"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sqlite/engine/index.html">httk.store.backend.sqlite.engine</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../store/backend/sqlite/hooks/index.html">httk.store.backend.sqlite.hooks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../store/entry_providers/index.html">httk.store.entry_providers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../store/export/index.html">httk.store.export</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../store/federated_store/index.html">httk.store.federated_store</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../store/id_ledger/index.html">httk.store.id_ledger</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../store/query/index.html">httk.store.query</a><input aria-label="Toggle navigation of httk.store.query" class="toctree-checkbox" id="toctree-checkbox-83" name="toctree-checkbox-83" role="switch" type="checkbox"/><label for="toctree-checkbox-83"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../store/query/optimade_filters/index.html">httk.store.query.optimade_filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../store/query/paging_tokens/index.html">httk.store.query.paging_tokens</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../store/query/portable/index.html">httk.store.query.portable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../store/query/protocols/index.html">httk.store.query.protocols</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../store/query/slicer/index.html">httk.store.query.slicer</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../store/served_specs/index.html">httk.store.served_specs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../store/storage_layout/index.html">httk.store.storage_layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../store/store_common/index.html">httk.store.store_common</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../store/store_timestamp/index.html">httk.store.store_timestamp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../store/validation/index.html">httk.store.validation</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../analyse/index.html">httk.analyse</a><input aria-label="Toggle navigation of httk.analyse" class="toctree-checkbox" id="toctree-checkbox-84" name="toctree-checkbox-84" role="switch" type="checkbox"/><label for="toctree-checkbox-84"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../analyse/crysviz/index.html">httk.analyse.crysviz</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../analyse/generic/index.html">httk.analyse.generic</a><input aria-label="Toggle navigation of httk.analyse.generic" class="toctree-checkbox" id="toctree-checkbox-85" name="toctree-checkbox-85" role="switch" type="checkbox"/><label for="toctree-checkbox-85"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../analyse/generic/lower_hull/index.html">httk.analyse.generic.lower_hull</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../analyse/matsci/index.html">httk.analyse.matsci</a><input aria-label="Toggle navigation of httk.analyse.matsci" class="toctree-checkbox" id="toctree-checkbox-86" name="toctree-checkbox-86" role="switch" type="checkbox"/><label for="toctree-checkbox-86"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../analyse/matsci/phase_diagrams/index.html">httk.analyse.matsci.phase_diagrams</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../workflow/index.html">httk.workflow</a><input aria-label="Toggle navigation of httk.workflow" class="toctree-checkbox" id="toctree-checkbox-87" name="toctree-checkbox-87" role="switch" type="checkbox"/><label for="toctree-checkbox-87"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/adapter_protocol/index.html">httk.workflow.adapter_protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/adapters/index.html">httk.workflow.adapters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/collecting/index.html">httk.workflow.collecting</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../workflow/compat/index.html">httk.workflow.compat</a><input aria-label="Toggle navigation of httk.workflow.compat" class="toctree-checkbox" id="toctree-checkbox-88" name="toctree-checkbox-88" role="switch" type="checkbox"/><label for="toctree-checkbox-88"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../workflow/compat/v1/index.html">httk.workflow.compat.v1</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/configuration/index.html">httk.workflow.configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/errors/index.html">httk.workflow.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/executors/index.html">httk.workflow.executors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/hookapi/index.html">httk.workflow.hookapi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/hygiene/index.html">httk.workflow.hygiene</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../workflow/languages/index.html">httk.workflow.languages</a><input aria-label="Toggle navigation of httk.workflow.languages" class="toctree-checkbox" id="toctree-checkbox-89" name="toctree-checkbox-89" role="switch" type="checkbox"/><label for="toctree-checkbox-89"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../workflow/languages/cwl/index.html">httk.workflow.languages.cwl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../workflow/languages/httk_v1/index.html">httk.workflow.languages.httk_v1</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../workflow/languages/jobflow/index.html">httk.workflow.languages.jobflow</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../workflow/languages/pwd/index.html">httk.workflow.languages.pwd</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/manifests/index.html">httk.workflow.manifests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/projects/index.html">httk.workflow.projects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/protocol/index.html">httk.workflow.protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/provenance/index.html">httk.workflow.provenance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/runtime/index.html">httk.workflow.runtime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/runtime_utils/index.html">httk.workflow.runtime_utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/scaffold/index.html">httk.workflow.scaffold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/sdk/index.html">httk.workflow.sdk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/shell_bridge/index.html">httk.workflow.shell_bridge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/supervision/index.html">httk.workflow.supervision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/transfers/index.html">httk.workflow.transfers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../workflow/vasp/index.html">httk.workflow.vasp</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../atomistic/index.html">httk.atomistic</a><input aria-label="Toggle navigation of httk.atomistic" class="toctree-checkbox" id="toctree-checkbox-90" name="toctree-checkbox-90" role="switch" type="checkbox"/><label for="toctree-checkbox-90"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../atomistic/cif_structures/index.html">httk.atomistic.cif_structures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../atomistic/cli/index.html">httk.atomistic.cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../atomistic/composition/index.html">httk.atomistic.composition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../atomistic/data/index.html">httk.atomistic.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../atomistic/elements/index.html">httk.atomistic.elements</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../atomistic/entries/index.html">httk.atomistic.entries</a><input aria-label="Toggle navigation of httk.atomistic.entries" class="toctree-checkbox" id="toctree-checkbox-91" name="toctree-checkbox-91" role="switch" type="checkbox"/><label for="toctree-checkbox-91"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/entries/charge/index.html">httk.atomistic.entries.charge</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/entries/definitions/index.html">httk.atomistic.entries.definitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/entries/moments/index.html">httk.atomistic.entries.moments</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/entries/precision/index.html">httk.atomistic.entries.precision</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/entries/prototypes/index.html">httk.atomistic.entries.prototypes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/entries/structures/index.html">httk.atomistic.entries.structures</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/entries/symmetry/index.html">httk.atomistic.entries.symmetry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/entries/trajectories/index.html">httk.atomistic.entries.trajectories</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../atomistic/integrations/index.html">httk.atomistic.integrations</a><input aria-label="Toggle navigation of httk.atomistic.integrations" class="toctree-checkbox" id="toctree-checkbox-92" name="toctree-checkbox-92" role="switch" type="checkbox"/><label for="toctree-checkbox-92"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/integrations/ase/index.html">httk.atomistic.integrations.ase</a><input aria-label="Toggle navigation of httk.atomistic.integrations.ase" class="toctree-checkbox" id="toctree-checkbox-93" name="toctree-checkbox-93" role="switch" type="checkbox"/><label for="toctree-checkbox-93"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/integrations/ase/models/index.html">httk.atomistic.integrations.ase.models</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/integrations/ase/view/index.html">httk.atomistic.integrations.ase.view</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/integrations/pymatgen/index.html">httk.atomistic.integrations.pymatgen</a><input aria-label="Toggle navigation of httk.atomistic.integrations.pymatgen" class="toctree-checkbox" id="toctree-checkbox-94" name="toctree-checkbox-94" role="switch" type="checkbox"/><label for="toctree-checkbox-94"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/integrations/pymatgen/models/index.html">httk.atomistic.integrations.pymatgen.models</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/integrations/pymatgen/view/index.html">httk.atomistic.integrations.pymatgen.view</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/integrations/vasp/index.html">httk.atomistic.integrations.vasp</a><input aria-label="Toggle navigation of httk.atomistic.integrations.vasp" class="toctree-checkbox" id="toctree-checkbox-95" name="toctree-checkbox-95" role="switch" type="checkbox"/><label for="toctree-checkbox-95"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/index.html">httk.atomistic.integrations.vasp.io</a><input aria-label="Toggle navigation of httk.atomistic.integrations.vasp.io" class="toctree-checkbox" id="toctree-checkbox-96" name="toctree-checkbox-96" role="switch" type="checkbox"/><label for="toctree-checkbox-96"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/oszicar/index.html">httk.atomistic.integrations.vasp.io.oszicar</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/outcar/index.html">httk.atomistic.integrations.vasp.io.outcar</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/outputs/index.html">httk.atomistic.integrations.vasp.io.outputs</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/poscar_reader/index.html">httk.atomistic.integrations.vasp.io.poscar_reader</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/poscar_writer/index.html">httk.atomistic.integrations.vasp.io.poscar_writer</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/potcar/index.html">httk.atomistic.integrations.vasp.io.potcar</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/volumetric/index.html">httk.atomistic.integrations.vasp.io.volumetric</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/wavecar/index.html">httk.atomistic.integrations.vasp.io.wavecar</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../atomistic/integrations/vasp/io/xdatcar/index.html">httk.atomistic.integrations.vasp.io.xdatcar</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/integrations/vasp/structure/index.html">httk.atomistic.integrations.vasp.structure</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/integrations/vasp/trajectory/index.html">httk.atomistic.integrations.vasp.trajectory</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../atomistic/io/index.html">httk.atomistic.io</a><input aria-label="Toggle navigation of httk.atomistic.io" class="toctree-checkbox" id="toctree-checkbox-97" name="toctree-checkbox-97" role="switch" type="checkbox"/><label for="toctree-checkbox-97"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/io/cif/index.html">httk.atomistic.io.cif</a><input aria-label="Toggle navigation of httk.atomistic.io.cif" class="toctree-checkbox" id="toctree-checkbox-98" name="toctree-checkbox-98" role="switch" type="checkbox"/><label for="toctree-checkbox-98"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/io/cif/cif_parser/index.html">httk.atomistic.io.cif.cif_parser</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/io/cif/cif_reader/index.html">httk.atomistic.io.cif.cif_reader</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/io/cif/cif_tags/index.html">httk.atomistic.io.cif.cif_tags</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/io/cif/cif_writer/index.html">httk.atomistic.io.cif.cif_writer</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/io/cif/mcif_parser/index.html">httk.atomistic.io.cif.mcif_parser</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/io/cif/mcif_writer/index.html">httk.atomistic.io.cif.mcif_writer</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/io/optimade_jsonl/index.html">httk.atomistic.io.optimade_jsonl</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../atomistic/mcif_structures/index.html">httk.atomistic.mcif_structures</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../atomistic/models/index.html">httk.atomistic.models</a><input aria-label="Toggle navigation of httk.atomistic.models" class="toctree-checkbox" id="toctree-checkbox-99" name="toctree-checkbox-99" role="switch" type="checkbox"/><label for="toctree-checkbox-99"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/cell/index.html">httk.atomistic.models.cell</a><input aria-label="Toggle navigation of httk.atomistic.models.cell" class="toctree-checkbox" id="toctree-checkbox-100" name="toctree-checkbox-100" role="switch" type="checkbox"/><label for="toctree-checkbox-100"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/api/index.html">httk.atomistic.models.cell.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/backend/index.html">httk.atomistic.models.cell.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/cell/index.html">httk.atomistic.models.cell.cell</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/like/index.html">httk.atomistic.models.cell.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/numeric/index.html">httk.atomistic.models.cell.numeric</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/numeric_view/index.html">httk.atomistic.models.cell.numeric_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/params/index.html">httk.atomistic.models.cell.params</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/params_view/index.html">httk.atomistic.models.cell.params_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/plain/index.html">httk.atomistic.models.cell.plain</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/plain_view/index.html">httk.atomistic.models.cell.plain_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/record/index.html">httk.atomistic.models.cell.record</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/view/index.html">httk.atomistic.models.cell.view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/cell/view_base/index.html">httk.atomistic.models.cell.view_base</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/formula/index.html">httk.atomistic.models.formula</a><input aria-label="Toggle navigation of httk.atomistic.models.formula" class="toctree-checkbox" id="toctree-checkbox-101" name="toctree-checkbox-101" role="switch" type="checkbox"/><label for="toctree-checkbox-101"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/api/index.html">httk.atomistic.models.formula.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/backend/index.html">httk.atomistic.models.formula.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/composition/index.html">httk.atomistic.models.formula.composition</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/composition_view/index.html">httk.atomistic.models.formula.composition_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/diagnostics/index.html">httk.atomistic.models.formula.diagnostics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/formula/index.html">httk.atomistic.models.formula.formula</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/formula_string/index.html">httk.atomistic.models.formula.formula_string</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/formula_view/index.html">httk.atomistic.models.formula.formula_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/formulatype/index.html">httk.atomistic.models.formula.formulatype</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/formulatype_string/index.html">httk.atomistic.models.formula.formulatype_string</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/formulatype_view/index.html">httk.atomistic.models.formula.formulatype_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/like/index.html">httk.atomistic.models.formula.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/notation/index.html">httk.atomistic.models.formula.notation</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/plain/index.html">httk.atomistic.models.formula.plain</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/record/index.html">httk.atomistic.models.formula.record</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/structure/index.html">httk.atomistic.models.formula.structure</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/view_base/index.html">httk.atomistic.models.formula.view_base</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/formula/wyckoff/index.html">httk.atomistic.models.formula.wyckoff</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/moments/index.html">httk.atomistic.models.moments</a><input aria-label="Toggle navigation of httk.atomistic.models.moments" class="toctree-checkbox" id="toctree-checkbox-102" name="toctree-checkbox-102" role="switch" type="checkbox"/><label for="toctree-checkbox-102"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/moments/api/index.html">httk.atomistic.models.moments.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/moments/backend/index.html">httk.atomistic.models.moments.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/moments/cartesian/index.html">httk.atomistic.models.moments.cartesian</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/moments/cartesian_view/index.html">httk.atomistic.models.moments.cartesian_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/moments/collinear/index.html">httk.atomistic.models.moments.collinear</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/moments/crystalaxis/index.html">httk.atomistic.models.moments.crystalaxis</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/moments/crystalaxis_view/index.html">httk.atomistic.models.moments.crystalaxis_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/moments/like/index.html">httk.atomistic.models.moments.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/moments/view_base/index.html">httk.atomistic.models.moments.view_base</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/protostructure/index.html">httk.atomistic.models.protostructure</a><input aria-label="Toggle navigation of httk.atomistic.models.protostructure" class="toctree-checkbox" id="toctree-checkbox-103" name="toctree-checkbox-103" role="switch" type="checkbox"/><label for="toctree-checkbox-103"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/api/index.html">httk.atomistic.models.protostructure.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/backend/index.html">httk.atomistic.models.protostructure.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/label/index.html">httk.atomistic.models.protostructure.label</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/label_string/index.html">httk.atomistic.models.protostructure.label_string</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/like/index.html">httk.atomistic.models.protostructure.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/occupation/index.html">httk.atomistic.models.protostructure.occupation</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/protostructure/index.html">httk.atomistic.models.protostructure.protostructure</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/recognized/index.html">httk.atomistic.models.protostructure.recognized</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/view/index.html">httk.atomistic.models.protostructure.view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/protostructure/view_base/index.html">httk.atomistic.models.protostructure.view_base</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/prototype/index.html">httk.atomistic.models.prototype</a><input aria-label="Toggle navigation of httk.atomistic.models.prototype" class="toctree-checkbox" id="toctree-checkbox-104" name="toctree-checkbox-104" role="switch" type="checkbox"/><label for="toctree-checkbox-104"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/api/index.html">httk.atomistic.models.prototype.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/backend/index.html">httk.atomistic.models.prototype.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/derived/index.html">httk.atomistic.models.prototype.derived</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/label/index.html">httk.atomistic.models.prototype.label</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/label_string/index.html">httk.atomistic.models.prototype.label_string</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/like/index.html">httk.atomistic.models.prototype.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/notation/index.html">httk.atomistic.models.prototype.notation</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/occupation/index.html">httk.atomistic.models.prototype.occupation</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/prototype/index.html">httk.atomistic.models.prototype.prototype</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/recognized/index.html">httk.atomistic.models.prototype.recognized</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/view/index.html">httk.atomistic.models.prototype.view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/prototype/view_base/index.html">httk.atomistic.models.prototype.view_base</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/sites/index.html">httk.atomistic.models.sites</a><input aria-label="Toggle navigation of httk.atomistic.models.sites" class="toctree-checkbox" id="toctree-checkbox-105" name="toctree-checkbox-105" role="switch" type="checkbox"/><label for="toctree-checkbox-105"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/api/index.html">httk.atomistic.models.sites.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/backend/index.html">httk.atomistic.models.sites.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/like/index.html">httk.atomistic.models.sites.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/numeric/index.html">httk.atomistic.models.sites.numeric</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/numeric_view/index.html">httk.atomistic.models.sites.numeric_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/plain/index.html">httk.atomistic.models.sites.plain</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/plain_view/index.html">httk.atomistic.models.sites.plain_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/record/index.html">httk.atomistic.models.sites.record</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/sites/index.html">httk.atomistic.models.sites.sites</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/view/index.html">httk.atomistic.models.sites.view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/sites/view_base/index.html">httk.atomistic.models.sites.view_base</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/species/index.html">httk.atomistic.models.species</a><input aria-label="Toggle navigation of httk.atomistic.models.species" class="toctree-checkbox" id="toctree-checkbox-106" name="toctree-checkbox-106" role="switch" type="checkbox"/><label for="toctree-checkbox-106"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/species/api/index.html">httk.atomistic.models.species.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/species/backend/index.html">httk.atomistic.models.species.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/species/like/index.html">httk.atomistic.models.species.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/species/plain/index.html">httk.atomistic.models.species.plain</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/species/plain_view/index.html">httk.atomistic.models.species.plain_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/species/record/index.html">httk.atomistic.models.species.record</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/species/species/index.html">httk.atomistic.models.species.species</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/species/view/index.html">httk.atomistic.models.species.view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/species/view_base/index.html">httk.atomistic.models.species.view_base</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/structure/index.html">httk.atomistic.models.structure</a><input aria-label="Toggle navigation of httk.atomistic.models.structure" class="toctree-checkbox" id="toctree-checkbox-107" name="toctree-checkbox-107" role="switch" type="checkbox"/><label for="toctree-checkbox-107"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/api/index.html">httk.atomistic.models.structure.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/asu/index.html">httk.atomistic.models.structure.asu</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/asu_view/index.html">httk.atomistic.models.structure.asu_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/backend/index.html">httk.atomistic.models.structure.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/comparison/index.html">httk.atomistic.models.structure.comparison</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/datastream/index.html">httk.atomistic.models.structure.datastream</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/like/index.html">httk.atomistic.models.structure.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/modulated/index.html">httk.atomistic.models.structure.modulated</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/numeric/index.html">httk.atomistic.models.structure.numeric</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/numeric_view/index.html">httk.atomistic.models.structure.numeric_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/optimade/index.html">httk.atomistic.models.structure.optimade</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/plain/index.html">httk.atomistic.models.structure.plain</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/plain_view/index.html">httk.atomistic.models.structure.plain_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/record/index.html">httk.atomistic.models.structure.record</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/semantics/index.html">httk.atomistic.models.structure.semantics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/symops/index.html">httk.atomistic.models.structure.symops</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/unitcell/index.html">httk.atomistic.models.structure.unitcell</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/unitcell_view/index.html">httk.atomistic.models.structure.unitcell_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structure/view/index.html">httk.atomistic.models.structure.view</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/structuretype/index.html">httk.atomistic.models.structuretype</a><input aria-label="Toggle navigation of httk.atomistic.models.structuretype" class="toctree-checkbox" id="toctree-checkbox-108" name="toctree-checkbox-108" role="switch" type="checkbox"/><label for="toctree-checkbox-108"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/anonymize/index.html">httk.atomistic.models.structuretype.anonymize</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/anonymized/index.html">httk.atomistic.models.structuretype.anonymized</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/api/index.html">httk.atomistic.models.structuretype.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/backend/index.html">httk.atomistic.models.structuretype.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/fundamental/index.html">httk.atomistic.models.structuretype.fundamental</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/fundamental_view/index.html">httk.atomistic.models.structuretype.fundamental_view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/like/index.html">httk.atomistic.models.structuretype.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/structuretype/index.html">httk.atomistic.models.structuretype.structuretype</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/view/index.html">httk.atomistic.models.structuretype.view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/structuretype/view_base/index.html">httk.atomistic.models.structuretype.view_base</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../atomistic/models/trajectory/index.html">httk.atomistic.models.trajectory</a><input aria-label="Toggle navigation of httk.atomistic.models.trajectory" class="toctree-checkbox" id="toctree-checkbox-109" name="toctree-checkbox-109" role="switch" type="checkbox"/><label for="toctree-checkbox-109"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/trajectory/api/index.html">httk.atomistic.models.trajectory.api</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/trajectory/backend/index.html">httk.atomistic.models.trajectory.backend</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/trajectory/jsonl/index.html">httk.atomistic.models.trajectory.jsonl</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/trajectory/like/index.html">httk.atomistic.models.trajectory.like</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/trajectory/plain/index.html">httk.atomistic.models.trajectory.plain</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/trajectory/record/index.html">httk.atomistic.models.trajectory.record</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/trajectory/trajectory/index.html">httk.atomistic.models.trajectory.trajectory</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../atomistic/models/trajectory/view/index.html">httk.atomistic.models.trajectory.view</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../atomistic/reduction/index.html">httk.atomistic.reduction</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../atomistic/storage/index.html">httk.atomistic.storage</a><input aria-label="Toggle navigation of httk.atomistic.storage" class="toctree-checkbox" id="toctree-checkbox-110" name="toctree-checkbox-110" role="switch" type="checkbox"/><label for="toctree-checkbox-110"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/storage/records/index.html">httk.atomistic.storage.records</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/storage/stored_properties/index.html">httk.atomistic.storage.stored_properties</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../atomistic/supercell/index.html">httk.atomistic.supercell</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../atomistic/symmetry/index.html">httk.atomistic.symmetry</a><input aria-label="Toggle navigation of httk.atomistic.symmetry" class="toctree-checkbox" id="toctree-checkbox-111" name="toctree-checkbox-111" role="switch" type="checkbox"/><label for="toctree-checkbox-111"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/affine_operation/index.html">httk.atomistic.symmetry.affine_operation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/canonical/index.html">httk.atomistic.symmetry.canonical</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/lift/index.html">httk.atomistic.symmetry.lift</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/magnetic/index.html">httk.atomistic.symmetry.magnetic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/paths/index.html">httk.atomistic.symmetry.paths</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/primitive/index.html">httk.atomistic.symmetry.primitive</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/recognition/index.html">httk.atomistic.symmetry.recognition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/setting_transform/index.html">httk.atomistic.symmetry.setting_transform</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/spacegroup/index.html">httk.atomistic.symmetry.spacegroup</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/standardization/index.html">httk.atomistic.symmetry.standardization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/subgroups/index.html">httk.atomistic.symmetry.subgroups</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/symop_key/index.html">httk.atomistic.symmetry.symop_key</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/wyckoff/index.html">httk.atomistic.symmetry.wyckoff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../atomistic/symmetry/xyz/index.html">httk.atomistic.symmetry.xyz</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../atomistic/wavefunction/index.html">httk.atomistic.wavefunction</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../registry/cli/job/index.html">httk.registry.cli.job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../registry/cli/core/index.html">httk.registry.cli.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../registry/cli/serve/index.html">httk.registry.cli.serve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../registry/cli/project/index.html">httk.registry.cli.project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../registry/entries/core/index.html">httk.registry.entries.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../registry/io/atomistic/index.html">httk.registry.io.atomistic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../registry/schemas/core/index.html">httk.registry.schemas.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../registry/cli/workflow/index.html">httk.registry.cli.workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../registry/entries/store/index.html">httk.registry.entries.store</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../registry/cli/workspace/index.html">httk.registry.cli.workspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../registry/cli/atomistic/index.html">httk.registry.cli.atomistic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../registry/entries/atomistic/index.html">httk.registry.entries.atomistic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../registry/schemas/atomistic/index.html">httk.registry.schemas.atomistic</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../../../../../../../_sources/reference/autoapi/httk/serve/web/widgets/optimade_fields/index.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-httk.serve.web.widgets.optimade_fields">
+<span id="httk-serve-web-widgets-optimade-fields"></span><h1>httk.serve.web.widgets.optimade_fields<a class="headerlink" href="#module-httk.serve.web.widgets.optimade_fields" title="Link to this heading">¶</a></h1>
+<p>A server-side-static table of OPTIMADE property definitions.</p>
+<p>Unlike <code class="docutils literal notranslate"><span class="pre">optimade_table</span></code> this widget performs no browser fetch and ships no
+JavaScript: the served schema’s property definitions are known at startup, so
+the table is rendered once from the <code class="docutils literal notranslate"><span class="pre">properties</span></code> mapping a site supplies.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#httk.serve.web.widgets.optimade_fields.MAX_OPTIMADE_FIELDS" title="httk.serve.web.widgets.optimade_fields.MAX_OPTIMADE_FIELDS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MAX_OPTIMADE_FIELDS</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#httk.serve.web.widgets.optimade_fields.render" title="httk.serve.web.widgets.optimade_fields.render"><code class="xref py py-obj docutils literal notranslate"><span class="pre">render</span></code></a>(context, *, properties[, caption])</p></td>
+<td><p>Render a static table of OPTIMADE property definitions.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="httk.serve.web.widgets.optimade_fields.MAX_OPTIMADE_FIELDS">
+<span class="sig-prename descclassname"><span class="pre">httk.serve.web.widgets.optimade_fields.</span></span><span class="sig-name descname"><span class="pre">MAX_OPTIMADE_FIELDS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">512</span></span><a class="headerlink" href="#httk.serve.web.widgets.optimade_fields.MAX_OPTIMADE_FIELDS" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="httk.serve.web.widgets.optimade_fields.render">
+<span class="sig-prename descclassname"><span class="pre">httk.serve.web.widgets.optimade_fields.</span></span><span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Field</span> <span class="pre">definitions'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#httk.serve.web.widgets.optimade_fields.render" title="Link to this definition">¶</a></dt>
+<dd><p>Render a static table of OPTIMADE property definitions.</p>
+<p>Each row links a property’s prefixed name to the human-readable definition
+page at its <code class="docutils literal notranslate"><span class="pre">$id</span></code> and shows the first paragraph of its <code class="docutils literal notranslate"><span class="pre">description</span></code>.
+Ad-hoc synthesized ids (whose path contains <code class="docutils literal notranslate"><span class="pre">/ad-hoc/</span></code>) and any non
+HTTP(S) id render the name as plain text rather than a link.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>context</strong> (<a class="reference internal" href="../core/index.html#httk.serve.web.widgets.core.WidgetContext" title="httk.serve.web.widgets.core.WidgetContext"><em>httk.serve.web.widgets.core.WidgetContext</em></a>) – Immutable widget invocation context.</p></li>
+<li><p><strong>properties</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><em>object</em></a>) – Mapping of served property name to its OPTIMADE
+property-definition mapping (each carrying <code class="docutils literal notranslate"><span class="pre">$id</span></code> and <code class="docutils literal notranslate"><span class="pre">description</span></code>).</p></li>
+<li><p><strong>caption</strong> (<a class="reference internal" href="../../../../store/query/index.html#httk.store.query.SlicerColumn.str" title="httk.store.query.SlicerColumn.str"><em>str</em></a>) – Accessible table caption.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Static field-definition table and its stylesheet asset.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../index.html#httk.serve.web.widgets.OptimadeTableProtocolError" title="httk.serve.web.widgets.OptimadeTableProtocolError"><strong>OptimadeTableProtocolError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">properties</span></code> is not a non-empty
+mapping of at most 512 identifier-named definition mappings.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../core/index.html#httk.serve.web.widgets.core.WidgetRenderResult" title="httk.serve.web.widgets.core.WidgetRenderResult">httk.serve.web.widgets.core.WidgetRenderResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../optimade_table/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">httk.serve.web.widgets.optimade_table</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../optimade_assets/index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">httk.serve.web.widgets.optimade_assets</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2026, The httk₂ AUTHORS
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">httk.serve.web.widgets.optimade_fields</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#httk.serve.web.widgets.optimade_fields.MAX_OPTIMADE_FIELDS"><code class="docutils literal notranslate"><span class="pre">MAX_OPTIMADE_FIELDS</span></code></a></li>
+<li><a class="reference internal" href="#httk.serve.web.widgets.optimade_fields.render"><code class="docutils literal notranslate"><span class="pre">render()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../../../../../_static/documentation_options.js?v=fe42cd0d"></script>
+    <script src="../../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../../../_static/copybutton.js?v=fd10adb8"></script>
+    <script src="../../../../../../../_static/selector.js?v=e591e119"></script>
+    <script>window.HTTK_DOCS_VERSIONING = {"channel":"dev","version":"dev:main","versionPathDepth":2};</script>
+    </body>
+</html>

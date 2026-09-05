@@ -1,0 +1,279 @@
+httk.serve.optimade.backend.protocols
+=====================================
+
+.. py:module:: httk.serve.optimade.backend.protocols
+
+.. autoapi-nested-parse::
+
+   Typed protocols for the store/searcher contract the OPTIMADE backend uses.
+
+   The store/searcher protocols are defined in :mod:`httk.store.query` (httk-store
+   is where httk's data stores live, and this backend programs against their
+   shared query contract); this module re-exports them for the backend's use,
+   together with the OPTIMADE-specific query-callable types from the result
+   model.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   httk.serve.optimade.backend.protocols.Searcher
+   httk.serve.optimade.backend.protocols.SearchExpression
+   httk.serve.optimade.backend.protocols.SearchField
+   httk.serve.optimade.backend.protocols.SearchResult
+   httk.serve.optimade.backend.protocols.SearchVariable
+   httk.serve.optimade.backend.protocols.Store
+   httk.serve.optimade.backend.protocols.QueryFunction
+   httk.serve.optimade.backend.protocols.QueryResults
+
+
+Module Contents
+---------------
+
+.. py:class:: Searcher
+
+   Bases: :py:obj:`Protocol`
+
+
+   Build one query and iterate its results.
+
+   Iteration yields one :class:`SearchResult` per match, so ``item[0][0]`` is
+   the first declared output of the match (typically the matched row object).
+   The expressions received by ``add`` are always ones produced by this same
+   backend's search variables, so implementations may type them as their own
+   expression class; a backend that needs a second (post-filter) evaluation
+   position decides that from the expression itself, not from the caller.
+
+
+   .. py:attribute:: offset
+      :type:  int
+
+
+   .. py:method:: variable(target)
+
+      Bind a query variable to ``target``.
+
+
+
+   .. py:method:: output(variable, name)
+
+      Declare ``variable`` as a named result output.
+
+
+
+   .. py:method:: add(expression)
+
+      Add a filter expression to the query.
+
+
+
+   .. py:method:: count()
+
+      Return the exact count of the current query.
+
+
+
+   .. py:method:: set_limit(limit)
+
+      Set the query limit.
+
+
+
+   .. py:method:: add_offset(offset)
+
+      Add an offset to the query.
+
+
+
+   .. py:method:: add_sort(field, descending)
+
+      Add a field sort to the query.
+
+
+
+   .. py:method:: results(**outputs)
+
+      Return a result set for the requested named outputs.
+
+
+
+.. py:class:: SearchExpression
+
+   Bases: :py:obj:`Protocol`
+
+
+   Require composable backend search expressions.
+
+
+.. py:class:: SearchField
+
+   Bases: :py:obj:`Protocol`
+
+
+   Expose a queryable field of a search variable.
+
+   In addition to the methods below, fields support the rich comparison
+   operators (``==``, ``!=``, ``<``, ``<=``, ``>``, ``>=``), returning
+   :class:`SearchExpression`. The handlers invoke those via
+   ``getattr(field, '__eq__')(value)`` since the comparison dunders cannot be
+   typed as expression-returning.
+
+   The three string-matching methods take **literal** text: no wildcard or
+   pattern syntax whatsoever crosses this contract, so ``%`` and ``_`` (and
+   any other metacharacter) match themselves. A backend is therefore free to
+   implement them with SQL ``LIKE`` over an escaped pattern, with a regular
+   expression, or with a full-text index — the choice is invisible here.
+
+
+   .. py:method:: has(value)
+
+      Match a list field containing ``value``.
+
+
+
+   .. py:method:: has_any(*values)
+
+      Match a list field containing any of ``values``.
+
+
+
+   .. py:method:: has_only(*values)
+
+      Match a list field containing no values outside ``values``.
+
+
+
+   .. py:method:: is_in(*values)
+
+      Match a root scalar field whose value is one of ``values``.
+
+      ``None`` is an explicit member: it matches a null field value, and its
+      negation excludes nulls rather than inheriting SQL's three-valued
+      ``NOT IN (..., NULL)`` behavior.
+
+      Backends define the corresponding semantics for child or set fields;
+      for example, a backend may use the existing ``has_only``-style
+      all-values reading for a child field.
+
+
+
+   .. py:method:: contains(text)
+
+      Match values containing ``text`` as a literal substring.
+
+
+
+   .. py:method:: startswith(prefix)
+
+      Match values beginning with the literal ``prefix``.
+
+
+
+   .. py:method:: endswith(suffix)
+
+      Match values ending with the literal ``suffix``.
+
+
+
+.. py:class:: SearchResult
+
+   Bases: :py:obj:`NamedTuple`
+
+
+   Represent one match with declared output values and names.
+
+   ``values`` holds one entry per :meth:`Searcher.output` call in declaration
+   order; it is a tuple, so ``values, names = result`` and ``result[0][0]``
+   both work.
+
+
+   .. py:attribute:: values
+      :type:  tuple[Any, Ellipsis]
+
+
+   .. py:attribute:: names
+      :type:  tuple[str, Ellipsis]
+
+
+.. py:class:: SearchVariable
+
+   Bases: :py:obj:`Protocol`
+
+
+   Bind a query variable to a target type whose attributes yield fields.
+
+   ``always_true``/``always_false`` are reserved names: they are real methods
+   of the variable, never stored fields resolved through ``__getattr__``.
+   They exist so a translation layer can express a constant truth value
+   without inventing a probe field. A ``field == field`` probe is NULL-unsound,
+   since it yields NULL (not true) for a NULL field.
+
+
+   .. py:method:: always_true()
+
+      An expression that matches every row.
+
+
+
+   .. py:method:: always_false()
+
+      An expression that matches no row.
+
+
+
+.. py:class:: Store
+
+   Bases: :py:obj:`Protocol`
+
+
+   Require a store that can create a query searcher.
+
+   Implementations predating the ``as_of`` keyword may omit it and remain
+   usable for current-state queries, but cannot honor historic queries.
+
+
+   .. py:method:: searcher(*, as_of = None)
+
+      Create an empty searcher, optionally at a historic cutoff.
+
+      :param as_of: Optional canonical historic timestamp cutoff.
+      :return: An empty query searcher.
+
+
+
+.. py:class:: QueryFunction
+
+   Bases: :py:obj:`Protocol`
+
+
+   The callback seam through which the request engine runs queries on a backend.
+
+
+.. py:class:: QueryResults
+
+   Bases: :py:obj:`Protocol`
+
+
+   The results of a query against a backend, as consumed by the entry endpoints.
+
+   Iteration yields one :class:`~httk.serve.optimade.model.results.ResultRow` per entry; its ``values`` map
+   OPTIMADE response-field names to values, and the ``id`` and ``type`` keys
+   are always present.
+
+
+   .. py:property:: more_data_available
+      :type: bool
+
+
+      Report whether another page is available.
+
+
+   .. py:method:: count()
+
+      Return the total number of matches before pagination.
+
+
+
