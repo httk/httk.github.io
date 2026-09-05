@@ -18,10 +18,13 @@ _EXPECTED_MODULES = frozenset(
 
 _EXPECTED_REGISTRY_LINKS = {
     Path("io/atomistic"): "httk-atomistic",
-    Path("workflow"): "httk-workflow",
     Path("cli/atomistic"): "httk-atomistic",
     Path("cli/core"): "httk-core",
     Path("cli/serve"): "httk-serve",
+    Path("cli/workflow"): "httk-workflow",
+    Path("cli/workspace"): "httk-workflow",
+    Path("cli/project"): "httk-workflow",
+    Path("cli/job"): "httk-workflow",
     Path("entries/atomistic"): "httk-atomistic",
     Path("entries/core"): "httk-core",
     Path("entries/store"): "httk-store",
@@ -113,11 +116,15 @@ def main() -> int:
         target = submodules / name / "src" / "httk" / "registry" / relative
         if not target.is_dir():
             _fail(f"registry source is missing for {name}: {target}")
+        if not (target / "__init__.py").is_file():
+            _fail(f"registry source is missing __init__.py for {name}: {target}")
         _inside(
             registry_root / relative,
             submodules / name,
             f"registry link for {name}:{relative}",
         )
+        if (registry_root / relative).resolve(strict=True) != target.resolve(strict=True):
+            _fail(f"registry link does not point to expected source for {name}:{relative}")
     print("topology matches docs/ecosystem.json")
     return 0
 

@@ -177,6 +177,10 @@ nitpick_ignore = [
     ("py:class", "FilterAst"),
     ("py:class", "_Context"),
     ("py:class", "_BackingPlan"),
+    # Match httk-store/docs/conf.py: slicer signatures expose these private
+    # operation-tree/accessor types, which intentionally have no API pages.
+    ("py:class", "_Node"),
+    ("py:class", "_SlicerStr"),
     # PyMongo publishes no usable intersphinx target for its client class; this
     # targeted ignore follows the sanctioned external-type precedent in httk-core.
     ("py:class", "pymongo.MongoClient"),
