@@ -1,13 +1,13 @@
 # *httk₂*
 
-*httk₂* is a modular high-throughput toolkit for computational materials science.
-It is not a single package: the `httk.*` import namespace is a PEP 420 native
-namespace shared by a set of independently developed and released module repositories.
-Installing the `httk` namespace by itself provides no functionality; you install the
-modules you need — starting with `httk-core`, which supplies the shared primitives
-(type dispatch, datastreams, the `DatasetLoader`), and adding domain modules such as
-`httk-atomistic` for crystal-structure representations. See the
-{doc}`versioned module directory <modules>` for snapshot-specific documentation links.
+*httk₂* helps you load structures, run calculations, collect and serve their
+results, and analyse materials. Start with {doc}`structures`, then follow
+{doc}`campaigns`, {doc}`data`, and {doc}`analysis` as your task grows.
+
+Install the complete standard toolkit with `pip install httk2`, or install just
+the modules you need. The {doc}`versioned module directory <modules>` explains
+which module supplies each capability and links to its snapshot-specific guide.
+Python 3.12 or newer is required.
 
 More about the {doc}`architectural design decisions <architecture>` of *httk₂*.
 

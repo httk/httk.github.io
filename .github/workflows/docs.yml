@@ -76,6 +76,8 @@ jobs:
           PY
       - name: Generate development ecosystem manifest
         run: PYTHONPATH=submodules/httk-core/src python -m httk.core.docs ecosystem-manifest --submodules-dir submodules --out docs/ecosystem.json
+      - name: Execute first-use examples
+        run: make first-use-check
       - name: Build development docs
         run: HTTK_DOCS_VERSION=dev:main HTTK_DOCS_BASE_URL=https://docs.httk.org make docs
       - name: Compose and publish development docs-site

@@ -1,6 +1,7 @@
 # Structures and file formats
 
-Load a structure in one call with `UnitcellStructureView("file.cif")`. The
+Load a structure with `httk.core.load("file.cif")`, then use
+`UnitcellStructureView` when you need the full unit cell. The
 registered *httk-atomistic* readers cover CIF, POSCAR/CONTCAR, OUTCAR, and
 WAVECAR; use the neutral `httk.atomistic.io` reader when you need format-level
 data instead of an atomistic structure.
@@ -15,6 +16,7 @@ chosen explicitly when that presentation is wanted.
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from httk.core import load, save
 from httk.atomistic import PlainStructureView, UnitcellStructureView
 
 cif = """data_nacl
@@ -40,9 +42,15 @@ Cl1 Cl 0.5 0.5 0.5
 with TemporaryDirectory() as directory:
     path = Path(directory) / "NaCl.cif"
     path.write_text(cif)
-    unitcell = UnitcellStructureView(path)
+    original = load(path)
+    unitcell = UnitcellStructureView(original)
     lattice, positions, numbers = PlainStructureView(unitcell)
+    save(original, Path(directory) / "copy.cif")
 ```
+
+Keep `original` as the source of truth: a numeric presentation does not replace
+its exact data. Filename saves replace their destination only after writing
+successfully, including when a lazy object is saved over its source filename.
 
 An asymmetric unit records a space group and one representative per symmetry
 orbit; expand it to a full unit cell only when the calculation needs it.

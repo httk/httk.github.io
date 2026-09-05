@@ -30,6 +30,7 @@ with TemporaryDirectory() as directory:
     with store.transaction():
         sid = store.save(record)
     assert store.fetch(type(record), sid) == record
+    db.dispose()
 ```
 
 The search DSL binds a record class to a variable, adds comparisons or
@@ -52,13 +53,19 @@ provider turns a store or in-memory records into the neutral entry-provider
 contract, and *httk-serve* can expose one or more providers through OPTIMADE:
 
 ```python
-from httk.serve.optimade import adapter_from_providers, serve
+from httk.core import Reference
+from httk.store.entry_providers import ReferenceEntryProvider
+from httk.serve.optimade import adapter_from_providers, create_asgi_app
 
-serve(adapter_from_providers([provider]), port=8080)
+provider = ReferenceEntryProvider({"example-1-1": Reference(title="Example reference")})
+adapter = adapter_from_providers([provider])
+app = create_asgi_app(adapter)
 ```
 
-Construct `adapter_from_providers([provider])` first when testing or embedding the adapter; `serve(...)` is the quick development-server path.
-For deployment, use `create_asgi_app` as the interface to any ASGI server.
+Save this as `api.py` and run `uvicorn api:app --port 8080`; the reference is
+available at `/v1/references`. `create_asgi_app` is also the deployment and
+embedding interface. For a quick development server directly from Python,
+`httk.serve.optimade.serve(adapter, port=8080)` runs the same adapter.
 
 Serving is not limited to OPTIMADE. *httk-serve* can also turn a caller-owned
 OpenAPI 3.1 contract into a running application: you supply the JSON Schemas and

@@ -1,15 +1,32 @@
 # Compute campaigns, small and large
 
-Start locally with the four-command cycle: initialize a workspace, create a
-job, run its manager, and collect the result. The packaged `vasp-relax`
-workflow accepts a POSCAR and needs no runner authoring:
+Start locally: initialize your identity and workspace, configure an executable,
+create a job, run it, and collect its result. The packaged `vasp-relax` workflow
+accepts a VASP-5 POSCAR and needs no runner authoring. From an *httk-workflow*
+checkout, with a `POSCAR` in the current directory, this uses the supplied mock
+executable so no VASP installation or license is needed:
 
 ```console
+$ httk init --name "Your Name" --email you@example.org
+$ httk project init --name quickstart .
 $ httk workspace init --name default .
+$ httk workspace settings set --key vasp.command --value "$PWD/examples/mock_vasp.py" default
 $ httk job new --workflow vasp-relax --input structure=POSCAR
 $ httk workflow run
-$ httk workflow collect --into results.sqlite
+$ httk workflow collect --into results.sqlite --id-base httk.quickstart
 ```
+
+The mock produces synthetic numbers, not scientific results. With real VASP,
+replace the mock path with your executable command. The workflow module's
+[quickstart](https://docs.httk.org/httk-workflow/dev/main/quickstart/) supplies a
+POSCAR and explains each step; its `examples/quickstart.sh` is the executable
+source for the complete sequence (run identity setup first).
+
+Ordinary `httk workflow collect` streams bounded batches and reports per-job
+failures without abandoning the sweep; use `--fail-fast` to stop at the first
+observed failure. `collect --into` retains the complete sweep in memory to
+discover its storage layout and resolve cross-job provenance. Account for that
+memory cost when selecting a collection sweep.
 
 The workspace holds durable state and provenance; collection is the boundary
 where finished jobs become records in *httk-store*. Re-collecting is safe and

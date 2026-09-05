@@ -4,7 +4,7 @@ PYTHON ?= python3
 # between httk repositories (read by docs/conf.py via HTTK_DOCS_BASE_URL).
 DOCS_BASE_URL ?= https://docs.httk.org
 
-.PHONY: docs docs-full docs-live docs-clean docs-inventories docs-lock docs-lock-check ecosystem-manifest release-check clean
+.PHONY: docs docs-full docs-live docs-clean docs-inventories docs-lock docs-lock-check first-use-check ecosystem-manifest release-check clean
 
 docs:
 	HTTK_DOCS_BASE_URL=$(DOCS_BASE_URL) $(PYTHON) -m sphinx -j auto -b html -W --keep-going docs docs/_build/html
@@ -46,7 +46,10 @@ ecosystem-manifest:
 	$(PYTHON) -m httk.core.docs ecosystem-manifest \
 		--submodules-dir submodules --out docs/ecosystem.json
 
-release-check: docs-full
+first-use-check:
+	$(PYTHON) scripts/check_first_use.py
+
+release-check: first-use-check docs-full
 	$(MAKE) docs-lock-check
 
 # Refresh the committed intersphinx inventories (the one docs task that uses the
