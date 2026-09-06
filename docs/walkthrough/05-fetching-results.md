@@ -43,7 +43,11 @@ httk workflow collect
 (repeatable `--state`) to include the failures you just fetched. Each job
 becomes a record: `JobRecord` is the mechanical readout of one stopped job, and
 `CollectedJob` adds the workflow-declared outputs, roles, and provenance on top
-of it. Land the records
+of it. That provenance is what the job *observed* as it ran; externally known
+inputs — like the database entity a run is *for* — are instead *declared* at
+scaffold time, via `new_job`'s `provenance=` (or `new_jobs`'s per-item
+provenance), and arrive in the collected `Run` untouched, with no further
+steps at collection. Land the records
 in a store with `--into` — that is page {doc}`06-database`:
 
 ```console

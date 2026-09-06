@@ -68,8 +68,13 @@ job = new_job(
     "vasp-static",
     inputs={"structure": load("example.cif")},
     tag="example",
+    provenance={"inputs": {"entity": {"type": "amdb_material", "id": "magndata:1.108"}}},
 )
 ```
+
+The `provenance` mapping is optional; the `entity` input edge above claims,
+from creation, that this run is *for* the named database entity, by its
+stable ledger key.
 
 Both `vasp.*` settings are stored on the workspace, so they are set once, not
 per job; a real `HTTK_VASP_COMMAND` environment variable remains a deployment

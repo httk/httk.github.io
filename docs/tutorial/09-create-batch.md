@@ -18,6 +18,7 @@ items = (
     {
         "inputs": {"structure": load(path).without_charges()},
         "tag": path.stem.lower(),
+        "provenance": {"inputs": {"entity": {"type": "amdb_material", "id": f"amdb:{path.stem.lower()}"}}},
     }
     for path in sorted(Path("docs/tutorial/data/catio3").glob("*.cif"))
 )
@@ -34,7 +35,9 @@ for job in new_jobs(
 `without_charges()` is an explicit lossy presentation for this VASP input;
 the original loaded structure remains untouched. The six files are copied from
 the Crystallography Open Database and their attribution is in
-`data/catio3/LICENSE.txt`.
+`data/catio3/LICENSE.txt`. Each item's `provenance` claims, from creation,
+that the job is *for* the corresponding database entity, via an `entity`
+input edge naming it by its stable ledger key.
 
 For a directory containing already charge-free inputs, the CLI can create the
 same kind of batch without the Python projection:

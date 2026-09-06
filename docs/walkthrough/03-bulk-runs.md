@@ -35,6 +35,7 @@ items = (
             "structure": UnitcellStructureView(row.structure).without_charges(),
         },
         "tag": row.structure.id[:12],
+        "provenance": {"inputs": {"entity": {"type": "amdb_material", "id": row.structure.id}}},
     }
     for row in results
 )
@@ -52,7 +53,9 @@ The query is evaluated as the result stream is consumed, so neither the
 matching records nor the jobs have to be materialized in memory. The
 `UnitcellStructureView` turns each stored record back into the structure object
 the VASP workflow consumes, while `without_charges()` makes the VASP boundary
-explicit.
+explicit. Each item's `provenance` claims, from creation, that the job is
+*for* the corresponding database entity, via an `entity` input edge naming it
+by its stable ledger key — the same `row.structure.id` used for the tag.
 
 ## From the CLI
 
