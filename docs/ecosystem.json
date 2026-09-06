@@ -16,12 +16,12 @@
       "version": null
     },
     "httk-serve": {
-      "commit": "29fc874eab6c8c3fa04f7e7d051cae1b26e634f1",
+      "commit": "719452089c1f475866b48310166c7ad10a0d378c",
       "distribution_version": "2.1.0",
       "version": null
     },
     "httk-store": {
-      "commit": "a7c4a8934117310c243b244707d7962c20911546",
+      "commit": "889e4f2e4cfc4c79cceef9f406de068873a23628",
       "distribution_version": "2.1.0",
       "version": null
     },
