@@ -202,6 +202,12 @@ child value is in it, and `is_in` has that same for-all meaning on a child
 field. On a root field, `is_in` is ordinary membership. Negating a set
 expression negates the set statement, not the whole row.
 
+Weak links between record lineages work the same way through a `links`
+namespace: `v.links.<name>.<field>` filters through a link, and
+`v.links.<name>` is a set-valued `results()` output that yields each row's
+linked records as a tuple. The versioned *httk-store* database guide has the
+full weak-link contract.
+
 ## Chain references and make self-joins
 
 A reference path creates its join automatically. Two variables of one class

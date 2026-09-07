@@ -58,3 +58,15 @@ queries use `OptimadeStore` as shown here.
 This is the same read-only interoperability boundary as the old OMDB example,
 without an OMDB-specific singleton: providers publish OPTIMADE, and httk
 consumes the standard service.
+
+## Follow relationships
+
+When a provider exposes relationships between entries, reach them through the
+searcher's `links` namespace rather than parsing the raw envelope. For a query
+variable `v`, `v.links.<name>.<field>` is a depth-1 relationship filter and
+`v.links.<name>` is a set-valued output: `search.results(item=v,
+related=v.links.<name>)` returns each match together with a tuple of its related
+records, riding along in the same response. Every returned record also exposes
+`record.links.<name>` to walk one hop further, and any resource the provider did
+not include is fetched by id on demand. See the *httk-serve* OPTIMADE client
+guide for the full contract.
