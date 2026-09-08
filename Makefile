@@ -18,7 +18,7 @@ docs-live:
 docs-clean:
 	rm -rf docs/_build docs/reference/autoapi docs/_generated
 
-# The aggregate has no internal dependency pins: all seven module checkouts are
+# The aggregate has no internal dependency pins: all six module checkouts are
 # installed separately, while this lock contains only external docs requirements.
 docs-lock:
 	$(PYTHON) -m httk.core.docs lock .

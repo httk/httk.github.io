@@ -50,16 +50,20 @@ jobs:
           pip check
           PYTHONPATH=submodules/httk-core/src python -m httk.core.docs ecosystem-manifest --submodules-dir submodules --verify docs/ecosystem.json --require-release-tags
       - name: Verify aggregate source topology
-        run: python scripts/verify_topology.py
+        run: |
+          python scripts/verify_topology.py
+          python scripts/check_lock_members.py
       - name: Check release version
         env:
           RELEASE_TAG: ${{ inputs.version }}
         run: |
           PYTHONPATH=submodules/httk-core/src python -m httk.core.docs check-release --tag "$RELEASE_TAG"
+      - name: Execute first-use examples
+        run: make first-use-check
       - name: Build repaired release docs
         env:
           RELEASE_TAG: ${{ inputs.version }}
-        run: HTTK_DOCS_VERSION="$RELEASE_TAG" HTTK_DOCS_BASE_URL=https://docs.httk.org make docs
+        run: HTTK_DOCS_VERSION="$RELEASE_TAG" HTTK_DOCS_BASE_URL=https://docs.httk.org make docs-full
       - name: Compose and publish repaired docs-site
         env:
           RELEASE_TAG: ${{ inputs.version }}

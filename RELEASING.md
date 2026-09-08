@@ -2,7 +2,7 @@
 
 The top-site release is an ecosystem snapshot. First release each runtime module
 and make sure its exact release tag is available. In this repository, update all
-seven submodule pointers to those tags, then run and commit both generated
+six submodule pointers to those tags, then run and commit both generated
 inputs:
 
 ```console
@@ -20,6 +20,21 @@ pass, tag `v<version>` and push the tag. The release workflow checks the tag and
 lock headers, verifies `docs/ecosystem.json` against the pinned release-tagged
 submodules, builds the aggregate docs, and publishes the immutable release
 directory.
+
+For the shared **v2.1.0** release, publish packages and their versioned docs in
+dependency order: *httk-core* first; then *httk-atomistic*, *httk-store*, and
+*httk-workflow*; then *httk-analyse* and *httk-serve*. Before tagging each
+dependent module, refresh its committed inventories from the already published
+dependency release docs with `make docs-inventories`, and run
+`python -m httk.core.docs check-release --tag v2.1.0` and `make docs-lock-check`.
+Locally built wheels can verify a candidate installation, but do not satisfy
+these public-index and published-inventory prerequisites.
+
+Once the six modules are released, pin this site's submodules to their exact
+`v2.1.0` tags and regenerate the manifest. Release the aggregate documentation,
+the *httk-web.github.io* website, and the refreshed *agent-httk-skill* packages
+against that snapshot. The website's package dependency also requires
+*httk-serve* 2.1.0 to be available first.
 
 If a published release needs a known repair, use the approval-gated repair
 workflow. It replaces only the explicitly selected release tree and leaves

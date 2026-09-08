@@ -91,6 +91,7 @@ myst_heading_anchors = 3
 # example incompatible with the httk-core / httk-atomistic APIs fails the build;
 # cache successful execution results under docs/_build so docs-clean removes them.
 nb_execution_mode = "cache"
+nb_execution_raise_on_error = True
 nb_execution_cache_path = os.path.join(_project_root, "docs", "_build", ".jupyter_cache")
 # Cells default to myst-nb's 30 s timeout, which sits too close to the legitimate
 # runtime of the heavier example notebooks under machine load; the timeout's job
@@ -223,7 +224,7 @@ copybutton_prompt_is_regexp = True
 # after merging the modules' inventories. The installed Sphinx tags missing
 # Python references by their distinct role subtypes (ref.class, ref.meth,
 # ref.func, ref.exc, and ref.attr), so those nitpicky warnings remain fatal.
-suppress_warnings = ["myst.xref_missing", "autoapi.python_import_resolution", "ref.python", "mystnb"]
+suppress_warnings = ["myst.xref_missing", "autoapi.python_import_resolution", "ref.python"]
 
 
 # Workflow-specific rules omit internal modules and resolve public bare-name

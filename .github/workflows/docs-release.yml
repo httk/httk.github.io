@@ -57,12 +57,16 @@ jobs:
         run: |
           PYTHONPATH=submodules/httk-core/src python -m httk.core.docs ecosystem-manifest --submodules-dir submodules --verify docs/ecosystem.json --require-release-tags
       - name: Verify aggregate source topology
-        run: python scripts/verify_topology.py
+        run: |
+          python scripts/verify_topology.py
+          python scripts/check_lock_members.py
       - name: Check release version
         run: |
           PYTHONPATH=submodules/httk-core/src python -m httk.core.docs check-release --tag "$GITHUB_REF_NAME"
+      - name: Execute first-use examples
+        run: make first-use-check
       - name: Build release docs
-        run: HTTK_DOCS_VERSION="$GITHUB_REF_NAME" HTTK_DOCS_BASE_URL=https://docs.httk.org make docs
+        run: HTTK_DOCS_VERSION="$GITHUB_REF_NAME" HTTK_DOCS_BASE_URL=https://docs.httk.org make docs-full
       - name: Compose and publish release docs-site
         env:
           SOURCE_COMMIT: ${{ github.sha }}
