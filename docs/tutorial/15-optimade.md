@@ -19,7 +19,7 @@ provider-specific endpoint name or database API.
 
 ```python
 from httk.atomistic import OptimadeStructure, UnitcellStructureView
-from httk.serve.optimade import OptimadeStore
+from httk.store.optimade import OptimadeStore
 
 base_url = "http://127.0.0.1:18770"
 
