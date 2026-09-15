@@ -44,7 +44,8 @@ workflow. It replaces only the explicitly selected release tree and leaves
 other release snapshots untouched.
 
 Development builds are different: a push to this repository's `main` workflow
-updates every submodule to its remote `main`, builds `dev:main`, and publishes
-the replaceable development snapshot. The site does not rebuild from module
-pushes alone; module changes enter the development snapshot on the next top-site
-push.
+updates every submodule to its remote `develop`, builds the `dev:main` channel,
+and publishes the replaceable development snapshot. The channel name follows
+this site's `main` branch; its module sources come from their `develop`
+branches. The site does not rebuild from module pushes alone; module changes
+enter the development snapshot on the next top-site push.

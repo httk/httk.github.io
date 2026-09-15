@@ -48,9 +48,9 @@ each with its recommended `default` feature extras:
 pip install httk2
 ```
 
-The metapackage repository also serves the development workflow: its `dev-main`
-branch installs the latest `main` state of every module directly from GitHub,
-and its `Makefile` can check out all module repositories, run `fetch`/`pull`/`push`
+The metapackage repository also serves the development workflow: its `main`
+branch coordinates the latest `develop` state of every module, and its
+`Makefile` can check out all module repositories, run `fetch`/`pull`/`push`
 across them, and editable-install them into your virtual environment in one step.
 See the [`httk2` README](https://github.com/httk/httk2#readme) for the details.
 

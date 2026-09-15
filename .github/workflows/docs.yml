@@ -26,14 +26,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Move all module checkouts to remote main
+      - name: Move all module checkouts to remote develop
         run: |
           git submodule update --init --remote --recursive
           for submodule in submodules/*; do
             [ -d "$submodule" ] || continue
-            git -C "$submodule" fetch origin main
-            test "$(git -C "$submodule" rev-parse HEAD)" = "$(git -C "$submodule" rev-parse origin/main)" || {
-              echo "$submodule is not at origin/main" >&2
+            git -C "$submodule" fetch origin develop
+            test "$(git -C "$submodule" rev-parse HEAD)" = "$(git -C "$submodule" rev-parse origin/develop)" || {
+              echo "$submodule is not at origin/develop" >&2
               exit 1
             }
           done
