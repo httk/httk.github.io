@@ -4,7 +4,7 @@ PYTHON ?= python3
 # between httk repositories (read by docs/conf.py via HTTK_DOCS_BASE_URL).
 DOCS_BASE_URL ?= https://docs.httk.org
 
-.PHONY: docs docs-full docs-live docs-clean docs-inventories docs-lock docs-lock-check first-use-check ecosystem-manifest release-check clean
+.PHONY: docs docs-full docs-live docs-clean docs-inventories docs-lock docs-lock-check first-use-check ecosystem-manifest ecosystem-manifest-release release-check release-prepare clean
 
 docs:
 	HTTK_DOCS_BASE_URL=$(DOCS_BASE_URL) $(PYTHON) -m sphinx -j auto -b html -W --keep-going docs docs/_build/html
@@ -46,11 +46,21 @@ ecosystem-manifest:
 	$(PYTHON) -m httk.core.docs ecosystem-manifest \
 		--submodules-dir submodules --out docs/ecosystem.json
 
+ecosystem-manifest-release:
+	PYTHONPATH=submodules/httk-core/src $(PYTHON) -m httk.core.docs ecosystem-manifest \
+		--submodules-dir submodules --out docs/ecosystem.json --require-release-tags
+
 first-use-check:
 	$(PYTHON) scripts/check_first_use.py
 
 release-check: first-use-check docs-full
 	$(MAKE) docs-lock-check
+
+release-prepare:
+	@version="$$($(PYTHON) -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')"; \
+	  test "$(VERSION)" = "v$$version" || { \
+	    echo "error: VERSION=$(VERSION) does not match v$$version"; exit 1; }
+	@$(MAKE) ecosystem-manifest-release docs-lock release-check
 
 # Refresh the committed intersphinx inventories (the one docs task that uses the
 # network); docs builds themselves resolve against these vendored files offline.

@@ -2,14 +2,17 @@
 
 The top-site release is an ecosystem snapshot. First release each runtime module
 and make sure its exact release tag is available. In this repository, update all
-six submodule pointers to those tags, then run and commit both generated
-inputs:
+six submodule pointers to those tags, then run the release preparation target
+and commit its generated inputs:
 
 ```console
-make ecosystem-manifest
-make docs-lock
-make release-check
+make release-prepare VERSION=v2.1.0
 ```
+
+This generates the release-tag-verified ecosystem manifest, refreshes the
+documentation lock, and runs the complete release check. The coordinated
+workflow documented in the `httk2` repository performs the pinning, checking,
+and snapshot commit automatically.
 
 `make release-check` uses `make docs-full` for the clean, forced aggregate docs
 build; use `make docs-full` directly when that release-style docs build is needed
