@@ -21,9 +21,9 @@
       "version": "v2.1.1"
     },
     "httk-store": {
-      "commit": "8ef547a6237bf23b74e5ef376d8b195292dbeb4b",
-      "distribution_version": "2.1.1",
-      "version": "v2.1.1"
+      "commit": "c1ff70728de8205f0ea3a09fb4e4ce0eb45a073d",
+      "distribution_version": "2.1.2",
+      "version": "v2.1.2"
     },
     "httk-workflow": {
       "commit": "6d6116d1dc46831b1cb08dffb6014c8e9c331044",
