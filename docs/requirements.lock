@@ -1,5 +1,5 @@
 # httk-docs-lock-schema: 1
-# input-hash: sha256:00e11a7fac9f7a84d71bb8cdf94e1dae1c91f625784673991be46a3e25856f45
+# input-hash: sha256:b88fb4070bd14efd9c35654e267b127eb5f77d9b4a5633749e1328fb449a1eb6
 # python: 3.12
 # platform: linux
 accessible-pygments==0.0.5
@@ -28,8 +28,8 @@ furo==2025.12.19
 greenlet==3.5.6
 h11==0.16.0
 highspy==1.15.1
-httpcore==1.0.9
-httpx==0.28.1
+httpcore2==2.13.0
+httpx2==2.13.0
 idna==3.19
 imagesize==2.0.1
 importlib-metadata==9.0.1
@@ -100,6 +100,7 @@ starlette==1.6.0
 tabulate==0.10.0
 tornado==6.5.10
 traitlets==5.16.1
+truststore==0.10.4
 typing-extensions==4.16.0
 urllib3==2.8.0
 uvicorn==0.53.0
