@@ -30,7 +30,7 @@ h11==0.16.0
 highspy==1.15.1
 httpcore2==2.13.0
 httpx2==2.13.0
-idna==3.19
+idna==3.20
 imagesize==2.0.1
 importlib-metadata==9.0.1
 ipykernel==7.3.0
