@@ -1,12 +1,7 @@
-:orphan:
+---
+orphan: true
+---
+
 # Reference
 
-This section documents the supported public API.
-
-```{toctree}
-:maxdepth: 2
-
-autoapi/httk/core/index
-autoapi/httk/atomistic/index
-autoapi/httk/analyse/index
-```
+The complete {doc}`API Reference <autoapi/index>` documents all *httk₂* modules.

@@ -124,10 +124,12 @@ autoapi_root = "reference/autoapi"
 autoapi_ignore = []  # include everything
 
 autoapi_type = "python"
-# The merged httk namespace tree is made from committed symlinks into all seven
+# The merged httk namespace tree is made from committed symlinks into all six
 # submodule checkouts, so AutoAPI parses the runtime distributions as one PEP 420
 # httk root and cross-module references resolve in the aggregate inventory.
 autoapi_dirs = ["../src/httk"]
+# Generate the index; docs/index.md links it explicitly, preventing AutoAPI's
+# fallback navigation insertion from adding a second reference entry.
 autoapi_add_toctree_entry = True
 autoapi_keep_files = True
 autoapi_member_order = "bysource"

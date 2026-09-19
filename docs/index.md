@@ -12,7 +12,7 @@ Python 3.12 or newer is required.
 More about the {doc}`architectural design decisions <architecture>` of *httk₂*.
 
 This site is the top-level documentation for *httk₂*. It carries an aggregate
-{doc}`API reference <reference/index>` covering the published modules (pinned to the
+{doc}`API reference <reference/autoapi/index>` covering the published modules (pinned to the
 submodule revisions this site is built against), and each module additionally
 publishes its own subsite under [docs.httk.org](https://docs.httk.org); the
 {doc}`module directory <modules>` links to each one.
@@ -24,7 +24,7 @@ publishes its own subsite under [docs.httk.org](https://docs.httk.org); the
   {doc}`structures`, {doc}`data`, {doc}`campaigns`, and {doc}`analysis` — the
   ecosystem-level path from input files to results and analysis.
 - **Module directory**: {doc}`modules` — every *httk₂* module and where its docs live.
-- **API reference**: {doc}`reference/index` — the aggregate reference for the published modules on this site.
+- **API reference**: {doc}`reference/autoapi/index` — the aggregate reference for the published modules on this site.
 - **Tutorial**: {doc}`tutorial/index` — the original short
   example sequence translated to current APIs, including the remaining gaps.
 - **Walkthrough**: {doc}`walkthrough/index` — the calculation lifecycle end to end, with notes for users coming from httk v1.
@@ -98,6 +98,6 @@ authoring
 tutorial/index
 walkthrough/index
 hpc
-reference/index
+reference/autoapi/index
 notebooks/index
 ```

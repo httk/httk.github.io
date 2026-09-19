@@ -4,7 +4,7 @@ API Reference
 This page contains auto-generated API reference documentation [#f1]_.
 
 .. toctree::
-   :titlesonly:
+   :maxdepth: 2
 
 {% for page in pages %}
    {% set state = namespace(has_rendered_parent=false) %}
