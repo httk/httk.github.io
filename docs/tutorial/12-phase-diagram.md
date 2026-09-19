@@ -1,64 +1,42 @@
 # Draw the Ca–Ti–O phase diagram
 
-The collected store contains the relaxed structure entries, total-energy
-records, and product links from page 11. The `Run.outputs` edges provide the
-same honest loose-reference join without assuming a SQL table layout; fetch the
-two entry types and pass the resulting structures and energies to the
-materials-science constructor:
+The collected store holds the relaxed structures and their total-energy
+records, joined by the records' `product_of` edges. One query returns the
+structure and energy pairs; the materials-science constructor takes them
+directly, with the OPTIMADE reduced formulas (elements in alphabetical order,
+so CaTiO3 reads `CaO3Ti`) as phase labels:
 
 ```python
-from math import gcd
-
 from httk.analyse.matsci import PhaseDiagram
-from httk.atomistic import StructureEntry, UnitcellStructureView
-from httk.core import DataRecord, Run
-from httk.store import Backend, SqlStore
+from httk.atomistic import UnitcellStructureView
+from httk.atomistic.storage.records import UnitcellStructureRecord
+from httk.core import DataRecord
+from httk.store import SqliteStore
 
-store = SqlStore(Backend.sqlite("presentation.sqlite"))
-structures, energies, ids = [], [], []
-search = store.searcher()
-run = search.variable(Run)
-for item in search.results(run=run).scalars():
-    structure_edge = next(edge for edge in item.outputs if edge.entry_type == "structures")
-    energy_edge = next(edge for edge in item.outputs if edge.entry_type == "_httk_records")
-    structure = store.fetch_entry(StructureEntry, structure_edge.entry_id)
-    energy = store.fetch_by_content_id(DataRecord, energy_edge.entry_id)
-    assert structure is not None and energy is not None
-    structures.append(structure)
-    energies.append(energy.value)
-    ids.append(structure_edge.entry_id)
+store = SqliteStore("presentation.sqlite")
+search = store.searcher(only_latest=True)
+structure = search.variable(UnitcellStructureRecord)
+record = search.variable(DataRecord)
+search.add(record.links.product_of == structure)
 
-pd = PhaseDiagram.from_structures(structures, energies, ids=ids)
-views = [UnitcellStructureView(structure) for structure in structures]
+structures, energies = [], []
+for row in search.results(structure=structure, record=record):
+    structures.append(row.structure)
+    energies.append(row.record.value)
 
-def label(structure):
-    amounts = structure.composition.amount_mapping
-    divisor = 0
-    for amount in amounts.values():
-        divisor = gcd(divisor, int(amount))
-    order = sorted(amounts, key=lambda element: (element == "O", element))
-    return "".join(
-        element + (str(int(amounts[element]) // divisor) if int(amounts[element]) // divisor != 1 else "")
-        for element in order
-    )
-
-labels = [label(structure) for structure in views]
+labels = [UnitcellStructureView(structure).chemical_formula_reduced for structure in structures]
+pd = PhaseDiagram.from_structures(structures, energies, ids=labels)
 stable = {labels[index] for index in pd.hull_indices}
 print("stable", sorted(stable))
-print("energy above hull", dict(zip(
-    labels,
-    pd.energy_above_hull,
-)))
-print("TiO stable", "TiO" in stable)
-assert len(structures) == 6
-assert stable == {"Ca", "Ti", "O", "CaO", "CaTiO3"}
-assert "TiO" not in stable
+print("energy above hull", dict(zip(labels, pd.energy_above_hull)))
+assert stable == {"Ca", "O", "Ti", "CaO", "CaO3Ti"}
+assert "OTi" not in stable
 ```
 
-The identifiers are content IDs, so the code does not assume filenames or
-hard-code compositions or energies. To make the result readable, map the
-stable IDs back to the six page-09 tags in the surrounding application; the
-expected stable set is Ca, Ti, O, CaO, and CaTiO3, with TiO above the hull.
+The join is exact provenance, not a filename convention: the edge on each
+record was written by the collector from the workflow's `product_of`
+curation and holds the structure's store id. The expected stable set is Ca,
+O, Ti, CaO, and CaO3Ti (CaTiO3), with OTi (TiO) above the hull.
 
 Plotting is an explicit presentation step:
 

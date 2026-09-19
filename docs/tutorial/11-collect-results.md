@@ -1,9 +1,10 @@
 # Collect the results
 
 The standard VASP collector reads each published `CONTCAR` and `OUTCAR`.
-Collecting into SQLite stores the relaxed structures, total-energy
-`DataRecord`s, provenance `Run`s, and `ProductLink`s that connect each output
-to the structure it describes:
+Collecting into SQLite stores the relaxed structures, the total-energy
+`DataRecord`s, and the provenance `Run`s. Each energy record carries a
+`product_of` edge naming the relaxed structure it describes, and each run
+carries its input and output edges:
 
 ```console
 httk workflow collect --into presentation.sqlite
@@ -13,35 +14,31 @@ The custom extractor detour is intentionally omitted here. The standard
 collector already publishes the records needed for the phase diagram; custom
 file formats belong in the dedicated workflow and store guides.
 
-Here is a short store query showing what landed. Each collected `Run` carries
-loose output references to its relaxed structure and total-energy record. The
-SQLite table count confirms the `ProductLink`s written alongside them.
+Here is a short store query showing what landed. Relationships are searched
+through the `links` namespace: `record.links.product_of == structure` joins
+every energy record to the structure it is a product of. Edges name a
+structure by its store id, which all its revisions share, so `only_latest=True`
+keeps one row per current pair when a later sweep revises a structure:
 
 ```python
-import sqlite3
-
-from httk.atomistic import StructureEntry
+from httk.atomistic import UnitcellStructureView
+from httk.atomistic.storage.records import UnitcellStructureRecord
 from httk.core import DataRecord, Run
-from httk.store import Backend, SqlStore
+from httk.store import SqliteStore
 
-store = SqlStore(Backend.sqlite("presentation.sqlite"))
-rows = []
-search = store.searcher()
+store = SqliteStore("presentation.sqlite")
+
+search = store.searcher(only_latest=True)
+structure = search.variable(UnitcellStructureRecord)
+record = search.variable(DataRecord)
+search.add(record.links.product_of == structure)
+pairs = list(search.results(structure=structure, record=record))
+for row in pairs:
+    print(UnitcellStructureView(row.structure).chemical_formula_reduced, row.record.value)
+
+search = store.searcher(only_latest=True)
 run = search.variable(Run)
-runs = list(search.results(run=run).scalars())
-for item in runs:
-    structure_edge = next(edge for edge in item.outputs if edge.entry_type == "structures")
-    energy_edge = next(edge for edge in item.outputs if edge.entry_type == "_httk_records")
-    structure = store.fetch_entry(StructureEntry, structure_edge.entry_id)
-    record = store.fetch_by_content_id(DataRecord, energy_edge.entry_id)
-    assert structure is not None and record is not None
-    rows.append((structure_edge.entry_id, structure, record.value))
-with sqlite3.connect("presentation.sqlite") as database:
-    product_links = database.execute("SELECT COUNT(*) FROM core_product_link").fetchone()[0]
-print("structures", len(rows), "energy records", len(rows))
-print("runs", len(runs), "product links", product_links)
+print("structures with energies", len(pairs), "runs", len(search.results(run=run)))
 ```
 
-The `rows` values are the exact relaxed structures and the canned total-cell
-energies. Page 12 joins those same identifiers and feeds them to
-`PhaseDiagram.from_structures`.
+Page 12 feeds those same pairs to `PhaseDiagram.from_structures`.
