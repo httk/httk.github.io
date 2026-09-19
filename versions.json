@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "project": "",
+  "url": "https://docs.httk.org",
+  "source_commit": "06774a5d9f2c90f4ebca206628a3e2242a595891",
+  "default": {
+    "name": "v2.1.2",
+    "path": "latest/",
+    "channel": "release"
+  },
+  "versions": [
+    {
+      "name": "v2.1.2",
+      "path": "v2.1.2/",
+      "channel": "release"
+    },
+    {
+      "name": "v2.1.1",
+      "path": "v2.1.1/",
+      "channel": "release"
+    },
+    {
+      "name": "dev:main",
+      "path": "dev/main/",
+      "channel": "dev"
+    }
+  ]
+}

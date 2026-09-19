@@ -1,0 +1,82 @@
+# Storing, querying, and serving data
+
+*httk₂* keeps data models separate from storage. Plain frozen dataclasses can
+be stored in SQLite or DuckDB through `SqlStore`, or in MongoDB through
+`MongoStore`; the same records and neutral query protocols travel across those
+backends. Content addressing deduplicates equal records while a local `sid`
+identifies a row in one store. That `content_id` is the storage identity; a
+defined entry family additionally carries a human-readable, store-minted entry
+`id` shared by every revision of a lineage, and a per-revision `immutable_id`
+written `<id>~<n>`. Named alternative representations of an entry — a
+conventional cell beside a primitive one, say — share the main's `id` under a
+composite `<id>~<kind>`. Queries and revision streams return main entries only
+by default (`searcher(only_main_alt=True)`); pass `only_latest=True` to narrow
+to each lineage's latest revision.
+
+```python
+from dataclasses import dataclass
+from tempfile import TemporaryDirectory
+
+from httk.store import Backend, SqlStore
+
+@dataclass(frozen=True)
+class Result:
+    formula: str
+
+record = Result("NaCl")
+with TemporaryDirectory() as directory:
+    db = Backend.sqlite(f"{directory}/results.sqlite")
+    store = SqlStore(db, entry_records={})
+    with store.transaction():
+        sid = store.save(record)
+    assert store.fetch(type(record), sid) == record
+    db.dispose()
+```
+
+The search DSL binds a record class to a variable, adds comparisons or
+collection predicates such as `has`, `has_any`, and `has_only`, then returns a
+lazy result set. `bulk_ingest(workers=N)` is the faster path for building a
+large store; use ordinary `save()` for a small increment.
+
+MongoDB uses the same model and store surface when MongoDB is already the
+operational data service:
+
+```python
+from httk.store.backend.mongo import MongoDatabase, MongoStore
+
+with MongoDatabase.connect(uri, database="materials") as database:
+    store = MongoStore(database, entry_records={})
+```
+
+Federation presents existing stores as one read-only, source-major union. A
+provider turns a store or in-memory records into the neutral entry-provider
+contract, and *httk-serve* can expose one or more providers through OPTIMADE:
+
+```python
+from httk.core import Reference
+from httk.store.entry_providers import ReferenceEntryProvider
+from httk.serve.optimade import adapter_from_providers, create_asgi_app
+
+provider = ReferenceEntryProvider({"example-1-1": Reference(title="Example reference")})
+adapter = adapter_from_providers([provider])
+app = create_asgi_app(adapter)
+```
+
+Save this as `api.py` and run `uvicorn api:app --port 8080`; the reference is
+available at `/v1/references`. `create_asgi_app` is also the deployment and
+embedding interface. For a quick development server directly from Python,
+`httk.serve.optimade.serve(adapter, port=8080)` runs the same adapter.
+
+Serving is not limited to OPTIMADE. *httk-serve* can also turn a caller-owned
+OpenAPI 3.1 contract into a running application: you supply the JSON Schemas and
+one handler per operation, and the adapter derives the routes, validation, and
+responses from the contract. This is the mechanism behind its Data Space
+Protocol (DSP) support and the way to serve a custom or standardized protocol
+from *httk₂* data.
+
+## Read next
+
+- [Data management](https://docs.httk.org/httk-store/dev/main/data/), [database storage](https://docs.httk.org/httk-store/dev/main/db/), [MongoDB](https://docs.httk.org/httk-store/dev/main/mongo/), and [federation](https://docs.httk.org/httk-store/dev/main/federation/).
+- [Database details](https://docs.httk.org/httk-store/dev/main/details/db/) and [MongoDB details](https://docs.httk.org/httk-store/dev/main/details/mongo/).
+- [OPTIMADE serving](https://docs.httk.org/httk-serve/dev/main/optimade/serving_providers/) and [core definition details](https://docs.httk.org/httk-core/dev/main/details/optimade_definitions/).
+- [Serving an OpenAPI contract](https://docs.httk.org/httk-serve/dev/main/http/openapi/) turns a JSON schema into an API server (with [details](https://docs.httk.org/httk-serve/dev/main/http/openapi-details/)).

@@ -1,0 +1,29 @@
+API Reference
+=============
+
+This page contains auto-generated API reference documentation [#f1]_.
+
+.. toctree::
+   :titlesonly:
+
+   /reference/autoapi/httk/core/index
+   /reference/autoapi/httk/serve/index
+   /reference/autoapi/httk/store/index
+   /reference/autoapi/httk/analyse/index
+   /reference/autoapi/httk/workflow/index
+   /reference/autoapi/httk/atomistic/index
+   /reference/autoapi/httk/registry/cli/job/index
+   /reference/autoapi/httk/registry/cli/core/index
+   /reference/autoapi/httk/registry/cli/serve/index
+   /reference/autoapi/httk/registry/cli/project/index
+   /reference/autoapi/httk/registry/entries/core/index
+   /reference/autoapi/httk/registry/io/atomistic/index
+   /reference/autoapi/httk/registry/schemas/core/index
+   /reference/autoapi/httk/registry/cli/workflow/index
+   /reference/autoapi/httk/registry/entries/store/index
+   /reference/autoapi/httk/registry/cli/workspace/index
+   /reference/autoapi/httk/registry/cli/atomistic/index
+   /reference/autoapi/httk/registry/entries/atomistic/index
+   /reference/autoapi/httk/registry/schemas/atomistic/index
+
+.. [#f1] Created with `sphinx-autoapi <https://github.com/readthedocs/sphinx-autoapi>`_
