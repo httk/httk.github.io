@@ -17,7 +17,7 @@ to each lineage's latest revision.
 from dataclasses import dataclass
 from tempfile import TemporaryDirectory
 
-from httk.store import Backend, SqlStore
+from httk.store import SqliteStore
 
 @dataclass(frozen=True)
 class Result:
@@ -25,12 +25,11 @@ class Result:
 
 record = Result("NaCl")
 with TemporaryDirectory() as directory:
-    db = Backend.sqlite(f"{directory}/results.sqlite")
-    store = SqlStore(db, entry_records={})
+    store = SqliteStore(f"{directory}/results.sqlite", entry_records={})
     with store.transaction():
         sid = store.save(record)
     assert store.fetch(type(record), sid) == record
-    db.dispose()
+    store.close()
 ```
 
 The search DSL binds a record class to a variable, adds comparisons or

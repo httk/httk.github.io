@@ -18,11 +18,11 @@ selector for this composition query:
 from pathlib import Path
 
 from httk.atomistic import UnitcellStructureRecord, UnitcellStructureView
-from httk.store import Backend, SqlStore
+from httk.store import DuckdbStore
 from httk.workflow import Workspace, new_jobs
 import httk.workflow.vasp  # registers the packaged vasp-relax workflow
 
-store = SqlStore(Backend.duckdb("source.duckdb"))
+store = DuckdbStore("source.duckdb")
 search = store.searcher()
 record = search.variable(UnitcellStructureRecord)
 search.add(record.species_at_sites.has_any("Si"))

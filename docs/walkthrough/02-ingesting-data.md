@@ -74,11 +74,10 @@ from pathlib import Path
 
 from httk.atomistic import StructureEntry, UnitcellStructureRecord, UnitcellStructureView
 from httk.core import load
-from httk.store import Backend, EntryIdScheme, SqlStore
+from httk.store import DuckdbStore, EntryIdScheme
 
-db = Backend.duckdb("source.duckdb")
-store = SqlStore(
-    db,
+store = DuckdbStore(
+    "source.duckdb",
     entry_records={StructureEntry: UnitcellStructureRecord},
     entry_ids=EntryIdScheme("httk.source", "1"),
 )

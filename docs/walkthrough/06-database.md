@@ -20,10 +20,9 @@ To store your own records, open a `Backend`, declare a store once, and save
 inside a transaction:
 
 ```python
-from httk.store import Backend, SqlStore
+from httk.store import SqliteStore
 
-db = Backend.sqlite("results.sqlite")
-store = SqlStore(db, entry_records={})
+store = SqliteStore("results.sqlite", entry_records={})
 with store.transaction():
     sid = store.save(record)
 ```
@@ -33,7 +32,7 @@ computed from the record's canonical JSON, so two records with identical
 content deduplicate to one row. The returned `sid` is only the local relational
 id of that row and can differ between stores. The first open of a store
 declares the durable representations it may hold; reopen later with just
-`SqlStore(db)`.
+`SqliteStore("results.sqlite")`.
 
 Beyond that storage identity, a defined entry family carries store-minted public
 ids: an entry `id` shared by every revision of a lineage, a per-revision
@@ -63,9 +62,11 @@ up with `store.fetch_by_content_id(cls, key)`.
 
 ## Backends and vocabulary
 
-SQLite, DuckDB, and PostgreSQL sit behind one `Backend` API —
-`Backend.sqlite(...)`, `Backend.duckdb(...)`, `Backend.postgresql(url)` — with
-the same store surface. MongoDB is available through `httk.store.backend.mongo` when
+SQLite, DuckDB, and PostgreSQL each have a dedicated store class —
+`SqliteStore(...)`, `DuckdbStore(...)`, `PostgresqlStore(url)` — with the same
+store surface. The two-object form `SqlStore(Backend.sqlite(...))` remains for
+custom SQLAlchemy engines or a `Backend` shared across several stores. MongoDB
+is available through `httk.store.backend.mongo` when
 MongoDB is already the operational data service. Property and entry-type
 definitions come from the OPTIMADE definition vocabulary, so what you store is
 what you can later serve.

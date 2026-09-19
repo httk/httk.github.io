@@ -270,10 +270,10 @@ empty mapping explicitly. Reopening the database loads that persisted
 declaration:
 
 ```python
-from httk.store import Backend, SqlStore
+from httk.store import SqliteStore
 
-custom_store = SqlStore(Backend.sqlite("custom.sqlite"), entry_records={})
-reopened_store = SqlStore(Backend.sqlite("custom.sqlite"))
+custom_store = SqliteStore("custom.sqlite", entry_records={})
+reopened_store = SqliteStore("custom.sqlite")
 print("custom store reopened", reopened_store is not custom_store)
 ```
 
