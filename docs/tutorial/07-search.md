@@ -68,9 +68,7 @@ The slice has its own positions for iteration, `len()`, indexing, `first()`,
 exactly one result; it raises `NoResultError` or `MultipleResultsError`
 otherwise.
 
-## Stream a single output with `scalars()`
-
-When a result has one output, `scalars()` yields that output directly:
+## Read result rows
 
 ```python
 search = store.searcher()
@@ -78,12 +76,13 @@ structure = search.variable(UnitcellStructureRecord)
 search.add(structure.species_at_sites.has_any("Xe"))
 results = search.results(structure=structure)
 
-for record in results.scalars():
-    print("scalar", record.species_at_sites)
+for row in results:
+    print(row.structure.species_at_sites)
 ```
 
-With multiple outputs, pass the output name to `scalars(name)` to select one
-column explicitly.
+A row exposes each declared output by name (`row.structure` above).
+`scalars(name)` also exists, for collecting a single output as a plain column
+of values rather than rows.
 
 ## Read exact columns or explicit floats
 
@@ -155,25 +154,6 @@ except ExpiredCursorRowError:
 Components filled into a view before advancing remain readable. A later fill
 through the expired cursor row raises `ExpiredCursorRowError`.
 
-## Use the backend-neutral low-level form
-
-The portable protocol declares an output with `search.output(...)` and yields
-plain values plus output names. SQL code will usually prefer `results()`, but
-this form works across `Searcher` implementations:
-
-```python
-search = store.searcher()
-structure = search.variable(UnitcellStructureRecord)
-search.add(structure.species_at_sites.has_any("Xe"))
-search.output(structure, "structure")
-
-for (values,), names in search:
-    print(names, values.species_at_sites)
-```
-
-See the complete low-level protocol and `cursor()` contract in the versioned
-*httk-store* database guide.
-
 ## Query list fields as sets
 
 List fields use explicit set operations. This record has two site species, so
@@ -238,8 +218,7 @@ right = search.variable(UnitcellStructureRecord)
 search.add(left.species_at_sites.has_any("Rn"))
 search.add(left.symmetry.space_group_it_number == right.symmetry.space_group_it_number)
 search.add(right.species_at_sites.has_any("Og"))
-search.output(right, "other")
-print("self join", [row.other.species_at_sites for row in search.results()])
+print("self join", [row.other.species_at_sites for row in search.results(other=right)])
 ```
 
 The first condition follows `symmetry` into its record automatically. The
