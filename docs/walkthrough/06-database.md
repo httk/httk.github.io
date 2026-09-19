@@ -16,15 +16,14 @@ duplicated.
 
 ## The direct store API
 
-To store your own records, open a `Backend`, declare a store once, and save
-inside a transaction:
+To store your own records, open a store for the chosen database and save:
 
 ```python
 from httk.store import SqliteStore
 
 store = SqliteStore("results.sqlite", entry_records={})
-with store.transaction():
-    sid = store.save(record)
+sid = store.save(record)
+store.close()
 ```
 
 Records are frozen dataclasses. Identity is content-addressed: `content_id` is
@@ -33,6 +32,15 @@ content deduplicate to one row. The returned `sid` is only the local relational
 id of that row and can differ between stores. The first open of a store
 declares the durable representations it may hold; reopen later with just
 `SqliteStore("results.sqlite")`.
+Use `with store.transaction():` when several writes should commit together.
+The convenience store owns its connection; close it explicitly or use a
+`with SqliteStore(...) as store:` block.
+
+For records intended for OPTIMADE serving, see the
+{doc}`three-file example <../serving-data>`. It uses `@entry_record` and
+`DataEntryRecord` to supply the common metadata and property mappings, and
+`records=[Result]` on both creation and reopening. That explicit application
+class declaration is required each time; the database does not import it.
 
 Beyond that storage identity, a defined entry family carries store-minted public
 ids: an entry `id` shared by every revision of a lineage, a per-revision
@@ -62,9 +70,11 @@ up with `store.fetch_by_content_id(cls, key)`.
 
 ## Backends and vocabulary
 
-SQLite, DuckDB, and PostgreSQL each have a dedicated store class —
-`SqliteStore(...)`, `DuckdbStore(...)`, `PostgresqlStore(url)` — with the same
-store surface. The two-object form `SqlStore(Backend.sqlite(...))` remains for
+SQLite, DuckDB, PostgreSQL, and ClickHouse each have a dedicated store class —
+`SqliteStore(...)`, `DuckdbStore(...)`, `PostgresqlStore(url)`, and
+`ClickhouseStore(url)`. ClickHouse supports bulk ingestion and read serving,
+subject to its [write restrictions](https://docs.httk.org/httk-store/dev/main/details/db-recovery.html#clickhouse-bulk-fenced-writes).
+The two-object form `SqlStore(Backend.sqlite(...))` remains for
 custom SQLAlchemy engines or a `Backend` shared across several stores. MongoDB
 is available through `httk.store.backend.mongo` when
 MongoDB is already the operational data service. Property and entry-type

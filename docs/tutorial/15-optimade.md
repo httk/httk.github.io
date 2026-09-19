@@ -18,7 +18,7 @@ is an OPTIMADE list query; it selects the Ca–Ti–O structure without relying 
 provider-specific endpoint name or database API.
 
 ```python
-from httk.atomistic import OptimadeStructure, UnitcellStructureView
+from httk.atomistic import UnitcellStructureView
 from httk.store.optimade import OptimadeStore
 
 base_url = "http://127.0.0.1:18770"
@@ -27,7 +27,7 @@ with OptimadeStore(base_url) as store:
     print("entry types", [entry_type.name for entry_type in store.entry_types])
 
     search = store.searcher()
-    structure = search.variable(OptimadeStructure)
+    structure = search.variable(store.entry_type("structures"))
     search.add(
         structure.elements.has("Ca")
         & structure.elements.has("Ti")
@@ -54,6 +54,8 @@ ordinary httk atomistic interface; the conversion happens only when the view's
 properties are requested. No remote write occurs. For one known entry URL,
 `httk.core.fetch(url, kind="optimade")` is also available, but filtered
 queries use `OptimadeStore` as shown here.
+Selecting `store.entry_type("structures")` explicitly avoids ambiguity when
+multiple endpoints share the same backend class.
 
 This is the same read-only interoperability boundary as the old OMDB example,
 without an OMDB-specific singleton: providers publish OPTIMADE, and httk
@@ -68,5 +70,6 @@ variable `v`, `v.links.<name>.<field>` is a depth-1 relationship filter and
 related=v.links.<name>)` returns each match together with a tuple of its related
 records, riding along in the same response. Every returned record also exposes
 `record.links.<name>` to walk one hop further, and any resource the provider did
-not include is fetched by id on demand. See the *httk-serve* OPTIMADE client
-guide for the full contract.
+not include is fetched by id on demand. See the
+[*httk-store* OPTIMADE client guide](https://docs.httk.org/httk-store/dev/main/details/db-optimade-client.html)
+for the full contract, endpoint recognition, and timeout settings.

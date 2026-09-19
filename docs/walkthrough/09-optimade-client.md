@@ -3,8 +3,9 @@
 This closes the loop. Once data is published (see {doc}`08-publishing`), someone
 external — or future you — consumes it with *httk₂* itself. *httk₂* ships a
 read-only OPTIMADE client that presents a remote service through exactly the
-same search DSL you use on a local store, so a query you already wrote works
-unchanged against a published endpoint.
+same search DSL you use on a local store. Remote queries support one root and
+the filters, sorting, and relationship traversals advertised by the service;
+local multi-root joins are not portable to every endpoint.
 
 ## A remote store you can search
 
@@ -12,12 +13,12 @@ unchanged against a published endpoint.
 service schema, then hands you the ordinary `store.searcher()` interface:
 
 ```python
-from httk.atomistic import OptimadeStructure, UnitcellStructureView
-from httk.serve.optimade import OptimadeStore
+from httk.atomistic import UnitcellStructureView
+from httk.store.optimade import OptimadeStore
 
 with OptimadeStore(base_url) as store:
     search = store.searcher()
-    structure = search.variable(OptimadeStructure)
+    structure = search.variable(store.entry_type("structures"))
     search.add(
         structure.elements.has("Ca")
         & structure.elements.has("Ti")
@@ -32,6 +33,10 @@ with OptimadeStore(base_url) as store:
 The element filter is an OPTIMADE list query, so the same code works against any
 compatible provider — just point `base_url` elsewhere. Use
 [providers.optimade.org](https://providers.optimade.org/) to discover endpoints.
+Selecting the entry type explicitly also works when multiple endpoints share
+one backend class; binding by class alone would then be ambiguous.
+The default request timeout is 120 seconds; pass `timeout=300` to allow longer
+queries. A supplied `client=` keeps its own timeout settings.
 
 ```{admonition} In httk v1
 :class: note
@@ -49,9 +54,15 @@ expands one lazily into the ordinary httk atomistic interface — the conversion
 happens only when a structural property is requested. For a single known entry
 URL, `httk.core.fetch(url, kind="optimade")` grabs it directly.
 
-The searcher DSL you knew from v1's `httk.db` is exactly what runs against the
-remote endpoint. A `variable`/`add`/`output` query you wrote for your own store
-works against a published one; only the store you open is different.
+Standard endpoints can be recognized from their declared OPTIMADE version and
+standard property names even without property-definition IDs. Provider-prefixed
+fields retain their wire names. Set `infer_standard_definitions=False` when
+you need definition-only discovery; unrecognized endpoints remain generic
+`OptimadeResource` records.
+
+Build queries with `variable` and `add`, then consume named rows from
+`results(structure=structure)`, just as for a local store. Follow relationships
+through `structure.links.<name>` where the provider exposes them.
 
 ## Federating and caching
 
@@ -67,7 +78,8 @@ from httk.store import SqliteStore
 
 cache = SqliteStore("optimade-cache.sqlite", entry_records={})
 sid = cache.save(remote)
-offline = cache.fetch(type(remote), sid)
+offline = cache.fetch(type(remote), sid, eager=True)
+cache.close()
 ```
 
 Caching is an explicit local operation, never an implicit OPTIMADE writeback.
@@ -75,6 +87,5 @@ Caching is an explicit local operation, never an implicit OPTIMADE writeback.
 ## Read next
 
 - {doc}`../tutorial/15-optimade`.
-- [The OPTIMADE client](https://docs.httk.org/httk-serve/dev/main/optimade/client/)
-  and [how it works](https://docs.httk.org/httk-serve/dev/main/optimade/how_it_works/).
+- [The OPTIMADE client](https://docs.httk.org/httk-store/dev/main/details/db-optimade-client.html).
 - [Federation](https://docs.httk.org/httk-store/dev/main/federation/).

@@ -182,11 +182,15 @@ child value is in it, and `is_in` has that same for-all meaning on a child
 field. On a root field, `is_in` is ordinary membership. Negating a set
 expression negates the set statement, not the whole row.
 
-Weak links between record lineages work the same way through a `links`
+Strong links and weak links between records are queried through a `links`
 namespace: `v.links.<name>.<field>` filters through a link, and
 `v.links.<name>` is a set-valued `results()` output that yields each row's
-linked records as a tuple. The versioned *httk-store* database guide has the
-full weak-link contract.
+linked records as a tuple. Strong links pin provenance to a revision; weak
+links are mutable associations to a lineage. For example,
+`record.links.product_of == structure` joins a collected result to its
+structure; see {doc}`11-collect-results`. Reverse strong-link queries also use
+the `links` namespace. The versioned *httk-store* database guide has the full
+relationship contract.
 
 ## Chain references and make self-joins
 

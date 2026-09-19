@@ -64,8 +64,9 @@ Analysis was always a hand-written script re-querying `httk.db`, with searcher
 joins like `search.add(search_total_energy.structure == search_struct)` and
 `search.add_all(search_struct.formula_symbols.is_in('O', 'Ca', 'Ti'))`, feeding
 the result into matplotlib. The searcher DSL survives in httk-store in
-recognizable form — `variable`/`add`/`output` — so this is the most familiar
-corner of *httk₂* for a v1 user.
+recognizable form, with `variable` and `add`; *httk₂* declares outputs and
+retrieves rows through `results(name=variable)`. The old `output()` and direct
+searcher iteration forms are retired.
 ```
 
 If you would rather write a query as an OPTIMADE filter string — the same text

@@ -1,7 +1,7 @@
 # Storing, querying, and serving data
 
 *httk₂* keeps data models separate from storage. Plain frozen dataclasses can
-be stored in SQLite or DuckDB through `SqlStore`, or in MongoDB through
+be stored through `SqliteStore`, `DuckdbStore`, or `PostgresqlStore`, or in MongoDB through
 `MongoStore`; the same records and neutral query protocols travel across those
 backends. Content addressing deduplicates equal records while a local `sid`
 identifies a row in one store. That `content_id` is the storage identity; a
@@ -34,7 +34,10 @@ with TemporaryDirectory() as directory:
 
 The search DSL binds a record class to a variable, adds comparisons or
 collection predicates such as `has`, `has_any`, and `has_only`, then returns a
-lazy result set. `bulk_ingest(workers=N)` is the faster path for building a
+lazy result set through `search.results(name=variable)`. Read its named outputs
+as `row.name`; `results()` is the public query surface, including counting,
+single-row selection, and paging. Strong and weak relationships are reached
+through `variable.links.<name>`. `bulk_ingest(workers=N)` is the faster path for building a
 large store; use ordinary `save()` for a small increment.
 
 MongoDB uses the same model and store surface when MongoDB is already the
@@ -69,6 +72,13 @@ embedding interface. For a quick development server directly from Python,
 For a complete example starting from CIF files and a JSON results table, see
 [Serve data over OPTIMADE](serving-data.md). It builds a SQLite database and
 serves result attributes on `_httk_records`, linked to the `structures` entries.
+Its three scripts share a `@entry_record` definition derived from
+`DataEntryRecord`; `Property` annotations declare served scalar attributes and
+ordinary record fields declare structure references. Pass `records=[Result]`
+when creating and reopening that SQL store. These helpers are currently
+unreleased; use matching development checkouts of *httk-core* and *httk-store*.
+Existing plain dataclasses and explicit `entry_records=` / `entry_families=`
+declarations remain supported.
 
 Serving is not limited to OPTIMADE. *httk-serve* can also turn a caller-owned
 OpenAPI 3.1 contract into a running application: you supply the JSON Schemas and

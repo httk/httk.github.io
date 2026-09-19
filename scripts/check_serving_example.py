@@ -12,6 +12,10 @@ from tempfile import TemporaryDirectory
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
+from httk.atomistic import UnitcellStructureView
+from httk.store.optimade import OptimadeStore
+
+
 def main() -> None:
     """Run the published three-file import and HTTP serving example."""
     page = Path(sys.argv[1]).resolve()
@@ -67,7 +71,9 @@ def main() -> None:
                 while True:
                     if server.poll() is not None or time.monotonic() > deadline:
                         log.seek(0)
-                        raise AssertionError(f"OPTIMADE server did not start:\n{log.read()}")
+                        raise AssertionError(
+                            f"OPTIMADE server did not start:\n{log.read()}"
+                        )
                     try:
                         get("/v1/info")
                         break
@@ -94,7 +100,9 @@ def main() -> None:
                 assert [(s["type"], s["id"]) for s in payload["included"]] == [
                     ("structures", link["id"])
                 ]
-                related = get("/v1/_httk_records", filter='structures.elements HAS "Na"')
+                related = get(
+                    "/v1/_httk_records", filter='structures.elements HAS "Na"'
+                )
                 assert [r["id"] for r in related["data"]] == [result["id"]]
                 sorted_records = get(
                     "/v1/_httk_records", sort="-_httk_custom_formation_energy"
@@ -103,6 +111,14 @@ def main() -> None:
                     r["attributes"]["_httk_custom_formation_energy"]
                     for r in sorted_records
                 ] == [-0.8, -1.2]
+                # Exercise the client/query API used by the adjacent walkthrough.
+                with OptimadeStore(base + "/v1") as remote:
+                    search = remote.searcher()
+                    structure = search.variable(remote.entry_type("structures"))
+                    search.add(structure.elements.has("Na"))
+                    (row,) = search.results(structure=structure)
+                    assert row.structure.id == link["id"]
+                    assert UnitcellStructureView(row.structure).formula == "ClNa"
             finally:
                 server.terminate()
                 try:
@@ -112,7 +128,7 @@ def main() -> None:
                     server.wait()
                     raise AssertionError("OPTIMADE server did not stop") from None
     print(
-        f"{page.name}: three-file import, reopen, relationships, and HTTP serving passed"
+        f"{page.name}: three-file import, reopen, relationships, and HTTP serving/client passed"
     )
 
 
