@@ -91,6 +91,7 @@ modules
 architecture
 structures
 data
+serving-data
 campaigns
 analysis
 authoring

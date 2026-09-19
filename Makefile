@@ -52,6 +52,7 @@ ecosystem-manifest-release:
 
 first-use-check:
 	$(PYTHON) scripts/check_first_use.py
+	$(PYTHON) scripts/check_serving_example.py docs/serving-data.md
 
 release-check: first-use-check docs-full
 	$(MAKE) docs-lock-check

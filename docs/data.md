@@ -66,6 +66,10 @@ available at `/v1/references`. `create_asgi_app` is also the deployment and
 embedding interface. For a quick development server directly from Python,
 `httk.serve.optimade.serve(adapter, port=8080)` runs the same adapter.
 
+For a complete example starting from CIF files and a JSON results table, see
+[Serve data over OPTIMADE](serving-data.md). It builds a SQLite database and
+serves result attributes on `_httk_records`, linked to the `structures` entries.
+
 Serving is not limited to OPTIMADE. *httk-serve* can also turn a caller-owned
 OpenAPI 3.1 contract into a running application: you supply the JSON Schemas and
 one handler per operation, and the adapter derives the routes, validation, and
