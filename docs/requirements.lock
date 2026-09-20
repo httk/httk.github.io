@@ -61,14 +61,14 @@ packaging==26.3
 parso==0.8.7
 pexpect==4.9.0
 pillow==12.3.0
-platformdirs==4.11.10
+platformdirs==4.11.11
 prompt-toolkit==3.0.53
 psutil==7.2.2
 ptyprocess==0.7.0
 pure-eval==0.2.4
 pycparser==3.0
 pygments==2.21.0
-pyparsing==3.3.2
+pyparsing==3.3.3
 python-dateutil==2.9.0.post0
 python-multipart==0.0.32
 pyyaml==6.0.3
