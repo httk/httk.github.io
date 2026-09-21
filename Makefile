@@ -39,7 +39,7 @@ docs-lock-check: docs-clean
 	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" -m pip install -e . --no-deps --no-build-isolation; \
 	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" -m pip check; \
 	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" scripts/check_lock_members.py; \
-	env -u PYTHONPATH -u PYTHONHOME HTTK_DOCS_BASE_URL="$(DOCS_BASE_URL)" \
+	env -u PYTHONPATH -u PYTHONHOME PATH="$$check_dir/venv/bin:$$PATH" HTTK_DOCS_BASE_URL="$(DOCS_BASE_URL)" \
 		HTTK_DOCS_VIEWCODE=1 "$$check_dir/venv/bin/python" -m sphinx -j auto -E -a -b html -W --keep-going docs "$$check_dir/html"
 
 ecosystem-manifest:

@@ -7,6 +7,10 @@ on:
         description: "Release tag to rebuild (vX.Y.Z)"
         required: true
         type: string
+      source_ref:
+        description: "Corrective descendant ref (blank uses the release tag)"
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -26,15 +30,22 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: refs/tags/${{ inputs.version }}
+          ref: ${{ inputs.source_ref || format('refs/tags/{0}', inputs.version) }}
           submodules: recursive
-      - name: Verify checked-out tag
-        env:
-          RELEASE_TAG: ${{ inputs.version }}
-        run: test "$(git describe --exact-match --tags HEAD 2>/dev/null || true)" = "$RELEASE_TAG"
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Verify checked-out source
+        env:
+          RELEASE_TAG: ${{ inputs.version }}
+          SOURCE_REF: ${{ inputs.source_ref }}
+        run: |
+          if [ -z "$SOURCE_REF" ]; then
+            test "$(git describe --exact-match --tags HEAD 2>/dev/null || true)" = "$RELEASE_TAG"
+          else
+            git merge-base --is-ancestor "$RELEASE_TAG^{}" HEAD
+            test "$(python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')" = "${RELEASE_TAG#v}"
+          fi
       - name: Install locked environment and verify snapshot
         env:
           RELEASE_TAG: ${{ inputs.version }}
@@ -67,8 +78,9 @@ jobs:
       - name: Compose and publish repaired docs-site
         env:
           RELEASE_TAG: ${{ inputs.version }}
-          SOURCE_COMMIT: ${{ github.sha }}
         run: |
+          SOURCE_COMMIT=$(git rev-parse HEAD)
+          export SOURCE_COMMIT
           git fetch origin docs-site || true
           for attempt in 1 2 3 4 5 6 7 8; do
             lease_sha=$(git rev-parse origin/docs-site 2>/dev/null || echo "")
