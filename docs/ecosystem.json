@@ -6,7 +6,7 @@
       "version": "v2.1.0"
     },
     "httk-atomistic": {
-      "commit": "7e6ec5b2a23f6a01b22039d37f912a935fdc11b2",
+      "commit": "8f93b3bb2d19d4a52478e29ddfe8736fca40920b",
       "distribution_version": "2.1.2",
       "version": "v2.1.2"
     },
@@ -26,7 +26,7 @@
       "version": "v2.1.4"
     },
     "httk-workflow": {
-      "commit": "fe23e55c71a1a97d349b9768dbee18cf1bd9e28d",
+      "commit": "e779b1c4ad810ef99cd882b7b77e48e29ba874f6",
       "distribution_version": "2.1.1",
       "version": "v2.1.1"
     }
