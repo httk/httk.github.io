@@ -198,7 +198,7 @@ httk workflow collect --into results.sqlite
 ```
 
 See the {doc}`database walkthrough <walkthrough/06-database>` and the
-[httk-workflow collecting documentation](https://docs.httk.org/httk-workflow/dev/main/collecting/).
+[httk-workflow collecting documentation](https://docs.httk.org/httk-workflow/dev/main/collecting.html).
 
 ### Writing the workflow yourself
 
@@ -227,11 +227,11 @@ httk job new --from-runner ./run.sh --parameter n=17
 
 Full workflows can declare inputs, resources per step, spawn child jobs,
 publish data transactionally, and be packaged and versioned. See the
-[full workflow authoring guide](https://docs.httk.org/httk-workflow/dev/main/details/runtime_helpers/),
-[workflow packages](https://docs.httk.org/httk-workflow/dev/main/workflow_packages/),
-[Bash SDK](https://docs.httk.org/httk-workflow/dev/main/sdks/native_bash_api/),
-[launchers](https://docs.httk.org/httk-workflow/dev/main/launchers/), and
-[remotes](https://docs.httk.org/httk-workflow/dev/main/remotes/) documentation.
+[full workflow authoring guide](https://docs.httk.org/httk-workflow/dev/main/details/runtime_helpers.html),
+[workflow packages](https://docs.httk.org/httk-workflow/dev/main/workflow_packages.html),
+[Bash SDK](https://docs.httk.org/httk-workflow/dev/main/sdks/native_bash_api.html),
+[launchers](https://docs.httk.org/httk-workflow/dev/main/launchers.html), and
+[remotes](https://docs.httk.org/httk-workflow/dev/main/remotes.html) documentation.
 
 ### Faster job creation
 

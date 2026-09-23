@@ -99,8 +99,8 @@ walks every v1 construct beside its *httk₂* replacement.
 - {doc}`../data` — storing, querying, and serving, at a glance.
 - {doc}`../tutorial/06-store` — saving a structure to SQLite, worked.
 - {doc}`07-analysis` — querying the stored data.
-- [Database storage](https://docs.httk.org/httk-store/dev/main/db/) and
-  [database details](https://docs.httk.org/httk-store/dev/main/details/db/).
-- [Migrating from httk v1](https://docs.httk.org/httk-store/dev/main/migrating_from_v1/).
-- [Collecting](https://docs.httk.org/httk-workflow/dev/main/collecting/) and
-  [MongoDB](https://docs.httk.org/httk-store/dev/main/mongo/).
+- [Database storage](https://docs.httk.org/httk-store/dev/main/db.html) and
+  [database details](https://docs.httk.org/httk-store/dev/main/details/db.html).
+- [Migrating from httk v1](https://docs.httk.org/httk-store/dev/main/migrating_from_v1.html).
+- [Collecting](https://docs.httk.org/httk-workflow/dev/main/collecting.html) and
+  [MongoDB](https://docs.httk.org/httk-store/dev/main/mongo.html).

@@ -108,7 +108,7 @@ name is kept with a warning, because parameters are deliberately open.
   Python and CLI forms.
 - {doc}`../campaigns` — the four-command cycle and how a large campaign
   partitions.
-- <https://docs.httk.org/httk-workflow/dev/main/details/workflow_cli/> — the
+- <https://docs.httk.org/httk-workflow/dev/main/details/workflow_cli.html> — the
   complete `httk workflow` command tree.
-- <https://docs.httk.org/httk-workflow/dev/main/details/runtime_helpers/> —
+- <https://docs.httk.org/httk-workflow/dev/main/details/runtime_helpers.html> —
   authoring a runner and its instantiate hook.

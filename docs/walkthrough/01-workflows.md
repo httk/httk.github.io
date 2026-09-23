@@ -92,14 +92,14 @@ CLI — see the migration guide, §15.
 
 ## Read next
 
-- <https://docs.httk.org/httk-workflow/dev/main/quickstart/> — the seven-command
+- <https://docs.httk.org/httk-workflow/dev/main/quickstart.html> — the seven-command
   walkthrough with a mock VASP.
-- <https://docs.httk.org/httk-workflow/dev/main/workflow_packages/> and
-  <https://docs.httk.org/httk-workflow/dev/main/details/workflow_packages/> —
+- <https://docs.httk.org/httk-workflow/dev/main/workflow_packages.html> and
+  <https://docs.httk.org/httk-workflow/dev/main/details/workflow_packages.html> —
   the package manifest, every table and key.
-- <https://docs.httk.org/httk-workflow/dev/main/workflow_languages/> — CWL, PWD,
+- <https://docs.httk.org/httk-workflow/dev/main/workflow_languages.html> — CWL, PWD,
   jobflow, and httk-v1 as workflow languages.
-- <https://docs.httk.org/httk-workflow/dev/main/vasp_runners/> — what the
+- <https://docs.httk.org/httk-workflow/dev/main/vasp_runners.html> — what the
   packaged VASP runners do, their inputs, parameters, and failure codes.
 - <https://docs.httk.org/httk-workflow/dev/main/sdks/> — the runner SDK
   in nine languages.

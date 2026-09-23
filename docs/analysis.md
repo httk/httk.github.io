@@ -26,5 +26,5 @@ locally.
 
 ## Read next
 
-- [Generic lower hulls](https://docs.httk.org/httk-analyse/dev/main/generic-hulls/) and [phase diagrams](https://docs.httk.org/httk-analyse/dev/main/phase-diagrams/).
-- [OPTIMADE client](https://docs.httk.org/httk-store/dev/main/details/db-optimade-client.html), [data queries](https://docs.httk.org/httk-store/dev/main/db/), and [database details](https://docs.httk.org/httk-store/dev/main/details/db/).
+- [Generic lower hulls](https://docs.httk.org/httk-analyse/dev/main/generic-hulls.html) and [phase diagrams](https://docs.httk.org/httk-analyse/dev/main/phase-diagrams.html).
+- [OPTIMADE client](https://docs.httk.org/httk-store/dev/main/details/db-optimade-client.html), [data queries](https://docs.httk.org/httk-store/dev/main/db.html), and [database details](https://docs.httk.org/httk-store/dev/main/details/db.html).

@@ -25,7 +25,7 @@ latest-per-lineage entries. `/_httk_<entry>~revs` serves every revision of every
 lineage, each keyed by its immutable id `<id>~<n>`, while `/_httk_<entry>~alts`
 serves the named alternative representations of every lineage, keyed by the
 composite `<id>~<kind>`. Both are detailed under
-[serving stores](https://docs.httk.org/httk-serve/dev/main/optimade/serving_stores/).
+[serving stores](https://docs.httk.org/httk-serve/dev/main/optimade/serving_stores.html).
 
 ```{admonition} In httk v1
 :class: note
@@ -100,9 +100,9 @@ for distribution.
 ## Read next
 
 - {doc}`../tutorial/14-publish`, {doc}`../tutorial/15-optimade`, and {doc}`../data`.
-- [Serving providers](https://docs.httk.org/httk-serve/dev/main/optimade/serving_providers/)
-  and [serving stores](https://docs.httk.org/httk-serve/dev/main/optimade/serving_stores/).
-- [Site template repository](https://docs.httk.org/httk-serve/dev/main/web/site_template_repository/)
-  and [widgets](https://docs.httk.org/httk-serve/dev/main/web/widgets/).
-- [Serving an OpenAPI contract](https://docs.httk.org/httk-serve/dev/main/http/openapi/)
-  and [the DSP catalogue](https://docs.httk.org/httk-serve/dev/main/dsp/).
+- [Serving providers](https://docs.httk.org/httk-serve/dev/main/optimade/serving_providers.html)
+  and [serving stores](https://docs.httk.org/httk-serve/dev/main/optimade/serving_stores.html).
+- [Site template repository](https://docs.httk.org/httk-serve/dev/main/web/site_template_repository.html)
+  and [widgets](https://docs.httk.org/httk-serve/dev/main/web/widgets.html).
+- [Serving an OpenAPI contract](https://docs.httk.org/httk-serve/dev/main/http/openapi.html)
+  and [the DSP catalogue](https://docs.httk.org/httk-serve/dev/main/dsp.html).

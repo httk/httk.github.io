@@ -87,6 +87,6 @@ The reverse transfer brings finished jobs home; run the local collector in the
 next step. `workspace init kappa:runs` creates the named workspace on kappa,
 so its name is resolved by kappa rather than by the local machine.
 
-See the [launcher authoring guide](https://docs.httk.org/httk-workflow/dev/main/launcher_authoring/)
+See the [launcher authoring guide](https://docs.httk.org/httk-workflow/dev/main/details/launcher_authoring.html)
 and workflow CLI guide in the versioned *httk-workflow* documentation for
 cluster-specific options.

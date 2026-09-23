@@ -76,6 +76,6 @@ states directly on the command line with `--state succeeded --state failed`.
 
 - {doc}`../tutorial/11-collect-results` — collecting into SQLite, worked.
 - {doc}`06-database` — where the collected records land.
-- [Collecting](https://docs.httk.org/httk-workflow/dev/main/collecting/) and
-  [CLI details](https://docs.httk.org/httk-workflow/dev/main/details/workflow_cli/).
-- [Provenance](https://docs.httk.org/httk-workflow/dev/main/provenance/) — the `Run` recorded per job.
+- [Collecting](https://docs.httk.org/httk-workflow/dev/main/collecting.html) and
+  [CLI details](https://docs.httk.org/httk-workflow/dev/main/details/workflow_cli.html).
+- [Provenance](https://docs.httk.org/httk-workflow/dev/main/provenance.html) — the `Run` recorded per job.

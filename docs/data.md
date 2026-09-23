@@ -89,7 +89,7 @@ from *httk₂* data.
 
 ## Read next
 
-- [Data management](https://docs.httk.org/httk-store/dev/main/data/), [database storage](https://docs.httk.org/httk-store/dev/main/db/), [MongoDB](https://docs.httk.org/httk-store/dev/main/mongo/), and [federation](https://docs.httk.org/httk-store/dev/main/federation/).
-- [Database details](https://docs.httk.org/httk-store/dev/main/details/db/) and [MongoDB details](https://docs.httk.org/httk-store/dev/main/details/mongo/).
-- [OPTIMADE serving](https://docs.httk.org/httk-serve/dev/main/optimade/serving_providers/) and [core definition details](https://docs.httk.org/httk-core/dev/main/details/optimade_definitions/).
-- [Serving an OpenAPI contract](https://docs.httk.org/httk-serve/dev/main/http/openapi/) turns a JSON schema into an API server (with [details](https://docs.httk.org/httk-serve/dev/main/http/openapi-details/)).
+- [Data management](https://docs.httk.org/httk-store/dev/main/data.html), [database storage](https://docs.httk.org/httk-store/dev/main/db.html), [MongoDB](https://docs.httk.org/httk-store/dev/main/mongo.html), and [federation](https://docs.httk.org/httk-store/dev/main/federation.html).
+- [Database details](https://docs.httk.org/httk-store/dev/main/details/db.html) and [MongoDB details](https://docs.httk.org/httk-store/dev/main/details/mongo.html).
+- [OPTIMADE serving](https://docs.httk.org/httk-serve/dev/main/optimade/serving_providers.html) and [core definition details](https://docs.httk.org/httk-core/dev/main/details/property_definitions.html).
+- [Serving an OpenAPI contract](https://docs.httk.org/httk-serve/dev/main/http/openapi.html) turns a JSON schema into an API server (with [details](https://docs.httk.org/httk-serve/dev/main/http/openapi-details.html)).

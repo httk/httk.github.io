@@ -113,8 +113,8 @@ longer lives inside the structure classes.
 ## Read next
 
 - {doc}`../analysis` and {doc}`../tutorial/12-phase-diagram`.
-- [Materials phase diagrams](https://docs.httk.org/httk-analyse/dev/main/phase-diagrams/)
-  and [generic lower hulls](https://docs.httk.org/httk-analyse/dev/main/generic-hulls/).
-- [Searching a store](https://docs.httk.org/httk-store/dev/main/examples/searching/)
-  and [OPTIMADE filter strings](https://docs.httk.org/httk-store/dev/main/examples/optimade_filters/).
-- [Workflow packages](https://docs.httk.org/httk-workflow/dev/main/details/workflow_packages/).
+- [Materials phase diagrams](https://docs.httk.org/httk-analyse/dev/main/phase-diagrams.html)
+  and [generic lower hulls](https://docs.httk.org/httk-analyse/dev/main/generic-hulls.html).
+- [Searching a store](https://docs.httk.org/httk-store/dev/main/examples/searching.html)
+  and [OPTIMADE filter strings](https://docs.httk.org/httk-store/dev/main/examples/optimade_filters.html).
+- [Workflow packages](https://docs.httk.org/httk-workflow/dev/main/details/workflow_packages.html).

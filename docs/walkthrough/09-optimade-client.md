@@ -88,4 +88,4 @@ Caching is an explicit local operation, never an implicit OPTIMADE writeback.
 
 - {doc}`../tutorial/15-optimade`.
 - [The OPTIMADE client](https://docs.httk.org/httk-store/dev/main/details/db-optimade-client.html).
-- [Federation](https://docs.httk.org/httk-store/dev/main/federation/).
+- [Federation](https://docs.httk.org/httk-store/dev/main/federation.html).

@@ -138,7 +138,7 @@ are replaced by `transfer`, `run`, and `workspace status`.
 - {doc}`../tutorial/10-run-remotely` — the same flow, end to end.
 - {doc}`05-fetching-results` — bringing finished jobs home.
 - {doc}`../campaigns` — scaling this to a partitioned campaign.
-- [Task manager](https://docs.httk.org/httk-workflow/dev/main/taskmanager/) and
-  [task-manager details](https://docs.httk.org/httk-workflow/dev/main/details/taskmanager/).
-- [CLI details](https://docs.httk.org/httk-workflow/dev/main/details/workflow_cli/) and
-  [launcher authoring](https://docs.httk.org/httk-workflow/dev/main/launcher_authoring/).
+- [Task manager](https://docs.httk.org/httk-workflow/dev/main/taskmanager.html) and
+  [task-manager details](https://docs.httk.org/httk-workflow/dev/main/details/taskmanager.html).
+- [CLI details](https://docs.httk.org/httk-workflow/dev/main/details/workflow_cli.html) and
+  [launcher authoring](https://docs.httk.org/httk-workflow/dev/main/details/launcher_authoring.html).

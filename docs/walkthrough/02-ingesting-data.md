@@ -109,10 +109,10 @@ durable structure representation when the store is first opened.
 - {doc}`../structures` — structures and file formats at ecosystem level.
 - {doc}`../tutorial/01-load-structure` — load and inspect a structure in one call.
 - {doc}`../tutorial/04-ase` — the ASE bridge in both directions.
-- <https://docs.httk.org/httk-core/dev/main/registry/> — `register_reader` and
+- <https://docs.httk.org/httk-core/dev/main/registry.html> — `register_reader` and
   the neutral registration pattern.
-- <https://docs.httk.org/httk-atomistic/dev/main/structures/> — the structure
+- <https://docs.httk.org/httk-atomistic/dev/main/structures.html> — the structure
   model and views.
-- <https://docs.httk.org/httk-atomistic/dev/main/poscar/> and
-  <https://docs.httk.org/httk-atomistic/dev/main/vasp_outputs/> — the POSCAR and
+- <https://docs.httk.org/httk-atomistic/dev/main/poscar.html> and
+  <https://docs.httk.org/httk-atomistic/dev/main/vasp_outputs.html> — the POSCAR and
   VASP output readers.

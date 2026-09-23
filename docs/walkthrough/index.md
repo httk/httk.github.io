@@ -53,7 +53,7 @@ $ httk project init --name my-project .
 $ httk project import-v1 PATH     # reads PATH/ht.project
 ```
 
-See <https://docs.httk.org/httk-core/dev/main/projects/>.
+See <https://docs.httk.org/httk-core/dev/main/projects.html>.
 
 ## Task templates became workflow packages
 
@@ -140,10 +140,10 @@ Several import verbs read legacy assets so you do not start from scratch:
   (`language = "httk-v1"`), so it runs unchanged under the *httk₂* CLI.
 
 Full migration guides:
-<https://docs.httk.org/httk-workflow/dev/main/httk_v1_migration_guide/>,
-<https://docs.httk.org/httk-workflow/dev/main/details/httk_v1_migration_guide/>,
-<https://docs.httk.org/httk-store/dev/main/migrating_from_v1/>, and
-<https://docs.httk.org/httk-workflow/dev/main/v1_compatibility/>.
+<https://docs.httk.org/httk-workflow/dev/main/httk_v1_migration_guide.html>,
+<https://docs.httk.org/httk-workflow/dev/main/details/httk_v1_migration_guide.html>,
+<https://docs.httk.org/httk-store/dev/main/migrating_from_v1.html>, and
+<https://docs.httk.org/httk-workflow/dev/main/v1_compatibility.html>.
 
 ## The lifecycle, page by page
 

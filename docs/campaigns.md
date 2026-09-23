@@ -18,7 +18,7 @@ $ httk workflow collect --into results.sqlite --id-base httk.quickstart
 
 The mock produces synthetic numbers, not scientific results. With real VASP,
 replace the mock path with your executable command. The workflow module's
-[quickstart](https://docs.httk.org/httk-workflow/dev/main/quickstart/) supplies a
+[quickstart](https://docs.httk.org/httk-workflow/dev/main/quickstart.html) supplies a
 POSCAR and explains each step; its `examples/quickstart.sh` is the executable
 source for the complete sequence (run identity setup first).
 
@@ -90,7 +90,7 @@ splitting auto-detected capacities across them while keeping explicit
 `--worker-resource` values per manager.
 
 Package manifests can declare workflow-wide and per-step resource tables; see
-the [workflow package details](https://docs.httk.org/httk-workflow/dev/main/details/workflow_packages/)
+the [workflow package details](https://docs.httk.org/httk-workflow/dev/main/details/workflow_packages.html)
 for the manifest rules:
 
 ```toml
@@ -125,6 +125,6 @@ managers execute registered artifacts and never compile jobs themselves.
 
 ## Read next
 
-- [Workflow quickstart](https://docs.httk.org/httk-workflow/dev/main/quickstart/), [campaigns](https://docs.httk.org/httk-workflow/dev/main/campaigns/), [collecting](https://docs.httk.org/httk-workflow/dev/main/collecting/), and [CLI](https://docs.httk.org/httk-workflow/dev/main/workflow_cli/).
-- [Workflow package authoring](https://docs.httk.org/httk-workflow/dev/main/workflow_packages/), [languages](https://docs.httk.org/httk-workflow/dev/main/workflow_languages/), and [SDKs](https://docs.httk.org/httk-workflow/dev/main/sdks/).
-- [CLI details](https://docs.httk.org/httk-workflow/dev/main/details/workflow_cli/), [package details](https://docs.httk.org/httk-workflow/dev/main/details/workflow_packages/), and [task-manager details](https://docs.httk.org/httk-workflow/dev/main/details/taskmanager/).
+- [Workflow quickstart](https://docs.httk.org/httk-workflow/dev/main/quickstart.html), [campaigns](https://docs.httk.org/httk-workflow/dev/main/campaigns.html), [collecting](https://docs.httk.org/httk-workflow/dev/main/collecting.html), and [CLI](https://docs.httk.org/httk-workflow/dev/main/workflow_cli.html).
+- [Workflow package authoring](https://docs.httk.org/httk-workflow/dev/main/workflow_packages.html), [languages](https://docs.httk.org/httk-workflow/dev/main/workflow_languages.html), and [SDKs](https://docs.httk.org/httk-workflow/dev/main/sdks/).
+- [CLI details](https://docs.httk.org/httk-workflow/dev/main/details/workflow_cli.html), [package details](https://docs.httk.org/httk-workflow/dev/main/details/workflow_packages.html), and [task-manager details](https://docs.httk.org/httk-workflow/dev/main/details/taskmanager.html).
