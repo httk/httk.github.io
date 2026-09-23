@@ -1,4 +1,5 @@
 PYTHON ?= python3
+SPHINX_JOBS ?= 2
 
 # Base URL of the published httk documentation site, used for cross-linking docs
 # between httk repositories (read by docs/conf.py via HTTK_DOCS_BASE_URL).
@@ -7,10 +8,10 @@ DOCS_BASE_URL ?= https://docs.httk.org
 .PHONY: docs docs-full docs-live docs-clean docs-inventories docs-lock docs-lock-check first-use-check ecosystem-manifest ecosystem-manifest-release release-check release-prepare clean
 
 docs:
-	HTTK_DOCS_BASE_URL=$(DOCS_BASE_URL) $(PYTHON) -m sphinx -j auto -b html -W --keep-going docs docs/_build/html
+	HTTK_DOCS_BASE_URL=$(DOCS_BASE_URL) $(PYTHON) -m sphinx -j $(SPHINX_JOBS) -b html -W --keep-going docs docs/_build/html
 
 docs-full: docs-clean
-	HTTK_DOCS_VIEWCODE=1 HTTK_DOCS_BASE_URL=$(DOCS_BASE_URL) $(PYTHON) -m sphinx -j auto -E -a -b html -W --keep-going docs docs/_build/html
+	HTTK_DOCS_VIEWCODE=1 HTTK_DOCS_BASE_URL=$(DOCS_BASE_URL) $(PYTHON) -m sphinx -j $(SPHINX_JOBS) -E -a -b html -W --keep-going docs docs/_build/html
 
 docs-live:
 	HTTK_DOCS_BASE_URL=$(DOCS_BASE_URL) sphinx-autobuild docs docs/_build/html
@@ -40,7 +41,7 @@ docs-lock-check: docs-clean
 	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" -m pip check; \
 	env -u PYTHONPATH -u PYTHONHOME "$$check_dir/venv/bin/python" scripts/check_lock_members.py; \
 	env -u PYTHONPATH -u PYTHONHOME PATH="$$check_dir/venv/bin:$$PATH" HTTK_DOCS_BASE_URL="$(DOCS_BASE_URL)" \
-		HTTK_DOCS_VIEWCODE=1 "$$check_dir/venv/bin/python" -m sphinx -j auto -E -a -b html -W --keep-going docs "$$check_dir/html"
+		HTTK_DOCS_VIEWCODE=1 "$$check_dir/venv/bin/python" -m sphinx -j $(SPHINX_JOBS) -E -a -b html -W --keep-going docs "$$check_dir/html"
 
 ecosystem-manifest:
 	$(PYTHON) -m httk.core.docs ecosystem-manifest \
