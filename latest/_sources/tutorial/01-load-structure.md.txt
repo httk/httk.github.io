@@ -1,0 +1,46 @@
+# Load and inspect a structure
+
+With *httk-atomistic* installed, `httk.core.load()` provides a one-call
+atomistic loading experience through a format adapter registered during
+registry discovery:
+
+```python
+from httk.core import load
+
+structure = load("example.cif")
+# POSCAR, CONTCAR, and compressed variants such as "CONTCAR.bz2" work too.
+# CIF loads return ASUStructure; POSCAR/CONTCAR loads return UnitcellStructure.
+
+print("Formula:", structure.formula)
+print("Volume:", float(structure.cell.volume))
+print("Species at sites:", structure.species_at_sites)
+print("Reduced coordinates:", structure.sites.reduced_coords)
+```
+
+Views provide the lazy form: construction checks the source configuration, and parsing
+waits until the first property is accessed.
+
+```python
+from httk.atomistic import ASUStructureView, UnitcellStructureView
+
+structure = UnitcellStructureView("example.cif")
+asu = ASUStructureView("example.cif")
+```
+
+For a remote source, pass an explicit `httk.core.DatastreamURL` consent token.
+
+The split is architectural: *httk-atomistic*'s I/O layer (`httk.atomistic.io`)
+parses file formats and returns neutral payloads, *httk-atomistic* owns
+`UnitcellStructure` and `ASUStructure`, and *httk-core* dispatches between
+them. The adapter registration makes the one-call domain-loading experience
+work when *httk-atomistic* is installed. Code that needs the neutral reader
+result can use the explicit escape hatch `load("example.cif", raw=True)`.
+Composition and formula properties are part of the structure itself. Providers
+reuse the same domain projection when exposing a structure through OPTIMADE, so
+serving or storing it does not require a separate formula calculation. Geometry
+remains exact until the explicit `float(...)` used for display.
+
+See the full *httk-atomistic* loading example in the versioned module
+documentation listed by the {doc}`module directory <../modules>`.
+
+See also the {doc}`/structures` topic page for the current structure vocabulary.

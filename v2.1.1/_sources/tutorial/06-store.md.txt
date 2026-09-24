@@ -1,0 +1,59 @@
+# Store data in SQLite
+
+```python
+from httk.atomistic import (
+    StructureEntry,
+    UnitcellStructureRecord,
+    UnitcellStructureView,
+)
+from httk.core import load
+from httk.store import Backend, SqlStore
+
+structure = UnitcellStructureView(load("example.cif"))
+
+store = SqlStore(
+    Backend.sqlite("presentation.sqlite"),
+    entry_records={StructureEntry: UnitcellStructureRecord},
+)
+sid = store.save(structure)
+fetched = store.fetch(UnitcellStructureRecord, sid)
+restored = UnitcellStructureView(fetched)
+print("Saved row", sid, "with stable structure id", restored.id)
+```
+
+The first opening of an entry store declares the durable representations it may
+contain. Here every stored `StructureEntry` uses the concrete, normalized
+`UnitcellStructureRecord` layout. The view converts the CIF-native ASU into the
+declared unit-cell family; `save()` then accepts the natural `UnitcellStructure` and
+projects its nested cell, sites, species, composition, and metadata recursively;
+there is no manual record-conversion step and no temporary record graph.
+
+Most httk APIs accept the appropriate `*Like` source or construct a View
+automatically. Storage asks for an explicit Record representation because that
+choice fixes a durable database layout and should never be surprising.
+`UnitcellStructureView(fetched)` exposes the exact fetched Record as a normal
+unit-cell structure while retaining that Record as its backend.
+
+The hexadecimal `.id` shown here is the *content* id: it is structural and
+stable across equivalent objects and stores, and is the storage identity used to
+look a record back up. It is distinct from the human-readable entry id a store
+mints for a defined entry family (`<id>`, shared by every revision, with a
+per-revision `immutable_id` of `<id>~<n>` and named alternatives as
+`<id>~<kind>`; see {doc}`/data`). The integer `sid` is only a local relational
+identifier: the same Record may have a different SID in another store without
+changing its content id.
+
+`Backend.sqlite()` without a filename creates an in-memory database. Rationals,
+surd bases, precisions, and periodicity are stored exactly. Species float fields
+round-trip at IEEE-double fidelity; the SQL layer may normalize `-0.0` to `+0.0`.
+User-defined frozen dataclasses remain the model for custom data.
+
+The same neutral store vocabulary is also available through `MongoStore` when
+MongoDB is the operational backend. For SQL stores, `store.bulk_ingest()` is
+the faster append/build path than a `save()` loop for a large stream; the
+regular loop remains the simpler choice for small writes.
+
+See the database guide in the versioned *httk-store* documentation listed by the
+{doc}`module directory <../modules>`.
+
+See also the {doc}`/data` topic page for the current storage and querying vocabulary.

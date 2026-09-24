@@ -1,0 +1,42 @@
+httk.atomistic.symmetry.canonical_protostructure
+================================================
+
+.. py:module:: httk.atomistic.symmetry.canonical_protostructure
+
+.. autoapi-nested-parse::
+
+   Protostructure-first canonicalization of a recognized crystal structure.
+
+   This opt-in convention chooses the anonymous Wyckoff occupation pattern, then its species
+   assignment, and only then the exact geometry. Its finite affine search is the same tabulated
+   normalizer scope used by the established canonicalizer; it does not enumerate an infinite affine
+   normalizer and performs no upward pseudosymmetry search.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.atomistic.symmetry.canonical_protostructure.canonical_asu_protostructure
+
+
+Module Contents
+---------------
+
+.. py:function:: canonical_asu_protostructure(structure, *, tolerance = None, factors = (Fraction(1, 5), 1, 5), preserve_chirality = True)
+
+   Recognize and canonicalize a structure using the protostructure-first convention.
+
+   Recognition uses the established tolerance sweep and deterministic P1 frames. The accepted ASU
+   is then handled exactly, without an upward pseudosymmetry search.
+
+   :param structure: The measured structure to recognize.
+   :param tolerance: Base Cartesian recognition tolerance, or ``None`` to derive it.
+   :param factors: Multipliers for the recognition tolerance sweep.
+   :param preserve_chirality: Whether to keep the recognized enantiomorphic group.
+   :return: The protostructure-first canonical asymmetric unit.
+   :raises ValueError: If the structure is unsupported or no tolerance member fits.
+
+

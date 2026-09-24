@@ -1,0 +1,69 @@
+# Create a Ca–Ti–O batch
+
+The batch is the six structures bundled with this tutorial. The Python form is
+the primary path because the COD CIFs declare oxidation states. VASP POSCAR
+inputs cannot carry those decorations, and httk never drops them silently, so
+we project them away explicitly at the VASP boundary.
+
+```python
+from pathlib import Path
+
+from httk.atomistic import UnitcellStructureView
+from httk.core import load
+from httk.workflow import Workspace, new_jobs
+
+workspace = Workspace.default()
+items = (
+    {
+        "inputs": {"structure": load(path).without_charges()},
+        "tag": path.stem.lower(),
+        "provenance": {"inputs": {"entity": {"type": "amdb_material", "id": f"amdb:{path.stem.lower()}"}}},
+    }
+    for path in sorted(Path("docs/tutorial/data/catio3").glob("*.cif"))
+)
+for job in new_jobs(
+    workspace,
+    "git+https://github.com/httk/workflows-vasp#vasp-relax",
+    items,
+    parameters={"kpoint_density": 30.0},
+    placement="batch",
+):
+    print(job.job_key)
+```
+
+`without_charges()` is an explicit lossy presentation for this VASP input;
+the original loaded structure remains untouched. The six files are copied from
+the Crystallography Open Database and their attribution is in
+`data/catio3/LICENSE.txt`. Each item's `provenance` claims, from creation,
+that the job is *for* the corresponding database entity, via an `entity`
+input edge naming it by its stable ledger key.
+
+For a directory containing already charge-free inputs, the CLI can create the
+same kind of batch without the Python projection:
+
+```console
+httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' \
+    --input-from structure charge-free-structures/ \
+    --parameter kpoint_density=30.0 --placement batch
+```
+
+If a charge-bearing file is passed to `--input-from`, the command stops with a
+clear error explaining that POSCAR cannot represent species charges and that
+`structure.without_charges()` is the explicit projection to use.
+
+The store-driven alternative is useful when page 07 already supplied a
+search result cursor. It keeps the same projection at the job boundary:
+
+```python
+items = (
+    {"inputs": {"structure": UnitcellStructureView(row.structure).without_charges()}, "tag": row.structure.id[:12]}
+    for row in results.cursor()
+)
+for job in new_jobs(workspace, "vasp.relax", items, placement="batch"):
+    print(job.job_key)
+```
+
+Once a workflow has been referenced by URI, as above, its short name
+(`vasp.relax` here) also works. The generator streams rows into jobs, so neither the search result nor the
+batch has to be materialized in memory. Continue with the local run in the
+next step.
