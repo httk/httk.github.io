@@ -139,7 +139,7 @@ Declare the workflow, runner, output, and collector in
 
 ```toml
 [workflow]
-id = "my_executable"
+name = "my_executable"
 description = "Run my_executable for one integer parameter."
 
 [workflow.runner]

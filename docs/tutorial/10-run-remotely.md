@@ -4,7 +4,7 @@
 
 The local manager runs until the workspace is idle. Configure the tutorial mock
 as the VASP command; it writes the same output-file contract as a finished
-`vasp-relax` job, but its numbers are canned demonstration values, not
+`vasp.relax` job, but its numbers are canned demonstration values, not
 physics.
 
 ```console

@@ -20,7 +20,6 @@ from pathlib import Path
 from httk.atomistic import UnitcellStructureRecord, UnitcellStructureView
 from httk.store import DuckdbStore
 from httk.workflow import Workspace, new_jobs
-import httk.workflow.vasp  # registers the packaged vasp-relax workflow
 
 store = DuckdbStore("source.duckdb")
 search = store.searcher()
@@ -41,7 +40,7 @@ items = (
 )
 for job in new_jobs(
     workspace,
-    "vasp-relax",
+    "git+https://github.com/httk/workflows-vasp#vasp-relax",
     items,
     parameters={"kpoint_density": 30.0},
     placement="batch",
@@ -63,7 +62,7 @@ The CLI `--input-from` form accepts a file or a directory, not a store query;
 use it as the file-based alternative when the inputs are already on disk:
 
 ```console
-$ httk job new --workflow vasp-relax \
+$ httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' \
       --input-from structure charge-free-structures/ \
       --parameter kpoint_density=30.0 --placement batch
 ```

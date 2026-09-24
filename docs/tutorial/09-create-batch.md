@@ -11,7 +11,6 @@ from pathlib import Path
 from httk.atomistic import UnitcellStructureView
 from httk.core import load
 from httk.workflow import Workspace, new_jobs
-import httk.workflow.vasp  # registers the packaged vasp-relax workflow
 
 workspace = Workspace.default()
 items = (
@@ -24,7 +23,7 @@ items = (
 )
 for job in new_jobs(
     workspace,
-    "vasp-relax",
+    "git+https://github.com/httk/workflows-vasp#vasp-relax",
     items,
     parameters={"kpoint_density": 30.0},
     placement="batch",
@@ -43,7 +42,7 @@ For a directory containing already charge-free inputs, the CLI can create the
 same kind of batch without the Python projection:
 
 ```console
-httk job new --workflow vasp-relax \
+httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' \
     --input-from structure charge-free-structures/ \
     --parameter kpoint_density=30.0 --placement batch
 ```
@@ -60,10 +59,11 @@ items = (
     {"inputs": {"structure": UnitcellStructureView(row.structure).without_charges()}, "tag": row.structure.id[:12]}
     for row in results.cursor()
 )
-for job in new_jobs(workspace, "vasp-relax", items, placement="batch"):
+for job in new_jobs(workspace, "vasp.relax", items, placement="batch"):
     print(job.job_key)
 ```
 
-The generator streams rows into jobs, so neither the search result nor the
+Once a workflow has been referenced by URI, as above, its short name
+(`vasp.relax` here) also works. The generator streams rows into jobs, so neither the search result nor the
 batch has to be materialized in memory. Continue with the local run in the
 next step.

@@ -9,17 +9,23 @@ queued campaign cannot change what its jobs execute.
 
 ## The quickstart shape
 
-For VASP you do not have to author anything: the packaged `vasp-relax`
-workflow (id `httk.vasp.relax`) runs VASP through three steps — prepare,
-run, publish — and needs only a POSCAR and a `vasp.command` setting.
+For VASP you do not have to author anything: the `vasp-relax` workflow
+package from the [httk/workflows-vasp](https://github.com/httk/workflows-vasp)
+repository runs VASP through three steps — prepare, run, publish — and needs
+only a POSCAR and a `vasp.command` setting.
 
 ```console
 $ httk project init --name quickstart .
 $ httk workspace init --name default .
-$ httk job new --workflow vasp-relax --input structure=POSCAR --tag silicon
+$ httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' \
+      --input structure=POSCAR --tag silicon
 $ httk workspace settings set --key vasp.command --value "$PWD/examples/mock_vasp.py" default
 $ httk workflow run
 ```
+
+Referencing a workflow this way canonicalizes the ref to the resolved commit
+hash and records that pinned URI on the job; afterward the short name
+`vasp.relax` also works wherever a workflow is accepted.
 
 `vasp.command` is an application setting resolved most-specific-first: a job's
 own `vasp.command` parameter, then `HTTK_VASP_COMMAND` in the environment, then
@@ -33,7 +39,8 @@ The equivalent was a per-code shell layer. `ht_steps` scripts dispatched on
 `$STEP` (start → prerelax → relax1 → relax2 → cleanup) and sourced helpers
 such as `ht_tasks_api.sh` and `vasptools.sh`; the VASP invocation lived in
 shell functions like `VASP_PREPARE_CALC` and `VASP_RUN_CONTROLLED`. In *httk₂*
-that is the packaged runner plus the one `vasp.command` workspace setting.
+that is the `workflows-vasp` runner plus the one `vasp.command` workspace
+setting.
 ```
 
 ## Authoring your own package
@@ -48,7 +55,7 @@ my-workflow/
 
 ```toml
 [workflow]
-id = "example.relax"
+name = "example.relax"
 
 [workflow.runner]
 entry = "run"
@@ -99,8 +106,9 @@ CLI — see the migration guide, §15.
   the package manifest, every table and key.
 - <https://docs.httk.org/httk-workflow/dev/main/workflow_languages.html> — CWL, PWD,
   jobflow, and httk-v1 as workflow languages.
-- <https://docs.httk.org/httk-workflow/dev/main/vasp_runners.html> — what the
-  packaged VASP runners do, their inputs, parameters, and failure codes.
+- <https://github.com/httk/workflows-vasp> — the VASP workflow packages
+  (`vasp-relax`, `vasp-relax-bash`, `vasp-static`, `vasp-relax-static`): what
+  they do, their inputs, parameters, and failure codes.
 - <https://docs.httk.org/httk-workflow/dev/main/sdks/> — the runner SDK
   in nine languages.
 - {doc}`../campaigns` — the four-command cycle at ecosystem level.

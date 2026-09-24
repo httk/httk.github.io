@@ -41,13 +41,14 @@ record another registered name later with `httk workspace default`.
 ## Create and run the calculation
 
 ```console
-httk job new --workflow vasp-static \
+httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-static' \
     --input structure=example.cif --parameter 'incar_tags={"ENCUT": 520}' --tag example
 httk workflow run
 ```
 
-`job new` scaffolds and submits one job from the packaged `vasp-static`
-workflow (`vasp-relax` and `vasp-relax-static` work the same way). The
+`job new` scaffolds and submits one job from the `vasp-static` workflow
+package in [httk/workflows-vasp](https://github.com/httk/workflows-vasp)
+(`vasp-relax` and `vasp-relax-static` work the same way). The
 `structure` input is loaded from the CIF and written as `files/POSCAR`.
 The runner's `prepare` step derives the k-point grid, assembles the POTCAR
 from the pseudopotential library, and fills in `MAGMOM` and `NBANDS`, with any
@@ -65,7 +66,7 @@ from httk.workflow import Workspace, new_job
 workspace = Workspace.default()
 job = new_job(
     workspace,
-    "vasp-static",
+    "git+https://github.com/httk/workflows-vasp#vasp-static",
     inputs={"structure": load("example.cif")},
     tag="example",
     provenance={"inputs": {"entity": {"type": "amdb_material", "id": "magndata:1.108"}}},
@@ -80,7 +81,9 @@ Both `vasp.*` settings are stored on the workspace, so they are set once, not
 per job; a real `HTTK_VASP_COMMAND` environment variable remains a deployment
 override and wins over the workspace setting.
 
-See the quickstart and the packaged VASP runner guide in the versioned
-*httk-workflow* documentation listed by the {doc}`module directory <../modules>`.
+See the quickstart in the versioned *httk-workflow* documentation listed by
+the {doc}`module directory <../modules>`, and the
+[httk/workflows-vasp](https://github.com/httk/workflows-vasp) repository for
+the packaged VASP runners' inputs, parameters, and failure codes.
 
 See also the {doc}`/campaigns` topic page for the current workflow vocabulary.

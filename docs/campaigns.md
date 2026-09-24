@@ -1,7 +1,8 @@
 # Compute campaigns, small and large
 
 Start locally: initialize your identity and workspace, configure an executable,
-create a job, run it, and collect its result. The packaged `vasp-relax` workflow
+create a job, run it, and collect its result. The `vasp-relax` workflow
+package from [httk/workflows-vasp](https://github.com/httk/workflows-vasp)
 accepts a VASP-5 POSCAR and needs no runner authoring. From an *httk-workflow*
 checkout, with a `POSCAR` in the current directory, this uses the supplied mock
 executable so no VASP installation or license is needed:
@@ -11,7 +12,7 @@ $ httk init --name "Your Name" --email you@example.org
 $ httk project init --name quickstart .
 $ httk workspace init --name default .
 $ httk workspace settings set --key vasp.command --value "$PWD/examples/mock_vasp.py" default
-$ httk job new --workflow vasp-relax --input structure=POSCAR
+$ httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' --input structure=POSCAR
 $ httk workflow run
 $ httk workflow collect --into results.sqlite --id-base httk.quickstart
 ```
