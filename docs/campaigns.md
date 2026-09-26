@@ -1,7 +1,7 @@
 # Compute campaigns, small and large
 
 Start locally: initialize your identity and workspace, configure an executable,
-create a job, run it, and collect its result. The `vasp-relax` workflow
+create a job, run it, and collect its result. The `vasp.relax` workflow
 package from [httk/workflows-vasp](https://github.com/httk/workflows-vasp)
 accepts a VASP-5 POSCAR and needs no runner authoring. From an *httk-workflow*
 checkout, with a `POSCAR` in the current directory, this uses the supplied mock
@@ -126,6 +126,7 @@ managers execute registered artifacts and never compile jobs themselves.
 
 ## Read next
 
+- {doc}`workflows` — finding, installing, and writing workflow packages.
 - [Workflow quickstart](https://docs.httk.org/httk-workflow/dev/main/quickstart.html), [campaigns](https://docs.httk.org/httk-workflow/dev/main/campaigns.html), [collecting](https://docs.httk.org/httk-workflow/dev/main/collecting.html), and [CLI](https://docs.httk.org/httk-workflow/dev/main/workflow_cli.html).
 - [Workflow package authoring](https://docs.httk.org/httk-workflow/dev/main/workflow_packages.html), [languages](https://docs.httk.org/httk-workflow/dev/main/workflow_languages.html), and [SDKs](https://docs.httk.org/httk-workflow/dev/main/sdks/).
 - [CLI details](https://docs.httk.org/httk-workflow/dev/main/details/workflow_cli.html), [package details](https://docs.httk.org/httk-workflow/dev/main/details/workflow_packages.html), and [task-manager details](https://docs.httk.org/httk-workflow/dev/main/details/taskmanager.html).

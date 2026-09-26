@@ -93,6 +93,7 @@ structures
 data
 serving-data
 campaigns
+workflows
 analysis
 authoring
 tutorial/index

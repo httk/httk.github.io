@@ -26,7 +26,7 @@ manifest.json
 ```
 
 The manifest is canonical JSON. Its definition entries record each definition
-IRI, archive path, and SHA-256; it also records the store hash, the persisted
+URI, archive path, and SHA-256; it also records the store hash, the persisted
 entry-record declaration, package versions, and the snapshot timestamp. An
 abbreviated real export looks like this:
 

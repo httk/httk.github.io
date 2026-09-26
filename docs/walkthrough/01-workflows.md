@@ -9,7 +9,7 @@ queued campaign cannot change what its jobs execute.
 
 ## The quickstart shape
 
-For VASP you do not have to author anything: the `vasp-relax` workflow
+For VASP you do not have to author anything: the `vasp.relax` workflow
 package from the [httk/workflows-vasp](https://github.com/httk/workflows-vasp)
 repository runs VASP through three steps — prepare, run, publish — and needs
 only a POSCAR and a `vasp.command` setting.
@@ -76,7 +76,10 @@ executable, or a `language` such as CWL, PWD, jobflow, or httk-v1),
 `[workflow.outputs.*]`, the `[workflow.instantiate]` and `[workflow.collect]`
 hooks, and `[workflow.postprocess.<NAME>]` scripts. Runners are written against
 the `Runner`/`Attempt` SDK (`@run.step`, `@run.instantiate`) in Python or Bash,
-or in C, C++, Fortran, Rust, Perl, Ada, or Java.
+or in C, C++, Fortran, Rust, Perl, Ada, or Java. A compiled or JVM runner needs
+no `run` bridge script: declare `[workflow.runner] command`, an argument
+vector such as `command = ["{artifacts}/relax"]` or
+`command = ["java", "-cp", "{artifacts}/classes", "Relax"]`, instead of `entry`.
 
 ```{admonition} In httk v1
 :class: note
@@ -107,8 +110,9 @@ CLI — see the migration guide, §15.
 - <https://docs.httk.org/httk-workflow/dev/main/workflow_languages.html> — CWL, PWD,
   jobflow, and httk-v1 as workflow languages.
 - <https://github.com/httk/workflows-vasp> — the VASP workflow packages
-  (`vasp-relax`, `vasp-relax-bash`, `vasp-static`, `vasp-relax-static`): what
+  (`vasp.relax`, `vasp.relax-bash`, `vasp.static`, `vasp.relax-static`): what
   they do, their inputs, parameters, and failure codes.
 - <https://docs.httk.org/httk-workflow/dev/main/sdks/> — the runner SDK
   in nine languages.
+- {doc}`../workflows` — the three workflow repositories, URIs, and installing.
 - {doc}`../campaigns` — the four-command cycle at ecosystem level.

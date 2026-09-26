@@ -46,9 +46,9 @@ httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-static'
 httk workflow run
 ```
 
-`job new` scaffolds and submits one job from the `vasp-static` workflow
+`job new` scaffolds and submits one job from the `vasp.static` workflow
 package in [httk/workflows-vasp](https://github.com/httk/workflows-vasp)
-(`vasp-relax` and `vasp-relax-static` work the same way). The
+(`vasp.relax` and `vasp.relax-static` work the same way). The
 `structure` input is loaded from the CIF and written as `files/POSCAR`.
 The runner's `prepare` step derives the k-point grid, assembles the POTCAR
 from the pseudopotential library, and fills in `MAGMOM` and `NBANDS`, with any
