@@ -1,0 +1,41 @@
+httk.registry.schemas.atomistic
+===============================
+
+.. py:module:: httk.registry.schemas.atomistic
+
+.. autoapi-nested-parse::
+
+   Register httk-atomistic's vendored entry-type and property schemas.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   httk.registry.schemas.atomistic.register_entry_type_definition
+   httk.registry.schemas.atomistic.register_property_definition
+
+
+Package Contents
+----------------
+
+.. py:function:: register_entry_type_definition(*, definition_id, resource)
+
+   Register one resource for an entry-type definition IRI.
+
+   :param definition_id: The entry-type definition IRI.
+   :param resource: The package resource reference to load.
+   :raises ValueError: If ``definition_id`` is already registered.
+
+
+.. py:function:: register_property_definition(*, definition_id, resource)
+
+   Register one resource for a property definition IRI.
+
+   :param definition_id: The property definition IRI.
+   :param resource: The package resource reference to load.
+   :raises ValueError: If ``definition_id`` is already registered.
+
+

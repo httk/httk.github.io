@@ -1,0 +1,8 @@
+| Module | Version | Documentation |
+| --- | --- | --- |
+| httk-analyse | v2.1.0 | [https://docs.httk.org/httk-analyse/v2.1.0/](https://docs.httk.org/httk-analyse/v2.1.0/) |
+| httk-atomistic | v2.1.0 | [https://docs.httk.org/httk-atomistic/v2.1.0/](https://docs.httk.org/httk-atomistic/v2.1.0/) |
+| httk-core | v2.1.0 | [https://docs.httk.org/httk-core/v2.1.0/](https://docs.httk.org/httk-core/v2.1.0/) |
+| httk-serve | v2.1.2 | [https://docs.httk.org/httk-serve/v2.1.2/](https://docs.httk.org/httk-serve/v2.1.2/) |
+| httk-store | v2.1.2 | [https://docs.httk.org/httk-store/v2.1.2/](https://docs.httk.org/httk-store/v2.1.2/) |
+| httk-workflow | v2.1.0 | [https://docs.httk.org/httk-workflow/v2.1.0/](https://docs.httk.org/httk-workflow/v2.1.0/) |
