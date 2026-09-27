@@ -56,12 +56,16 @@ the [workflow URI guide](https://docs.httk.org/httk-workflow/dev/main/workflow_u
 declares minimum distribution versions, checked both when the job is created
 and again by the claiming manager, so a runner needs no import guard — an
 unmet manager simply leaves the job for another one. `[workflow.runner]`
-selects an executable `run` entry, an argument-vector `command` (for a
-compiled, JVM, or interpreted program that needs no bridge script, with
-`{package}`/`{artifacts}` placeholders), or a language realization (CWL, PWD,
-jobflow, httk-v1). Inputs are staged to a `destination` path or consumed by an
-`[workflow.instantiate]` hook; `[workflow.collect]` produces the declared
-outputs; `[workflow.postprocess.NAME]` scripts run on request afterward. A
+selects an executable `entry` (any executable package member; `run.py`/
+`run.sh` recommended, and then the package carries no plain `run` member), an
+argument-vector `command` (for a compiled, JVM, or interpreted program that
+needs no bridge script, with `{package}`/`{artifacts}` placeholders), or a
+language realization (CWL, PWD, jobflow, httk-v1). Inputs are staged to a
+`destination` path or consumed by an `[workflow.instantiate]` hook —
+required inputs are checked before it runs, it sees only the caller-supplied
+parameters, and declared parameter defaults are applied only after it
+returns; `[workflow.collect]` produces the declared outputs;
+`[workflow.postprocess.NAME]` scripts run on request afterward. A
 compiled package additionally declares `[workflow.build]`, built and
 registered per machine with `httk workflow build` (see {doc}`campaigns`); the
 native SDKs it builds against live under `HTTK_WORKFLOW_NATIVE_API`.
