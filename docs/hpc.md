@@ -229,7 +229,7 @@ Full workflows can declare inputs, resources per step, spawn child jobs,
 publish data transactionally, and be packaged and versioned. See the
 [full workflow authoring guide](https://docs.httk.org/httk-workflow/dev/main/details/runtime_helpers.html),
 [workflow packages](https://docs.httk.org/httk-workflow/dev/main/workflow_packages.html),
-[Bash SDK](https://docs.httk.org/httk-workflow/dev/main/sdks/native_bash_api.html),
+[Bash SDK](https://docs.httk.org/httk-workflow/dev/main/sdks/bash_api.html),
 [launchers](https://docs.httk.org/httk-workflow/dev/main/launchers.html), and
 [remotes](https://docs.httk.org/httk-workflow/dev/main/remotes.html) documentation.
 

@@ -68,7 +68,7 @@ returns; `[workflow.collect]` produces the declared outputs;
 `[workflow.postprocess.NAME]` scripts run on request afterward. A
 compiled package additionally declares `[workflow.build]`, built and
 registered per machine with `httk workflow build` (see {doc}`campaigns`); the
-native SDKs it builds against live under `HTTK_WORKFLOW_NATIVE_API`.
+language SDKs it builds against live under `HTTK_WORKFLOW_LANGUAGES_DIR`.
 
 The full manifest reference — every table and key — is the
 [package guide](https://docs.httk.org/httk-workflow/dev/main/workflow_packages.html)

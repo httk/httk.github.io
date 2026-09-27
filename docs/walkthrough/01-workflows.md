@@ -96,7 +96,7 @@ convention with a declared manifest and SDK steps.
 :class: note
 
 You do not have to rewrite an existing v1 template to use it. Wrap it
-unchanged as a package with `language = "httk-v1"` and it runs under the *httk₂*
+unchanged as a package with `format = "httk-v1"` and it runs under the *httk₂*
 CLI — see the migration guide, §15.
 ```
 
@@ -107,8 +107,8 @@ CLI — see the migration guide, §15.
 - <https://docs.httk.org/httk-workflow/dev/main/workflow_packages.html> and
   <https://docs.httk.org/httk-workflow/dev/main/details/workflow_packages.html> —
   the package manifest, every table and key.
-- <https://docs.httk.org/httk-workflow/dev/main/workflow_languages.html> — CWL, PWD,
-  jobflow, and httk-v1 as workflow languages.
+- <https://docs.httk.org/httk-workflow/dev/main/workflow_compat.html> — CWL, PWD,
+  jobflow, and httk-v1 as compat formats.
 - <https://github.com/httk/workflows-vasp> — the VASP workflow packages
   (`vasp.relax`, `vasp.relax-bash`, `vasp.static`, `vasp.relax-static`): what
   they do, their inputs, parameters, and failure codes.

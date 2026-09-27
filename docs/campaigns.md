@@ -128,5 +128,5 @@ managers execute registered artifacts and never compile jobs themselves.
 
 - {doc}`workflows` — finding, installing, and writing workflow packages.
 - [Workflow quickstart](https://docs.httk.org/httk-workflow/dev/main/quickstart.html), [campaigns](https://docs.httk.org/httk-workflow/dev/main/campaigns.html), [collecting](https://docs.httk.org/httk-workflow/dev/main/collecting.html), and [CLI](https://docs.httk.org/httk-workflow/dev/main/workflow_cli.html).
-- [Workflow package authoring](https://docs.httk.org/httk-workflow/dev/main/workflow_packages.html), [languages](https://docs.httk.org/httk-workflow/dev/main/workflow_languages.html), and [SDKs](https://docs.httk.org/httk-workflow/dev/main/sdks/).
+- [Workflow package authoring](https://docs.httk.org/httk-workflow/dev/main/workflow_packages.html), [compat formats](https://docs.httk.org/httk-workflow/dev/main/workflow_compat.html), and [SDKs](https://docs.httk.org/httk-workflow/dev/main/sdks/).
 - [CLI details](https://docs.httk.org/httk-workflow/dev/main/details/workflow_cli.html), [package details](https://docs.httk.org/httk-workflow/dev/main/details/workflow_packages.html), and [task-manager details](https://docs.httk.org/httk-workflow/dev/main/details/taskmanager.html).

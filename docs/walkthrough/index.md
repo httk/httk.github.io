@@ -136,8 +136,8 @@ Several import verbs read legacy assets so you do not start from scratch:
   remote; it never runs legacy shell code.
 - `httk workflow config import-v1` — imports legacy configuration.
 - `httk workflow v1 collect` — harvests a finished v1 result tree into records.
-- the `httk-v1` workflow language — wraps an existing v1 template as a package
-  (`language = "httk-v1"`), so it runs unchanged under the *httk₂* CLI.
+- the `httk-v1` compat format — wraps an existing v1 template as a package
+  (`format = "httk-v1"`), so it runs unchanged under the *httk₂* CLI.
 
 Full migration guides:
 <https://docs.httk.org/httk-workflow/dev/main/httk_v1_migration_guide.html>,
