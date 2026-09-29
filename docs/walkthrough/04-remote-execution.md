@@ -89,12 +89,12 @@ and the remote workspace owns them.
 
 ## Transfer, run, and check
 
-`transfer SRC DST` moves jobs whichever way the two names point. Send the batch
-up, then run the workspace. The same command works on the login node, through a
-self-addressed `machine_names` name, or from the desk via the remote:
+`job transfer SRC DST` moves jobs whichever way the two names point. Send the
+batch up, then run the workspace. The same command works on the login node,
+through a self-addressed `machine_names` name, or from the desk via the remote:
 
 ```console
-httk workflow transfer --job JOB-ID default kappa:runs
+httk job transfer --job JOB-ID default kappa:runs
 httk workflow precheck --workspace kappa:runs
 httk workflow run --workspace kappa:runs --count 1
 httk workspace status kappa:runs
@@ -130,7 +130,7 @@ and shown in that manager's summary.
 to assign them and rsync'd them across; `httk-tasks-start-taskmanager kappa`
 submitted `taskmanager.sh` with `sbatch`; `httk-tasks-status` counted
 directories in `ht.waitstart/`, `ht.running/`, and `ht.finished/`. Those three
-are replaced by `transfer`, `run`, and `workspace status`.
+are replaced by `job transfer`, `run`, and `workspace status`.
 ```
 
 ## Read next

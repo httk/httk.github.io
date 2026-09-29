@@ -47,11 +47,11 @@ httk workspace settings set --key manager.workers --value 8 kappa:runs
 httk workspace settings set --key environment.prelude --value "module load httk vasp" kappa:runs
 httk workspace settings set --key vasp.command --value "srun -n 32 vasp_std" kappa:runs
 
-httk workflow transfer \
+httk job transfer \
     --job ca --job cao --job catio3 --job o --job ti --job tio default kappa:runs
 httk workflow run --workspace kappa:runs --count 1
 httk workspace status kappa:runs
-httk workflow transfer kappa:runs default
+httk job transfer kappa:runs default
 ```
 
 `ssh` runs the adapter's commands through a non-interactive shell, so

@@ -1,12 +1,12 @@
 # Fetching results back
 
 When jobs have finished on the remote (page {doc}`04-remote-execution`), bring
-them home with the same `transfer` verb, pointed the other way. Fetching is a
+them home with the same `job transfer` verb, pointed the other way. Fetching is a
 sealed, detached operation: it survives interruption and never corrupts the
 copy in flight.
 
 ```console
-httk workflow transfer --state succeeded --state failed kappa:runs default
+httk job transfer --state succeeded --state failed kappa:runs default
 ```
 
 `--state` (repeatable, default `succeeded` and `failed`) chooses which finished
@@ -19,7 +19,7 @@ every path, every file's content *and executable bit*, and the literal target
 of every symlink, so a runner arriving without its executable bit — or a link
 retargeted in transit — is a detected mismatch, not a silent corruption. The
 source is retired only after an idempotent acknowledgement. An interrupted
-fetch resumes by re-running the exact same `transfer` command.
+fetch resumes by re-running the exact same `job transfer` command.
 
 ```{admonition} In httk v1
 :class: note

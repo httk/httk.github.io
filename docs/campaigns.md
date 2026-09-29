@@ -51,11 +51,18 @@ httk workspace settings set --key manager.launch --value cluster kappa:runs
 httk workspace settings set --key slurm.partition --value batch kappa:runs
 httk workspace settings set --key manager.workers --value 8 kappa:runs
 httk workspace settings set --key vasp.command --value "srun -n 32 vasp_std" kappa:runs
-httk workflow transfer --job JOB-ID default kappa:runs
+httk job transfer --job JOB-ID default kappa:runs
 httk workflow precheck --workspace kappa:runs
 httk workflow run --workspace kappa:runs --count 1
-httk workflow transfer --state succeeded --state failed kappa:runs default
+httk job transfer --state succeeded --state failed kappa:runs default
 ```
+
+`SRC` and `DST` may also be workspace directories instead of registered names,
+so an unregistered workspace can be addressed too. `httk job eject` and
+`httk job adopt` move a job, with any bound child jobs, out of a workspace to a
+free-standing job directory, and move such a directory into any workspace, without either side
+needing to be registered. See the
+[CLI details](https://docs.httk.org/httk-workflow/dev/main/details/workflow_cli.html).
 
 `ssh` runs the adapter's commands through a non-interactive shell, so
 `module load` lines and virtualenv activation your login shell sets up don't
