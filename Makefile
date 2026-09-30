@@ -55,6 +55,7 @@ first-use-check:
 	$(PYTHON) scripts/check_first_use.py
 	$(PYTHON) scripts/check_serving_example.py docs/serving-data/new-database.md
 	$(PYTHON) scripts/check_existing_database_example.py docs/serving-data/existing-database.md
+	$(PYTHON) scripts/check_vasp_example.py docs/serving-data/vasp-calculations.md
 
 release-check: first-use-check docs-full
 	$(MAKE) docs-lock-check
