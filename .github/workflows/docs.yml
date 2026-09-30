@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: docs-build-dev-${{ github.repository }}
+  group: docs-build-dev-develop-${{ github.repository }}
   cancel-in-progress: false
 
 jobs:
@@ -79,7 +79,7 @@ jobs:
       - name: Execute first-use examples
         run: make first-use-check
       - name: Build development docs
-        run: HTTK_DOCS_VERSION=dev:main HTTK_DOCS_BASE_URL=https://docs.httk.org make docs
+        run: HTTK_DOCS_VERSION=dev:develop HTTK_DOCS_BASE_URL=https://docs.httk.org make docs
       - name: Compose and publish development docs-site
         env:
           SOURCE_COMMIT: ${{ github.sha }}
@@ -90,8 +90,9 @@ jobs:
             if [ "$remote_site_exists" = true ]; then lease_sha=$(git rev-parse origin/docs-site 2>/dev/null || echo ""); else lease_sha=""; fi
             rm -rf "$SITE_DIR"; mkdir -p "$SITE_DIR"
             if git show-ref --verify --quiet refs/remotes/origin/docs-site; then git archive origin/docs-site | tar -x -C "$SITE_DIR"; fi
-            PYTHONPATH=submodules/httk-core/src python -m httk.core.docs compose --site "$SITE_DIR" --build docs/_build/html --dev --slug "" --url https://docs.httk.org --source-commit "$SOURCE_COMMIT"
-            PYTHONPATH=submodules/httk-core/src python -m httk.core.docs commit-site --site "$SITE_DIR" --repo "$GITHUB_WORKSPACE" --branch docs-site --message "dev: $SOURCE_COMMIT"
+            rm -rf "$SITE_DIR/dev/main"
+            PYTHONPATH=submodules/httk-core/src python -m httk.core.docs compose --site "$SITE_DIR" --build docs/_build/html --dev develop --slug "" --url https://docs.httk.org --source-commit "$SOURCE_COMMIT"
+            PYTHONPATH=submodules/httk-core/src python -m httk.core.docs commit-site --site "$SITE_DIR" --repo "$GITHUB_WORKSPACE" --branch docs-site --message "dev:develop: $SOURCE_COMMIT"
             if git push --force-with-lease=refs/heads/docs-site:$lease_sha origin docs-site; then break; fi
             if [ "$attempt" -eq 8 ]; then echo "docs-site push was rejected after 8 attempts" >&2; exit 1; fi
             sleep $((RANDOM % 5 + attempt * 3)); git fetch origin docs-site; remote_site_exists=true

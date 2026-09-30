@@ -1,6 +1,7 @@
 import json
 import importlib
 import os
+import re
 import warnings
 from datetime import date
 from pathlib import Path
@@ -342,6 +343,18 @@ def _workflow_module_exports(module_name: str) -> frozenset[str] | None:
     return _workflow_exports_cache[module_name]
 
 
+_DEV_LABEL = os.environ.get("HTTK_DOCS_VERSION", "")
+httk_docs_dev_source = (
+    "this site's GitHub main branch and its modules' GitHub develop branches" if _DEV_LABEL == "dev:develop" else None
+)
+
+
+def _retarget_module_links(app, docname, source):
+    if _DEV_LABEL == "dev:develop":
+        modules = "|".join(map(re.escape, _module_names))
+        source[0] = re.sub(rf"https://docs\.httk\.org/({modules})/dev/main/", r"https://docs.httk.org/\1/dev/develop/", source[0])
+
+
 def _module_version_rows(srcdir: Path) -> list[tuple[str, str, str]]:
     manifest_path = srcdir / "ecosystem.json"
     if manifest_path.is_file():
@@ -355,11 +368,9 @@ def _module_version_rows(srcdir: Path) -> list[tuple[str, str, str]]:
                     version = entry.get("version") if isinstance(entry, dict) else None
                     if not isinstance(version, str) or not version:
                         version = "dev:main"
-                    link = (
-                        f"https://docs.httk.org/{name}/{version}/"
-                        if version.startswith("v")
-                        else f"https://docs.httk.org/{name}/dev/main/"
-                    )
+                    if not version.startswith("v"):
+                        version = _DEV_LABEL if _DEV_LABEL == "dev:develop" else "dev:main"
+                    link = f"https://docs.httk.org/{name}/{version.replace(':', '/')}/" if version.startswith("dev:") else f"https://docs.httk.org/{name}/{version}/"
                     rows.append((name, version, link))
                 return rows
         except (KeyError, OSError, json.JSONDecodeError, TypeError):
@@ -402,3 +413,4 @@ def skip_member(app, what, name, obj, skip, options):
 def setup(sphinx):
     sphinx.connect('autoapi-skip-member', skip_member)
     sphinx.connect('builder-inited', _write_module_versions)
+    sphinx.connect('source-read', _retarget_module_links)

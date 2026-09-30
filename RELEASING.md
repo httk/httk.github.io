@@ -43,9 +43,10 @@ If a published release needs a known repair, use the approval-gated repair
 workflow. It replaces only the explicitly selected release tree and leaves
 other release snapshots untouched.
 
-Development builds are different: a push to this repository's `main` workflow
-updates every submodule to its remote `develop`, builds the `dev:main` channel,
-and publishes the replaceable development snapshot. The channel name follows
-this site's `main` branch; its module sources come from their `develop`
-branches. The site does not rebuild from module pushes alone; module changes
-enter the development snapshot on the next top-site push.
+Development builds are different: a push to this repository's `main` builds
+the site's `dev:develop` channel from this site's `main` branch with every
+module submodule moved to its remote `develop` branch, and publishes the
+replaceable development snapshot. The site publishes no `dev:main`; module
+sites publish both `dev:main` (their `main` branch) and `dev:develop` (their
+`develop` branch). The site does not rebuild from module pushes alone; module
+changes enter the development snapshot on the next top-site push.
