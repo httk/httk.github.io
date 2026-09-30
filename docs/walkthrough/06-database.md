@@ -5,14 +5,16 @@ Collected results (page {doc}`05-fetching-results`) become durable records in a
 store.
 
 ```console
-httk workflow collect --workspace WORKSPACE --into results.sqlite
+httk collect --workspace WORKSPACE --into results.sqlite --id-base example
 ```
 
 This stores each collected job's entries plus a provenance `Run` record —
 succeeded jobs by default; add `--state failed` (repeatable `--state`) to
 include fetched failures. It is deduplicated on re-collection, so re-running is
 always safe — a job whose records already exist is skipped rather than
-duplicated.
+duplicated. `--id-base` names the namespace of the minted entry ids, such as
+`example.records-1-1`; an id ledger beside the store, `results.sqlite.ids.sqlite`,
+keeps them stable across later collects and rebuilds.
 
 ## The direct store API
 

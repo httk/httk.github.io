@@ -122,7 +122,7 @@ later manager retries it. Run `httk workflow run --count 20` again until
 
 ### Collecting results into a database
 
-`httk workflow collect` needs the workflow to declare what its outputs are. A
+`httk collect` needs the workflow to declare what its outputs are. A
 `--from-command` job has no collector, so collecting it directly would produce
 only generic records. To give `answer.txt` a named output, turn the one-command
 job into a small workflow package:
@@ -194,7 +194,7 @@ for n in $(seq 1 1000); do
   httk job new --workflow-dir ./my_executable --parameter n=$n --tag n$n
 done
 
-httk workflow collect --into results.sqlite
+httk collect --into results.sqlite --id-base example
 ```
 
 See the {doc}`database walkthrough <walkthrough/06-database>` and the

@@ -14,7 +14,7 @@ $ httk workspace init --name default .
 $ httk workspace settings set --key vasp.command --value "$PWD/examples/mock_vasp.py" default
 $ httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' --input structure=POSCAR
 $ httk workflow run
-$ httk workflow collect --into results.sqlite --id-base httk.quickstart
+$ httk collect --into results.sqlite --id-base httk.quickstart
 ```
 
 The mock produces synthetic numbers, not scientific results. With real VASP,
@@ -23,7 +23,7 @@ replace the mock path with your executable command. The workflow module's
 POSCAR and explains each step; its `examples/quickstart.sh` is the executable
 source for the complete sequence (run identity setup first).
 
-Ordinary `httk workflow collect` streams bounded batches and reports per-job
+Ordinary `httk collect` streams bounded batches and reports per-job
 failures without abandoning the sweep; use `--fail-fast` to stop at the first
 observed failure. `collect --into` retains the complete sweep in memory to
 discover its storage layout and resolve cross-job provenance. Account for that

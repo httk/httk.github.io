@@ -1,37 +1,44 @@
 # From VASP calculations
 
-This example reads a directory tree of finished VASP calculations with the
-*httk₂* VASP readers, stores the results in SQLite, and serves them over
-OPTIMADE. It uses the same entry layout as
-[altermagnets](https://github.com/Anyterial/altermagnets): standard
-`structures`, typed results at `_httk_records` linked to their relaxed
-structure, one `_httk_runs` provenance run per calculation, and `files` entries
-for the OUTCARs. For calculations run through *httk-workflow*, use
-`httk workflow collect --into` instead (see [campaigns](../campaigns.md)).
+This example turns a directory tree of finished VASP calculations into an
+*httk-store* database with one command, `httk collect`, and serves it over
+OPTIMADE. `httk collect` walks the tree and offers each directory to the
+*recognized-calculation collectors* that code packages ship. The VASP
+collectors store the structures as standard `structures`, the total energies as
+`_httk_records` linked to their structure, and one `_httk_runs` provenance run
+per calculation. Calculations run through *httk-workflow* are collected with
+the same command pointed at their workspace (see [campaigns](../campaigns.md)).
 
-Use Python 3.12 or newer and install the modules (also included in the `httk2`
-metapackage):
+Use Python 3.12 or newer and install the modules. *httk-workflow-vasp*
+provides the VASP collectors, and *httk-atomistic* the file readers they use:
 
 ```bash
-python -m pip install 'httk-atomistic[default]' 'httk-store[db]' httk-serve
+python -m pip install httk-workflow-vasp 'httk-atomistic[default]' 'httk-store[db]' httk-serve
 ```
 
-Curated result properties and serving core `Run` and `FileRecord` entries next
-to your own records are currently unreleased. Use matching development
-checkouts of `httk-core`, `httk-store`, `httk-atomistic` and `httk-serve` when
-trying this example.
+`httk collect` and the recognized-calculation collectors are currently
+unreleased. Use matching development checkouts of `httk-core`,
+`httk-atomistic`, `httk-store`, `httk-serve`, `httk-workflow` and
+`httk-workflow-vasp` when trying this example.
+
+The database's entry ids are allocated through an id ledger that is signed
+with your operator identity. If you have not set one up yet, do it once:
+
+```bash
+httk init --name "Your Name" --email you@example.org
+```
 
 ## Your calculations
 
-You would normally point at your own tree: any layout works, as long as each
-calculation directory has an `OUTCAR` (possibly compressed), a `POSCAR`, a
-`CONTCAR` and, for the magnetization, an `OSZICAR`. To have something
-runnable, save this as
-`make_example_calculations.py`. It uses the standard library to write a small
-stand-in tree with **invented numbers**, not real calculations: relaxations of
-NaCl, MgO and spin-polarized Fe, a static Si run whose CONTCAR equals its
-POSCAR, and a failed KCl run without a final energy. The MgO files are
-bz2-compressed.
+You would normally point at your own tree. Any layout works: a calculation is
+a directory with an `OUTCAR` and a `POSCAR`, and a relaxation also needs its
+`CONTCAR`. Each file may be compressed. To have something runnable, save this
+as `make_example_calculations.py`. It uses the standard library to write a
+small stand-in tree with **invented numbers**, not real calculations. It holds
+relaxations of NaCl, MgO and spin-polarized Fe, a static Si run, a molecular
+dynamics run of Al, and a KCl relaxation that failed before its first energy.
+The MgO files are bz2-compressed. Each OUTCAR echoes `NSW` and `IBRION` the way
+VASP does, which is what the collectors classify a calculation by.
 
 ```python
 import bz2
@@ -46,8 +53,13 @@ def poscar(symbols, counts, a, positions):
     )
 
 
-def outcar(energy):
-    text = " vasp.6.4.1 18Apr23 (build Jan 01 2024) complex\n   ENCUT  =  520.0 eV\n"
+def outcar(nsw, ibrion, energy):
+    text = (
+        " vasp.6.4.1 18Apr23 (build Jan 01 2024) complex\n"
+        "   ENCUT  =  520.0 eV\n"
+        f"   NSW    = {nsw:6d}    number of steps for IOM\n"
+        f"   IBRION = {ibrion:6d}    ionic relax: 0-MD 1-quasi-New 2-CG\n"
+    )
     if energy is not None:
         text += (
             "   FREE ENERGIE OF THE ION-ELECTRON SYSTEM (eV)\n"
@@ -63,20 +75,23 @@ def oszicar(energy, mag):
     return line + (f"  mag=     {mag:.4f}\n" if mag is not None else "\n")
 
 
-# directory: symbols, counts, lattice parameter before and after, positions, energy, mag
+# directory: symbols, counts, lattice parameter before and after, positions,
+# NSW, IBRION, energy, mag
+RS = [(0, 0, 0), (0.5, 0.5, 0.5)]
 CALCULATIONS = {
-    "NaCl/relax": (["Na", "Cl"], [1, 1], 3.99, 4.02, [(0, 0, 0), (0.5, 0.5, 0.5)], -6.83, None),
-    "MgO/relax": (["Mg", "O"], [1, 1], 3.00, 3.03, [(0, 0, 0), (0.5, 0.5, 0.5)], -11.93, None),
-    "Fe/relax": (["Fe"], [1], 2.83, 2.84, [(0, 0, 0)], -8.31, 2.214),
-    "Si/static": (["Si"], [2], 3.10, 3.10, [(0, 0, 0), (0.5, 0.5, 0.5)], -10.84, None),
+    "NaCl/relax": (["Na", "Cl"], [1, 1], 3.99, 4.02, RS, 99, 2, -6.83, None),
+    "MgO/relax": (["Mg", "O"], [1, 1], 3.00, 3.03, RS, 99, 2, -11.93, None),
+    "Fe/relax": (["Fe"], [1], 2.83, 2.84, [(0, 0, 0)], 99, 2, -8.31, 2.214),
+    "Si/static": (["Si"], [2], 3.10, 3.10, RS, 0, -1, -10.84, None),
+    "Al/md": (["Al"], [1], 4.05, 4.05, [(0, 0, 0)], 500, 0, -3.74, None),
 }
-for name, (symbols, counts, a0, a1, positions, energy, mag) in CALCULATIONS.items():
+for name, (symbols, counts, a0, a1, positions, nsw, ibrion, energy, mag) in CALCULATIONS.items():
     directory = Path("calculations", name)
     directory.mkdir(parents=True, exist_ok=True)
     files = {
         "POSCAR": poscar(symbols, counts, a0, positions),
         "CONTCAR": poscar(symbols, counts, a1, positions),
-        "OUTCAR": outcar(energy),
+        "OUTCAR": outcar(nsw, ibrion, energy),
         "OSZICAR": oszicar(energy, mag),
     }
     for filename, text in files.items():
@@ -85,285 +100,314 @@ for name, (symbols, counts, a0, a1, positions, energy, mag) in CALCULATIONS.item
         else:
             (directory / filename).write_text(text)
 
-# A calculation that failed before its first energy: no CONTCAR, no energy.
+# A relaxation that failed before its first energy: no CONTCAR, no energy.
 failed = Path("calculations", "KCl/relax")
 failed.mkdir(parents=True, exist_ok=True)
-(failed / "POSCAR").write_text(poscar(["K", "Cl"], [1, 1], 3.15, [(0, 0, 0), (0.5, 0.5, 0.5)]))
-(failed / "OUTCAR").write_text(outcar(None))
+(failed / "POSCAR").write_text(poscar(["K", "Cl"], [1, 1], 3.15, RS))
+(failed / "OUTCAR").write_text(outcar(99, 2, None))
 ```
 
-## The data model
-
-Save this as `vasp_records.py`. The result record says what a calculation
-produced. Its `total_energy` uses *httk₂*'s curated definition and is served as
-`_httk_total_energy`; the other properties are served as `_httk_custom_*`. The
-`structure` field links the result to its relaxed structure, served as
-`relationships.structures`. `Indexed()` speeds up the ingest's lookups by
-`source_path`.
-
-```python
-from typing import Annotated
-
-from httk.atomistic import UnitcellStructureRecord
-from httk.core import DataEntryRecord, Indexed, Property, entry_record, load_property_definition
-
-TOTAL_ENERGY = "https://schemas.httk.org/defs/v0.1/properties/core/total_energy"
-
-
-@entry_record("example.vasp_result")
-class VaspResult(DataEntryRecord):
-    total_energy: Annotated[float, load_property_definition(TOTAL_ENERGY)]
-    total_magnetization: Annotated[
-        float | None,
-        Property(
-            unit="mu_B",
-            description="Cell magnetization of the last ionic step in OSZICAR, "
-            "or null when the calculation is not collinear spin-polarized.",
-        ),
-    ]
-    completed: Annotated[
-        bool, Property(description="Whether OUTCAR ends with VASP's completion footer.")
-    ]
-    source_path: Annotated[
-        str,
-        Property(description="Calculation directory relative to the ingested tree."),
-        Indexed(),
-    ]
-    structure: UnitcellStructureRecord
+```bash
+python make_example_calculations.py
 ```
 
-The ingest stores four kinds of entries per calculation:
+## See what will be collected
 
-- the initial (POSCAR) and relaxed (CONTCAR) structures as standard
-  `structures`. They are stored by content, so identical cells share one entry;
-- the result, linked to the relaxed structure;
-- a `files` entry for the OUTCAR with its URL, name, size and media type
-  (`text/plain`, left unset for a compressed OUTCAR). The SHA-256 checksum is
-  stored to detect changed files, but not served;
-- a run that links the initial structure as input to the relaxed structure,
-  the result and the OUTCAR as outputs. The structures, results and files
-  then show the run under `_httk_is_input` or `_httk_is_output`.
+A dry run lists how each directory would be claimed, and collects nothing:
 
-OPTIMADE serves metadata, not file contents: set `DATA_URL` to wherever you
-host the calculation tree, so that each file `url` downloads the file.
+```console
+$ httk collect calculations --dry-run
+{"also_matched":[],"collector":"vasp.calculation.relax","directory":"Al/md","duplicate_of":null,"format":"httk-collect-claim","format_version":1,"identity":null,"kind":"unclaimed","priority":null,"reason":"molecular dynamics (IBRION = 0) is not collected yet"}
+{"also_matched":[],"collector":"vasp.calculation.relax","directory":"Fe/relax","duplicate_of":null,"format":"httk-collect-claim","format_version":1,"identity":"0c110c39f7a9c5109a5adf9f6869464e2543b20ed53eb2a0856d1eada493496f","kind":"claimed","priority":10,"reason":null}
+{"also_matched":[],"collector":"vasp.calculation.relax","directory":"KCl/relax","duplicate_of":null,"format":"httk-collect-claim","format_version":1,"identity":"0b9429efca48b6ce6c331568d07e6cc7bea881939f1799935f20c2018c029fce","kind":"claimed","priority":10,"reason":null}
+{"also_matched":[],"collector":"vasp.calculation.relax","directory":"MgO/relax","duplicate_of":null,"format":"httk-collect-claim","format_version":1,"identity":"7553e5eb09258f6319bdf2a2dc7caaed7cb2ce0b4230a4e8d349588243d69d27","kind":"claimed","priority":10,"reason":null}
+{"also_matched":[],"collector":"vasp.calculation.relax","directory":"NaCl/relax","duplicate_of":null,"format":"httk-collect-claim","format_version":1,"identity":"eac3f541d30691e845b748ee105f18576cc5f5a73b63215cd175dde561799c3a","kind":"claimed","priority":10,"reason":null}
+{"also_matched":[],"collector":"vasp.calculation.static","directory":"Si/static","duplicate_of":null,"format":"httk-collect-claim","format_version":1,"identity":"578eb95dba076c0d5348ede253f883fbe88711d2115708ff13db1f3268a80501","kind":"claimed","priority":10,"reason":null}
+```
 
-## Ingest
+Two collectors from *httk-workflow-vasp* take part: `vasp.calculation.relax`
+claims the directories whose OUTCAR echoes a relaxation (`NSW > 0` and
+`IBRION` 1, 2 or 3), and `vasp.calculation.static` those with `NSW = 0` or
+`IBRION = -1`. `Al/md` is *unclaimed*: it is recognizably a VASP run, but
+molecular dynamics is not collected yet, and the line gives that reason.
+Directories that are not VASP runs at all are not listed.
 
-Save this as `ingest_vasp.py`:
+The `identity` of a claimed calculation is a digest of its input files,
+`INCAR`, `POSCAR`, `KPOINTS` and `POTCAR` (those present), decompressed. It
+does not depend on where the directory is, so moving or renaming it keeps the
+calculation's identity. A copy of a calculation elsewhere in the tree is listed
+with `duplicate_of` and collected once. Two directories with the same inputs
+but different OUTCARs stop the sweep with an error naming both; skip one of
+them with `--exclude PATTERN`, a glob on the path relative to the tree.
+
+`KCl/relax` is claimed although it failed: it is clearly a VASP relaxation, so
+its failure is reported when it is collected rather than hidden.
+
+## Collect into a database
+
+```console
+$ httk collect calculations --into vasp.sqlite --id-base example
+Al/md: not collected by vasp.calculation.relax: molecular dynamics (IBRION = 0) is not collected yet
+when reading VASP POSCAR/CONTCAR files it is recommended to pass a value for precision (e.g. load(path, precision=5e-4)); without it the coordinate precision is inferred from the number of digits written, which for full-precision CONTCAR output yields an unrealistically tight symmetry tolerance.
+...
+creating id ledger vasp.sqlite.ids.sqlite: entry ids for this store are now allocated through it and stay stable across rebuilds. Keep this file with the store (commit it alongside it) — deleting it re-mints every id.
+{"format":"httk-workflow-collected",...,"stored":{"entries":["example-1-5","example-1-8","example.records-1-1"],"run":"example.runs-1-1"},"unfulfilled":[],"workflow":"vasp.calculation.relax"}
+...
+{"collected":4,"degraded":1,"format":"httk-workflow-collect-summary","format_version":2,"revised":0,"skipped_unreadable":0,"storage_errors":0,"unclaimed":1,"unfulfilled_roles":2}
+```
+
+The command prints one JSON line per claimed calculation and a summary line at
+the end; the plain-text messages go to standard error. The summary counts four calculations `collected` and stored, one
+`degraded`, one `unclaimed` (`Al/md`), and none `revised`. The degraded one is
+`KCl/relax`: its line says `"skipped":"degraded"`, nothing of it is stored, and
+its `missing_collector` gives the reason, `expected workdir file
+.../calculations/KCl/relax/CONTCAR`. Its two output roles, the relaxed
+structure and the energy, are the two `unfulfilled_roles`. Because a
+calculation was degraded, the command exits with status 1. The collectors read
+POSCAR and CONTCAR without an explicit
+coordinate precision, so the structure reader repeats its precision
+recommendation for each file it reads.
+
+The first collect also creates `vasp.sqlite.ids.sqlite`, the id ledger. It
+records which id each calculation's records and run were given, and keeps
+those ids when you collect again or rebuild the database from scratch. Keep it
+next to the database, and back it up or commit it with it: deleting it
+re-numbers every entry.
+
+Per calculation, the database now holds:
+
+- the initial structure (POSCAR) and, for a relaxation, the relaxed structure
+  (CONTCAR), as standard `structures`. They are stored by content, so
+  identical cells share one entry. The store numbers them, as in
+  `example-1-5`;
+- the total energy as a record, `example.records-1-1` for Fe, linked to the
+  structure it was computed for by a `product_of` edge. For a relaxation that
+  is the relaxed structure, for the static Si run the initial one;
+- one run, `example.runs-1-1` for Fe, with the initial structure as its input
+  and the relaxed structure and the energy as its outputs. It is identified
+  as `vasp.calculation.relax:<identity>`.
+
+Collecting again adds nothing. Run the same command a second time: it prints
+the same ids and the same summary, with `"revised":0`, and the database is
+unchanged.
+
+To see the energies, save this as `show_results.py`. It joins every record to
+the structure it is a product of:
 
 ```python
-import logging
-from pathlib import Path
-
 from httk.atomistic import UnitcellStructureRecord, UnitcellStructureView
-from httk.atomistic.integrations.vasp import VASPStructure
-from httk.atomistic.integrations.vasp.io import VASPOutputs
-from httk.core import FileRecord, Run, RunEdge
-from httk.core.digests import sha256_file
-from httk.store import EntryIdScheme, SqliteStore
-from vasp_records import VaspResult
+from httk.core import DataRecord
+from httk.store import SqliteStore
 
-TREE = "calculations"
-DATA_URL = "https://data.example.org/calculations"  # where TREE is published
-PRECISION = 5e-4  # Å; CONTCAR prints full doubles, so give the real precision
-
-
-def upsert(store, cls, key, value, obj):
-    """Save obj, or store it as the next revision of the latest cls entry whose key equals value."""
+with SqliteStore("vasp.sqlite") as store:
     search = store.searcher(only_latest=True)
-    entry = search.variable(cls)
-    search.add(getattr(entry, key) == value)
-    previous = search.results(entry=entry).first()
-    sid = store.save(obj) if previous is None else store.replace(previous.entry, obj)
-    return store.fetch(cls, sid)
-
-
-def save_structure(store, payload):
-    sid = store.save(UnitcellStructureView(VASPStructure(payload)))
-    return store.fetch(UnitcellStructureRecord, sid)
-
-
-def magnetization(outputs):
-    outcar = outputs.outcar
-    noncollinear = outcar.parameters.get("LNONCOLLINEAR") == "T"
-    steps = outputs.oszicar["ionic_steps"] if outputs.oszicar else []
-    if noncollinear or outcar.noncollinear_magnetization or not steps:
-        return None  # a noncollinear mag= is a vector
-    if steps[-1]["mag"] is None:
-        return None
-    return float(steps[-1]["mag"])
-
-
-def ingest(store, relative, outputs):
-    """Store one calculation; return False when it did not finish."""
-    outcar = outputs.outcar
-    energies = outcar.final_energies
-    if None in (outputs.poscar, outputs.contcar, energies.energy_sigma0) or not energies.final:
-        logging.warning("skipping %s: the calculation did not finish", relative)
-        return False
-    initial = save_structure(store, outputs.poscar)
-    relaxed = save_structure(store, outputs.contcar)
-    result = VaspResult(
-        total_energy=float(energies.energy_sigma0),
-        total_magnetization=magnetization(outputs),
-        completed=outcar.completed,
-        source_path=relative,
-        structure=relaxed,
-    )
-    result = upsert(store, VaspResult, "source_path", relative, result)
-    path = Path(outcar.path)
-    url = f"{DATA_URL}/{relative}/{path.name}"
-    size, sha256 = path.stat().st_size, sha256_file(path)
-    media_type = "text/plain" if path.name == "OUTCAR" else None  # compressed: unset
-    file = FileRecord(url=url, name=path.name, size=size, media_type=media_type, sha256=sha256)
-    file = upsert(store, FileRecord, "url", url, file)
-    produced = [RunEdge("result", "records", result.id), RunEdge("outcar", "files", file.id)]
-    if relaxed.id != initial.id:  # a static run leaves the structure unchanged
-        produced.insert(0, RunEdge("relaxed_structure", "structures", relaxed.id))
-    run = Run(
-        source_id=f"{TREE}:{relative}",
-        inputs=(RunEdge("initial_structure", "structures", initial.id),),
-        outputs=tuple(produced),
-    )
-    upsert(store, Run, "source_id", run.source_id, run)
-    return True
-
-
-root = Path(TREE)
-store = SqliteStore(
-    "vasp.sqlite",
-    records=[VaspResult, Run, FileRecord],
-    entry_ids=EntryIdScheme("example", "1", type_in_base=True),
-)
-ingested = skipped = 0
-for directory in sorted({p.parent for p in root.rglob("OUTCAR*") if p.is_file()}):
-    relative = directory.relative_to(root).as_posix()
-    try:
-        with store.transaction(), VASPOutputs(directory, precision=PRECISION) as outputs:
-            if outputs.outcar is None:  # e.g. only an OUTCAR.bak
-                continue
-            stored = ingest(store, relative, outputs)
-    except ValueError as error:  # e.g. a malformed POSCAR
-        logging.warning("skipping %s: %s", relative, error)
-        stored = False
-    if stored:
-        ingested += 1
-    else:
-        skipped += 1
-store.close()
-print(f"ingested {ingested} calculations, skipped {skipped}")
+    structure = search.variable(UnitcellStructureRecord)
+    record = search.variable(DataRecord)
+    search.add(record.links.product_of == structure)
+    for row in search.results(structure=structure, record=record):
+        formula = UnitcellStructureView(row.structure).chemical_formula_reduced
+        print(formula, row.structure.id, row.record.id, row.record.name, row.record.value)
 ```
 
-A calculation is every directory with an `OUTCAR`, compressed or not. Each
-one is stored in its own transaction, so an unreadable file skips only its
-calculation. The
-`upsert` helper finds a result by `source_path`, a file by `url` and a run by
-`source_id`. It stores a new entry the first time, and afterwards a new
-revision of the same entry; an unchanged calculation adds nothing. With
-`type_in_base=True` the ids name their entry type, such as
-`example.records-1-1` and `example.structures-1-1`.
+```console
+$ python show_results.py
+Fe example-1-5 example.records-1-1 _httk_total_energy -8.31
+MgO example-1-11 example.records-1-2 _httk_total_energy -11.93
+ClNa example-1-17 example.records-1-3 _httk_total_energy -6.83
+Si example-1-23 example.records-1-4 _httk_total_energy -10.84
+```
 
+## Serve and query
+
+The database remembers what it holds, so serving it needs no record classes.
 Save this as `serve_vasp.py`:
 
 ```python
-from httk.core import FileRecord, Run
 from httk.serve.optimade import serve
 from httk.store import SqliteStore
-from vasp_records import VaspResult
 
-store = SqliteStore("vasp.sqlite", records=[VaspResult, Run, FileRecord])
+store = SqliteStore("vasp.sqlite")
 serve(store, port=8080)
 store.close()
 ```
 
-Create the tree, ingest it twice, and start the API:
-
 ```bash
-python make_example_calculations.py
-python ingest_vasp.py
-python ingest_vasp.py
 python serve_vasp.py
 ```
-
-Each ingest warns that it skips `KCl/relax` and prints
-`ingested 4 calculations, skipped 1`. The second ingest adds nothing.
-
-## Query it
 
 In another terminal:
 
 ```bash
-curl http://127.0.0.1:8080/v1/info/_httk_records
+curl http://127.0.0.1:8080/v1/info
+curl --get http://127.0.0.1:8080/v1/structures \
+  --data-urlencode 'filter=elements HAS "Na"'
+curl http://127.0.0.1:8080/v1/_httk_runs/example.runs-1-3
+curl --get http://127.0.0.1:8080/v1/_httk_runs \
+  --data-urlencode 'filter=_httk_source_id STARTS "vasp.calculation.static"'
 curl --get http://127.0.0.1:8080/v1/_httk_records \
   --data-urlencode 'include=structures'
-curl --get http://127.0.0.1:8080/v1/_httk_records \
-  --data-urlencode 'filter=_httk_total_energy < -10'
-curl http://127.0.0.1:8080/v1/_httk_runs
-curl http://127.0.0.1:8080/v1/structures/example.structures-1-2
-curl http://127.0.0.1:8080/v1/files
 ```
 
-The first request shows `_httk_total_energy` with its curated definition and
-unit `eV`, and the three `_httk_custom_*` properties. The second returns the
-four results, each with `relationships.structures`, and the relaxed structures
-in `included`. Fe's `_httk_custom_total_magnetization` is `2.214`. For the
-others it is null and therefore omitted from the default response; request it
-with `response_fields=_httk_custom_total_magnetization`. The filter returns
-the MgO and Si results, `example.records-1-2` and `example.records-1-4`. The runs list has one run per calculation, with
-`_httk_has_input` and `_httk_has_output` relationships; the static Si run has
-no relaxed structure output. Structure `example.structures-1-2`, the relaxed
-Fe cell, names its run `example.runs-1-1` under `_httk_is_output`. The files
-list has the four OUTCARs, including `OUTCAR.bz2`, with URLs under `DATA_URL`;
-the compressed file's null `media_type` is likewise omitted.
+The first request lists the entry types `structures`, `_httk_records` and
+`_httk_runs`, and the endpoints for their revisions and alternatives. The
+second returns the two NaCl structures: `example-1-20`, the POSCAR cell with
+lattice parameter 3.99, which names the NaCl run under `_httk_is_input`, and
+`example-1-17`, the CONTCAR cell with 4.02, which names it under
+`_httk_is_output` and names the energy record `example.records-1-3` under
+`_httk_has_product`. The third is that run. Its `_httk_source_id` is
+`vasp.calculation.relax:eac3f541…`, its `_httk_has_input` is `example-1-20`
+labelled `initial_structure`, and its `_httk_has_output` is `example-1-17`
+(`relaxed_structure`) and `example.records-1-3` (`total_energy`). The filter
+on `_httk_source_id` returns the one static run, `example.runs-1-4`. The last
+request returns the four energy records, each with `_httk_product_of` naming
+its structure, and the four structures in `included`.
+
+The records are served with their ids and relationships, but not yet with
+their values: the served `_httk_records` of a collected database have no
+`_httk_total_energy` property, and a filter on it is refused as an unrecognized
+property name. Read the values from the database, as `show_results.py` does.
 
 ## Re-running a calculation
 
-Suppose you re-run `NaCl/relax` and it ends at a new energy and cell. To try
-it, stop the server, change `-6.83000000` to `-6.85000000` in
-`calculations/NaCl/relax/OUTCAR` and `4.02` to `4.03` in its `CONTCAR`, then
-ingest and serve again:
+Suppose you re-run `NaCl/relax` in place and it ends at a new energy and cell.
+To try it, change `-6.83000000` to `-6.85000000` in
+`calculations/NaCl/relax/OUTCAR` and `4.02` to `4.03` in its `CONTCAR`. The
+inputs are unchanged, so it is the same calculation. Collect again; the server
+can keep running:
 
-```bash
-python ingest_vasp.py
-python serve_vasp.py
-curl http://127.0.0.1:8080/v1/_httk_records/example.records-1-3/_httk_revs
+```console
+$ httk collect calculations --into vasp.sqlite --id-base example
+...
+{"collected":4,"degraded":1,"format":"httk-workflow-collect-summary","format_version":2,"revised":1,"skipped_unreadable":0,"storage_errors":0,"unclaimed":1,"unfulfilled_roles":2}
+$ python show_results.py
+Fe example-1-5 example.records-1-1 _httk_total_energy -8.31
+MgO example-1-11 example.records-1-2 _httk_total_energy -11.93
+Si example-1-23 example.records-1-4 _httk_total_energy -10.84
+ClNa example-1-26 example.records-1-3 _httk_total_energy -6.85
+$ curl http://127.0.0.1:8080/v1/_httk_records/example.records-1-3/_httk_revs
 ```
 
-The NaCl result keeps its id `example.records-1-3` and now has
-`_httk_total_energy` `-6.85`. Its two revisions are listed under `_httk_revs`.
-The OUTCAR file gets a second revision as well. The new relaxed cell is a new
-structure, `example.structures-1-8`, and the old one stays. The run gets a
-second revision because its relaxed-structure edge changed. A run's edges name
-the result and file by their stable ids, so a re-run that changes only the
-energy revises the result and the file, not the run.
+One calculation was `revised`: NaCl's line carries `"revised":true`. Its energy
+record keeps the id `example.records-1-3` and gains a second revision, and the
+revisions request lists both, `example.records-1-3~1` with `_httk_product_of`
+`example-1-17` and `example.records-1-3~2` with `example-1-26`. The new relaxed
+cell is a new structure, `example-1-26`, and the old one stays. The run keeps
+the id `example.runs-1-3` and gains a second revision whose output is the new
+cell. A re-run that changes only the energy revises the record, but not the
+run, whose edges name the record by its id.
+
+Changing an input is different: `cp CONTCAR POSCAR` followed by a new run
+gives the directory a new identity, so it is collected as a new calculation.
+
+## Collecting more than the standard collector does
+
+A collector is a small package directory: a manifest, `httk_workflow.toml`, a
+`recognize.py` hook that claims directories and a `collect.py` hook that reads
+them. To collect more, copy the installed relaxation collector and extend it:
+
+```bash
+cp -r "$(python -c 'from httk.core.register import collector_support; print(collector_support("vasp.calculation.relax").path())')" my-vasp-relax
+```
+
+The manifest declares the collector's name, `vasp.calculation.relax`, its
+markers and priority under `[workflow.recognize]`, the input role
+`initial_structure`, and the outputs `relaxed_structure` and `total_energy`.
+Add a third output at the end of `my-vasp-relax/httk_workflow.toml`:
+
+```toml
+[workflow.outputs.total_magnetization]
+entry_type = "records"
+role = "total_magnetization"
+description = "The cell magnetization of the last ionic step in OSZICAR, in Bohr magnetons."
+product_of = "relaxed_structure"
+```
+
+and replace `my-vasp-relax/collect.py` with a version that also reads the
+magnetization, OSZICAR's `mag=` of the last ionic step:
+
+```python
+"""Collect a finished VASP relaxation, with the magnetization from OSZICAR."""
+
+import httk.core
+from httk.codes.vasp.collect import read_structure, read_total_energy
+from httk.core import DataRecord
+
+MAGNETIZATION = "https://example.org/properties/total_magnetization"
+
+
+def collect(record):
+    outputs = {
+        "initial_structure": read_structure(record.result_file("POSCAR")),
+        "relaxed_structure": read_structure(record.result_file("CONTCAR")),
+        "total_energy": read_total_energy(record.result_file("OUTCAR")),
+    }
+    steps = httk.core.load(record.result_file("OSZICAR"), raw=True)["ionic_steps"]
+    if steps and steps[-1]["mag"] is not None:  # no mag= unless spin-polarized
+        outputs["total_magnetization"] = DataRecord.from_value(
+            MAGNETIZATION, "_example_total_magnetization", float(steps[-1]["mag"])
+        )
+    return outputs
+```
+
+`record.result_file` finds a file in the calculation directory, compressed or
+not. The energy uses *httk₂*'s curated `total_energy` definition; the
+magnetization is a `DataRecord` under a definition IRI and property name of
+your own. Collect with your collector:
+
+```console
+$ httk collect calculations --into vasp.sqlite --id-base example --collector ./my-vasp-relax
+...
+{"collected":4,"degraded":1,"format":"httk-workflow-collect-summary","format_version":2,"revised":1,"skipped_unreadable":0,"storage_errors":0,"unclaimed":1,"unfulfilled_roles":5}
+$ python show_results.py
+Fe example-1-5 example.records-1-1 _httk_total_energy -8.31
+Fe example-1-5 example.records-1-5 _example_total_magnetization 2.214
+MgO example-1-11 example.records-1-2 _httk_total_energy -11.93
+Si example-1-23 example.records-1-4 _httk_total_energy -10.84
+ClNa example-1-26 example.records-1-3 _httk_total_energy -6.85
+```
+
+Your collector has the same name as the shipped one, so it replaces it for
+this sweep, and every relaxation keeps its identity and ids: the name is part
+of each calculation's key. Fe gains the magnetization record
+`example.records-1-5`, and its run `example.runs-1-1` a second revision with
+that record as a third output. NaCl and MgO print no `mag=`, so their
+`total_magnetization` role stays unfulfilled, which the summary counts but
+does not treat as a failure. Pass `--collector` on every later collect. A
+collect without it uses the shipped collector again, which stores nothing new
+for Fe: its run's older revision, without the magnetization, is not restored
+(see the limitations below). A collector with a different name would
+claim the same directories at the same priority, which stops the sweep unless
+`--prefer NAME` picks one. It would also give the calculations new keys, so
+they would get new runs.
 
 ## Limitations and next steps
 
-- Re-ingesting only adds. Deleted or renamed directories are not retracted,
-  changing `DATA_URL` turns the files into new entries, renaming `TREE`
-  likewise re-identifies the runs (their `source_id` contains it), and
-  reverting a calculation to the exact content of an older revision leaves the newer
-  revision as the latest. Rebuild the database from scratch in those cases.
-  Calculations run through *httk-workflow* get stable ids from
-  `httk workflow collect --into` and its id ledger (see
-  [campaigns](../campaigns.md)).
+- Re-collecting only adds. A calculation directory deleted since the last
+  collect is not retracted, and a calculation whose files return to the exact
+  content of an older revision keeps the newer revision as the latest. Rebuild
+  the database in those cases: delete `vasp.sqlite`, keep
+  `vasp.sqlite.ids.sqlite`, and collect again. Records and runs keep their ids
+  through the ledger; structures are numbered by the store as they are stored,
+  so their ids can change.
+- A calculation's identity comes from its inputs. `cp CONTCAR POSCAR` and a
+  new run make a new calculation, and two directories with the same inputs
+  but different OUTCARs stop the sweep until one is excluded.
 - The total energy is VASP's `energy(sigma->0)`. With finite-temperature
   smearing, the free energy `TOTEN` is the variational quantity. Energies are
   comparable only within one computational setup.
-- The magnetization is OSZICAR's `mag=` of the last ionic step, and `null` when
-  OSZICAR is absent or the run is not spin-polarized. Noncollinear runs are
-  recognised from OUTCAR's `LNONCOLLINEAR` flag (or its LORBIT magnetization
-  blocks) and served with `null` magnetization.
+- Files are read by their exact names, apart from a compression suffix: a
+  directory with `outcar` instead of `OUTCAR` is reported as unclaimed, "no
+  OUTCAR".
+- Molecular dynamics (`IBRION = 0`) and other `IBRION` values are not
+  collected yet, and neither are directories with only a `vasprun.xml`.
+  Directories whose names start with `.` and symlinked directories are not
+  visited.
+- The served `_httk_records` do not include the record values yet (see
+  above).
 - The readers assume VASP 5 or newer POSCAR files, with an element line.
-- Directories that only have a `vasprun.xml` are not found. Symlinked
-  directories are followed by `rglob` on Python 3.12, but not on 3.13 and
-  newer.
-- Failed or unfinished calculations are skipped and counted.
-- Next steps: add fields from the OUTCAR prologue, such as `ENCUT`
-  (`outcar.parameters`) or the functional (`outcar.xc`), and record more
-  files, such as `vasprun.xml`, the same way as the OUTCAR.
 
-See the [VASP outputs guide](https://docs.httk.org/httk-atomistic/dev/main/vasp_outputs.html)
-for everything the readers provide, and [Building a new database](new-database.md)
-and [From an existing database](existing-database.md) for the other ways to
-serve data.
+See [collecting recognized calculations](https://docs.httk.org/httk-workflow/dev/main/collecting.html#recognized-calculations)
+for the collector package format and the Python API, and
+[Building a new database](new-database.md) and
+[From an existing database](existing-database.md) for the other ways to serve
+data.

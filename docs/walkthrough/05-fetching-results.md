@@ -36,7 +36,7 @@ itself and retires the source only on acknowledgement.
 After the jobs are home, turn them into records:
 
 ```console
-httk workflow collect
+httk collect
 ```
 
 `collect` iterates the *succeeded* jobs by default; add `--state failed`
@@ -51,7 +51,7 @@ steps at collection. Land the records
 in a store with `--into` — that is page {doc}`06-database`:
 
 ```console
-httk workflow collect --into results.sqlite
+httk collect --into results.sqlite --id-base example
 ```
 
 ```{admonition} In httk v1

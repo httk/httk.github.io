@@ -7,7 +7,7 @@ Collecting into SQLite stores the relaxed structures, the total-energy
 carries its input and output edges:
 
 ```console
-httk workflow collect --into presentation.sqlite
+httk collect --into presentation.sqlite --id-base example
 ```
 
 The custom extractor detour is intentionally omitted here. The standard
