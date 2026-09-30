@@ -37,7 +37,7 @@ The convenience store owns its connection; close it explicitly or use a
 `with SqliteStore(...) as store:` block.
 
 For records intended for OPTIMADE serving, see the
-{doc}`three-file example <../serving-data>`. It uses `@entry_record` and
+{doc}`three-file example <../serving-data/new-database>`. It uses `@entry_record` and
 `DataEntryRecord` to supply the common metadata and property mappings, and
 `records=[Result]` on both creation and reopening. That explicit application
 class declaration is required each time; the database does not import it.

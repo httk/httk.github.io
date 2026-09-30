@@ -70,7 +70,8 @@ embedding interface. For a quick development server directly from Python,
 `httk.serve.optimade.serve(adapter, port=8080)` runs the same adapter.
 
 For a complete example starting from CIF files and a JSON results table, see
-[Serve data over OPTIMADE](serving-data.md). It builds a SQLite database and
+[Serve data over OPTIMADE](serving-data.md) (it also has an existing-database
+walkthrough). The from-files walkthrough builds a SQLite database and
 serves result attributes on `_httk_records`, linked to the `structures` entries.
 Its three scripts share a `@entry_record` definition derived from
 `DataEntryRecord`; `Property` annotations declare served scalar attributes and

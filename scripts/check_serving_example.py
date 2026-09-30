@@ -19,7 +19,7 @@ from httk.store.optimade import OptimadeStore
 def main() -> None:
     """Run the published three-file import and HTTP serving example."""
     page = Path(sys.argv[1]).resolve()
-    section = page.read_text(encoding="utf-8").split("Serve data over OPTIMADE", 1)[1]
+    section = page.read_text(encoding="utf-8").split("Building a new database", 1)[1]
     blocks = re.findall(r"^```(\w+)\n(.*?)^```", section, re.MULTILINE | re.DOTALL)
     python = [code for language, code in blocks if language == "python"]
     cifs = [
