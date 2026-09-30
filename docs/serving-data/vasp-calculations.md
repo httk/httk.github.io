@@ -148,25 +148,21 @@ its failure is reported when it is collected rather than hidden.
 ```console
 $ httk collect calculations --into vasp.sqlite --id-base example
 Al/md: not collected by vasp.calculation.relax: molecular dynamics (IBRION = 0) is not collected yet
-when reading VASP POSCAR/CONTCAR files it is recommended to pass a value for precision (e.g. load(path, precision=5e-4)); without it the coordinate precision is inferred from the number of digits written, which for full-precision CONTCAR output yields an unrealistically tight symmetry tolerance.
-...
 creating id ledger vasp.sqlite.ids.sqlite: entry ids for this store are now allocated through it and stay stable across rebuilds. Keep this file with the store (commit it alongside it) — deleting it re-mints every id.
-{"format":"httk-workflow-collected",...,"stored":{"entries":["example-1-5","example-1-8","example.records-1-1"],"run":"example.runs-1-1"},"unfulfilled":[],"workflow":"vasp.calculation.relax"}
+{"directory":"Fe/relax","format":"httk-workflow-collected",...,"stored":{"entries":["example-1-5","example-1-8","example.records-1-1"],"run":"example.runs-1-1"},"unfulfilled":[],"workflow":"vasp.calculation.relax"}
 ...
 {"collected":4,"degraded":1,"format":"httk-workflow-collect-summary","format_version":2,"revised":0,"skipped_unreadable":0,"storage_errors":0,"unclaimed":1,"unfulfilled_roles":2}
 ```
 
-The command prints one JSON line per claimed calculation and a summary line at
-the end; the plain-text messages go to standard error. The summary counts four calculations `collected` and stored, one
-`degraded`, one `unclaimed` (`Al/md`), and none `revised`. The degraded one is
-`KCl/relax`: its line says `"skipped":"degraded"`, nothing of it is stored, and
-its `missing_collector` gives the reason, `expected workdir file
+The command prints one JSON line per claimed calculation, named by its
+`directory`, and a summary line at the end; the plain-text messages go to
+standard error. The summary counts four calculations `collected` and stored,
+one `degraded`, one `unclaimed` (`Al/md`), and none `revised`. The degraded one
+is `KCl/relax`: its line says `"skipped":"degraded"`, nothing of it is stored,
+and its `missing_collector` gives the reason, `expected workdir file
 .../calculations/KCl/relax/CONTCAR`. Its two output roles, the relaxed
 structure and the energy, are the two `unfulfilled_roles`. Because a
-calculation was degraded, the command exits with status 1. The collectors read
-POSCAR and CONTCAR without an explicit
-coordinate precision, so the structure reader repeats its precision
-recommendation for each file it reads.
+calculation was degraded, the command exits with status 1.
 
 The first collect also creates `vasp.sqlite.ids.sqlite`, the id ledger. It
 records which id each calculation's records and run were given, and keeps
@@ -177,12 +173,14 @@ re-numbers every entry.
 Per calculation, the database now holds:
 
 - the initial structure (POSCAR) and, for a relaxation, the relaxed structure
-  (CONTCAR), as standard `structures`. They are stored by content, so
-  identical cells share one entry. The store numbers them, as in
-  `example-1-5`;
-- the total energy as a record, `example.records-1-1` for Fe, linked to the
-  structure it was computed for by a `product_of` edge. For a relaxation that
-  is the relaxed structure, for the static Si run the initial one;
+  (CONTCAR), as standard `structures`. They are read at a precision taken from
+  the OUTCAR's echo: the magnitude of `EDIFFG` for a relaxation (or of
+  `EDIFF` when `EDIFFG` is zero or absent), else of `EDIFF`; 0.001 Å when
+  neither is echoed, as here. They are stored by content, so identical cells
+  share one entry. The store numbers them, as in `example-1-5`;
+- the total energy in eV as a record, `example.records-1-1` for Fe, linked to
+  the structure it was computed for by a `product_of` edge. For a relaxation
+  that is the relaxed structure, for the static Si run the initial one;
 - one run, `example.runs-1-1` for Fe, with the initial structure as its input
   and the relaxed structure and the energy as its outputs. It is identified
   as `vasp.calculation.relax:<identity>`.
@@ -190,32 +188,6 @@ Per calculation, the database now holds:
 Collecting again adds nothing. Run the same command a second time: it prints
 the same ids and the same summary, with `"revised":0`, and the database is
 unchanged.
-
-To see the energies, save this as `show_results.py`. It joins every record to
-the structure it is a product of:
-
-```python
-from httk.atomistic import UnitcellStructureRecord, UnitcellStructureView
-from httk.core import DataRecord
-from httk.store import SqliteStore
-
-with SqliteStore("vasp.sqlite") as store:
-    search = store.searcher(only_latest=True)
-    structure = search.variable(UnitcellStructureRecord)
-    record = search.variable(DataRecord)
-    search.add(record.links.product_of == structure)
-    for row in search.results(structure=structure, record=record):
-        formula = UnitcellStructureView(row.structure).chemical_formula_reduced
-        print(formula, row.structure.id, row.record.id, row.record.name, row.record.value)
-```
-
-```console
-$ python show_results.py
-Fe example-1-5 example.records-1-1 _httk_total_energy -8.31
-MgO example-1-11 example.records-1-2 _httk_total_energy -11.93
-ClNa example-1-17 example.records-1-3 _httk_total_energy -6.83
-Si example-1-23 example.records-1-4 _httk_total_energy -10.84
-```
 
 ## Serve and query
 
@@ -239,33 +211,44 @@ In another terminal:
 
 ```bash
 curl http://127.0.0.1:8080/v1/info
+curl http://127.0.0.1:8080/v1/info/_httk_records
+curl --get http://127.0.0.1:8080/v1/_httk_records \
+  --data-urlencode 'filter=_httk_total_energy < -10'
+curl --get http://127.0.0.1:8080/v1/_httk_records \
+  --data-urlencode 'sort=_httk_total_energy' --data-urlencode 'include=structures'
 curl --get http://127.0.0.1:8080/v1/structures \
   --data-urlencode 'filter=elements HAS "Na"'
 curl http://127.0.0.1:8080/v1/_httk_runs/example.runs-1-3
 curl --get http://127.0.0.1:8080/v1/_httk_runs \
   --data-urlencode 'filter=_httk_source_id STARTS "vasp.calculation.static"'
-curl --get http://127.0.0.1:8080/v1/_httk_records \
-  --data-urlencode 'include=structures'
 ```
 
 The first request lists the entry types `structures`, `_httk_records` and
 `_httk_runs`, and the endpoints for their revisions and alternatives. The
-second returns the two NaCl structures: `example-1-20`, the POSCAR cell with
-lattice parameter 3.99, which names the NaCl run under `_httk_is_input`, and
-`example-1-17`, the CONTCAR cell with 4.02, which names it under
-`_httk_is_output` and names the energy record `example.records-1-3` under
-`_httk_has_product`. The third is that run. Its `_httk_source_id` is
-`vasp.calculation.relax:eac3f541…`, its `_httk_has_input` is `example-1-20`
-labelled `initial_structure`, and its `_httk_has_output` is `example-1-17`
-(`relaxed_structure`) and `example.records-1-3` (`total_energy`). The filter
-on `_httk_source_id` returns the one static run, `example.runs-1-4`. The last
-request returns the four energy records, each with `_httk_product_of` naming
-its structure, and the four structures in `included`.
+second describes the records. Their value property is `_httk_total_energy`,
+served under *httk₂*'s curated definition
+`https://schemas.httk.org/defs/v0.1/properties/core/total_energy`, with unit
+`eV` and `sortable: true`. The definition says what the number means: the
+total energy as produced by a calculation, whose zero is method- and
+code-specific.
 
-The records are served with their ids and relationships, but not yet with
-their values: the served `_httk_records` of a collected database have no
-`_httk_total_energy` property, and a filter on it is refused as an unrecognized
-property name. Read the values from the database, as `show_results.py` does.
+The filter returns the two records below -10 eV, `example.records-1-2`
+(-11.93, MgO) and `example.records-1-4` (-10.84, Si). The sorted request
+returns all four from the lowest energy up: `example.records-1-2` (-11.93),
+`example.records-1-4` (-10.84), `example.records-1-1` (-8.31, Fe) and
+`example.records-1-3` (-6.83, NaCl). Each names its structure under
+`_httk_product_of`, and `include=structures` puts those four structures in
+`included`.
+
+The structure filter returns the two NaCl cells: `example-1-20`, the POSCAR
+cell with lattice parameter 3.99, which names the NaCl run under
+`_httk_is_input`, and `example-1-17`, the CONTCAR cell with 4.02, which names
+it under `_httk_is_output` and names the energy record `example.records-1-3`
+under `_httk_has_product`. The next request is that run. Its `_httk_source_id`
+is `vasp.calculation.relax:eac3f541…`, its `_httk_has_input` is `example-1-20`
+labelled `initial_structure`, and its `_httk_has_output` is `example-1-17`
+(`relaxed_structure`) and `example.records-1-3` (`total_energy`). The last
+filter returns the one static run, `example.runs-1-4`.
 
 ## Re-running a calculation
 
@@ -279,22 +262,18 @@ can keep running:
 $ httk collect calculations --into vasp.sqlite --id-base example
 ...
 {"collected":4,"degraded":1,"format":"httk-workflow-collect-summary","format_version":2,"revised":1,"skipped_unreadable":0,"storage_errors":0,"unclaimed":1,"unfulfilled_roles":2}
-$ python show_results.py
-Fe example-1-5 example.records-1-1 _httk_total_energy -8.31
-MgO example-1-11 example.records-1-2 _httk_total_energy -11.93
-Si example-1-23 example.records-1-4 _httk_total_energy -10.84
-ClNa example-1-26 example.records-1-3 _httk_total_energy -6.85
 $ curl http://127.0.0.1:8080/v1/_httk_records/example.records-1-3/_httk_revs
 ```
 
-One calculation was `revised`: NaCl's line carries `"revised":true`. Its energy
-record keeps the id `example.records-1-3` and gains a second revision, and the
-revisions request lists both, `example.records-1-3~1` with `_httk_product_of`
-`example-1-17` and `example.records-1-3~2` with `example-1-26`. The new relaxed
-cell is a new structure, `example-1-26`, and the old one stays. The run keeps
-the id `example.runs-1-3` and gains a second revision whose output is the new
-cell. A re-run that changes only the energy revises the record, but not the
-run, whose edges name the record by its id.
+One calculation was `revised`: the `NaCl/relax` line carries `"revised":true`.
+Its energy record keeps the id `example.records-1-3` and gains a second
+revision, and the revisions request lists both: `example.records-1-3~1` with
+`_httk_total_energy` -6.83 and `_httk_product_of` `example-1-17`, and
+`example.records-1-3~2` with -6.85 and `example-1-26`. The new relaxed cell is
+a new structure, `example-1-26`, and the old one stays. The run keeps the id
+`example.runs-1-3` and gains a second revision whose output is the new cell. A
+re-run that changes only the energy revises the record, but not the run, whose
+edges name the record by its id.
 
 Changing an input is different: `cp CONTCAR POSCAR` followed by a new run
 gives the directory a new identity, so it is collected as a new calculation.
@@ -322,23 +301,25 @@ description = "The cell magnetization of the last ionic step in OSZICAR, in Bohr
 product_of = "relaxed_structure"
 ```
 
-and replace `my-vasp-relax/collect.py` with a version that also reads the
-magnetization, OSZICAR's `mag=` of the last ionic step:
+and replace `my-vasp-relax/collect.py` with this version. It reads the three
+standard outputs exactly as the shipped hook does, and adds the magnetization,
+OSZICAR's `mag=` of the last ionic step:
 
 ```python
 """Collect a finished VASP relaxation, with the magnetization from OSZICAR."""
 
 import httk.core
-from httk.codes.vasp.collect import read_structure, read_total_energy
+from httk.codes.vasp.collect import read_structure, read_total_energy, structure_precision
 from httk.core import DataRecord
 
 MAGNETIZATION = "https://example.org/properties/total_magnetization"
 
 
 def collect(record):
+    precision = structure_precision(record.result_file("OUTCAR").parent)
     outputs = {
-        "initial_structure": read_structure(record.result_file("POSCAR")),
-        "relaxed_structure": read_structure(record.result_file("CONTCAR")),
+        "initial_structure": read_structure(record.result_file("POSCAR"), precision=precision),
+        "relaxed_structure": read_structure(record.result_file("CONTCAR"), precision=precision),
         "total_energy": read_total_energy(record.result_file("OUTCAR")),
     }
     steps = httk.core.load(record.result_file("OSZICAR"), raw=True)["ionic_steps"]
@@ -350,20 +331,16 @@ def collect(record):
 ```
 
 `record.result_file` finds a file in the calculation directory, compressed or
-not. The energy uses *httk₂*'s curated `total_energy` definition; the
-magnetization is a `DataRecord` under a definition IRI and property name of
-your own. Collect with your collector:
+not. Keep the structures read at the same precision as the shipped collector:
+a structure read differently is different content, so every relaxation would
+get new structure entries and a revised run. The magnetization is a
+`DataRecord` under a definition IRI and property name of your own. Collect
+with your collector:
 
 ```console
 $ httk collect calculations --into vasp.sqlite --id-base example --collector ./my-vasp-relax
 ...
 {"collected":4,"degraded":1,"format":"httk-workflow-collect-summary","format_version":2,"revised":1,"skipped_unreadable":0,"storage_errors":0,"unclaimed":1,"unfulfilled_roles":5}
-$ python show_results.py
-Fe example-1-5 example.records-1-1 _httk_total_energy -8.31
-Fe example-1-5 example.records-1-5 _example_total_magnetization 2.214
-MgO example-1-11 example.records-1-2 _httk_total_energy -11.93
-Si example-1-23 example.records-1-4 _httk_total_energy -10.84
-ClNa example-1-26 example.records-1-3 _httk_total_energy -6.85
 ```
 
 Your collector has the same name as the shipped one, so it replaces it for
@@ -372,13 +349,44 @@ of each calculation's key. Fe gains the magnetization record
 `example.records-1-5`, and its run `example.runs-1-1` a second revision with
 that record as a third output. NaCl and MgO print no `mag=`, so their
 `total_magnetization` role stays unfulfilled, which the summary counts but
-does not treat as a failure. Pass `--collector` on every later collect. A
-collect without it uses the shipped collector again, which stores nothing new
-for Fe: its run's older revision, without the magnetization, is not restored
-(see the limitations below). A collector with a different name would
-claim the same directories at the same priority, which stops the sweep unless
-`--prefer NAME` picks one. It would also give the calculations new keys, so
-they would get new runs.
+does not treat as a failure.
+
+The magnetization is stored, but it is not served: unlike
+`_httk_total_energy`, its definition is not registered with *httk₂*. The
+served `/info/_httk_records` has no `_example_total_magnetization`, and the
+record itself is served with its id and relationships only; sorted by
+`_httk_total_energy`, it comes last, after the four energies. Serving it takes a
+typed record class for the property, registered for the `records` family the
+way *httk₂*'s own `TotalEnergyRecord` is; there is no shortcut for that yet.
+Read it from the database instead. Save this as `show_magnetization.py`:
+
+```python
+from httk.atomistic import UnitcellStructureRecord, UnitcellStructureView
+from httk.core import DataRecord
+from httk.store import SqliteStore
+
+with SqliteStore("vasp.sqlite") as store:
+    search = store.searcher(only_latest=True)
+    structure = search.variable(UnitcellStructureRecord)
+    record = search.variable(DataRecord)
+    search.add(record.name == "_example_total_magnetization")
+    search.add(record.links.product_of == structure)
+    for row in search.results(structure=structure, record=record):
+        formula = UnitcellStructureView(row.structure).chemical_formula_reduced
+        print(formula, row.structure.id, row.record.id, row.record.value)
+```
+
+```console
+$ python show_magnetization.py
+Fe example-1-5 example.records-1-5 2.214
+```
+
+Pass `--collector` on every later collect. A collect without it uses the
+shipped collector again, which stores nothing new for Fe: its run's older
+revision, without the magnetization, is not restored (see the limitations
+below). A collector with a different name would claim the same directories at
+the same priority, which stops the sweep unless `--prefer NAME` picks one. It
+would also give the calculations new keys, so they would get new runs.
 
 ## Limitations and next steps
 
@@ -389,6 +397,9 @@ they would get new runs.
   `vasp.sqlite.ids.sqlite`, and collect again. Records and runs keep their ids
   through the ledger; structures are numbered by the store as they are stored,
   so their ids can change.
+- A database collected by a development version from before total energies
+  were typed records is refused with "predates typed records"; rebuild it the
+  same way.
 - A calculation's identity comes from its inputs. `cp CONTCAR POSCAR` and a
   new run make a new calculation, and two directories with the same inputs
   but different OUTCARs stop the sweep until one is excluded.
@@ -402,8 +413,8 @@ they would get new runs.
   collected yet, and neither are directories with only a `vasprun.xml`.
   Directories whose names start with `.` and symlinked directories are not
   visited.
-- The served `_httk_records` do not include the record values yet (see
-  above).
+- Properties of your own are stored and readable from Python, but served only
+  once a typed record class is registered for them.
 - The readers assume VASP 5 or newer POSCAR files, with an element line.
 
 See [collecting recognized calculations](https://docs.httk.org/httk-workflow/dev/main/collecting.html#recognized-calculations)
