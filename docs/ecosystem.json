@@ -1,34 +1,34 @@
 {
   "modules": {
     "httk-analyse": {
-      "commit": "0c34b2d4e2f8cbacc647c06a488cc901717b4cf7",
+      "commit": "0986e10e73b247fb9cbbdf93e648c72de487f56a",
       "distribution_version": "2.1.0",
-      "version": "v2.1.0"
+      "version": null
     },
     "httk-atomistic": {
-      "commit": "8f93b3bb2d19d4a52478e29ddfe8736fca40920b",
+      "commit": "3de07752f9edadc6cdedca2f8ed91811d8c129d2",
       "distribution_version": "2.1.2",
-      "version": "v2.1.2"
+      "version": null
     },
     "httk-core": {
-      "commit": "5896d929fdc04762431b79b286e3f4d5f62aee0c",
+      "commit": "5aef7a57c738e801170f272408729ae58e1bec63",
       "distribution_version": "2.1.2",
-      "version": "v2.1.2"
+      "version": null
     },
     "httk-serve": {
-      "commit": "d92c078863adeaa99974584fc76ef10c66228461",
+      "commit": "8d0518b6cdac3ec367cbac95fb32c268821a7ed2",
       "distribution_version": "2.1.3",
-      "version": "v2.1.3"
+      "version": null
     },
     "httk-store": {
-      "commit": "0ba3e361ec5288b42df4be709029682e6f7244cb",
+      "commit": "19f023cc60035c886144d9ec9a09b61ee680f246",
       "distribution_version": "2.1.4",
-      "version": "v2.1.4"
+      "version": null
     },
     "httk-workflow": {
-      "commit": "e779b1c4ad810ef99cd882b7b77e48e29ba874f6",
+      "commit": "1e3c1c99316f033122183f5e6c9a6a6f4134525b",
       "distribution_version": "2.1.1",
-      "version": "v2.1.1"
+      "version": null
     }
   },
   "schema_version": 1
