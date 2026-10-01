@@ -168,6 +168,7 @@ nitpick_ignore = [
     ("py:class", "sqlalchemy.Table"),
     ("py:class", "sqlalchemy.ColumnElement"),
     ("py:class", "sqlalchemy.FromClause"),
+    ("py:class", "sqlalchemy.Select"),
     # PEP 695 method type parameters are not classes.
     ("py:class", "T"),
     # Member-module AutoAPI artifacts: these are intentionally unresolved
@@ -309,6 +310,8 @@ _PUBLIC_WORKFLOW_MODULES = frozenset(
         "httk.workflow.executors",
         "httk.workflow.shell_bridge",
         "httk.workflow.collecting",
+        "httk.workflow.calculations",
+        "httk.workflow.storing",
         "httk.workflow.provenance",
         "httk.workflow.supervision",
         "httk.workflow.transfers",
