@@ -251,6 +251,8 @@ def main() -> None:
                 assert energy["$id"] == TOTAL_ENERGY
                 assert energy["x-optimade-unit"] == "eV"
                 assert energy["sortable"] is True
+                # The other curated value property, null for every record here.
+                assert "_httk_average_total_energy" in properties
                 low = get("/v1/_httk_records", filter="_httk_total_energy < -10")
                 assert sorted(entry["id"] for entry in low["data"]) == [
                     "example.records-1-2",

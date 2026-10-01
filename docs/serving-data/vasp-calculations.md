@@ -117,12 +117,12 @@ A dry run lists how each directory would be claimed, and collects nothing:
 
 ```console
 $ httk collect calculations --dry-run
-{"also_matched":[],"collector":"vasp.calculation.relax","directory":"Al/md","duplicate_of":null,"format":"httk-collect-claim","format_version":1,"identity":null,"kind":"unclaimed","priority":null,"reason":"molecular dynamics (IBRION = 0) is not collected yet"}
-{"also_matched":[],"collector":"vasp.calculation.relax","directory":"Fe/relax","duplicate_of":null,"format":"httk-collect-claim","format_version":1,"identity":"0c110c39f7a9c5109a5adf9f6869464e2543b20ed53eb2a0856d1eada493496f","kind":"claimed","priority":10,"reason":null}
-{"also_matched":[],"collector":"vasp.calculation.relax","directory":"KCl/relax","duplicate_of":null,"format":"httk-collect-claim","format_version":1,"identity":"0b9429efca48b6ce6c331568d07e6cc7bea881939f1799935f20c2018c029fce","kind":"claimed","priority":10,"reason":null}
-{"also_matched":[],"collector":"vasp.calculation.relax","directory":"MgO/relax","duplicate_of":null,"format":"httk-collect-claim","format_version":1,"identity":"7553e5eb09258f6319bdf2a2dc7caaed7cb2ce0b4230a4e8d349588243d69d27","kind":"claimed","priority":10,"reason":null}
-{"also_matched":[],"collector":"vasp.calculation.relax","directory":"NaCl/relax","duplicate_of":null,"format":"httk-collect-claim","format_version":1,"identity":"eac3f541d30691e845b748ee105f18576cc5f5a73b63215cd175dde561799c3a","kind":"claimed","priority":10,"reason":null}
-{"also_matched":[],"collector":"vasp.calculation.static","directory":"Si/static","duplicate_of":null,"format":"httk-collect-claim","format_version":1,"identity":"578eb95dba076c0d5348ede253f883fbe88711d2115708ff13db1f3268a80501","kind":"claimed","priority":10,"reason":null}
+{"also_matched":[],"collector":"vasp.calculation.relax","consumes":[],"directory":"Al/md","duplicate_of":null,"format":"httk-collect-claim","format_version":1,"identity":null,"kind":"unclaimed","priority":null,"reason":"molecular dynamics (IBRION = 0) is not collected yet"}
+{"also_matched":[],"collector":"vasp.calculation.relax","consumes":[],"directory":"Fe/relax","duplicate_of":null,"format":"httk-collect-claim","format_version":1,"identity":"0c110c39f7a9c5109a5adf9f6869464e2543b20ed53eb2a0856d1eada493496f","kind":"claimed","priority":10,"reason":null}
+{"also_matched":[],"collector":"vasp.calculation.relax","consumes":[],"directory":"KCl/relax","duplicate_of":null,"format":"httk-collect-claim","format_version":1,"identity":"0b9429efca48b6ce6c331568d07e6cc7bea881939f1799935f20c2018c029fce","kind":"claimed","priority":10,"reason":null}
+{"also_matched":[],"collector":"vasp.calculation.relax","consumes":[],"directory":"MgO/relax","duplicate_of":null,"format":"httk-collect-claim","format_version":1,"identity":"7553e5eb09258f6319bdf2a2dc7caaed7cb2ce0b4230a4e8d349588243d69d27","kind":"claimed","priority":10,"reason":null}
+{"also_matched":[],"collector":"vasp.calculation.relax","consumes":[],"directory":"NaCl/relax","duplicate_of":null,"format":"httk-collect-claim","format_version":1,"identity":"eac3f541d30691e845b748ee105f18576cc5f5a73b63215cd175dde561799c3a","kind":"claimed","priority":10,"reason":null}
+{"also_matched":[],"collector":"vasp.calculation.static","consumes":[],"directory":"Si/static","duplicate_of":null,"format":"httk-collect-claim","format_version":1,"identity":"578eb95dba076c0d5348ede253f883fbe88711d2115708ff13db1f3268a80501","kind":"claimed","priority":10,"reason":null}
 ```
 
 Two collectors from *httk-workflow-vasp* take part: `vasp.calculation.relax`
@@ -225,12 +225,14 @@ curl --get http://127.0.0.1:8080/v1/_httk_runs \
 
 The first request lists the entry types `structures`, `_httk_records` and
 `_httk_runs`, and the endpoints for their revisions and alternatives. The
-second describes the records. Their value property is `_httk_total_energy`,
-served under *httk₂*'s curated definition
+second describes the records. They serve the values of *httk₂*'s curated
+record types: here `_httk_total_energy`, under the definition
 `https://schemas.httk.org/defs/v0.1/properties/core/total_energy`, with unit
 `eV` and `sortable: true`. The definition says what the number means: the
 total energy as produced by a calculation, whose zero is method- and
-code-specific.
+code-specific. The list also has `_httk_average_total_energy`, the curated
+time-averaged energy of a molecular dynamics run; no record here has one, so
+it is null.
 
 The filter returns the two records below -10 eV, `example.records-1-2`
 (-11.93, MgO) and `example.records-1-4` (-10.84, Si). The sorted request
