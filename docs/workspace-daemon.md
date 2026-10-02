@@ -23,7 +23,7 @@ in {doc}`hpc` remain separate execution paths.
 The broker can reach Slurm authentication, such as MUNGE. Workflow payloads do
 not receive those broker mounts. MPI adds a separate site-approved launch path
 described below. The
-[full daemon reference](https://docs.httk.org/httk-workflow/dev/main/workspace_daemon.html)
+[full daemon reference](https://docs.httk.org/httk-workflow/dev/main/details/workspace_daemon.html)
 specifies the mount restrictions, policy fields and deployment checks.
 
 ## 1. Find your client public key
@@ -243,7 +243,7 @@ client key also prevents that key from replaying recorded responses.
 ## MPI applications
 
 The operator can approve MPI launchers and the additional site policy described
-in the [MPI reference](https://docs.httk.org/httk-workflow/dev/main/workspace_daemon.html#mpi-applications).
+in the [MPI reference](https://docs.httk.org/httk-workflow/dev/main/details/workspace_daemon.html#mpi-applications).
 This includes fixed rank geometry, PMIx socket roots, devices and node-local
 control/shared-memory locations. MPI configurations run one manager worker and
 one application step at a time.

@@ -48,7 +48,7 @@ httk workflow uninstall vasp.relax
 ```
 
 The complete grammar, commit pinning, and short-name resolution rules are in
-the [workflow URI guide](https://docs.httk.org/httk-workflow/dev/main/workflow_uris.html).
+the [workflow URI guide](https://docs.httk.org/httk-workflow/dev/main/details/workflow_uris.html).
 
 ## Package essentials
 
@@ -101,7 +101,7 @@ describing its inputs and outputs, named by the manifest's
 `declaration_uri`. Collection records both on the `Run`, as
 `workflow_definition_uri` and `workflow_declaration_uri`; see the
 [provenance](https://docs.httk.org/httk-workflow/dev/main/provenance.html) and
-[declarations](https://docs.httk.org/httk-workflow/dev/main/declarations.html)
+[declarations](https://docs.httk.org/httk-workflow/dev/main/details/declarations.html)
 module documentation.
 
 ## Read next

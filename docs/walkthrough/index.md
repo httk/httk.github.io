@@ -143,7 +143,7 @@ Full migration guides:
 <https://docs.httk.org/httk-workflow/dev/main/httk_v1_migration_guide.html>,
 <https://docs.httk.org/httk-workflow/dev/main/details/httk_v1_migration_guide.html>,
 <https://docs.httk.org/httk-store/dev/main/migrating_from_v1.html>, and
-<https://docs.httk.org/httk-workflow/dev/main/v1_compatibility.html>.
+<https://docs.httk.org/httk-workflow/dev/main/details/v1_compatibility.html>.
 
 ## The lifecycle, page by page
 
