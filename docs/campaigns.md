@@ -1,5 +1,8 @@
 # Compute campaigns, small and large
 
+For a mounted remote workspace controlled through signed files, see
+{doc}`workspace-daemon` for identity keys, destination setup and manager controls.
+
 Start locally: initialize your identity and workspace, configure an executable,
 create a job, run it, and collect its result. The `vasp.relax` workflow
 package from [httk/workflows-vasp](https://github.com/httk/workflows-vasp)

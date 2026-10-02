@@ -1,5 +1,10 @@
 # High-throughput on HPC systems
 
+For jobs transported through SSHFS with signed file commands and a destination
+daemon, follow {doc}`workspace-daemon`. It covers public keys, approved manager
+configurations and confined serial/MPI execution. The commands below use the
+ordinary Slurm launcher.
+
 This is the shortest path from an installed `httk` on the cluster to 1000
 SLURM jobs. The example assumes you are logged in to `arrhenius`, that
 `my_executable` is available there, and that its command-line form is
