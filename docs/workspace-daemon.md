@@ -1,10 +1,11 @@
-# Run Slurm jobs through a mounted workspace
+# Run Slurm jobs through a mounted exchange
 
-Use the `mount-daemon` adapter when you want to transfer jobs over a mount such
-as SSHFS and control Slurm through signed files. On the cluster, an operator runs
-`httk workspace daemon`. It accepts health, start, status and cancellation
-requests. A start selects a locally approved manager configuration; clients
-cannot attach commands, Slurm options or changed manager settings to it.
+Use the `mount-daemon` adapter when you want to send jobs over a mount such as
+SSHFS and control Slurm through signed files. On the cluster, an operator runs
+`httk workspace daemon`. You mount only its exchange directory, never the
+workspace. The daemon accepts health, start, status and cancellation requests.
+A start selects an operator-approved daemon launcher; clients cannot attach
+commands, Slurm options or changed manager settings to it.
 
 This guide describes the current development implementation in *httk-workflow*.
 Check that both installations provide `httk workspace daemon --help` and
@@ -15,8 +16,8 @@ in {doc}`hpc` remain separate execution paths.
 
 | Component | Role |
 | --- | --- |
-| Client | Transfers job files, signs requests with your httk identity, verifies replies. |
-| Destination daemon | Runs inside Bubblewrap, reads requests, checks authorization and approved settings, invokes fixed Slurm operations. |
+| Client | Ejects jobs into the exchange and adopts finished ones, signs requests with your httk identity, verifies replies. |
+| Destination daemon | Runs inside Bubblewrap, reads requests, checks authorization and approved launchers, moves bundles between the exchange and the workspace, invokes fixed Slurm operations. |
 | Slurm allocation | Starts the manager inside a separate Bubblewrap sandbox before its prelude or workflow runs. |
 | Protected local state | Holds the daemon's private response key and durable request ledger. It is outside the transport export. |
 
@@ -24,7 +25,7 @@ The broker can reach Slurm authentication, such as MUNGE. Workflow payloads do
 not receive those broker mounts. MPI adds a separate site-approved launch path
 described below. The
 [full daemon reference](https://docs.httk.org/httk-workflow/dev/main/details/workspace_daemon.html)
-specifies the mount restrictions, policy fields and deployment checks.
+specifies the layout rules, launcher keys and deployment checks.
 
 ## 1. Find your client public key
 
@@ -54,130 +55,106 @@ Give the destination operator the **complete `ed25519:...` string**, including
 the prefix. `None` means no usable default key was found; finish identity setup
 before continuing. Run these commands with the same user and `HTTK_CONFIG_HOME`
 as the client commands below. Never copy a private key or seed into the workspace,
-mailboxes, policy or endpoint export.
+exchange or endpoint file.
 
 There are three separate credentials:
 
-- Your httk public key goes in the daemon policy's `authorized_keys`; your private
+- Your httk public key is given to the daemon with `--authorize`; your private
   key stays on the client and signs requests.
-- The daemon has its own response-signing key. Its public half comes in the
-  endpoint export, which you obtain from the operator through a trusted channel.
+- The daemon has its own response-signing key. Its public half is in
+  `endpoint.json` in the exchange; confirm it with the operator through a trusted
+  channel.
 - Slurm uses the site's authentication, for example MUNGE. Httk signatures
   authorize mailbox requests; they do not replace Slurm authentication.
 
-## 2. Approve a manager on the destination
+## 2. Approve a launcher on the destination
 
 Run this section on the cluster as the daemon operator. Install *httk-workflow*
 and its dependencies in a trusted location visible on compute nodes. The site
 needs Linux, Bubblewrap 0.9.0 or later with the required namespace features,
 permitted unprivileged user namespaces, and Slurm 23.11.6 or later.
 
-Choose a writable workspace, separate request/response directories and protected
-state. This example uses the following mapping; provision the parent directories
-with appropriate ownership first:
+The workspace and the exchange must be siblings in a dedicated parent that
+holds nothing else, on one filesystem and one mount that supports no-replace
+renames. Setup and startup check this. Example mapping:
 
 | Purpose | Destination path | Client mount path |
 | --- | --- | --- |
-| Workspace | `/srv/httk/example/data` | `/home/me/mounts/cluster/data` |
-| Requests | `/srv/httk/example/data.daemon-requests` | `/home/me/mounts/cluster/data.daemon-requests` |
-| Responses | `/srv/httk/example/data.daemon-responses` | `/home/me/mounts/cluster/data.daemon-responses` |
-| Private ledger | `/var/lib/httk/example` | Not exported |
-| Policy and snapshots | `/opt/httk-control/` | Not exported |
+| Dedicated parent | `/srv/httk/example` | Not exported |
+| Workspace | `/srv/httk/example/workspace` | Not mounted |
+| Exchange | `/srv/httk/example/exchange` | `/mnt/cluster/exchange` |
+| Private state | `/var/lib/httk/example` | Not exported |
+| Snapshots | `/opt/httk-control/example.snapshots` | Not exported |
 
 The private ledger needs a local filesystem with reliable locking and durability.
-Snapshots beside the policy must be visible at the same absolute path on compute
-nodes. Export only the workspace and mailboxes. Their parents must prevent the
-transport user from replacing these roots. An SSHFS mount path alone does not
-restrict the server account: enforce the restriction on the server, or use a
-separate restricted transport identity.
+Snapshots must be visible at the same absolute path on compute nodes. Export
+only the exchange. An SSHFS mount path alone does not restrict the server
+account: enforce the restriction on the server, or use a separate restricted
+transport identity.
 
-Create a workspace and a named Slurm launcher:
+Create the workspace and a global daemon launcher. Setup reads only the launcher, never workspace settings:
 
 ```console
-httk workspace init --name runs /srv/httk/example/data
-httk workflow launcher add --template slurm --global small \
+httk workspace init --name runs /srv/httk/example/workspace
+httk workflow launcher add --template daemon --global small \
   --set slurm.cpus_per_task=2 --set slurm.mem=4G \
   --set slurm.time_limit=01:00:00 --set slurm.partition=batch \
   --set manager.workers=2
 ```
 
 Replace `batch` with a partition valid at your site; add `slurm.account` if
-required. Launcher settings override workspace settings. You can create several
-named launchers and approve each. Every start launches one manager; workers
-share that manager's capacity. CPU count, memory and time must be finite and
-explicit. An approved `environment.prelude` runs inside the payload sandbox.
+required. You can create and approve several launchers; those that set the same
+`daemon.*` site key must agree. Every start launches one manager; workers share
+that manager's capacity. An `environment.prelude` runs inside the payload
+sandbox. Unset `daemon.*` keys are discovered: read-only runtime paths, the
+Slurm configuration directory, and `bwrap`, `sbatch`, `squeue` and `scancel`
+from the trusted `PATH`.
 
-Save this operator policy as `/opt/httk-control/example.json`, replacing the key
-and adjusting installation/configuration paths to your site:
-
-```json
-{
-  "format": "httk-workspace-daemon-policy",
-  "format_version": 2,
-  "workspace": "/srv/httk/example/data",
-  "state": "/var/lib/httk/example",
-  "readonly_paths": ["/usr", "/bin", "/lib", "/lib64", "/opt/httk"],
-  "broker_paths": ["/etc/slurm", "/run/munge"],
-  "slurm_conf": "/etc/slurm/slurm.conf",
-  "authorized_keys": ["ed25519:REPLACE_WITH_CLIENT_PUBLIC_KEY"],
-  "allowed_launchers": ["small"]
-}
-```
-
-`readonly_paths` must expose the trusted Python environment, *httk₂*, libraries
-and application binaries. Broker-only paths must remain separate. The initial
-operator PATH is trusted: setup finds `bwrap`, `sbatch`, `squeue` and `scancel`
-and records their paths; Python defaults to the running interpreter. Explicit
-tool paths are also supported. Slurm cluster discovery uses the environment,
-configuration or a bounded `scontrol show config` call.
-
-Initialize, check the broker, and export its public endpoint:
+Initialize, check the broker, and run it:
 
 ```console
-httk workspace daemon /srv/httk/example/data --policy /opt/httk-control/example.json --initialize
-httk workspace daemon /srv/httk/example/data --policy /opt/httk-control/example.json --check
-httk workspace daemon /srv/httk/example/data --policy /opt/httk-control/example.json --export-endpoint > endpoint.json
-httk workspace daemon /srv/httk/example/data --policy /opt/httk-control/example.json
+httk workspace daemon /srv/httk/example/workspace --initialize \
+  --exchange /srv/httk/example/exchange --launcher small \
+  --state /var/lib/httk/example --snapshots /opt/httk-control/example.snapshots \
+  --authorize ed25519:REPLACE_WITH_CLIENT_PUBLIC_KEY
+httk workspace daemon /srv/httk/example/workspace --state /var/lib/httk/example \
+  --snapshots /opt/httk-control/example.snapshots --check
+httk workspace daemon /srv/httk/example/workspace --state /var/lib/httk/example \
+  --snapshots /opt/httk-control/example.snapshots
 ```
 
-Initialization saves an immutable approval snapshot and creates the default
-sibling mailboxes. `--check` tests the real broker sandbox and scheduler clients;
-it does not submit a compute job. The final command stays in the foreground;
-a site service supervisor may manage it. Give the client `endpoint.json` through
-a trusted channel. It contains public identities, the response key, approved
-configuration digests and request lifetime, with no private key.
+Initialization creates the exchange (it must not exist or be empty), saves an
+immutable approval snapshot, prints the approved launchers and keys, and writes
+the public `exchange/endpoint.json`. `--check` tests the real broker sandbox and
+scheduler clients; it does not submit a compute job. The final command stays in
+the foreground; a site service supervisor may manage it. Non-default `--state`
+and `--snapshots` must be repeated on every later invocation.
 
-## 3. Connect the client and transfer jobs
+## 3. Connect the client and send jobs
 
-Mount the three exported directories using your site's SSHFS arrangement. The
-mount must preserve atomic rename, metadata visibility and server symlink
-semantics; validate those properties at the site. Then, in your client project:
+Mount the exchange with your site's SSHFS arrangement, without
+`follow_symlinks` and outside any local workspace. Then, in your client project:
 
 ```console
 httk workflow remote add --template mount-daemon confined
-httk workflow remote daemon configure confined --endpoint endpoint.json \
-  --mount-root /home/me/mounts/cluster/data \
-  --requests /home/me/mounts/cluster/data.daemon-requests \
-  --responses /home/me/mounts/cluster/data.daemon-responses
+httk workflow remote daemon configure confined --exchange /mnt/cluster/exchange
 httk workflow remote check confined
 ```
 
-Use `--global` with `remote add` if you want a user-wide remote instead of a
-project remote. Import validates the endpoint and mounted workspace without
-sending a command. `remote check` sends a signed health request and verifies
-the response. The daemon must be running and your public key must be authorized.
+Use `--global` with `remote add` for a user-wide remote. `configure` pins the
+identities in `endpoint.json` without sending a command; confirm them with the
+operator. `remote check` sends a signed health request. The daemon must be
+running and your public key authorized.
 
-Create jobs in a local workspace as in {doc}`campaigns`. Transfer one using its
-actual job ID and the **absolute mounted workspace path**:
+Create jobs in a local workspace as in {doc}`campaigns`, then eject one into the
+exchange inbox using its actual job ID:
 
 ```console
-httk job transfer default /home/me/mounts/cluster/data --job JOB
+httk job eject JOB /mnt/cluster/exchange/inbox
 ```
 
-For this adapter, use the typed commands below to control managers. Generic
-`confined:runs` execution and `httk workflow run --workspace confined:runs`
-are refused. Native mounted transfers do not run the uploaded workflow on the
-client.
+Managers started by the daemon adopt it. Generic `confined:runs` execution is
+refused: use the typed commands below to control managers.
 
 ## 4. Start, inspect and cancel a manager
 
@@ -191,7 +168,10 @@ httk workflow remote daemon status confined --handle MANAGER_HANDLE
 
 Replace `REQUEST_ID` with the generated 32-character lowercase hexadecimal value.
 Use the returned opaque manager handle as `MANAGER_HANDLE`. Status creates a fresh
-request ID by default, so each call asks for a fresh observation. To cancel, generate
+request ID by default, so each call asks for a fresh observation. Without
+`--handle`, `httk workflow remote daemon status confined` instead prints the
+passive `status.json` and `managers.json` from the exchange, which are
+informational. To cancel, generate
 and retain a **different** ID for that new operation:
 
 ```console
@@ -215,36 +195,42 @@ be replayed after expiry by a still-authorized signer; replay does not resubmit.
 
 Exit 2 covers refusals, busy/uncertain outcomes and unacknowledged calls. `UNKNOWN`
 status does not mean completion, and cancellation acknowledgement does not prove
-termination. Once jobs are finished or otherwise quiescent, transfer results back:
+termination. A job that has succeeded, failed or been cancelled is ejected
+automatically, about 60 seconds after it finishes, to `outbox/JOB_KEY` in the
+exchange. Fetch it:
 
 ```console
-httk job transfer /home/me/mounts/cluster/data default --state succeeded
+httk job adopt /mnt/cluster/exchange/outbox/JOB_KEY
 ```
+
+A bundle the daemon refuses appears in `outbox/rejected/`, with the reason in
+`status.json`. To resume a failed job, adopt it, fix it and eject it to the inbox
+again.
 
 ## 5. Change approvals
 
-On the destination, stop the daemon, edit the allowed launcher/workspace settings
-or authorized keys, then approve them again:
+On the destination, stop the daemon, edit the launchers, then approve them again:
 
 ```console
-httk workspace daemon /srv/httk/example/data --policy /opt/httk-control/example.json --reload
-httk workspace daemon /srv/httk/example/data --policy /opt/httk-control/example.json --export-endpoint > endpoint.json
-httk workspace daemon /srv/httk/example/data --policy /opt/httk-control/example.json
+httk workspace daemon /srv/httk/example/workspace --state /var/lib/httk/example \
+  --snapshots /opt/httk-control/example.snapshots --reload
 ```
 
-Reload refuses while the daemon is running. Changing workspace settings alone
-does not change approvals. Queued and running managers retain their original
-snapshot; new requests must match the current catalog. Re-import the export on
-clients using the same `remote daemon configure` command. Keep the previous
-export for exact retries using an old digest; a revised configuration needs a new
-operation ID. Preserve the ledger, response key and old snapshots. Removing a
-client key also prevents that key from replaying recorded responses.
+`--reload` keeps the stored launchers and keys unless `--launcher` or
+`--authorize` is given, prints the result and rewrites `endpoint.json`. It
+refuses while the daemon is running and refuses to change the fixed connection
+(paths, Slurm executables, cluster); that needs a new enrollment. Queued and
+running managers retain their original snapshot; new requests must match the
+current catalog. Clients read the catalog live from `endpoint.json`, so they
+need no reconfiguration. Preserve the ledger, response key and old snapshots.
+Removing a client key also prevents that key from replaying recorded responses.
 
 ## MPI applications
 
-The operator can approve MPI launchers and the additional site policy described
+The operator can approve MPI launchers (`slurm.mpi=pmix`) and the additional
+`daemon.mpi.*` site keys described
 in the [MPI reference](https://docs.httk.org/httk-workflow/dev/main/details/workspace_daemon.html#mpi-applications).
-This includes fixed rank geometry, PMIx socket roots, devices and node-local
+These cover fixed rank geometry, PMIx socket roots, devices and node-local
 control/shared-memory locations. MPI configurations run one manager worker and
 one application step at a time.
 

@@ -1,8 +1,8 @@
 # High-throughput on HPC systems
 
-For jobs transported through SSHFS with signed file commands and a destination
-daemon, follow {doc}`workspace-daemon`. It covers public keys, approved manager
-configurations and confined serial/MPI execution. The commands below use the
+For jobs sent through an SSHFS-mounted exchange directory with signed file
+commands and a destination daemon, follow {doc}`workspace-daemon`. It covers
+public keys, approved daemon launchers and confined serial/MPI execution. The commands below use the
 ordinary Slurm launcher.
 
 This is the shortest path from an installed `httk` on the cluster to 1000

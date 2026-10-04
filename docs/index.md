@@ -29,8 +29,8 @@ publishes its own subsite under [docs.httk.org](https://docs.httk.org); the
   example sequence translated to current APIs, including the remaining gaps.
 - **Walkthrough**: {doc}`walkthrough/index` — the calculation lifecycle end to end, with notes for users coming from httk v1.
 - **HPC**: {doc}`hpc` — run high-throughput jobs through SLURM with *httk₂*.
-- **Mounted HPC workspaces**: {doc}`workspace-daemon` — signed file requests,
-  locally approved managers and Bubblewrap execution.
+- **Mounted HPC workspaces**: {doc}`workspace-daemon` — an exchange directory,
+  signed file requests, operator-approved daemon launchers and Bubblewrap execution.
 - **Example notebooks**: {doc}`notebooks/index` — runnable tours of the core and cross-module APIs.
 ```
 

@@ -1,6 +1,6 @@
 # Compute campaigns, small and large
 
-For a mounted remote workspace controlled through signed files, see
+For a cluster workspace reached through a mounted exchange directory and signed files, see
 {doc}`workspace-daemon` for identity keys, destination setup and manager controls.
 
 Start locally: initialize your identity and workspace, configure an executable,
