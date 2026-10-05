@@ -71,7 +71,8 @@ There are three separate credentials:
 
 Run this section on the cluster as the daemon operator. Install *httk-workflow*
 and its dependencies in a trusted location visible on compute nodes. The site
-needs Linux, Bubblewrap 0.9.0 or later with the required namespace features,
+needs Linux, Bubblewrap 0.6 or later (0.8.0 or later also blocks nested user
+namespaces inside the sandbox),
 permitted unprivileged user namespaces, and Slurm 23.11.6 or later.
 
 The workspace and the exchange must be siblings in a dedicated parent that
