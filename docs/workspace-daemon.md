@@ -211,6 +211,14 @@ A bundle the daemon refuses appears in `outbox/rejected/`, with the reason in
 `status.json`. To resume a failed job, adopt it, fix it and eject it to the inbox
 again.
 
+The broker also follows each manager's Slurm job. `managers.json` shows its
+state, exit code and times, and the bundles still waiting. When a manager ends,
+its Slurm output is published as `outbox/managers/<handle>.log`
+(`httk workflow remote daemon log REMOTE --handle HANDLE`). If no manager can
+run your jobs, `httk workflow remote daemon withdraw REMOTE --request-id ID`
+returns the waiting bundles unchanged to `outbox/withdrawn/`, from where
+`httk job adopt` takes them back.
+
 ## 5. Change approvals
 
 On the destination, stop the daemon, edit the launchers, then approve them again:
