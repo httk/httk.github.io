@@ -75,8 +75,8 @@ needs Linux, Bubblewrap 0.9.0 or later with the required namespace features,
 permitted unprivileged user namespaces, and Slurm 23.11.6 or later.
 
 The workspace and the exchange must be siblings in a dedicated parent that
-holds nothing else, on one filesystem and one mount that supports no-replace
-renames. Setup and startup check this. Example mapping:
+holds nothing else, on one filesystem and one mount, so that jobs move by a
+plain rename. Setup and startup check this. Example mapping:
 
 | Purpose | Destination path | Client mount path |
 | --- | --- | --- |
