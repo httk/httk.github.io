@@ -68,7 +68,7 @@ outputs land there as before — and every `--file` input is also copied into
 that directory under its own name before the command starts (never overwriting
 a file that is already there), so a program that reads its input from the
 working directory, such as VASP reading `POSCAR`, needs no placeholder at all:
-`--from-command 'srun … vasp_std' --file POSCAR=POSCAR`. `--file` is repeatable for several inputs, as in
+`--from-command 'srun … vasp_std' --file POSCAR=POSCAR`. These examples use the generic `--from-command` path (like `httk_workflow_run`), which never adds a launch prefix, unlike the code run helpers, whose commands name only the program. `--file` is repeatable for several inputs, as in
 `--file geometry=… --file settings=…`, and the wrapper it generates is the
 same one shown under "Writing the workflow yourself", with the path
 substituted.
@@ -85,6 +85,8 @@ for d in inputs/*/; do
       --files "$d" --tag "$(basename "$d")"
 done
 ```
+
+As above, this is the generic `--from-command` path with no automatic launch prefix, so the command carries its own `srun`.
 
 `--files DIR` stages every regular file directly inside `DIR` under its own
 name, exactly as one `--file NAME=DIR/NAME` per file would: the copies live in

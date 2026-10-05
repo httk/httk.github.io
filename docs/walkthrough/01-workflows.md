@@ -29,8 +29,8 @@ hash and records that pinned URI on the job; afterward the short name
 
 `vasp.command` is an application setting resolved most-specific-first: a job's
 own `vasp.command` parameter, then `HTTK_VASP_COMMAND` in the environment, then
-the workspace setting. On a real machine you would set it to something like
-`"srun -n 32 vasp_std"`.
+the workspace setting. On a real machine you would set it to the bare program,
+such as `vasp_std`; the parallel start comes from the attempt's launch prefix.
 
 ```{admonition} In httk v1
 :class: note

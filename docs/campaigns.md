@@ -53,7 +53,7 @@ httk workflow launcher check cluster
 httk workspace settings set --key manager.launch --value cluster kappa:runs
 httk workspace settings set --key slurm.partition --value batch kappa:runs
 httk workspace settings set --key manager.workers --value 8 kappa:runs
-httk workspace settings set --key vasp.command --value "srun -n 32 vasp_std" kappa:runs
+httk workspace settings set --key vasp.command --value vasp_std kappa:runs
 httk job transfer --job JOB-ID default kappa:runs
 httk workflow precheck --workspace kappa:runs
 httk workflow run --workspace kappa:runs --count 1

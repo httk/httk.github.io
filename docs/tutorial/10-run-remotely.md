@@ -15,10 +15,11 @@ httk workflow run --workers 2
 
 `run` is the local executor here: it prepares, runs, and publishes every job,
 then exits when no work remains. On a real VASP machine, use the same flow and
-set the command to `vasp_std` or to the site launcher, for example:
+set the command to the bare program, for example (the parallel start comes
+from the attempt's launch prefix, not from the command):
 
 ```console
-httk workspace settings set --key vasp.command --value "srun -n 32 vasp_std" default
+httk workspace settings set --key vasp.command --value vasp_std default
 httk workflow run --workers 8
 ```
 
@@ -45,7 +46,7 @@ httk workspace settings set --key slurm.partition --value batch kappa:runs
 httk workspace settings set --key slurm.time_limit --value 01:00:00 kappa:runs
 httk workspace settings set --key manager.workers --value 8 kappa:runs
 httk workspace settings set --key environment.prelude --value "module load httk vasp" kappa:runs
-httk workspace settings set --key vasp.command --value "srun -n 32 vasp_std" kappa:runs
+httk workspace settings set --key vasp.command --value vasp_std kappa:runs
 
 httk job transfer \
     --job ca --job cao --job catio3 --job o --job ti --job tio default kappa:runs

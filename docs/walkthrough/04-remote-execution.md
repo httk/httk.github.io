@@ -69,7 +69,7 @@ httk workspace settings set --key slurm.time_limit --value 01:00:00 kappa:runs
 httk workspace settings set --key manager.workers --value 8 kappa:runs
 httk workspace settings set --key environment.prelude --value "module load httk vasp" kappa:runs
 httk workspace settings set --key manager.command --value httk kappa:runs
-httk workspace settings set --key vasp.command --value "srun -n 32 vasp_std" kappa:runs
+httk workspace settings set --key vasp.command --value vasp_std kappa:runs
 ```
 
 The launcher and scheduler settings live with the workspace, not with the
