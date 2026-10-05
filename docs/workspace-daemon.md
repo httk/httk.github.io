@@ -220,7 +220,7 @@ httk workspace daemon /srv/httk/example/workspace --state /var/lib/httk/example 
 `--reload` keeps the stored launchers and keys unless `--launcher` or
 `--authorize` is given, prints the result and rewrites `endpoint.json`. It
 refuses while the daemon is running and refuses to change the fixed connection
-(paths, Slurm executables, cluster); that needs a new enrollment. Queued and
+(workspace, exchange, state, snapshots, cluster); that needs a new enrollment. Queued and
 running managers retain their original snapshot; new requests must match the
 current catalog. Clients read the catalog live from `endpoint.json`, so they
 need no reconfiguration. Preserve the ledger, response key and old snapshots.
