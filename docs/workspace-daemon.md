@@ -21,8 +21,10 @@ in {doc}`hpc` remain separate execution paths.
 | Slurm allocation | Starts the manager inside a separate Bubblewrap sandbox before its prelude or workflow runs. |
 | Protected local state | Holds the daemon's private response key and durable request ledger. It is outside the transport export. |
 
-The broker can reach Slurm authentication, such as MUNGE. Workflow payloads do
-not receive those broker mounts. MPI adds a separate site-approved launch path
+The broker runs only *httk* code and the Slurm clients, so it sees the host
+filesystem read-only (Slurm, MUNGE, user database) and writes only the daemon
+directory and its state. Workflow payloads see only the approved read-only
+paths, never the host view. MPI adds a separate site-approved launch path
 described below. The
 [full daemon reference](https://docs.httk.org/httk-workflow/dev/main/details/workspace_daemon.html)
 specifies the layout rules, launcher keys and deployment checks.
@@ -107,9 +109,10 @@ Replace `batch` with a partition valid at your site; add `slurm.account` if
 required. You can create and approve several launchers; those that set the same
 `daemon.*` site key must agree. Every start launches one manager; workers share
 that manager's capacity. An `environment.prelude` runs inside the payload
-sandbox. Unset `daemon.*` keys are discovered: read-only runtime paths, the
-Slurm configuration directory, and `bwrap`, `sbatch`, `squeue` and `scancel`
-from the trusted `PATH`.
+sandbox. Unset `daemon.*` keys are discovered: the job sandboxes' read-only
+paths (`/usr`, the Python installation and where *httk* is imported from), the
+Slurm configuration, and `bwrap`, `sbatch`, `squeue` and `scancel` from the
+trusted `PATH`. `--initialize` and `--reload` end with the sandbox check.
 
 Initialize, check the broker, and run it:
 
