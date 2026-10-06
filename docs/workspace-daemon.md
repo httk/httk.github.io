@@ -63,7 +63,7 @@ exchange or endpoint file.
 
 There are three separate credentials:
 
-- Your httk public key is given to the daemon with `--authorize`; your private
+- Your httk public key is given to the daemon as an `authorized_keys` entry; your private
   key stays on the client and signs requests.
 - The daemon has its own response-signing key. Its public half is in
   `endpoint.json` in the exchange; confirm it with the operator through a trusted
@@ -117,27 +117,26 @@ read-only and their own job directory writable. Everything else they need at
 run time, such as a module tree, a conda prefix or code binaries, must be listed
 in `confine.readonly_paths`; `--add-path` extends the computed default
 (`/usr`, `/etc`, the Python installation and where *httk* is imported from)
-without restating it. `--initialize` and `--reload` end with the broker check.
+without restating it. `init` ends with the broker check.
 
 Initialize, check the broker, and run it:
 
 ```console
-httk workspace daemon /srv/httk/example/workspace --initialize \
-  --exchange /srv/httk/example/exchange --launcher small \
+httk workspace daemon init /srv/httk/example/workspace \
+  --exchange /srv/httk/example/exchange --add launchers=small \
   --state /var/lib/httk/example --snapshots /opt/httk-control/example.snapshots \
-  --authorize ed25519:REPLACE_WITH_CLIENT_PUBLIC_KEY
-httk workspace daemon /srv/httk/example/workspace --state /var/lib/httk/example \
-  --snapshots /opt/httk-control/example.snapshots --check
-httk workspace daemon /srv/httk/example/workspace --state /var/lib/httk/example \
-  --snapshots /opt/httk-control/example.snapshots
+  --add authorized_keys=ed25519:REPLACE_WITH_CLIENT_PUBLIC_KEY
+httk workspace daemon check /srv/httk/example/workspace --state /var/lib/httk/example
+httk workspace daemon run /srv/httk/example/workspace --state /var/lib/httk/example
 ```
 
-Initialization creates the exchange (it must not exist or be empty), saves an
-immutable approval snapshot, prints the approved launchers and keys, and writes
-the public `exchange/endpoint.json`. `--check` tests the real broker sandbox and
-scheduler clients; it does not submit a compute job. The final command stays in
-the foreground; a site service supervisor may manage it. Non-default `--state`
-and `--snapshots` must be repeated on every later invocation.
+`init` creates the exchange (it must not exist or be empty), saves the daemon
+configuration, prints it, and writes the public `exchange/endpoint.json`.
+`httk workspace daemon show` prints the configuration again. `check` tests the
+real broker sandbox and scheduler clients; it does not submit a compute job.
+`run` stays in the foreground; a site service supervisor may manage it. A
+non-default `--state` must be repeated on every later invocation; the
+enrollment remembers its snapshot directory.
 
 ## 3. Connect the client and send jobs
 
@@ -224,24 +223,29 @@ run your jobs, `httk workflow remote daemon withdraw REMOTE --request-id ID`
 returns the waiting bundles unchanged to `outbox/withdrawn/`, from where
 `httk job adopt` takes them back.
 
-## 5. Change approvals
+## 5. Change the configuration
 
-On the destination, stop the daemon, edit the launchers, then approve them again.
-Edits to a launcher take effect only after this reload; submissions use the
-frozen approved settings:
+On the destination, edit a launcher with `httk workflow launcher configure`,
+or the daemon configuration (launchers, authorized keys, Slurm clients,
+`force` for resources above the sanity limits) with
+`httk workspace daemon configure`, then restart the daemon:
 
 ```console
-httk workspace daemon /srv/httk/example/workspace --state /var/lib/httk/example \
-  --snapshots /opt/httk-control/example.snapshots --reload
+httk workspace daemon configure /srv/httk/example/workspace \
+  --state /var/lib/httk/example --add launchers=large \
+  --add authorized_keys=ed25519:ANOTHER_CLIENT_PUBLIC_KEY
+httk workspace daemon run /srv/httk/example/workspace --state /var/lib/httk/example
 ```
 
-`--reload` keeps the stored launchers and keys unless `--launcher` or
-`--authorize` is given, prints the result and rewrites `endpoint.json`. It
-refuses while the daemon is running and refuses to change the fixed connection
-(workspace, exchange, state, snapshots, cluster); that needs a new enrollment. Queued and
-running managers retain their original snapshot; new requests must match the
-current catalog. Clients read the catalog live from `endpoint.json`, so they
-need no reconfiguration. Preserve the ledger, response key and old snapshots.
+`configure` validates the result before saving it. Every `check` and `run`
+reads the listed launchers and the configuration again, and when they changed,
+activates them and rewrites `endpoint.json`; a running daemon keeps its
+configuration until it is restarted. The same restart applies an *httk*
+upgrade. The workspace, exchange, state and snapshot directories and the
+cluster are fixed; changing them needs a new enrollment. Queued and running
+managers retain their original snapshot; new requests must match the current
+catalog. Clients read the catalog live from `endpoint.json`, so they need no
+reconfiguration. Preserve the ledger, response key and old snapshots.
 Removing a client key also prevents that key from replaying recorded responses.
 
 ## Parallel launches
@@ -263,7 +267,7 @@ $HTTK_WORKFLOW_LAUNCH ./program input.dat
 Ranks use the host network and share a private `/dev/shm` per node and launch.
 MPI tuning variables set in the attempt do not reach the ranks; the operator
 sets them as `confine.environment.NAME`. Each launch style (the built-in `srun`
-prefix with PMIx, Open MPI `mpirun`, `mpprun`, Intel MPI) needs its own site
+prefix with the site's default MPI plugin, Open MPI `mpirun`, `mpprun`, Intel MPI) needs its own site
 acceptance: real multi-node communication, shared memory, filesystem and
 process isolation, dynamic spawn, nested scheduler access, and cancellation and
 cleanup. A generic `MPI_ERR_SPAWN` alone does not establish a containment
