@@ -267,7 +267,7 @@ $HTTK_WORKFLOW_LAUNCH ./program input.dat
 Ranks use the host network and share a private `/dev/shm` per node and launch.
 MPI tuning variables set in the attempt do not reach the ranks; the operator
 sets them as `confine.environment.NAME`. Each launch style (the built-in `srun`
-prefix with the site's default MPI plugin, Open MPI `mpirun`, `mpprun`, Intel MPI) needs its own site
+prefix with the site's default MPI plugin, `srun --mpi=pmi2` for Intel MPI via `manager.launch_mpi=pmi2`, Open MPI `mpirun`, `mpprun`, Intel MPI hydra) needs its own site
 acceptance: real multi-node communication, shared memory, filesystem and
 process isolation, dynamic spawn, nested scheduler access, and cancellation and
 cleanup. A generic `MPI_ERR_SPAWN` alone does not establish a containment
@@ -275,3 +275,8 @@ boundary. The
 [parallel launches reference](https://docs.httk.org/httk-workflow/dev/main/details/workspace_daemon.html#parallel-launches)
 describes the rank sandboxes and includes the site probe; local tests do not
 establish security on every cluster.
+
+Intel MPI binaries run with `--set manager.launch_mpi=pmi2` on the launcher.
+The rank helper then relays the PMI-1 traffic to Slurm and refuses
+`MPI_Comm_spawn`; see
+[PMI-2 launches](https://docs.httk.org/httk-workflow/dev/main/details/workspace_daemon.html#pmi-2-launches-intel-mpi).
