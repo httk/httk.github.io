@@ -278,5 +278,6 @@ establish security on every cluster.
 
 Intel MPI binaries run with `--set manager.launch_mpi=pmi2` on the launcher.
 The rank helper then relays the PMI-1 traffic to Slurm and refuses
-`MPI_Comm_spawn`; see
+`MPI_Comm_spawn`. Spawn blocking is the launcher setting
+`manager.confine.block_mpi_spawn` (default `on`); see
 [PMI-2 launches](https://docs.httk.org/httk-workflow/dev/main/details/workspace_daemon.html#pmi-2-launches-intel-mpi).
