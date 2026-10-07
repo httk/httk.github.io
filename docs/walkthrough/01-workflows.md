@@ -16,7 +16,7 @@ only a POSCAR and a `vasp.command` setting.
 
 ```console
 $ httk project init --name quickstart .
-$ httk workspace init --name default .
+$ httk workspace init --name default workspace
 $ httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' \
       --input structure=POSCAR --tag silicon
 $ httk workspace settings set --key vasp.command --value "$PWD/examples/mock_vasp.py" default

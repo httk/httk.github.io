@@ -1,11 +1,14 @@
 # Run Slurm jobs through a mounted exchange
 
 Use the `mount-daemon` adapter when you want to send jobs over a mount such as
-SSHFS and control Slurm through signed files. On the cluster, an operator runs
-`httk workspace daemon`. You mount only its exchange directory, never the
-workspace. The daemon accepts health, start, status and cancellation requests.
-A start selects an operator-approved Slurm launcher; clients cannot attach
-commands, Slurm options or changed manager settings to it.
+SSHFS and control Slurm through signed files. The workspace on the cluster has
+an **exchange** directory, `WORKSPACE/exchange/`. You mount only that, never
+the workspace. The workspace's own managers serve it: they adopt the jobs you
+drop into `inbox` and return finished ones to `outbox`. An operator also runs
+`httk workspace daemon`, a small broker that starts, queries and cancels
+managers on signed requests. A start selects an operator-approved Slurm
+launcher; clients cannot attach commands, Slurm options or changed manager
+settings to it. Jobs keep running whether or not the daemon is running.
 
 This guide describes the current development implementation in *httk-workflow*.
 Check that both installations provide `httk workspace daemon --help` and
@@ -17,9 +20,9 @@ in {doc}`hpc` remain separate execution paths.
 | Component | Role |
 | --- | --- |
 | Client | Ejects jobs into the exchange and adopts finished ones, signs requests with your httk identity, verifies replies. |
-| Destination daemon | Runs inside Bubblewrap, reads requests, checks authorization and approved launchers, moves bundles between the exchange and the workspace, invokes fixed Slurm operations. |
-| Slurm allocation | Runs the trusted manager, unconfined, as the operator. The manager starts every job attempt in its own Bubblewrap sandbox. |
-| Protected local state | Holds the daemon's private response key and durable request ledger. It is outside the transport export. |
+| Slurm allocation | Runs the trusted manager, unconfined, as the workspace owner. The manager serves the exchange (adopts from `inbox`, returns finished jobs to `outbox`) and starts every job attempt in its own Bubblewrap sandbox. |
+| Destination daemon | Runs inside Bubblewrap, reads signed requests, checks authorization and approved launchers, invokes fixed Slurm operations to start, query and cancel managers. |
+| Protected local state | Holds the daemon's private response key and durable request ledger. It is outside the workspace and the exchange. |
 
 The remote host, the installation, the operator's launchers and the workspace
 settings are trusted. The manager is trusted too and runs unconfined. Each job
@@ -27,9 +30,9 @@ attempt, and each rank of a parallel launch, is confined: it can write only its
 own job directory, it can read the workspace, and it has no scheduler
 authority. The broker runs only *httk* code and the Slurm clients, so it sees
 the host filesystem read-only (Slurm, MUNGE, user database) and writes only the
-daemon directory and its state. The
+workspace's `exchange/` and its state. The
 [full daemon reference](https://docs.httk.org/httk-workflow/dev/main/details/workspace_daemon.html)
-specifies the layout rules, confinement settings and deployment checks.
+specifies the layout, confinement settings and deployment checks.
 
 ## 1. Find your client public key
 
@@ -58,15 +61,15 @@ python -c 'from httk.core.identity import identity_public_key; print(identity_pu
 Give the destination operator the **complete `ed25519:...` string**, including
 the prefix. `None` means no usable default key was found; finish identity setup
 before continuing. Run these commands with the same user and `HTTK_CONFIG_HOME`
-as the client commands below. Never copy a private key or seed into the workspace,
-exchange or endpoint file.
+as the client commands below. Never copy a private key or seed into the workspace
+or exchange.
 
 There are three separate credentials:
 
 - Your httk public key is given to the daemon as an `authorized_keys` entry; your private
   key stays on the client and signs requests.
 - The daemon has its own response-signing key. Its public half is in
-  `endpoint.json` in the exchange; confirm it with the operator through a trusted
+  `daemon.json` in the exchange; confirm it with the operator through a trusted
   channel.
 - Slurm uses the site's authentication, for example MUNGE. Httk signatures
   authorize mailbox requests; they do not replace Slurm authentication.
@@ -79,23 +82,22 @@ needs Linux, Bubblewrap 0.6 or later (0.8.0 or later also blocks nested user
 namespaces inside the sandbox),
 permitted unprivileged user namespaces, and Slurm 23.11.6 or later.
 
-The workspace and the exchange must be siblings in a dedicated parent that
-holds nothing else, on one filesystem and one mount, so that jobs move by a
-plain rename. Setup and startup check this. Example mapping:
+There is no special layout: the exchange is the `exchange/` directory of the
+workspace. Example mapping:
 
 | Purpose | Destination path | Client mount path |
 | --- | --- | --- |
-| Dedicated parent | `/srv/httk/example` | Not exported |
 | Workspace | `/srv/httk/example/workspace` | Not mounted |
-| Exchange | `/srv/httk/example/exchange` | `/mnt/cluster/exchange` |
+| Exchange | `/srv/httk/example/workspace/exchange` | `/mnt/cluster/exchange` |
 | Private state | `/var/lib/httk/example` | Not exported |
 | Snapshots | `/opt/httk-control/example.snapshots` | Not exported |
 
-The private ledger needs a local filesystem with reliable locking and durability.
-Snapshots must be visible at the same absolute path on compute nodes. Export
-only the exchange. An SSHFS mount path alone does not restrict the server
-account: enforce the restriction on the server, or use a separate restricted
-transport identity.
+State and snapshots must lie outside the workspace. The daemon's ledger works on
+any filesystem with POSIX rename and link semantics. Snapshots must be visible
+at the same absolute path on compute nodes. Export only the exchange. The
+exchange writer must be the workspace owner's account (a separate transport UID
+is unsupported); an SSHFS mount path alone does not restrict that account, so
+restricting its SFTP access is a site matter.
 
 Create the workspace and an ordinary global `slurm` launcher that sets
 `manager.confine=bwrap`. Setup reads only the launcher, never workspace
@@ -123,20 +125,22 @@ Initialize, check the broker, and run it:
 
 ```console
 httk workspace daemon init /srv/httk/example/workspace \
-  --exchange /srv/httk/example/exchange --add launchers=small \
+  --add launchers=small \
   --state /var/lib/httk/example --snapshots /opt/httk-control/example.snapshots \
   --add authorized_keys=ed25519:REPLACE_WITH_CLIENT_PUBLIC_KEY
 httk workspace daemon check /srv/httk/example/workspace --state /var/lib/httk/example
 httk workspace daemon run /srv/httk/example/workspace --state /var/lib/httk/example
 ```
 
-`init` creates the exchange (it must not exist or be empty), saves the daemon
-configuration, prints it, and writes the public `exchange/endpoint.json`.
-`httk workspace daemon show` prints the configuration again. `check` tests the
-real broker sandbox and scheduler clients; it does not submit a compute job.
-`run` stays in the foreground; a site service supervisor may manage it. A
-non-default `--state` must be repeated on every later invocation; the
-enrollment remembers its snapshot directory.
+`init` enables the workspace's exchange extension if needed (also available as
+`httk workspace exchange enable`), saves the daemon configuration, prints it,
+and writes the public `exchange/daemon.json`. On a workspace with the exchange
+extension enabled, every manager must confine its attempts
+(`manager.confine=bwrap`). `httk workspace daemon show` prints the
+configuration again. `check` tests the real broker sandbox and scheduler
+clients; it does not submit a compute job. `run` stays in the foreground; a
+site service supervisor may manage it. A non-default `--state` must be repeated
+on every later invocation; the enrollment remembers its snapshot directory.
 
 ## 3. Connect the client and send jobs
 
@@ -150,9 +154,12 @@ httk workflow remote check confined
 ```
 
 Use `--global` with `remote add` for a user-wide remote. `configure` pins the
-identities in `endpoint.json` without sending a command; confirm them with the
-operator. `remote check` sends a signed health request. The daemon must be
-running and your public key authorized.
+workspace from `exchange.json` and, when `daemon.json` exists, the daemon
+identities, without sending a command; confirm them with the operator. Without
+`daemon.json` only the workspace is pinned: sending and fetching jobs and
+reading status work, signed requests do not. `remote check` reads
+`exchange.json` and, with the daemon pinned, sends a signed health request. The
+daemon must be running and your public key authorized for that.
 
 Create jobs in a local workspace as in {doc}`campaigns`, then eject one into the
 exchange inbox using its actual job ID:
@@ -161,8 +168,10 @@ exchange inbox using its actual job ID:
 httk job eject JOB /mnt/cluster/exchange/inbox
 ```
 
-Managers started by the daemon adopt it. Generic `confined:runs` execution is
-refused: use the typed commands below to control managers.
+The job is exported by a local atomic ejection and then copied into the mount
+(`--resume` continues an interrupted copy). Any unrestricted confined manager (no `--placement-prefix` or pool restriction) of the
+workspace adopts it. Generic `confined:runs` execution is refused: use the
+typed commands below to control managers.
 
 ## 4. Start, inspect and cancel a manager
 
@@ -203,25 +212,27 @@ be replayed after expiry by a still-authorized signer; replay does not resubmit.
 
 Exit 2 covers refusals, busy/uncertain outcomes and unacknowledged calls. `UNKNOWN`
 status does not mean completion, and cancellation acknowledgement does not prove
-termination. A job that has succeeded, failed or been cancelled is ejected
-automatically, about 60 seconds after it finishes, to `outbox/JOB_KEY` in the
-exchange. Fetch it:
+termination. A job that arrived through the exchange and has succeeded, failed
+or been cancelled is returned by its manager about 60 seconds after it
+finishes, to `outbox/JOB_KEY` in the exchange. Fetch it (copied, verified, and
+the source removed):
 
 ```console
 httk job adopt /mnt/cluster/exchange/outbox/JOB_KEY
 ```
 
-A bundle the daemon refuses appears in `outbox/rejected/`, with the reason in
-`status.json`. To resume a failed job, adopt it, fix it and eject it to the inbox
-again.
+A bundle a manager refuses appears in `outbox/rejected/<unique>/`, as the
+bundle and a `reason.json` holding the reason (eject errors go to the manager
+log). To resume a
+failed job, adopt it, fix it and eject it to the inbox again.
 
 The broker also follows each manager's Slurm job. `managers.json` shows its
-state, exit code and times, and the bundles still waiting. When a manager ends,
-its Slurm output is published as `outbox/managers/<handle>.log`
-(`httk workflow remote daemon log REMOTE --handle HANDLE`). If no manager can
-run your jobs, `httk workflow remote daemon withdraw REMOTE --request-id ID`
-returns the waiting bundles unchanged to `outbox/withdrawn/`, from where
-`httk job adopt` takes them back.
+state, exit code and times. When a manager ends, its Slurm output is published
+as `managers/<handle>.log` (`httk workflow remote daemon log REMOTE --handle
+HANDLE`). If no manager can run your jobs, take a waiting bundle back with
+`httk workflow remote daemon take-back REMOTE NAME [DESTINATION]`: a client-only
+rename to a dot name, copy out and remove. If the name is gone, a manager took
+it; cancel the job instead.
 
 ## 5. Change the configuration
 
@@ -239,14 +250,17 @@ httk workspace daemon run /srv/httk/example/workspace --state /var/lib/httk/exam
 
 `configure` validates the result before saving it. Every `check` and `run`
 reads the listed launchers and the configuration again, and when they changed,
-activates them and rewrites `endpoint.json`; a running daemon keeps its
-configuration until it is restarted. The same restart applies an *httk*
-upgrade. The workspace, exchange, state and snapshot directories and the
-cluster are fixed; changing them needs a new enrollment. Queued and running
-managers retain their original snapshot; new requests must match the current
-catalog. Clients read the catalog live from `endpoint.json`, so they need no
-reconfiguration. Preserve the ledger, response key and old snapshots.
-Removing a client key also prevents that key from replaying recorded responses.
+activates them and rewrites `daemon.json`. A running daemon is not blocked:
+running instances exit at their next admission when the active configuration
+changed, and a supervisor restarts them. Any number of daemon instances may
+run. The same restart applies an *httk* upgrade. The workspace, state and
+snapshot directories and the cluster are fixed; changing them needs a new
+enrollment (an enrollment made with the earlier SQLite ledger must be
+initialized again). Queued and running managers retain their original snapshot;
+new requests must match the current catalog. Clients read the catalog live from
+`daemon.json`, so they need no reconfiguration. Preserve the ledger, response
+key and old snapshots. Removing a client key also prevents that key from
+replaying recorded responses.
 
 ## Parallel launches
 

@@ -9,7 +9,7 @@ Commands discover the nearest anchor by walking up from the current directory.
 Create one anchor once for the effort; it is not a per-run directory.
 
 A workspace is the machine-owned working area where workflow runs happen. It
-contains the workspace UUID, job payloads, state markers, journals, and runner
+contains the workspace UUID, job payloads (under `jobs/`), state markers, journals, and runner
 files. A workspace is single-user: managers claim jobs whose marker, payload,
 and `job.json` belong to the manager's account. The plain workspace name is
 only a command-line lookup name in the owning machine's registry; a remote
@@ -25,11 +25,13 @@ imports it into the destination workspace.
 ## Initialize the project and its first workspace
 
 The core project command creates the anchor. The workflow command then creates
-and registers the first local workspace at the project root:
+and registers the first local workspace in its own `workspace/` directory inside the
+project, recorded as the project default (`workspace init` refuses a non-empty
+directory):
 
 ```console
 httk project init --name tutorial .
-httk workspace init --name default .
+httk workspace init --name default workspace
 httk workspace settings set --key vasp.command --value vasp_std default
 httk workspace settings set --key vasp.pseudo_library --value /path/to/potpaw_PBE default
 ```

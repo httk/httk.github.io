@@ -24,14 +24,16 @@ cluster. The repeatable `--setting KEY=VALUE` options seed application
 settings while the workspace is created.
 
 ```console
-mkdir ~/my_bulk_runs && cd ~/my_bulk_runs
+cd ~
 httk workflow launcher add --template slurm --global arrhenius \
     --set slurm.account=<account> --set slurm.partition=<partition> \
     --set slurm.time_limit=24:00:00 --set slurm.nodes=1 \
     --set slurm.ntasks=10 --set slurm.cpus_per_task=1
 httk workspace init --name my_bulk_runs \
     --setting manager.launch=arrhenius --setting manager.workers=1 \
-    --setting environment.prelude="module load my_stack" .     # prelude only if needed
+    --setting environment.prelude="module load my_stack" \
+    ~/my_bulk_runs     # prelude only if needed; the directory must be absent or empty
+cd ~/my_bulk_runs
 ```
 
 ## Create the jobs
@@ -116,7 +118,7 @@ allocation; it is 1 here because each `my_executable` uses all 10 CPUs.
 once on the workspace; command-line options override those settings for one
 run.
 
-Outputs are stored in `jobs/n<N>--<uuid>/run/`, including anything that
+Outputs are stored in `jobs/n<N>--<uuid>/run/` (relative to the workspace root; jobs created with a `placement` live under `jobs/<placement>/`), including anything that
 `my_executable` writes there. Its console output is in
 `jobs/n<N>--<uuid>/logs/stdio.out`, with attempt markers.
 
