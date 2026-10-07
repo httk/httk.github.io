@@ -209,6 +209,10 @@ Requests include signed timestamps, with **130 minutes of allowed clock skew**
 on each side. Default lifetime is one hour, so first execution can fall between
 creation minus 130 minutes and expiry plus 130 minutes. Completed responses can
 be replayed after expiry by a still-authorized signer; replay does not resubmit.
+Busy, capacity, conflicting-request, wrong-workspace and wrong-enrollment
+refusals are not recorded, so a retry of those is decided afresh. The file-level rules of the
+exchange, the request/response mailbox and the confined launch files are in the
+[filesystem protocol](https://docs.httk.org/httk-workflow/dev/main/details/workflow_filesystem_api.html#daemon-mailbox).
 
 Exit 2 covers refusals, busy/uncertain outcomes and unacknowledged calls. `UNKNOWN`
 status does not mean completion, and cancellation acknowledgement does not prove
