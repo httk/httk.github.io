@@ -12,7 +12,7 @@ settings to it. Jobs keep running whether or not the daemon is running.
 
 This guide describes the current development implementation in *httk-workflow*.
 Check that both installations provide `httk workspace daemon --help` and
-`httk workflow remote daemon --help`. The ordinary SSH remote and Slurm launcher
+`httk remote daemon --help`. The ordinary SSH remote and Slurm launcher
 in {doc}`hpc` remain separate execution paths.
 
 ## What runs where
@@ -105,11 +105,11 @@ settings:
 
 ```console
 httk workspace init --name runs /srv/httk/example/workspace
-httk workflow launcher add --template slurm --global small \
+httk launcher add --template slurm --global small \
   --set manager.confine=bwrap --set slurm.cpus_per_task=2 --set slurm.mem=4G \
   --set slurm.time_limit=01:00:00 --set slurm.partition=batch \
   --set manager.workers=2
-httk workflow launcher configure --add-path confine.readonly_paths=/software small
+httk launcher configure --add-path confine.readonly_paths=/software small
 ```
 
 Replace `batch` with a partition valid at your site; add `slurm.account` if
@@ -148,9 +148,9 @@ Mount the exchange with your site's SSHFS arrangement, without
 `follow_symlinks` and outside any local workspace. Then, in your client project:
 
 ```console
-httk workflow remote add --template mount-daemon confined
-httk workflow remote daemon configure confined --exchange /mnt/cluster/exchange
-httk workflow remote check confined
+httk remote add --template mount-daemon confined
+httk remote daemon configure confined --exchange /mnt/cluster/exchange
+httk remote check confined
 ```
 
 Use `--global` with `remote add` for a user-wide remote. `configure` pins the
@@ -179,21 +179,21 @@ Generate a request ID once for a new operation and retain it:
 
 ```console
 python -c 'import secrets; print(secrets.token_hex(16))'
-httk workflow remote daemon start confined --configuration small --request-id REQUEST_ID
-httk workflow remote daemon status confined --handle MANAGER_HANDLE
+httk remote daemon start confined --configuration small --request-id REQUEST_ID
+httk remote daemon status confined --handle MANAGER_HANDLE
 ```
 
 Replace `REQUEST_ID` with the generated 32-character lowercase hexadecimal value.
 Use the returned opaque manager handle as `MANAGER_HANDLE`. Status creates a fresh
 request ID by default, so each call asks for a fresh observation. Without
-`--handle`, `httk workflow remote daemon status confined` instead prints the
+`--handle`, `httk remote daemon status confined` instead prints the
 passive `status.json` and `managers.json` from the exchange, which are
 informational. To cancel, generate
 and retain a **different** ID for that new operation:
 
 ```console
 python -c 'import secrets; print(secrets.token_hex(16))'
-httk workflow remote daemon cancel confined --handle MANAGER_HANDLE --request-id CANCEL_REQUEST_ID
+httk remote daemon cancel confined --handle MANAGER_HANDLE --request-id CANCEL_REQUEST_ID
 ```
 
 Each call writes its request ID to stderr and a verified JSON response to stdout.
@@ -228,15 +228,15 @@ failed job, adopt it, fix it and eject it to the inbox again.
 
 The broker also follows each manager's Slurm job. `managers.json` shows its
 state, exit code and times. When a manager ends, its Slurm output is published
-as `managers/<handle>.log` (`httk workflow remote daemon log REMOTE --handle
+as `managers/<handle>.log` (`httk remote daemon log REMOTE --handle
 HANDLE`). If no manager can run your jobs, take a waiting bundle back with
-`httk workflow remote daemon take-back REMOTE NAME [DESTINATION]`: a client-only
+`httk remote daemon take-back REMOTE NAME [DESTINATION]`: a client-only
 rename to a dot name, copy out and remove. If the name is gone, a manager took
 it; cancel the job instead.
 
 ## 5. Change the configuration
 
-On the destination, edit a launcher with `httk workflow launcher configure`,
+On the destination, edit a launcher with `httk launcher configure`,
 or the daemon configuration (launchers, authorized keys, Slurm clients,
 `force` for resources above the sanity limits) with
 `httk workspace daemon configure`, then restart the daemon:

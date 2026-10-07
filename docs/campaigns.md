@@ -42,14 +42,14 @@ that workspace's launcher and scheduler settings, then transfer jobs and run
 the workspace there:
 
 ```console
-httk workflow remote add --template ssh kappa
-httk workflow remote configure \
+httk remote add --template ssh kappa
+httk remote configure \
     --set host=kappa.example.org --set username=rar \
     --set check_connectivity=yes kappa
-httk workflow remote check kappa
+httk remote check kappa
 httk workspace init kappa:/scratch/rar/httk/runs
-httk workflow launcher add --template slurm --global cluster
-httk workflow launcher check cluster
+httk launcher add --template slurm --global cluster
+httk launcher check cluster
 httk workspace settings set --key manager.launch --value cluster kappa:runs
 httk workspace settings set --key slurm.partition --value batch kappa:runs
 httk workspace settings set --key manager.workers --value 8 kappa:runs
@@ -74,7 +74,7 @@ apply there. Put that setup in the remote's `prelude` instead of
 sends, including the probe `remote check` uses:
 
 ```console
-httk workflow remote configure --set prelude='module load Python/3.13.5-bundle
+httk remote configure --set prelude='module load Python/3.13.5-bundle
 source ~/venv/bin/activate' kappa
 ```
 

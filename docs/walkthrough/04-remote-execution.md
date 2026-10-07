@@ -12,10 +12,10 @@ httk-workflow`), then define and check the SSH remote. A remote only describes
 how to reach a machine; it is not the manager launcher:
 
 ```console
-httk workflow remote add --template ssh kappa
-httk workflow remote configure \
+httk remote add --template ssh kappa
+httk remote configure \
     --set host=kappa.example.org --set username=rar kappa
-httk workflow remote check kappa
+httk remote check kappa
 ```
 
 `remote check` verifies that `httk` answers over the adapter's
@@ -36,7 +36,7 @@ bootstraps the shell so `httk` can run at all, while `environment.prelude` is
 applied later by the manager once it is already running on kappa.
 
 ```console
-httk workflow remote configure --set prelude='module load Python/3.13.5-bundle
+httk remote configure --set prelude='module load Python/3.13.5-bundle
 source ~/venv/bin/activate' kappa
 ```
 
@@ -47,7 +47,7 @@ source ~/venv/bin/activate' kappa
 `ht.project/computers/kappa/` and ran an interactive `make_config`, then
 `httk-computer-install kappa` ran the template's `install` script *on the
 cluster*. *httk₂* never installs software remotely: `remote check` only
-verifies. An old computer bundle can be mapped with `httk workflow remote
+verifies. An old computer bundle can be mapped with `httk remote
 import-v1`, which reads its assignment-only `config` — the legacy shell code
 (`push`, `pull`, `install`, `command`) is never executed.
 ```
@@ -60,8 +60,8 @@ scheduler settings on the workspace itself:
 
 ```console
 httk workspace init kappa:/scratch/rar/httk/runs
-httk workflow launcher add --template slurm --global cluster
-httk workflow launcher check cluster
+httk launcher add --template slurm --global cluster
+httk launcher check cluster
 httk workspace settings set --key manager.launch --value cluster kappa:runs
 httk workspace settings set --key manager.count --value 1 kappa:runs
 httk workspace settings set --key slurm.partition --value batch kappa:runs

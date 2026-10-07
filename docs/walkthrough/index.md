@@ -84,7 +84,7 @@ per-queue `config.<queue>` holding the scheduler details.
 ```
 
 *httk₂* models the same machines as remotes. You add, configure, and verify one
-with `httk workflow remote add`, `remote configure`, and `remote check`; a
+with `httk remote add`, `remote configure`, and `remote check`; a
 workspace (`kappa:runs`) owns its launcher and scheduler configuration. See
 {doc}`04-remote-execution`.
 
@@ -132,10 +132,10 @@ Some things have no v1 equivalent:
 Several import verbs read legacy assets so you do not start from scratch:
 
 - `httk project import-v1` — imports a legacy `ht.project` anchor.
-- `httk workflow remote import-v1` — maps a legacy computer bundle to a
+- `httk remote import-v1` — maps a legacy computer bundle to a
   remote; it never runs legacy shell code.
-- `httk workflow config import-v1` — imports legacy configuration.
-- `httk workflow v1 collect` — harvests a finished v1 result tree into records.
+- `httk config import-v1` — imports legacy configuration.
+- `httk v1 collect` — harvests a finished v1 result tree into records.
 - the `httk-v1` compat format — wraps an existing v1 template as a package
   (`format = "httk-v1"`), so it runs unchanged under the *httk₂* CLI.
 

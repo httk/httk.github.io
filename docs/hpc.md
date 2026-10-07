@@ -25,7 +25,7 @@ settings while the workspace is created.
 
 ```console
 cd ~
-httk workflow launcher add --template slurm --global arrhenius \
+httk launcher add --template slurm --global arrhenius \
     --set slurm.account=<account> --set slurm.partition=<partition> \
     --set slurm.time_limit=24:00:00 --set slurm.nodes=1 \
     --set slurm.ntasks=10 --set slurm.cpus_per_task=1
