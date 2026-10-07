@@ -255,8 +255,8 @@ running instances exit at their next admission when the active configuration
 changed, and a supervisor restarts them. Any number of daemon instances may
 run. The same restart applies an *httk* upgrade. The workspace, state and
 snapshot directories and the cluster are fixed; changing them needs a new
-enrollment (an enrollment made with the earlier SQLite ledger must be
-initialized again). Queued and running managers retain their original snapshot;
+enrollment (an enrollment whose ledger has an earlier format, the SQLite
+ledger or ledger format 1, must be initialized again). Queued and running managers retain their original snapshot;
 new requests must match the current catalog. Clients read the catalog live from
 `daemon.json`, so they need no reconfiguration. Preserve the ledger, response
 key and old snapshots. Removing a client key also prevents that key from
@@ -279,6 +279,9 @@ $HTTK_WORKFLOW_LAUNCH ./program input.dat
 ```
 
 Ranks use the host network and share a private `/dev/shm` per node and launch.
+Their per-launch directory lives below `confine.shm_root` (default `/dev/shm`),
+which must be a node-local tmpfs: managers check this before they claim jobs
+and refuse a launch on any other filesystem.
 MPI tuning variables set in the attempt do not reach the ranks; the operator
 sets them as `confine.environment.NAME`. Each launch style (the built-in `srun`
 prefix with the site's default MPI plugin, `srun --mpi=pmi2` for Intel MPI via `manager.launch_mpi=pmi2`, Open MPI `mpirun`, `mpprun`, Intel MPI hydra) needs its own site
