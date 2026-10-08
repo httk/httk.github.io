@@ -297,6 +297,16 @@ boundary. The
 describes the rank sandboxes and includes the site probe; local tests do not
 establish security on every cluster.
 
+If a manager disappears, another manager finishes its jobs only once every
+launch they made has provably ended: for Slurm it asks `squeue` whether the old
+allocation has ended. `httk job why JOB` names a launch that still blocks a job.
+A multi-node launch technology other than Slurm must provide an allocation
+probe that can answer whether an allocation has ended (see the
+[launcher authoring guide](https://docs.httk.org/httk-workflow/dev/main/details/launcher_authoring.html#has-the-allocation-ended)).
+Without one, such jobs wait until the operator has made sure the old launches
+ended and confirms it with `httk job confirm-launches-ended JOB`. The rules are
+in the [filesystem protocol](https://docs.httk.org/httk-workflow/dev/main/details/workflow_filesystem_api.html#launch-end-evidence).
+
 Intel MPI binaries run with `--set manager.launch_mpi=pmi2` on the launcher.
 The rank helper then relays the PMI-1 traffic to Slurm and refuses
 `MPI_Comm_spawn`. Spawn blocking is the launcher setting
