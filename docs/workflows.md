@@ -84,8 +84,9 @@ in the module docs.
 
 A repository can also carry an `httk_plugin.toml` listing its workflow
 directories, so `httk plugin install git+https://github.com/httk/workflows-vasp`
-installs all of them at once; `[plugin] requires` then applies to every
-workflow it bundles. Project templates are installed the same way, by URI or
+makes all of them known on this machine at once (a workspace still installs
+the ones it runs); `[plugin] requires` then applies to every workflow it
+bundles. Project templates are installed the same way, by URI or
 from a plugin:
 
 ```console

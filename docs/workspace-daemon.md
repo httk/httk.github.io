@@ -315,8 +315,9 @@ allocation probe that can answer whether an allocation has ended (see the
 [launcher authoring guide](https://docs.httk.org/httk-workflow/dev/main/details/launcher_authoring.html#has-the-allocation-ended)).
 Without one, such jobs wait until the operator has made sure the old manager
 and its launches are gone and declares it with
-`httk workspace attest-dead OWNER --reason TEXT`. Attesting an owner that is
-still running can run work twice. The rules are in the
+`httk workspace attest-dead OWNER --force --reason TEXT` (`--force` because no
+probe can decide; an owner proven alive is always refused). Attesting an owner
+that is still running can run work twice. The rules are in the
 [filesystem protocol](https://docs.httk.org/httk-workflow/dev/main/details/workflow_filesystem_api.html#launch-end-evidence).
 
 Intel MPI binaries run with `--set manager.launch_mpi=pmi2` on the launcher.

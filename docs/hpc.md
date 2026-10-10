@@ -125,9 +125,10 @@ with a `placement` live under `jobs/<state>/<placement>/`), so `httk job show`
 prints where it is. Its console output is in the job directory's
 `logs/stdio.out`, between attempt marker lines.
 
-If a job is interrupted by the 24-hour limit, it returns to the queue and a
-later manager retries it. Run `httk workflow run --count 20` again until
-`httk job list` shows every job as succeeded. For individual records, use
+If the 24-hour limit interrupts a job, its manager drains and the attempt
+fails with `owner_lost`, which a later manager retries only when the job's
+`retry_policy.retry_on` lists it. Run `httk workflow run --count 20` again
+until `httk job list` shows no job left to run. For individual records, use
 `httk job show` and `httk job log`.
 
 ## More advanced steps
