@@ -89,20 +89,23 @@ and the remote workspace owns them.
 
 ## Transfer, run, and check
 
-`job transfer SRC DST` moves jobs whichever way the two names point. Send the
-batch up, then run the workspace. The same command works on the login node,
-through a self-addressed `machine_names` name, or from the desk via the remote:
+`job transfer SRC DST` moves jobs whichever way the two names point. A job
+runs only a workflow installed in its workspace, and workflows never travel
+with jobs, so install the workflow on kappa first. Then send the batch up and
+run the workspace. The same commands work on the login node, through a
+self-addressed `machine_names` name, or from the desk via the remote:
 
 ```console
+httk workflow install --workspace kappa:runs 'git+https://github.com/httk/workflows-vasp#vasp-relax'
 httk job transfer --job JOB-ID default kappa:runs
 httk workflow precheck --workspace kappa:runs
 httk workflow run --workspace kappa:runs --count 1
 httk workspace status kappa:runs
 ```
 
-`precheck` reports readiness — declared-environment resolution, runner-reference
-availability and digests, whether a live manager can claim the jobs, and any
-required staged inputs — before you start managers. `run --workspace
+`precheck` reports readiness — declared-environment resolution, whether the
+workflow and its calls are installed and built, whether a live manager can
+claim the jobs, and any required staged inputs — before you start managers. `run --workspace
 kappa:runs` reaches the machine through the remote adapter when necessary,
 then runs the workspace's configured launcher there. The workspace settings,
 including `manager.launch`, determine how managers start; the remote itself

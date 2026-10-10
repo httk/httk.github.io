@@ -27,25 +27,30 @@ git+https://github.com/<org>/<repo>[@<ref>][#<subdir>]
 ```
 
 `@<ref>` is a branch, tag, or commit (default branch if omitted); `#<subdir>`
-picks one workflow out of a multi-workflow repository. The first reference
-fetches and installs it, and the job records the **canonical URI** with the
-ref expanded to the full commit hash:
+picks one workflow out of a multi-workflow repository. A job runs only a
+workflow installed in its workspace; `--install` fetches and installs it there
+first, and the job records the **canonical URI** with the ref expanded to the
+full commit hash:
 
 ```console
 httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' \
-    --input structure=POSCAR
+    --install --input structure=POSCAR
 ```
 
 Once installed, the manifest's `[workflow] name` (its **short name**, for
 example `vasp.relax`) also resolves the workflow, as long as it is not
-ambiguous between repositories. Install, list, or forget workflows without
-creating a job:
+ambiguous between repositories. Install, list, or remove a workspace's
+workflows without creating a job:
 
 ```console
-httk workflow install 'git+https://github.com/httk/workflows-vasp#vasp-relax'
-httk workflow list
-httk workflow uninstall vasp.relax
+httk workflow install --workspace default 'git+https://github.com/httk/workflows-vasp#vasp-relax'
+httk workflow list --workspace default
+httk workflow uninstall --workspace default vasp.relax
 ```
+
+Without `--workspace`, `httk workflow install` only fetches into this machine's
+cache. Workflows never travel with jobs: install them in every workspace that
+runs those jobs.
 
 The complete grammar, commit pinning, and short-name resolution rules are in
 the [workflow URI guide](https://docs.httk.org/httk-workflow/dev/main/details/workflow_uris.html).
@@ -53,9 +58,9 @@ the [workflow URI guide](https://docs.httk.org/httk-workflow/dev/main/details/wo
 ## Package essentials
 
 `[workflow] name` identifies the workflow; `requires = ["httk-workflow>=2.2.0"]`
-declares minimum distribution versions, checked both when the job is created
-and again by the claiming manager, so a runner needs no import guard — an
-unmet manager simply leaves the job for another one. `[workflow.runner]`
+declares minimum distribution versions, recorded at installation and checked
+by the claiming manager (and by `httk workflow describe`), so a runner needs no
+import guard — an unmet manager simply leaves the job for another one. `[workflow.runner]`
 selects an executable `entry` (any executable package member; `run.py`/
 `run.sh` recommended, and then the package carries no plain `run` member), an
 argument-vector `command` (for a compiled, JVM, or interpreted program that

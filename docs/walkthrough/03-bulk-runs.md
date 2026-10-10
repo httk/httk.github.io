@@ -44,6 +44,7 @@ for job in new_jobs(
     items,
     parameters={"kpoint_density": 30.0},
     placement="batch",
+    install=True,
 ):
     print(job.job_key)
 ```
@@ -62,14 +63,15 @@ The CLI `--input-from` form accepts a file or a directory, not a store query;
 use it as the file-based alternative when the inputs are already on disk:
 
 ```console
-$ httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' \
+$ httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' --install \
       --input-from structure charge-free-structures/ \
       --parameter kpoint_density=30.0 --placement batch
 ```
 
 The query-driven path is the Python form above. A directory batch derives one
-job tag from each readable input; the runner is published once for the set and
-jobs are submitted as they are generated.
+job tag from each readable input; `--install` (or `install=True` in Python)
+installs the workflow in the workspace once for the set, and jobs are submitted
+as they are generated.
 
 Creation-time parameterization goes through `[workflow.parameters.*]` in the
 manifest, validated at job creation and applied by the runner's

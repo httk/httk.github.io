@@ -30,8 +30,9 @@ exercise. They are not calculated material energies.
 
 For a real cluster, configure an SSH remote once and transfer the complete
 batch. The remote is only the path to the machine; manager launch belongs to
-the workspace.
-`--job` is repeatable; list every page-09 job so the whole batch moves:
+the workspace, and the workflow must be installed there too.
+A `--job` path below `jobs/` selects every job under it, so the page-09
+`batch` placement moves at once:
 
 ```console
 httk remote add --template ssh kappa
@@ -48,11 +49,11 @@ httk workspace settings set --key manager.workers --value 8 kappa:runs
 httk workspace settings set --key environment.prelude --value "module load httk vasp" kappa:runs
 httk workspace settings set --key vasp.command --value vasp_std kappa:runs
 
-httk job transfer \
-    --job ca --job cao --job catio3 --job o --job ti --job tio default kappa:runs
+httk workflow install --workspace kappa:runs 'git+https://github.com/httk/workflows-vasp#vasp-relax'
+httk job transfer --job workspace/jobs/ready/batch default kappa:runs
 httk workflow run --workspace kappa:runs --count 1
 httk workspace status kappa:runs
-httk job transfer kappa:runs default
+httk job transfer --job JOB-UUID --job JOB-UUID … kappa:runs default
 ```
 
 `ssh` runs the adapter's commands through a non-interactive shell, so
@@ -84,9 +85,10 @@ Jobs that require a resource this manager does not have remain idle and are
 listed in its summary; in a Slurm allocation, `procs`, `gpus`, `nodes`, and
 `mem` can be derived from the allocation when not specified.
 
-The reverse transfer brings finished jobs home; run the local collector in the
-next step. `workspace init kappa:runs` creates the named workspace on kappa,
-so its name is resolved by kappa rather than by the local machine.
+The reverse transfer brings finished jobs home, named by their job UUIDs, as
+a remote source requires; run the local collector in the next step.
+`workspace init kappa:runs` creates the named workspace on kappa, so its name
+is resolved by kappa rather than by the local machine.
 
 See the [launcher authoring guide](https://docs.httk.org/httk-workflow/dev/main/details/launcher_authoring.html)
 and workflow CLI guide in the versioned *httk-workflow* documentation for

@@ -9,9 +9,10 @@ Commands discover the nearest anchor by walking up from the current directory.
 Create one anchor once for the effort; it is not a per-run directory.
 
 A workspace is the machine-owned working area where workflow runs happen. It
-contains the workspace UUID, job payloads (under `jobs/`), state markers, journals, and runner
-files. A workspace is single-user: managers claim jobs whose marker, payload,
-and `job.json` belong to the manager's account. The plain workspace name is
+contains the workspace UUID, the installed workflows (under `workflows/`), and
+the job directories (under `jobs/`), which move between `jobs/<state>/` trees as
+their state changes. A workspace is single-user: managers claim jobs whose
+directory and `job.json` belong to the manager's account. The plain workspace name is
 only a command-line lookup name in the owning machine's registry; a remote
 machine resolves its own names and paths.
 
@@ -19,8 +20,9 @@ The two layers are related but independent. A project can record a default
 workspace name, and that workspace can live outside the project directory. A
 project can also be detached from a workspace, which is useful for project
 metadata and signed manifests; jobs and their joins still belong to a
-workspace. Moving a job between machines detaches a sealed job bundle and
-imports it into the destination workspace.
+workspace. Moving a job between machines holds it on the source, copies its
+job directory, with any seal inside, to the destination workspace, and adopts
+it there.
 
 ## Initialize the project and its first workspace
 
@@ -43,21 +45,22 @@ record another registered name later with `httk workspace default`.
 ## Create and run the calculation
 
 ```console
-httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-static' \
+httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-static' --install \
     --input structure=example.cif --parameter 'incar_tags={"ENCUT": 520}' --tag example
 httk workflow run
 ```
 
 `job new` scaffolds and submits one job from the `vasp.static` workflow
 package in [httk/workflows-vasp](https://github.com/httk/workflows-vasp)
-(`vasp.relax` and `vasp.relax-static` work the same way). The
+(`vasp.relax` and `vasp.relax-static` work the same way). A job runs only a
+workflow installed in its workspace, so `--install` installs it there first. The
 `structure` input is loaded from the CIF and written as `files/POSCAR`.
 The runner's `prepare` step derives the k-point grid, assembles the POTCAR
 from the pseudopotential library, and fills in `MAGMOM` and `NBANDS`, with any
 explicit `--parameter 'incar_tags={"ENCUT": 520}'` winning over derived values. `run` executes
 the manager until nothing is ready, driving the job through prepare, run, and
-publish; the results and logs end up in the payload directory the `job new`
-command printed.
+publish; the results and logs end up in the job directory, which moves with
+the job's state, so `httk job show example` prints where it is.
 
 The same job can be created in Python:
 
@@ -71,6 +74,7 @@ job = new_job(
     "git+https://github.com/httk/workflows-vasp#vasp-static",
     inputs={"structure": load("example.cif")},
     tag="example",
+    install=True,
     provenance={"inputs": {"entity": {"type": "amdb_material", "id": "magndata:1.108"}}},
 )
 ```

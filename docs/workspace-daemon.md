@@ -93,7 +93,8 @@ workspace. Example mapping:
 | Snapshots | `/opt/httk-control/example.snapshots` | Not exported |
 
 State and snapshots must lie outside the workspace. The daemon's ledger works on
-any filesystem with POSIX rename and link semantics. Snapshots must be visible
+any filesystem with POSIX rename semantics; it needs no hard links and no file
+locks. Snapshots must be visible
 at the same absolute path on compute nodes. Export only the exchange. The
 exchange writer must be the workspace owner's account (a separate transport UID
 is unsupported); an SSHFS mount path alone does not restrict that account, so
@@ -162,16 +163,21 @@ reading status work, signed requests do not. `remote check` reads
 daemon must be running and your public key authorized for that.
 
 Create jobs in a local workspace as in {doc}`campaigns`, then eject one into the
-exchange inbox using its actual job ID:
+exchange inbox using its actual job ID. The job must be fresh (never run) and
+have no parent:
 
 ```console
 httk job eject JOB /mnt/cluster/exchange/inbox
 ```
 
-The job is exported by a local atomic ejection and then copied into the mount
-(`--resume` continues an interrupted copy). Any unrestricted confined manager (no `--placement-prefix` or pool restriction) of the
-workspace adopts it. Generic `confined:runs` execution is refused: use the
-typed commands below to control managers.
+The bundle is copied into the mount under a hidden partial name and renamed
+into `inbox/` when complete; a failed delivery returns the job to the state it
+left. Any unrestricted confined manager (no `--placement-prefix` or pool
+restriction) of the workspace adopts it, with a fresh UUID, keeping your job
+UUID as its exchange name. The job's workflow must be installed in the
+destination workspace (`httk workflow install --workspace runs …`, an operator
+task); until then the adopted job waits. Generic `confined:runs` execution is
+refused: use the typed commands below to control managers.
 
 ## 4. Start, inspect and cancel a manager
 
@@ -216,14 +222,17 @@ exchange, the request/response mailbox and the confined launch files are in the
 
 Exit 2 covers refusals, busy/uncertain outcomes and unacknowledged calls. `UNKNOWN`
 status does not mean completion, and cancellation acknowledgement does not prove
-termination. A job that arrived through the exchange and has succeeded, failed
-or been cancelled is returned by its manager about 60 seconds after it
-finishes, to `outbox/JOB_KEY` in the exchange. Fetch it (copied, verified, and
-the source removed):
+termination. Once a job that arrived through the exchange and every job of its
+tree have succeeded, failed or been cancelled, a manager returns the whole tree
+to `outbox/CLIENT_JOB_UUID/JOB_KEY` in the exchange. Fetch it (copied, verified,
+and the source removed):
 
 ```console
-httk job adopt /mnt/cluster/exchange/outbox/JOB_KEY
+httk job adopt --move /mnt/cluster/exchange/outbox/CLIENT_JOB_UUID/JOB_KEY
 ```
+
+Without `--move` the copy in the outbox stays, and the next return of that job
+waits until it is gone.
 
 A bundle a manager refuses appears in `outbox/rejected/<unique>/`, as the
 bundle and a `reason.json` holding the reason (eject errors go to the manager
@@ -297,15 +306,18 @@ boundary. The
 describes the rank sandboxes and includes the site probe; local tests do not
 establish security on every cluster.
 
-If a manager disappears, another manager finishes its jobs only once every
-launch they made has provably ended: for Slurm it asks `squeue` whether the old
-allocation has ended. `httk job why JOB` names a launch that still blocks a job.
-A multi-node launch technology other than Slurm must provide an allocation
-probe that can answer whether an allocation has ended (see the
+If a manager disappears, its jobs are recovered only once the death proof
+shows that the manager and every launch it recorded have ended: for Slurm, the
+scheduler confirms that the old allocation has ended. `httk workspace owners`
+and `httk job why JOB` show the owner's liveness. There is no time-based
+takeover. A multi-node launch technology other than Slurm must provide an
+allocation probe that can answer whether an allocation has ended (see the
 [launcher authoring guide](https://docs.httk.org/httk-workflow/dev/main/details/launcher_authoring.html#has-the-allocation-ended)).
-Without one, such jobs wait until the operator has made sure the old launches
-ended and confirms it with `httk job confirm-launches-ended JOB`. The rules are
-in the [filesystem protocol](https://docs.httk.org/httk-workflow/dev/main/details/workflow_filesystem_api.html#launch-end-evidence).
+Without one, such jobs wait until the operator has made sure the old manager
+and its launches are gone and declares it with
+`httk workspace attest-dead OWNER --reason TEXT`. Attesting an owner that is
+still running can run work twice. The rules are in the
+[filesystem protocol](https://docs.httk.org/httk-workflow/dev/main/details/workflow_filesystem_api.html#launch-end-evidence).
 
 Intel MPI binaries run with `--set manager.launch_mpi=pmi2` on the launcher.
 The rank helper then relays the PMI-1 traffic to Slurm and refuses

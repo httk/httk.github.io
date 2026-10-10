@@ -27,6 +27,7 @@ for job in new_jobs(
     items,
     parameters={"kpoint_density": 30.0},
     placement="batch",
+    install=True,
 ):
     print(job.job_key)
 ```
@@ -42,7 +43,7 @@ For a directory containing already charge-free inputs, the CLI can create the
 same kind of batch without the Python projection:
 
 ```console
-httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' \
+httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' --install \
     --input-from structure charge-free-structures/ \
     --parameter kpoint_density=30.0 --placement batch
 ```
@@ -63,7 +64,7 @@ for job in new_jobs(workspace, "vasp.relax", items, placement="batch"):
     print(job.job_key)
 ```
 
-Once a workflow has been referenced by URI, as above, its short name
+Once a workflow has been installed from its URI, as above, its short name
 (`vasp.relax` here) also works. The generator streams rows into jobs, so neither the search result nor the
 batch has to be materialized in memory. Continue with the local run in the
 next step.

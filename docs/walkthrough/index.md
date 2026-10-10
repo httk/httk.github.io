@@ -70,7 +70,8 @@ in the *name* of the result directory
 
 In *httk₂* a workflow is a package: a directory with an `httk_workflow.toml`
 manifest and a runner. Jobs live in a workspace with durable, transactional
-records instead of state-encoding directory names, and everything is driven
+records, and a job directory moves between `jobs/<state>/` trees by atomic
+renames instead of carrying its state in its name; everything is driven
 through the single `httk workflow` CLI with managers. See {doc}`01-workflows`
 and {doc}`03-bulk-runs`.
 

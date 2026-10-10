@@ -3,9 +3,9 @@
 In httk v1 a calculation was a task-template directory you pointed at with a
 `t:` reference. In *httk₂* it is a *workflow package*: a self-contained directory
 whose `httk_workflow.toml` manifest is the httk-owned glue around a runner, and
-whose runner is written against a small SDK. The whole directory is published
-content-addressed and pinned by digest per job, so upgrading *httk₂* underneath a
-queued campaign cannot change what its jobs execute.
+whose runner is written against a small SDK. The whole directory is installed
+into the workspace and pinned by digest per job, so upgrading *httk₂* underneath
+a queued campaign cannot change what its jobs execute.
 
 ## The quickstart shape
 
@@ -18,14 +18,16 @@ only a POSCAR and a `vasp.command` setting.
 $ httk project init --name quickstart .
 $ httk workspace init --name default workspace
 $ httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' \
-      --input structure=POSCAR --tag silicon
+      --install --input structure=POSCAR --tag silicon
 $ httk workspace settings set --key vasp.command --value "$PWD/examples/mock_vasp.py" default
 $ httk workflow run
 ```
 
-Referencing a workflow this way canonicalizes the ref to the resolved commit
-hash and records that pinned URI on the job; afterward the short name
-`vasp.relax` also works wherever a workflow is accepted.
+A job runs only a workflow installed in its workspace: `--install` fetches the
+repository and installs the workflow there first (`httk workflow install
+--workspace default URI` does the same on its own). The ref is canonicalized to
+the resolved commit hash and that pinned URI is recorded on the job; afterward
+the short name `vasp.relax` also works wherever a workflow is accepted.
 
 `vasp.command` is an application setting resolved most-specific-first: a job's
 own `vasp.command` parameter, then `HTTK_VASP_COMMAND` in the environment, then
@@ -102,7 +104,7 @@ CLI — see the migration guide, §15.
 
 ## Read next
 
-- <https://docs.httk.org/httk-workflow/dev/main/quickstart.html> — the seven-command
+- <https://docs.httk.org/httk-workflow/dev/main/quickstart.html> — the eight-command
   walkthrough with a mock VASP.
 - <https://docs.httk.org/httk-workflow/dev/main/workflow_packages.html> and
   <https://docs.httk.org/httk-workflow/dev/main/details/workflow_packages.html> —

@@ -15,7 +15,7 @@ $ httk init --name "Your Name" --email you@example.org
 $ httk project init --name quickstart .
 $ httk workspace init --name default workspace
 $ httk workspace settings set --key vasp.command --value "$PWD/examples/mock_vasp.py" default
-$ httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' --input structure=POSCAR
+$ httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' --install --input structure=POSCAR
 $ httk workflow run
 $ httk collect --into results.sqlite --id-base httk.quickstart
 ```
@@ -35,11 +35,12 @@ memory cost when selecting a collection sweep.
 The workspace holds durable state and provenance; collection is the boundary
 where finished jobs become records in *httk-store*. Re-collecting is safe and
 deduplicated. Run `httk workflow precheck --workspace WORKSPACE` before starting managers
-to report missing settings, runner references, and machine readiness.
+to report missing settings, workflows that are not installed or built, and
+machine readiness.
 
 For a remote, add and configure the SSH machine, initialize its workspace, set
-that workspace's launcher and scheduler settings, then transfer jobs and run
-the workspace there:
+that workspace's launcher and scheduler settings, install the workflow there,
+then transfer jobs and run the workspace there:
 
 ```console
 httk remote add --template ssh kappa
@@ -54,17 +55,24 @@ httk workspace settings set --key manager.launch --value cluster kappa:runs
 httk workspace settings set --key slurm.partition --value batch kappa:runs
 httk workspace settings set --key manager.workers --value 8 kappa:runs
 httk workspace settings set --key vasp.command --value vasp_std kappa:runs
+httk workflow install --workspace kappa:runs 'git+https://github.com/httk/workflows-vasp#vasp-relax'
 httk job transfer --job JOB-ID default kappa:runs
 httk workflow precheck --workspace kappa:runs
 httk workflow run --workspace kappa:runs --count 1
-httk job transfer --state succeeded --state failed kappa:runs default
+httk job transfer --job JOB-UUID kappa:runs default
 ```
 
+The reverse transfer names each job by its UUID. A transfer holds the jobs on
+the source, copies and adopts them at the destination, and only then releases
+the hold; an interrupted transfer is finished by running it again or with
+`httk job transfer --resume`, and `httk transfer status` lists the holds.
+
 `SRC` and `DST` may also be workspace directories instead of registered names,
-so an unregistered workspace can be addressed too. `httk job eject` and
-`httk job adopt` move a job, with any bound child jobs, out of a workspace to a
-free-standing job directory, and move such a directory into any workspace, without either side
-needing to be registered. See the
+so an unregistered workspace can be addressed too. `httk job eject` moves a
+job (with `--tree`, its descendants too; with `--wait`, after pausing it) out of
+a workspace into a plain bundle directory, and `httk job adopt` moves such a
+bundle into any workspace, without either side needing to be registered. See
+the
 [CLI details](https://docs.httk.org/httk-workflow/dev/main/details/workflow_cli.html).
 
 `ssh` runs the adapter's commands through a non-interactive shell, so
@@ -130,9 +138,10 @@ The nine-language SDK family gives the same runner surface from Python, Bash,
 C, Fortran, Rust, Perl, Ada, C++, and Java. jobflow/atomate2, CWL, PWD, and
 httk-v1 documents are also normal workflow language realizations.
 
-Compiled packages declare `[workflow.build]`. Publication carries sources-only
-digests; `httk workflow build` builds and registers a binary per machine, so
-managers execute registered artifacts and never compile jobs themselves.
+Compiled packages declare `[workflow.build]`. Installation records
+sources-only digests and builds for the installing machine; `httk workflow
+build` builds and registers a binary for each other platform, so managers
+execute registered artifacts and never compile jobs themselves.
 
 ## Read next
 

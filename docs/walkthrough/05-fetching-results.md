@@ -1,25 +1,26 @@
 # Fetching results back
 
 When jobs have finished on the remote (page {doc}`04-remote-execution`), bring
-them home with the same `job transfer` verb, pointed the other way. Fetching is a
-sealed, detached operation: it survives interruption and never corrupts the
-copy in flight.
+them home with the same `job transfer` verb, pointed the other way. Fetching
+survives interruption: the jobs stay held on the remote until the copy at home
+has been adopted.
 
 ```console
-httk job transfer --state succeeded --state failed kappa:runs default
+httk job transfer --job JOB-UUID kappa:runs default
 ```
 
-`--state` (repeatable, default `succeeded` and `failed`) chooses which finished
-jobs move. The finished jobs are offered, pulled home, imported, and only then
-is each remote source retired.
+A remote source names each job by its UUID; `--job` is repeatable, and
+`--tree` brings a job home together with its spawned descendants. The jobs are
+first held on the remote, out of its state trees, then copied home and adopted
+into the states they left, and only then is the remote hold released.
 
-Every transfer is a sealed bundle. It fences an explicit quiescent state, seals
-it in the payload, and validates the payload digest at import; the digest pins
-every path, every file's content *and executable bit*, and the literal target
-of every symlink, so a runner arriving without its executable bit — or a link
-retargeted in transit — is a detected mismatch, not a silent corruption. The
-source is retired only after an idempotent acknowledgement. An interrupted
-fetch resumes by re-running the exact same `job transfer` command.
+Each move is a bundle of complete job directories, checked strictly on
+adoption: no symlink or special file in protocol positions, and every job's
+`job.json` agreeing with the bundle manifest. A succeeded job's seal travels
+inside its payload, so the seal can still be verified at home. Delivery is at
+least once: an interrupted fetch is finished by re-running the same
+`job transfer` command or `httk job transfer --resume`, and
+`httk transfer status` lists the holds still in flight.
 
 ```{admonition} In httk v1
 :class: note
@@ -27,8 +28,8 @@ fetch resumes by re-running the exact same `job transfer` command.
 `httk-tasks-receive-from-computer kappa Runs/` rsync-pulled the matching
 `ht.finished/` task directories back and deleted the remote copies — no
 digests, no resume, and the job's state lived only in the directory name
-(`ht.task.…finished`, `ht.task.…broken`). *httk₂* seals the transfer bundle
-itself and retires the source only on acknowledgement.
+(`ht.task.…finished`, `ht.task.…broken`). *httk₂* holds the jobs on the source
+and releases the hold only after the destination has adopted them.
 ```
 
 ## Collecting the fetched jobs into records
@@ -59,9 +60,9 @@ httk collect --into results.sqlite --id-base example
 
 "Sealing" in v1 was a *read-time* step: `httk.task.reader()` picked the newest
 `ht.run.<timestamp>` in each `.finished` directory and built a signed
-`ht.manifest.bz2` per run. *httk₂* seals the transfer bundle when it moves and
-records provenance per job at collection, so reading is no longer where
-integrity is established.
+`ht.manifest.bz2` per run. *httk₂* seals each job as it succeeds, the seal
+travels with the job, and provenance is recorded per job at collection, so
+reading is no longer where integrity is established.
 ```
 
 ```{admonition} In httk v1

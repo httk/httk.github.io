@@ -39,8 +39,8 @@ cd ~/my_bulk_runs
 ## Create the jobs
 
 Run this from the command line where you normally launch the program. The
-`{n}` parameter is filled for each job; httk generates and stores the one-step
-workflow wrapper once:
+`{n}` parameter is filled for each job; httk generates the one-step workflow
+wrapper and installs it in the workspace once:
 
 ```console
 for n in $(seq 1 1000); do
@@ -107,7 +107,7 @@ IDs:
 httk workflow run --count 20        # submits 20 allocations; returns at once with their SLURM job ids
 squeue -u $USER                     # the httk-manager jobs
 httk job list                       # ready / running / succeeded per job
-httk job why jobs/n17--*            # a stuck or failed job
+httk job why n17--                  # a stuck or failed job
 ```
 
 Here `--count` is the number of **managers** to start: 20 SLURM allocations
@@ -118,9 +118,12 @@ allocation; it is 1 here because each `my_executable` uses all 10 CPUs.
 once on the workspace; command-line options override those settings for one
 run.
 
-Outputs are stored in `jobs/n<N>--<uuid>/run/` (relative to the workspace root; jobs created with a `placement` live under `jobs/<placement>/`), including anything that
-`my_executable` writes there. Its console output is in
-`jobs/n<N>--<uuid>/logs/stdio.out`, with attempt markers.
+Outputs are stored in the job directory's `run/`, including anything that
+`my_executable` writes there. A job directory moves with its state, for example
+to `jobs/succeeded/n<N>--<uuid>~…` (relative to the workspace root; jobs created
+with a `placement` live under `jobs/<state>/<placement>/`), so `httk job show`
+prints where it is. Its console output is in the job directory's
+`logs/stdio.out`, between attempt marker lines.
 
 If a job is interrupted by the 24-hour limit, it returns to the queue and a
 later manager retries it. Run `httk workflow run --count 20` again until
@@ -155,8 +158,6 @@ description = "Run my_executable for one integer parameter."
 entry = "run.sh"
 steps = ["run"]
 initial_step = "run"
-data_mode = "none"
-workdir_mode = "persistent"
 
 [workflow.outputs.answer]
 entry_type = "strings"
@@ -195,12 +196,13 @@ for line in sys.stdin:
 ```
 
 Make `collect.py` executable. The package's `run.sh` is the same runner shown
-in the next subsection. Create jobs from the package in the loop, then collect
-them after the runs finish:
+in the next subsection. Install the package in the workspace once, create jobs
+from it in the loop, then collect them after the runs finish:
 
 ```console
+httk workflow install --workspace my_bulk_runs ./my_executable
 for n in $(seq 1 1000); do
-  httk job new --workflow-dir ./my_executable --parameter n=$n --tag n$n
+  httk job new --workflow my_executable --parameter n=$n --tag n$n
 done
 
 httk collect --into results.sqlite --id-base example
@@ -235,7 +237,7 @@ httk job new --from-runner ./run.sh --parameter n=17
 ```
 
 Full workflows can declare inputs, resources per step, spawn child jobs,
-publish data transactionally, and be packaged and versioned. See the
+commit data transactionally, and be packaged and versioned. See the
 [full workflow authoring guide](https://docs.httk.org/httk-workflow/dev/main/details/runtime_helpers.html),
 [workflow packages](https://docs.httk.org/httk-workflow/dev/main/workflow_packages.html),
 [Bash SDK](https://docs.httk.org/httk-workflow/dev/main/sdks/bash_api.html),
