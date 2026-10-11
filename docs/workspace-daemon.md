@@ -22,15 +22,18 @@ in {doc}`hpc` remain separate execution paths.
 | Client | Ejects jobs into the exchange and adopts finished ones, signs requests with your httk identity, verifies replies. |
 | Slurm allocation | Runs the trusted manager, unconfined, as the workspace owner. The manager serves the exchange (adopts from `inbox`, returns finished jobs to `outbox`) and starts every job attempt in its own Bubblewrap sandbox. |
 | Destination daemon | Runs inside Bubblewrap, reads signed requests, checks authorization and approved launchers, invokes fixed Slurm operations to start, query and cancel managers. |
-| Protected local state | Holds the daemon's private response key and durable request ledger. It is outside the workspace and the exchange. |
+| Daemon private directory | `WORKSPACE/.httk-workspace/daemon/`; hidden from confined jobs and not exported. |
 
 The remote host, the installation, the operator's launchers and the workspace
-settings are trusted. The manager is trusted too and runs unconfined. Each job
+settings are trusted. The manager is trusted too and runs unconfined, so it may
+read the private directory. Each job
 attempt, and each rank of a parallel launch, is confined: it can write only its
 own job directory, it can read the workspace, and it has no scheduler
 authority. The broker runs only *httk* code and the Slurm clients, so it sees
-the host filesystem read-only (Slurm, MUNGE, user database) and writes only the
-workspace's `exchange/` and its state. The
+the host filesystem read-only (Slurm, MUNGE, user database) and writes only
+`WORKSPACE/exchange` and `WORKSPACE/.httk-workspace/daemon/broker`. Confined
+jobs see the workspace read-only with `.httk-workspace/daemon/` hidden under an
+empty tmpfs. The
 [full daemon reference](https://docs.httk.org/httk-workflow/dev/main/details/workspace_daemon.html)
 specifies the layout, confinement settings and deployment checks.
 
@@ -61,8 +64,8 @@ python -c 'from httk.core.identity import identity_public_key; print(identity_pu
 Give the destination operator the **complete `ed25519:...` string**, including
 the prefix. `None` means no usable default key was found; finish identity setup
 before continuing. Run these commands with the same user and `HTTK_CONFIG_HOME`
-as the client commands below. Never copy a private key or seed into the workspace
-or exchange.
+as the client commands below. Never copy your client private key into the
+workspace or exchange.
 
 There are three separate credentials:
 
@@ -89,16 +92,25 @@ workspace. Example mapping:
 | --- | --- | --- |
 | Workspace | `/srv/httk/example/workspace` | Not mounted |
 | Exchange | `/srv/httk/example/workspace/exchange` | `/mnt/cluster/exchange` |
-| Private state | `/var/lib/httk/example` | Not exported |
-| Snapshots | `/opt/httk-control/example.snapshots` | Not exported |
+| Daemon private directory | `/srv/httk/example/workspace/.httk-workspace/daemon/` | Not exported |
 
-State and snapshots must lie outside the workspace. The daemon's ledger works on
-any filesystem with POSIX rename semantics; it needs no hard links and no file
-locks. Snapshots must be visible
-at the same absolute path on compute nodes. Export only the exchange. The
-exchange writer must be the workspace owner's account (a separate transport UID
-is unsupported); an SSHFS mount path alone does not restrict that account, so
-restricting its SFTP access is a site matter.
+An unconfined workspace copy (for example, your own `rsync` or `tar`) includes
+`.httk-workspace/daemon/`; a new `init` creates a new key, while exchange
+transfers and `job eject` move job bundles only and never include it.
+
+The private directory is mode `0700` and contains the configuration, response
+seed, active snapshot pointer, immutable snapshots, manager output and ledger.
+The broker binds writable only `WORKSPACE/exchange` and
+`WORKSPACE/.httk-workspace/daemon/broker`; its other host reads are read-only.
+The ledger works on any filesystem with POSIX rename semantics; it needs no hard
+links or file locks. The workspace's shared filesystem makes manager output
+reachable from batch nodes. The exchange writer must be the workspace owner's
+account (a separate transport UID is unsupported); an SSHFS mount path alone
+does not restrict that account, so restricting its SFTP access is a site matter.
+Keep the trusted *httk* installation, launcher bundles, Python interpreter and
+Slurm clients outside the workspace; their existing ownership and
+world-writability rules remain unchanged. The exchange must be the workspace's
+own `exchange/`.
 
 Create the workspace and an ordinary global `slurm` launcher that sets
 `manager.confine=bwrap`. Setup reads only the launcher, never workspace
@@ -127,10 +139,9 @@ Initialize, check the broker, and run it:
 ```console
 httk workspace daemon init /srv/httk/example/workspace \
   --add launchers=small \
-  --state /var/lib/httk/example --snapshots /opt/httk-control/example.snapshots \
   --add authorized_keys=ed25519:REPLACE_WITH_CLIENT_PUBLIC_KEY
-httk workspace daemon check /srv/httk/example/workspace --state /var/lib/httk/example
-httk workspace daemon run /srv/httk/example/workspace --state /var/lib/httk/example
+httk workspace daemon check /srv/httk/example/workspace
+httk workspace daemon run /srv/httk/example/workspace
 ```
 
 `init` enables the workspace's exchange extension if needed (also available as
@@ -140,8 +151,14 @@ extension enabled, every manager must confine its attempts
 (`manager.confine=bwrap`). `httk workspace daemon show` prints the
 configuration again. `check` tests the real broker sandbox and scheduler
 clients; it does not submit a compute job. `run` stays in the foreground; a
-site service supervisor may manage it. A non-default `--state` must be repeated
-on every later invocation; the enrollment remembers its snapshot directory.
+site service supervisor may manage it. Within the new layout, `init` refuses an
+existing `.httk-workspace/daemon/`; remove it and initialize again. An
+enrollment from the earlier layout is not migrated. Reconcile outstanding
+work first, then run `init`; clients must re-pin the new daemon key from the
+new `daemon.json` handoff. Remove old state and snapshot directories by hand
+(`workspace-daemons/<hash>` and `<hash>.snapshots` below the *httk* data
+directory by default). A snapshot from an earlier policy format is refused at
+start; there is no migration.
 
 ## 3. Connect the client and send jobs
 
@@ -256,9 +273,9 @@ or the daemon configuration (launchers, authorized keys, Slurm clients,
 
 ```console
 httk workspace daemon configure /srv/httk/example/workspace \
-  --state /var/lib/httk/example --add launchers=large \
+  --add launchers=large \
   --add authorized_keys=ed25519:ANOTHER_CLIENT_PUBLIC_KEY
-httk workspace daemon run /srv/httk/example/workspace --state /var/lib/httk/example
+httk workspace daemon run /srv/httk/example/workspace
 ```
 
 `configure` validates the result before saving it. Every `check` and `run`
@@ -266,10 +283,10 @@ reads the listed launchers and the configuration again, and when they changed,
 activates them and rewrites `daemon.json`. A running daemon is not blocked:
 running instances exit at their next admission when the active configuration
 changed, and a supervisor restarts them. Any number of daemon instances may
-run. The same restart applies an *httk* upgrade. The workspace, state and
-snapshot directories and the cluster are fixed; changing them needs a new
-enrollment (an enrollment whose ledger has an earlier format, the SQLite
-ledger or ledger format 1, must be initialized again). Queued and running managers retain their original snapshot;
+run. The same restart applies an *httk* upgrade. The workspace and cluster are
+fixed; changing them needs a new enrollment (an enrollment whose ledger has an
+earlier format, the SQLite ledger or ledger format 1, must be initialized
+again). Queued and running managers retain their original snapshot;
 new requests must match the current catalog. Clients read the catalog live from
 `daemon.json`, so they need no reconfiguration. Preserve the ledger, response
 key and old snapshots. Removing a client key also prevents that key from
