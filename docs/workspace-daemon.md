@@ -300,16 +300,18 @@ The parallel start comes from the attempt's launch prefix,
 or the built-in Slurm prefix. The code run helpers prepend it for you.
 
 Inside a confined attempt the sandbox has no scheduler access, so the prefix is
-a launch client: it asks the trusted manager to start the launch, and each rank
-then enters its own sandbox, which can write only the job directory. Used by
-hand, it works like any prefix:
+a launch client: it asks the trusted manager to start the launch, and the
+ranks of the launch on each node run in one shared sandbox, which can write
+only the job directory. Used by hand, it works like any prefix:
 
 ```console
 $HTTK_WORKFLOW_LAUNCH ./program input.dat
 ```
 
-Ranks use the host network and share a private `/dev/shm` per node and launch.
-Their per-launch directory lives below `confine.shm_root` (default `/dev/shm`),
+Ranks use the host network. The ranks of one launch on one node share a
+private `/dev/shm`, process IDs and System V shared memory, so OpenMP runtimes
+and codes such as VASP that use System V shared memory work; other launches and
+jobs cannot see them. The per-launch directory lives below `confine.shm_root` (default `/dev/shm`),
 which must be a node-local tmpfs: managers check this before they claim jobs
 and refuse a launch on any other filesystem.
 MPI tuning variables set in the attempt do not reach the ranks; the operator
