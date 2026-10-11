@@ -58,12 +58,12 @@ httk init --name "Your Name" --email you@example.org
 public key:
 
 ```console
-python -c 'from httk.core.identity import identity_public_key; print(identity_public_key())'
+httk identity key
 ```
 
 Give the destination operator the **complete `ed25519:...` string**, including
-the prefix. `None` means no usable default key was found; finish identity setup
-before continuing. Run these commands with the same user and `HTTK_CONFIG_HOME`
+the prefix. If the command instead reports that no identity or signing key is
+configured, finish identity setup before continuing. Run these commands with the same user and `HTTK_CONFIG_HOME`
 as the client commands below. Never copy your client private key into the
 workspace or exchange.
 
