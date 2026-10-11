@@ -198,31 +198,25 @@ refused: use the typed commands below to control managers.
 
 ## 4. Start, inspect and cancel a manager
 
-Generate a request ID once for a new operation and retain it:
-
 ```console
-python -c 'import secrets; print(secrets.token_hex(16))'
-httk remote daemon start confined --configuration small --request-id REQUEST_ID
+httk remote daemon start confined --configuration small
 httk remote daemon status confined --handle MANAGER_HANDLE
+httk remote daemon cancel confined --handle MANAGER_HANDLE
 ```
 
-Replace `REQUEST_ID` with the generated 32-character lowercase hexadecimal value.
-Use the returned opaque manager handle as `MANAGER_HANDLE`. Status creates a fresh
-request ID by default, so each call asks for a fresh observation. Without
+Use the returned opaque manager handle as `MANAGER_HANDLE`. Without
 `--handle`, `httk remote daemon status confined` instead prints the
 passive `status.json` and `managers.json` from the exchange, which are
-informational. To cancel, generate
-and retain a **different** ID for that new operation:
+informational.
 
-```console
-python -c 'import secrets; print(secrets.token_hex(16))'
-httk remote daemon cancel confined --handle MANAGER_HANDLE --request-id CANCEL_REQUEST_ID
-```
-
-Each call writes its request ID to stderr and a verified JSON response to stdout.
-After a timeout, repeat the same operation with **the same ID and identical
+Each call generates a fresh request ID, writes it to stderr, and writes a verified
+JSON response to stdout. A call that times out has not necessarily failed: its
+request may still be queued in the exchange, and the daemon applies it when it
+picks it up, until the request expires. To keep waiting for that request, repeat
+the operation with **`--request-id ID` (the ID the call printed) and identical
 fields**. The client caches the exact signed request; the daemon's durable ledger
-prevents a retry from submitting twice. Do not generate a new ID or delete request
+prevents such a retry from submitting twice. Repeating `start` without
+`--request-id` sends a new request and may start a second manager. Do not generate a new ID or delete request
 history to resolve an uncertain submission. Ask the operator to reconcile it.
 Run original and retry commands as the same user with the same httk data directory
 (`HTTK_DATA_HOME`, otherwise `$XDG_DATA_HOME/httk` or `~/.local/share/httk`).
