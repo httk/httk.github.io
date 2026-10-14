@@ -127,9 +127,55 @@ prints where it is. Its console output is in the job directory's
 
 If the 24-hour limit interrupts a job, its manager drains and the attempt
 fails with `owner_lost`, which a later manager retries only when the job's
-`retry_policy.retry_on` lists it. Run `httk workflow run --count 20` again
-until `httk job list` shows no job left to run. For individual records, use
-`httk job show` and `httk job log`.
+`retry_policy.retry_on` lists it (and only while its retry budget lasts; see
+[Fix and resume a failed job](#fix-and-resume-a-failed-job) to raise it). Run
+`httk workflow run --count 20` again until `httk job list` shows no job left to
+run. For individual records, use `httk job show` and `httk job log`.
+
+## Fix and resume a failed job
+
+A failed job is not lost: it stays under `jobs/failed/<placement>/…` with all
+of its files. `httk job show JOB` prints where, `httk job why JOB` explains the
+failure and names the remedy, and `httk job log JOB` prints the run log. While
+the job is `failed` or `paused`, everything in its directory except `job.json`
+may be edited; edit first, then post a request. A revived step reruns from its
+top, so if the step regenerates a file (for example copies an `INCAR` template),
+it overwrites your hand edit at that layer. Edit the file the step reads from.
+
+Three requests revive a job, each as `httk job request ACTION --reason TEXT JOB`:
+
+- `continue`: a parent that failed because a child failed
+  (`dependency_failure`) goes back to waiting on its children, with no new
+  attempt and no budget counted. Any other failed or paused job reruns its
+  current step as a new attempt, bound by the retry budget.
+- `restart`: always reruns the current step as a new attempt, bound by the
+  budget. On a parent this spawns a fresh set of children; the old ones stay.
+- `override_step --step STEP`: a new activation at the named step.
+
+To fix a failed child and let its parent proceed:
+
+```console
+httk job why PARENT                                           # names the failed child
+httk job request continue --reason "fixed INCAR" CHILD       # edit its files first
+httk job show CHILD                                           # or: httk job log CHILD
+httk job request continue --reason "child done" PARENT
+```
+
+`httk job request continue --tree --reason TEXT PARENT` resumes the failed
+descendants deepest first and then the parent (local workspaces only). When
+`job why` reports `retry_exhausted`, raise the budget after the fact, then
+restart: the override is kept in the job's `state.json` and `job.json` stays
+untouched.
+
+```console
+httk job request set_budget --max-attempts-per-activation 3 --reason "flaky node" JOB
+httk job request restart --reason "retry" JOB
+```
+
+`set_budget` also takes `--max-total-attempts` and `--max-activations`
+(a number or `unlimited`; give at least one option). Cancelled jobs cannot be
+revived, and a succeeded job is never changed. The full rules are in the
+[httk-workflow restarting jobs documentation](https://docs.httk.org/httk-workflow/dev/main/restarting_jobs.html).
 
 ## More advanced steps
 
