@@ -235,11 +235,12 @@ Exit 2 covers refusals, busy/uncertain outcomes and unacknowledged calls. `UNKNO
 status does not mean completion, and cancellation acknowledgement does not prove
 termination. Once a job that arrived through the exchange and every job of its
 tree have succeeded, failed or been cancelled, a manager returns the whole tree
-to `outbox/CLIENT_JOB_UUID/JOB_KEY` in the exchange. Fetch it (copied, verified,
-and the source removed):
+to `outbox/CLIENT_JOB_KEY` in the exchange, where `CLIENT_JOB_KEY` is your own
+job key, `<tag>--<client job UUID>`, the name the bundle had in `inbox/`. Fetch
+it (copied, verified, and the whole entry removed):
 
 ```console
-httk job adopt --move /mnt/cluster/exchange/outbox/CLIENT_JOB_UUID/JOB_KEY
+httk job adopt --move /mnt/cluster/exchange/outbox/CLIENT_JOB_KEY
 ```
 
 Without `--move` the copy in the outbox stays, and the next return of that job
@@ -252,7 +253,7 @@ failed job, adopt it, fix it and eject it to the inbox again.
 
 The broker also follows each manager's Slurm job. `managers.json` shows its
 state, exit code and times. When a manager ends, its Slurm output is published
-as `managers/<handle>.log` (`httk remote daemon log REMOTE --handle
+as `launchers/<handle>.log` (`httk remote daemon log REMOTE --handle
 HANDLE`). If no manager can run your jobs, take a waiting bundle back with
 `httk remote daemon take-back REMOTE NAME [DESTINATION]`: a client-only
 rename to a dot name, copy out and remove. If the name is gone, a manager took
