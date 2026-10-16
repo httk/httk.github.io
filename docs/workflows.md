@@ -9,8 +9,8 @@ about running a campaign — see {doc}`campaigns` for that.
 ## Three repositories
 
 - [workflows-vasp](https://github.com/httk/workflows-vasp) — production VASP
-  workflows: `vasp.relax`, `vasp.relax-bash`, `vasp.static`, and
-  `vasp.relax-static`. Use these for real calculations; no runner authoring
+  workflows: `vasp.relax`, `vasp.relax-bash`, `vasp.static`,
+  `vasp.relax-static`, and `vasp.band-structure`. Use these for real calculations; no runner authoring
   needed.
 - [workflows-vasp-other-languages](https://github.com/httk/workflows-vasp-other-languages) —
   the same relaxation authored once per native SDK language, `vasp.relax-ada`
