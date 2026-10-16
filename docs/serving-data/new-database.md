@@ -177,6 +177,25 @@ The server reads the persisted database directly; it does not need the JSON or
 CIF files. Repeating the build deduplicates unchanged data. The custom energy
 attribute is published as `_httk_custom_formation_energy`.
 
+## Run the API as a service
+
+For a production service, for example a `systemd` unit behind Apache or Nginx,
+no serving script is needed. `httk serve optimade serve` opens the database
+itself and runs it with the uvicorn ASGI server; name the record class the
+database was written with:
+
+```bash
+httk serve optimade check results.sqlite --records result_record:Result
+httk serve optimade serve results.sqlite --records result_record:Result --port 8080
+```
+
+Run both in `materials/`, so that `result_record.py` can be imported. `check`
+tests every endpoint without serving and lists them; `serve` answers the same
+queries as `serve_db.py`. This command is currently unreleased; use a
+development checkout of `httk-serve`. For a public base URL, worker processes,
+Unix sockets, and example `systemd`, Apache and Nginx configurations, see
+[deploying a store as an OPTIMADE service](https://docs.httk.org/httk-serve/dev/main/optimade/deployment.html).
+
 ## Query the API and include the linked structures
 
 In another terminal:

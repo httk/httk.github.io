@@ -67,7 +67,9 @@ app = create_asgi_app(adapter)
 Save this as `api.py` and run `uvicorn api:app --port 8080`; the reference is
 available at `/v1/references`. `create_asgi_app` is also the deployment and
 embedding interface. For a quick development server directly from Python,
-`httk.serve.optimade.serve(adapter, port=8080)` runs the same adapter.
+`httk.serve.optimade.serve(adapter, port=8080)` runs the same adapter. A
+database file can be served as a production service with
+`httk serve optimade serve STORE`; the walkthrough linked below shows how.
 
 For a complete example starting from CIF files and a JSON results table, see
 [Serve data over OPTIMADE](serving-data.md) (it also has an existing-database

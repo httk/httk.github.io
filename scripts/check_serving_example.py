@@ -2,6 +2,7 @@
 
 import json
 import re
+import shlex
 import shutil
 import socket
 import subprocess
@@ -29,6 +30,18 @@ def main() -> None:
     ]
     inputs = next(code for language, code in blocks if language == "json")
     assert len(python) == 3 and len(cifs) == 2
+    (cli,) = [
+        code
+        for language, code in blocks
+        if language == "bash" and "httk serve optimade" in code
+    ]
+    check_command, serve_command = (
+        shlex.split(line) for line in cli.strip().splitlines()
+    )
+    assert check_command[:4] == ["httk", "serve", "optimade", "check"]
+    assert serve_command[:4] == ["httk", "serve", "optimade", "serve"]
+    assert serve_command[-2:] == ["--port", "8080"]
+    httk = str(Path(sys.executable).with_name("httk"))
     with TemporaryDirectory(prefix="httk-serving-example-") as directory:
         root = Path(directory)
         (root / "cifs").mkdir()
@@ -120,16 +133,57 @@ def main() -> None:
                     assert row.structure.id == link["id"]
                     assert UnitcellStructureView(row.structure).formula == "ClNa"
             finally:
-                server.terminate()
-                try:
-                    server.wait(timeout=15)
-                except subprocess.TimeoutExpired:
-                    server.kill()
-                    server.wait()
-                    raise AssertionError("OPTIMADE server did not stop") from None
+                stop(server)
+        # The documented production command serves the same database without a script.
+        checked = subprocess.run(
+            [httk, *check_command[1:]],
+            cwd=root,
+            check=True,
+            timeout=60,
+            capture_output=True,
+            text=True,
+        )
+        assert checked.stdout.split() == ["_httk_records", "structures"], checked
+        with (root / "cli.log").open("w+") as log:
+            server = subprocess.Popen(
+                [httk, *serve_command[1:-1], str(port)],
+                cwd=root,
+                stdout=log,
+                stderr=log,
+            )
+            try:
+                deadline = time.monotonic() + 20
+                while True:
+                    if server.poll() is not None or time.monotonic() > deadline:
+                        log.seek(0)
+                        raise AssertionError(
+                            f"httk serve optimade did not start:\n{log.read()}"
+                        )
+                    try:
+                        get("/v1/info")
+                        break
+                    except OSError:
+                        time.sleep(0.05)
+                (result,) = get(
+                    "/v1/_httk_records", filter="_httk_custom_formation_energy < -1"
+                )["data"]
+                assert result["attributes"]["_httk_custom_formation_energy"] == -1.2
+            finally:
+                stop(server)
     print(
-        f"{page.name}: three-file import, reopen, relationships, and HTTP serving/client passed"
+        f"{page.name}: three-file import, reopen, relationships, HTTP serving/client, and serve CLI passed"
     )
+
+
+def stop(server: subprocess.Popen) -> None:
+    """Terminate a server process and fail if it does not stop."""
+    server.terminate()
+    try:
+        server.wait(timeout=15)
+    except subprocess.TimeoutExpired:
+        server.kill()
+        server.wait()
+        raise AssertionError("OPTIMADE server did not stop") from None
 
 
 if __name__ == "__main__":

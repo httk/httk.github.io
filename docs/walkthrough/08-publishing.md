@@ -18,7 +18,11 @@ serve(adapter_from_providers([provider]), port=8080)
 ```
 
 Serving straight from a store also works, and for real deployment
-`create_asgi_app(...)` returns an app you run behind any ASGI server.
+`create_asgi_app(...)` returns an app you run behind any ASGI server. To run a
+store file as a production service without writing an application, for
+example as a `systemd` unit behind Apache, use
+`httk serve optimade serve STORE` (currently unreleased; see
+[deploying a store as an OPTIMADE service](https://docs.httk.org/httk-serve/dev/main/optimade/deployment.html)).
 
 A store-backed service also exposes two endpoint families beyond the
 latest-per-lineage entries. `/_httk_<entry>~revs` serves every revision of every

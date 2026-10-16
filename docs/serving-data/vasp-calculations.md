@@ -207,6 +207,14 @@ store.close()
 python serve_vasp.py
 ```
 
+The same database can also be served without a script, as a production
+service suitable for a `systemd` unit behind Apache or Nginx (currently
+unreleased; see [deploying a store as an OPTIMADE service](https://docs.httk.org/httk-serve/dev/main/optimade/deployment.html)):
+
+```bash
+httk serve optimade serve vasp.sqlite --port 8080
+```
+
 In another terminal:
 
 ```bash
