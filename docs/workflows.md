@@ -14,9 +14,12 @@ about running a campaign — see {doc}`campaigns` for that.
   needed.
 - [workflows-vasp-atomate2](https://github.com/httk/workflows-vasp-atomate2) —
   atomate2's VASP Makers as workflows: `atomate2.static`, `atomate2.relax`,
-  `atomate2.tight-relax`, and `atomate2.double-relax`, run through the jobflow
-  realization with atomate2's input sets and custodian error handling. Use these
-  when you want atomate2's protocols; they need `atomate2` where jobs run.
+  `atomate2.tight-relax`, `atomate2.double-relax`, `atomate2.band-structure`,
+  `atomate2.dielectric`, `atomate2.elastic`, and `atomate2.phonons`, run through
+  the jobflow realization with atomate2's input sets and custodian error handling,
+  and collected as typed records (band structures, densities of states, elastic and
+  dielectric tensors, phonon properties). Use these when you want atomate2's
+  protocols; they need `atomate2` where jobs run.
 - [workflows-vasp-other-languages](https://github.com/httk/workflows-vasp-other-languages) —
   the same relaxation authored once per native SDK language, `vasp.relax-ada`
   through `vasp.relax-rust`. Use as a starting point for a compiled or JVM
