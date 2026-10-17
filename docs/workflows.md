@@ -6,12 +6,17 @@ and friends resolve one from a name, a git URI, or a local directory; this
 page is about where workflows come from and the manifest essentials, not
 about running a campaign — see {doc}`campaigns` for that.
 
-## Three repositories
+## Four repositories
 
 - [workflows-vasp](https://github.com/httk/workflows-vasp) — production VASP
   workflows: `vasp.relax`, `vasp.relax-bash`, `vasp.static`,
   `vasp.relax-static`, and `vasp.band-structure`. Use these for real calculations; no runner authoring
   needed.
+- [workflows-vasp-atomate2](https://github.com/httk/workflows-vasp-atomate2) —
+  atomate2's VASP Makers as workflows: `atomate2.static`, `atomate2.relax`,
+  `atomate2.tight-relax`, and `atomate2.double-relax`, run through the jobflow
+  realization with atomate2's input sets and custodian error handling. Use these
+  when you want atomate2's protocols; they need `atomate2` where jobs run.
 - [workflows-vasp-other-languages](https://github.com/httk/workflows-vasp-other-languages) —
   the same relaxation authored once per native SDK language, `vasp.relax-ada`
   through `vasp.relax-rust`. Use as a starting point for a compiled or JVM
