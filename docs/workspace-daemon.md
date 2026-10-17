@@ -271,21 +271,22 @@ it; cancel the job instead.
 On the destination, edit a launcher with `httk launcher configure`,
 or the daemon configuration (launchers, authorized keys, Slurm clients,
 `force` for resources above the sanity limits) with
-`httk workspace daemon configure`, then restart the daemon:
+`httk workspace daemon configure`, then reload it:
 
 ```console
 httk workspace daemon configure /srv/httk/example/workspace \
   --add launchers=large \
   --add authorized_keys=ed25519:ANOTHER_CLIENT_PUBLIC_KEY
-httk workspace daemon run /srv/httk/example/workspace
+httk workspace daemon reload /srv/httk/example/workspace
 ```
 
-`configure` validates the result before saving it. Every `check` and `run`
-reads the listed launchers and the configuration again, and when they changed,
-activates them and rewrites `daemon.json`. A running daemon is not blocked:
-running instances exit at their next admission when the active configuration
-changed, and a supervisor restarts them. Any number of daemon instances may
-run. The same restart applies an *httk* upgrade. The workspace and cluster are
+`configure` validates the result before saving it. Every `reload`, `check` and
+`run` reads the listed launchers and the configuration again, and when they
+changed, activates them and rewrites `daemon.json`. A running daemon notices the
+new activation at its next poll and stops, and `httk workspace daemon run` starts
+it again on the new configuration, so queued and running managers are never
+lost. Any number of daemon instances may run. Restarting `run` applies an
+*httk* upgrade. The workspace and cluster are
 fixed; changing them needs a new enrollment (an enrollment whose ledger has an
 earlier format, the SQLite ledger or ledger format 1, must be initialized
 again). Queued and running managers retain their original snapshot;
