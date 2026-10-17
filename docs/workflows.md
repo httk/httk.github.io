@@ -94,7 +94,17 @@ A repository can also carry an `httk_plugin.toml` listing its workflow
 directories, so `httk plugin install git+https://github.com/httk/workflows-vasp`
 makes all of them known on this machine at once (a workspace still installs
 the ones it runs); `[plugin] requires` then applies to every workflow it
-bundles. Project templates are installed the same way, by URI or
+bundles.
+
+The workflow repositories are also pip-installable from a clone:
+`pip install -e .` (or `pip install .`) installs their Python dependencies and
+makes every workflow known to *httk₂* in that Python environment, at HEAD and
+at every `wf-v*` tag, under the same commit-pinned GitHub URIs a git install
+records, so jobs and workspaces move freely between machines installed either
+way (see
+[workflows by URI](https://docs.httk.org/httk-workflow/dev/main/details/workflow_uris.html)).
+
+Project templates are installed the same way as plugin workflows, by URI or
 from a plugin:
 
 ```console
