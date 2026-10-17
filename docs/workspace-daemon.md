@@ -209,6 +209,13 @@ Use the returned opaque manager handle as `MANAGER_HANDLE`. Without
 passive `status.json` and `managers.json` from the exchange, which are
 informational.
 
+`start --time-limit DURATION` (Slurm `--time` syntax) gives this one manager a
+different allocation length. It may not exceed the launcher's
+`slurm.time_limit_max`, which defaults to its `slurm.time_limit`, so by default
+a start can only shorten it. The daemon refuses a longer request with
+`time_limit_exceeded`. The response and the `managers.json` row show the
+effective `time_limit`.
+
 Each call generates a fresh request ID, writes it to stderr, and writes a verified
 JSON response to stdout. A call that times out has not necessarily failed: its
 request may still be queued in the exchange, and the daemon applies it when it

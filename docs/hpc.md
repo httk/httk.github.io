@@ -110,6 +110,10 @@ httk job list                       # ready / running / succeeded per job
 httk job why n17--                  # a stuck or failed job
 ```
 
+`httk workflow run --count 20 --time-limit 12:00:00` submits the same
+allocations with a shorter SLURM `--time`. A longer one needs
+`slurm.time_limit_max` set on the launcher.
+
 Here `--count` is the number of **managers** to start: 20 SLURM allocations
 of 10 CPUs each, each running the workspace's jobs one after another.
 `--workers` is how many jobs ONE manager runs concurrently inside its
