@@ -199,10 +199,19 @@ refused: use the typed commands below to control managers.
 ## 4. Start, inspect and cancel a manager
 
 ```console
+httk remote daemon show confined
 httk remote daemon start confined --configuration small
 httk remote daemon status confined --handle MANAGER_HANDLE
 httk remote daemon cancel confined --handle MANAGER_HANDLE
 ```
+
+`show` prints the daemon's published `daemon.json`: each approved
+configuration with its digest and its resource settings, namely
+`manager.workers`, `slurm.partition`, `slurm.nodes`, `slurm.ntasks`,
+`slurm.ntasks_per_node`, `slurm.cpus_per_task`, `slurm.mem`, `slurm.gres`,
+`slurm.time_limit` and `slurm.time_limit_max` where set (time limits as
+`[D-]HH:MM:SS`). Every other launcher setting, such as the prelude, launch
+commands, confinement and account, stays private to the operator.
 
 Use the returned opaque manager handle as `MANAGER_HANDLE`. Without
 `--handle`, `httk remote daemon status confined` instead prints the
