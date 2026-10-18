@@ -9,7 +9,8 @@ separate documentation subsite.
 ### httk-core
 
 Shared contracts, exact vector and datastream models, OPTIMADE definitions,
-registries, and dependency-free record models. Import path: `httk.core`.
+registries, dependency-free record models, and the unified diagnostics
+reporting channel (`httk.core.report`). Import path: `httk.core`.
 
 - API reference: {doc}`httk.core </reference/autoapi/httk/core/index>`
 - Module documentation: <https://docs.httk.org/httk-core/dev/main/>
@@ -19,9 +20,10 @@ registries, and dependency-free record models. Import path: `httk.core`.
 
 Exact crystal-structure and symmetry representations, together with the
 file-format I/O layer (CIF/mCIF, POSCAR/CONTCAR, VASP OUTCAR/XDATCAR/WAVECAR,
-and trajectory JSONL) that previously lived in the retired *httk-io* module.
-Import path: `httk.atomistic` (I/O under `httk.atomistic.io` and
-`httk.atomistic.integrations.vasp`).
+Quantum ESPRESSO, ABINIT and CP2K structure files, LAMMPS dumps and data
+files, and trajectory JSONL) that previously lived in the retired *httk-io*
+module. Import path: `httk.atomistic` (I/O under `httk.atomistic.io` and
+`httk.atomistic.integrations.<code>`).
 
 - API reference: {doc}`httk.atomistic </reference/autoapi/httk/atomistic/index>`
 - Module documentation: <https://docs.httk.org/httk-atomistic/dev/main/>

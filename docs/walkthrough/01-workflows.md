@@ -11,8 +11,8 @@ a queued campaign cannot change what its jobs execute.
 
 For VASP you do not have to author anything: the `vasp.relax` workflow
 package from the [httk/workflows-vasp](https://github.com/httk/workflows-vasp)
-repository runs VASP through three steps — prepare, run, publish — and needs
-only a POSCAR and a `vasp.command` setting.
+repository runs v1's staged, robust VASP relaxation through its prepare, run,
+stage and publish steps, and needs only a POSCAR and a `vasp.command` setting.
 
 ```console
 $ httk project init --name quickstart .
@@ -73,7 +73,7 @@ default = 520
 ```
 
 The manifest declares `[workflow]` identity, the `[workflow.runner]` (an
-executable, or a `language` such as CWL, PWD, jobflow, or httk-v1),
+executable, or a `format` such as CWL, PWD, jobflow, or httk-v1),
 `[workflow.inputs.*]` (staged objects), `[workflow.parameters.*]` (knobs),
 `[workflow.outputs.*]`, the `[workflow.instantiate]` and `[workflow.collect]`
 hooks, and `[workflow.postprocess.<NAME>]` scripts. Runners are written against
@@ -99,7 +99,7 @@ convention with a declared manifest and SDK steps.
 
 You do not have to rewrite an existing v1 template to use it. Wrap it
 unchanged as a package with `format = "httk-v1"` and it runs under the *httk₂*
-CLI — see the migration guide, §15.
+CLI — see the migration guide, §3.
 ```
 
 ## Read next
@@ -112,9 +112,10 @@ CLI — see the migration guide, §15.
 - <https://docs.httk.org/httk-workflow/dev/main/workflow_compat.html> — CWL, PWD,
   jobflow, and httk-v1 as compat formats.
 - <https://github.com/httk/workflows-vasp> — the VASP workflow packages
-  (`vasp.relax`, `vasp.relax-bash`, `vasp.static`, `vasp.relax-static`): what
-  they do, their inputs, parameters, and failure codes.
+  (`vasp.relax`, `vasp.relax-bash`, `vasp.static`, `vasp.relax-static`, the
+  property workflows, and `vasp.full-characterization`): what they do, their
+  inputs, parameters, and failure codes.
 - <https://docs.httk.org/httk-workflow/dev/main/sdks/> — the runner SDK
   in nine languages.
-- {doc}`../workflows` — the three workflow repositories, URIs, and installing.
+- {doc}`../workflows` — the four workflow repositories, URIs, and installing.
 - {doc}`../campaigns` — the four-command cycle at ecosystem level.

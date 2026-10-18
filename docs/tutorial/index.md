@@ -8,12 +8,12 @@ deeper details linked from each page.
 
 ## Install the pieces used by the tutorial
 
-The `httk2` metapackage installs the core, I/O, atomistic, analysis, and
-workflow modules. Database examples additionally need *httk-store*'s SQL extra;
-ASE is used only for the two visualization/interchange steps.
+The `httk2` metapackage installs the core, atomistic (with its file I/O),
+store (with its SQL extra), serve, analysis, and workflow modules. ASE is used
+only for the two visualization/interchange steps.
 
 ```console
-python -m pip install httk2 "httk-store[db]" ase
+python -m pip install httk2 ase
 ```
 
 ## Feature map
@@ -27,14 +27,14 @@ python -m pip install httk2 "httk-store[db]" ase
 | 5 | Build general, orthogonal, and cubic supercells | Exact supercell operations | `httk-atomistic` |
 | 6 | Store structure data in SQLite | Representation-specific Records in SQL or MongoDB stores | `httk-store` |
 | 7 | Search the local database | Backend-neutral query API | `httk-store` |
-| 8 | Prepare a VASP calculation | Packaged templates and POSCAR preparation | `httk-workflow` |
+| 8 | Prepare a VASP calculation | Packaged templates and POSCAR preparation | `httk-workflow` + `httk-workflow-vasp` |
 | 9 | Generate a batch | Instantiation parameters and campaign partitioning | `httk-workflow` |
 | 10 | Send and run remotely | Remote adapters, precheck, and runner builds | `httk-workflow` |
 | 11 | Read results into the database | Workflow collection or explicit record storage | `httk-workflow` + `httk-store` |
 | 12 | Draw a phase diagram | Composition and convex-hull analysis | `httk-analyse` |
 | 13 | Store custom data | Frozen dataclasses | `httk-store` |
-| 14 | Publish a project centrally | Signed local manifests; no central publisher | `httk-workflow` |
-| 15 | Query an OPTIMADE server | Generic OPTIMADE client and structure loading | `httk-serve` |
+| 14 | Publish a project centrally | Signed local manifests; no central publisher | `httk-core` + `httk-store` |
+| 15 | Query an OPTIMADE server | Generic OPTIMADE client and structure loading | `httk-store` |
 
 ```{toctree}
 :maxdepth: 1

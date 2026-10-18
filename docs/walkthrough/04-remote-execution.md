@@ -75,8 +75,11 @@ httk workspace settings set --key vasp.command --value vasp_std kappa:runs
 The launcher and scheduler settings live with the workspace, not with the
 remote:
 `slurm.account`, `slurm.partition`, `slurm.time_limit`, `slurm.nodes`,
-`slurm.cpus_per_task`, and `slurm.reservation` become batch directives, and
-`manager.workers` supplies the default worker count.
+`slurm.ntasks`, `slurm.ntasks_per_node`, `slurm.cpus_per_task`, `slurm.mem`,
+`slurm.gres`, and `slurm.reservation` become batch directives,
+`slurm.time_limit_max` bounds a per-start `httk workflow run --time-limit`
+(by default it may only shorten `slurm.time_limit`), and `manager.workers`
+supplies the default worker count.
 
 ```{admonition} In httk v1
 :class: note

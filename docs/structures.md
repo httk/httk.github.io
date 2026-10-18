@@ -2,9 +2,11 @@
 
 Load a structure with `httk.core.load("file.cif")`, then use
 `UnitcellStructureView` when you need the full unit cell. The
-registered *httk-atomistic* readers cover CIF, POSCAR/CONTCAR, OUTCAR, and
-WAVECAR; use the neutral `httk.atomistic.io` reader when you need format-level
-data instead of an atomistic structure.
+registered *httk-atomistic* readers cover CIF/mCIF, POSCAR/CONTCAR, the VASP
+outputs (OUTCAR, OSZICAR, XDATCAR, WAVECAR), Quantum ESPRESSO, ABINIT and CP2K
+structure files, LAMMPS dumps and data files, and trajectory JSONL; pass
+`raw=True` to `load` when you need the neutral format-level payload instead of
+an atomistic structure.
 
 Views are immutable, multi-format access to one backend, so a structure can be
 read as a unit cell or as a plain `(lattice, positions, numbers)` triple. The
@@ -56,12 +58,14 @@ An asymmetric unit records a space group and one representative per symmetry
 orbit; expand it to a full unit cell only when the calculation needs it.
 Precision is a recorded claim from the source digits or stated uncertainties,
 not a universal tolerance. Use exact integer supercell transformations when a
-larger cell is needed. Bridges expose the same data to ASE and pymatgen without
-making either library the structure model.
+larger cell is needed. `band_path` returns an exact HPKOT band-structure path
+together with the primitive cell its k-points refer to; running it again on
+that cell returns the same cell. Bridges expose the same data to ASE and
+pymatgen without making either library the structure model.
 
 ## Read next
 
 - [Core views](https://docs.httk.org/httk-core/dev/main/view_backend_pattern.html) and [view details](https://docs.httk.org/httk-core/dev/main/details/view_backend_pattern.html); [datastreams](https://docs.httk.org/httk-core/dev/main/datastreams.html) and [details](https://docs.httk.org/httk-core/dev/main/details/datastreams.html).
-- [Atomistic structures](https://docs.httk.org/httk-atomistic/dev/main/structures.html), [asymmetric units](https://docs.httk.org/httk-atomistic/dev/main/asu.html), [precision](https://docs.httk.org/httk-atomistic/dev/main/precision.html), [periodicity](https://docs.httk.org/httk-atomistic/dev/main/periodicity.html), and [material-information levels](https://docs.httk.org/httk-atomistic/dev/main/prototypes.html).
+- [Atomistic structures](https://docs.httk.org/httk-atomistic/dev/main/structures.html), [asymmetric units](https://docs.httk.org/httk-atomistic/dev/main/asu.html), [precision](https://docs.httk.org/httk-atomistic/dev/main/precision.html), [periodicity](https://docs.httk.org/httk-atomistic/dev/main/periodicity.html), [band-structure paths](https://docs.httk.org/httk-atomistic/dev/main/band-paths.html), and [material-information levels](https://docs.httk.org/httk-atomistic/dev/main/prototypes.html).
 - [Structure details](https://docs.httk.org/httk-atomistic/dev/main/details/structures.html), [ASU details](https://docs.httk.org/httk-atomistic/dev/main/details/asu.html), [precision details](https://docs.httk.org/httk-atomistic/dev/main/details/precision.html), and [periodicity details](https://docs.httk.org/httk-atomistic/dev/main/details/periodicity.html).
 - [CIF](https://docs.httk.org/httk-atomistic/dev/main/cif.html), [POSCAR](https://docs.httk.org/httk-atomistic/dev/main/poscar.html), [VASP outputs](https://docs.httk.org/httk-atomistic/dev/main/vasp_outputs.html), and [WAVECAR](https://docs.httk.org/httk-atomistic/dev/main/wavecar.html) readers.

@@ -6,7 +6,9 @@ For a cluster workspace reached through a mounted exchange directory and signed 
 Start locally: initialize your identity and workspace, configure an executable,
 create a job, run it, and collect its result. The `vasp.relax` workflow
 package from [httk/workflows-vasp](https://github.com/httk/workflows-vasp)
-accepts a VASP-5 POSCAR and needs no runner authoring. From an *httk-workflow*
+accepts a VASP-5 POSCAR and needs no runner authoring; its runner uses the
+`httk.codes.vasp` library of *httk-workflow-vasp*, which must be installed
+(`pip install httk-workflow-vasp`) wherever the job runs. From an *httk-workflow*
 checkout, with a `POSCAR` in the current directory, this uses the supplied mock
 executable so no VASP installation or license is needed:
 

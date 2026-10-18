@@ -14,10 +14,14 @@ class StructureIsEdible:
     is_edible: bool
 
 
-store = SqliteStore("presentation.sqlite", entry_records={})
+store = SqliteStore("presentation.sqlite")
 store.save(StructureIsEdible("ClNa", True))
 store.save(StructureIsEdible("As", False))
 ```
+
+Reopening the existing presentation store loads its persisted declaration; a
+custom record that is not an entry family needs no declaration of its own. A
+new store holding only custom records is created with `entry_records={}`.
 
 No ORM base class, decorator, or plugin property is required. Nested frozen
 dataclasses become references; `Annotated` storage markers add indexes,

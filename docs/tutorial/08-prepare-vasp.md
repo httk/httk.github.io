@@ -53,7 +53,10 @@ httk workflow run
 `job new` scaffolds and submits one job from the `vasp.static` workflow
 package in [httk/workflows-vasp](https://github.com/httk/workflows-vasp)
 (`vasp.relax` and `vasp.relax-static` work the same way). A job runs only a
-workflow installed in its workspace, so `--install` installs it there first. The
+workflow installed in its workspace, so `--install` installs it there first.
+The packaged VASP runners use the `httk.codes.vasp` library of
+*httk-workflow-vasp*, so install that distribution
+(`pip install httk-workflow-vasp`) wherever their jobs run. The
 `structure` input is loaded from the CIF and written as `files/POSCAR`.
 The runner's `prepare` step derives the k-point grid, assembles the POTCAR
 from the pseudopotential library, and fills in `MAGMOM` and `NBANDS`, with any

@@ -10,7 +10,8 @@ about running a campaign — see {doc}`campaigns` for that.
 
 - [workflows-vasp](https://github.com/httk/workflows-vasp) — production VASP
   workflows: `vasp.relax`, `vasp.relax-bash`, `vasp.static`,
-  `vasp.relax-static`, `vasp.relax-ions`, and `vasp.band-structure`, and the
+  `vasp.relax-static`, `vasp.relax-static-coarse`, `vasp.relax-static-hse`,
+  `vasp.general`, `vasp.relax-ions`, and `vasp.band-structure`, and the
   property workflows built natively on *httk-analyse*: `vasp.dos`,
   `vasp.dielectric`, `vasp.elastic`, `vasp.eos`, and `vasp.phonons` (phonopy),
   collected as typed records. `vasp.full-characterization` runs them as child

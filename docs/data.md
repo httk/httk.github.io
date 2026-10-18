@@ -1,11 +1,12 @@
 # Storing, querying, and serving data
 
 *httk₂* keeps data models separate from storage. Plain frozen dataclasses can
-be stored through `SqliteStore`, `DuckdbStore`, or `PostgresqlStore`, or in MongoDB through
-`MongoStore`; the same records and neutral query protocols travel across those
-backends. Content addressing deduplicates equal records while a local `sid`
-identifies a row in one store. That `content_id` is the storage identity; a
-defined entry family additionally carries a human-readable, store-minted entry
+be stored through `SqliteStore`, `DuckdbStore`, `PostgresqlStore`, or
+`ClickhouseStore`, or in MongoDB through `MongoStore`; the same records and
+neutral query protocols travel across those backends. Content addressing
+deduplicates equal records while a local `sid` identifies a row in one store.
+That `content_id` is the storage identity; a defined entry family additionally
+carries a human-readable, store-minted entry
 `id` shared by every revision of a lineage, and a per-revision `immutable_id`
 written `<id>~<n>`. Named alternative representations of an entry — a
 conventional cell beside a primitive one, say — share the main's `id` under a
@@ -46,7 +47,7 @@ operational data service:
 ```python
 from httk.store.backend.mongo import MongoDatabase, MongoStore
 
-with MongoDatabase.connect(uri, database="materials") as database:
+with MongoDatabase(uri, database="materials") as database:
     store = MongoStore(database, entry_records={})
 ```
 
@@ -78,10 +79,8 @@ serves result attributes on `_httk_records`, linked to the `structures` entries.
 Its three scripts share a `@entry_record` definition derived from
 `DataEntryRecord`; `Property` annotations declare served scalar attributes and
 ordinary record fields declare structure references. Pass `records=[Result]`
-when creating and reopening that SQL store. These helpers are currently
-unreleased; use matching development checkouts of *httk-core* and *httk-store*.
-Existing plain dataclasses and explicit `entry_records=` / `entry_families=`
-declarations remain supported.
+when creating and reopening that SQL store. Existing plain dataclasses and
+explicit `entry_records=` / `entry_families=` declarations remain supported.
 
 Serving is not limited to OPTIMADE. *httk-serve* can also turn a caller-owned
 OpenAPI 3.1 contract into a running application: you supply the JSON Schemas and

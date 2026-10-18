@@ -241,7 +241,9 @@ Retain its `daemon-requests/` cache so retries reuse the original signature.
 Requests include signed timestamps, with **130 minutes of allowed clock skew**
 on each side. Default lifetime is one hour, so first execution can fall between
 creation minus 130 minutes and expiry plus 130 minutes. Completed responses can
-be replayed after expiry by a still-authorized signer; replay does not resubmit.
+be replayed after expiry by a still-authorized signer, for as long as the daemon
+keeps them (`retention.daemon_history_days`, 30 days by default); replay does
+not resubmit.
 Busy, capacity, conflicting-request, wrong-workspace and wrong-enrollment
 refusals are not recorded, so a retry of those is decided afresh. The file-level rules of the
 exchange, the request/response mailbox and the confined launch files are in the
@@ -274,6 +276,17 @@ HANDLE`). If no manager can run your jobs, take a waiting bundle back with
 `httk remote daemon take-back REMOTE NAME [DESTINATION]`: a client-only
 rename to a dot name, copy out and remove. If the name is gone, a manager took
 it; cancel the job instead.
+
+The daemon keeps its history for the workspace's
+`retention.daemon_history_days` (30 days by default; `"keep"` keeps it all):
+after that long, a settled request leaves its ledger and an ended manager whose
+log was published leaves `managers.json`, freeing their place in the
+`max_submissions` and record quotas, which bound the kept history rather than
+lifetime totals. A start answered `uncertain` without a Slurm job ID stays, and
+no request is retired before its signed lifetime plus the clock skew has passed.
+The daemon reads the setting when it starts, so restart it after changing it
+with `httk workspace policy set --key retention.daemon_history_days --value 14
+WORKSPACE`.
 
 ## 5. Change the configuration
 

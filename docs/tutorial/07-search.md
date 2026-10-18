@@ -238,8 +238,11 @@ concrete record class. Fetch with the family key and the stable content ID:
 from httk.atomistic import StructureEntry
 
 record = store.fetch_entry(StructureEntry, restored.id)
-print(type(record).__name__, record.id == restored.id)
+print(type(record).__name__, record.id, UnitcellStructureView(record).id == restored.id)
 ```
+
+The stored record's own `id` is the entry id the store minted (`example-1-1`);
+a view of it reports the same content ID as before.
 
 An entry store can register unit-cell, fundamental-domain, and asymmetric-unit
 records under the same family. `fetch_entry(StructureEntry, id)` then returns

@@ -33,13 +33,13 @@ abbreviated real export looks like this:
 ```console
 $ unzip -p presentation-dataset.zip manifest.json | python -m json.tool
 {
-    "created_at_ns": 1786483194324005731,
+    "created_at_ns": 1792345783546740765,
     "definitions": [
         {
-            "id": "https://schemas.optimade.org/defs/v1.2/entrytypes/optimade/files",
+            "id": "https://schemas.optimade.org/defs/v1.3/entrytypes/optimade/structures",
             "kind": "entry_type",
-            "path": "definitions/entry-type-a058ad6ffcb58e43.json",
-            "sha256": "19e134bf48e786ff9b221187b5cad6f3da04a110ab77349a29d0d6ecb135ffaa"
+            "path": "definitions/entry-type-49f43a4773b3201e.json",
+            "sha256": "22f9d4f9e798fc22b4a194f709943ba164bc0078ad73f3e27d0bd168d7b03879"
         },
         ...
     ]

@@ -43,8 +43,9 @@ contract between your data and any served protocol.
 ## A website
 
 For a public-facing site, httk-serve provides a template repository
-([example_website_httk](https://github.com/httk/example_website_httk)) with
-reusable widgets under `src/widgets/`, invoked in pages as `{{ widget(...) }}`.
+([example_website_httk](https://github.com/httk/example_website_httk)). Pages
+invoke built-in widgets, or the site's own under `src/widgets/`, as
+`{{ widget(...) }}`.
 Pages can be fully static, with the browser querying an OPTIMADE endpoint
 directly, so the site needs no running backend of its own.
 

@@ -99,7 +99,8 @@ workspace (`kappa:runs`) owns its launcher and scheduler configuration. See
 ```
 
 *httk₂*'s *httk-store* gives content-addressed `SqliteStore`, `DuckdbStore`,
-and `PostgresqlStore` classes (and a `MongoStore`), storing plain frozen-dataclass records.
+`PostgresqlStore`, and `ClickhouseStore` classes (and a `MongoStore`), storing
+plain frozen-dataclass records.
 OPTIMADE property definitions are the shared vocabulary across storage,
 querying, and serving. See {doc}`06-database`.
 

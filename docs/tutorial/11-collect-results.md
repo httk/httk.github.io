@@ -1,6 +1,7 @@
 # Collect the results
 
-The standard VASP collector reads each published `CONTCAR` and `OUTCAR`.
+The standard VASP collector reads each job's final `CONTCAR` and `OUTCAR`,
+which the relaxation leaves in the job's persistent `run/` directory.
 Collecting into SQLite stores the relaxed structures, the total-energy
 `DataRecord`s, and the provenance `Run`s. Each energy record carries a
 `product_of` edge naming the relaxed structure it describes, and each run

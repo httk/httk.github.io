@@ -11,7 +11,8 @@ entry point, the readers are pure Python, and dispatch is by filename.
 `httk.core.load(path)` returns the file's native representation: a CIF loads as
 an asymmetric-unit structure, a POSCAR as a unit-cell structure. Compressed
 files decompress transparently, and dispatch is on the extension or exact
-basename, case-insensitively.
+basename, case-insensitively; a file no name identifies takes an explicit
+format tag, for example `load("si.in", format="qe-pw-input")`.
 
 ```python
 from httk.core import load

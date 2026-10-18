@@ -1,7 +1,7 @@
 # *httk₂* notebook examples
 
 These notebooks are executed as part of the (strict) documentation build, so their
-outputs always reflect the current httk-core and httk-atomistic APIs.
+outputs always reflect the current APIs of the modules they use.
 
 ```{toctree}
 :maxdepth: 1

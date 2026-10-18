@@ -7,13 +7,14 @@ from httk.atomistic import (
     UnitcellStructureView,
 )
 from httk.core import load
-from httk.store import SqliteStore
+from httk.store import EntryIdScheme, SqliteStore
 
 structure = UnitcellStructureView(load("example.cif"))
 
 store = SqliteStore(
     "presentation.sqlite",
     entry_records={StructureEntry: UnitcellStructureRecord},
+    entry_ids=EntryIdScheme("example", "1"),
 )
 sid = store.save(structure)
 fetched = store.fetch(UnitcellStructureRecord, sid)
@@ -23,7 +24,8 @@ print("Saved row", sid, "with stable structure id", restored.id)
 
 The first opening of an entry store declares the durable representations it may
 contain. Here every stored `StructureEntry` uses the concrete, normalized
-`UnitcellStructureRecord` layout. The view converts the CIF-native ASU into the
+`UnitcellStructureRecord` layout, and `EntryIdScheme` names the namespace of the
+entry ids the store mints for them. The view converts the CIF-native ASU into the
 declared unit-cell family; `save()` then accepts the natural `UnitcellStructure` and
 projects its nested cell, sites, species, composition, and metadata recursively;
 there is no manual record-conversion step and no temporary record graph.

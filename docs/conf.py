@@ -137,6 +137,11 @@ autoapi_member_order = "bysource"
 autoapi_python_class_content = "module"  # docstring under class, not merged from __init__
 autoapi_python_use_implicit_namespaces = True
 autoapi_follow_symlinks = True
+# Stubs first, as in httk-workflow's own conf.py: the httk.workflow package root
+# re-exports lazily (PEP 562), and its ``__init__.pyi`` holds the static imports
+# the reference documents (AutoAPI keeps the first match). httk-workflow is the
+# only distribution in the merged tree that ships ``.pyi`` stubs.
+autoapi_file_patterns = ["*.pyi", "*.py"]
 autoapi_template_dir = "_templates/autoapi"
 
 nitpicky = True
@@ -180,6 +185,14 @@ nitpick_ignore = [
     ("py:class", "_RemoteVariable"),
     # The data query API exposes this bare alias.
     ("py:class", "FilterAst"),
+    # Aggregate-only: httk-serve re-exports httk-store's HandlerTable alias on its
+    # optimade.backend.handlers page, where the alias docstring's bare
+    # FilterTranslationError reference (resolvable in httk-store's own module)
+    # has no target. httk-serve's own build does not render the re-export, so
+    # its conf.py has no counterpart. The reference is qualified at source in
+    # httk-store (Oct 18 2026); remove this entry once the submodule gitlink
+    # includes that commit.
+    ("py:class", "FilterTranslationError"),
     ("py:class", "_Context"),
     ("py:class", "_BackingPlan"),
     # Match httk-store/docs/conf.py: slicer signatures expose these private
@@ -235,6 +248,19 @@ suppress_warnings = ["myst.xref_missing", "autoapi.python_import_resolution", "r
 # aliases in the aggregate reference.
 _INTERNAL_MODULES = (
     "models",
+    # The filesystem kernel and the job model behind httk.workflow.protocol, as
+    # listed in httk-workflow's own conf.py.
+    "_fs",
+    "_kernel",
+    "_state",
+    "_job",
+    "_data",
+    "_requests",
+    "_children",
+    "_joins",
+    "_store",
+    "_bundles",
+    "_allocation",
     "journal",
     "transactions",
     "runtime_builders",
@@ -267,7 +293,10 @@ nitpick_ignore_regex = [
     (
         r"py:.*",
         r"(DataMode|WorkdirMode|PublishMode|RunnerSource|StepHandler|JoinCondition"
-        r"|DiagnosticSeverity|EventMonitor|RemedyChange|RemedySequence|MarkerFault|V1Materializer)",
+        r"|DiagnosticSeverity|EventMonitor|RemedyChange|RemedySequence|MarkerFault|V1Materializer"
+        # The private Frozen/Release aliases of httk.workflow.protocol, as in
+        # httk-workflow's own conf.py.
+        r"|Frozen|Release)",
     ),
 ]
 
