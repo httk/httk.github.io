@@ -18,8 +18,11 @@ about running a campaign — see {doc}`campaigns` for that.
   `atomate2.dielectric`, `atomate2.elastic`, and `atomate2.phonons`, run through
   the jobflow realization with atomate2's input sets and custodian error handling,
   and collected as typed records (band structures, densities of states, elastic and
-  dielectric tensors, phonon properties). Use these when you want atomate2's
-  protocols; they need `atomate2` where jobs run.
+  dielectric tensors, phonon properties). `atomate2.full-characterization` runs
+  them as child jobs on one material: a shared tight relaxation, then band
+  structure, elastic tensor, dielectric response and phonons in parallel, with no
+  VASP calculation run twice. Use these when you want atomate2's protocols; they
+  need `atomate2` where jobs run.
 - [workflows-vasp-other-languages](https://github.com/httk/workflows-vasp-other-languages) —
   the same relaxation authored once per native SDK language, `vasp.relax-ada`
   through `vasp.relax-rust`. Use as a starting point for a compiled or JVM
