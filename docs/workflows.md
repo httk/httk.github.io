@@ -10,8 +10,15 @@ about running a campaign — see {doc}`campaigns` for that.
 
 - [workflows-vasp](https://github.com/httk/workflows-vasp) — production VASP
   workflows: `vasp.relax`, `vasp.relax-bash`, `vasp.static`,
-  `vasp.relax-static`, and `vasp.band-structure`. Use these for real calculations; no runner authoring
-  needed.
+  `vasp.relax-static`, `vasp.relax-ions`, and `vasp.band-structure`, and the
+  property workflows built natively on *httk-analyse*: `vasp.dos`,
+  `vasp.dielectric`, `vasp.elastic`, `vasp.eos`, and `vasp.phonons` (phonopy),
+  collected as typed records. `vasp.full-characterization` runs them as child
+  jobs on one material: one tight relaxation, then band structure, density of
+  states, elastic tensor, equation of state, dielectric response and phonons in
+  parallel where they allow, sharing the self-consistent density and the Born
+  charges so no VASP calculation runs twice. Use these for real calculations; no
+  runner authoring needed.
 - [workflows-vasp-atomate2](https://github.com/httk/workflows-vasp-atomate2) —
   atomate2's VASP Makers as workflows: `atomate2.static`, `atomate2.relax`,
   `atomate2.tight-relax`, `atomate2.double-relax`, `atomate2.band-structure`,
