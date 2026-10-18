@@ -63,6 +63,22 @@ httk workflow list --workspace default
 httk workflow uninstall --workspace default vasp.relax
 ```
 
+A `git+` URI without `#subdir`, whose repository root holds an
+`httk_plugin.toml` (and no `httk_workflow.toml`), installs every workflow
+package that manifest lists. Each is installed under its pinned member URI
+(`…@<commit>#<subdir>`), and one `ID<TAB>NAME` line is printed per workflow:
+
+```console
+httk workflow install --workspace default 'git+https://github.com/httk/workflows-vasp-atomate2@wf-v0.2.0'
+```
+
+A call from one listed workflow to another, by name or alias, binds to the
+member at the same commit. A repository whose root holds
+`httk_workflow.toml` is a single package, as before, and `httk job new
+--workflow` and `httk workflow describe` still need `#subdir`, since they name
+one workflow. A running workspace daemon needs no reload: managers read the
+workspace's installed workflows when they claim jobs.
+
 Without `--workspace`, `httk workflow install` only fetches into this machine's
 cache. Workflows never travel with jobs: install them in every workspace that
 runs those jobs.
@@ -100,8 +116,9 @@ in the module docs.
 A repository can also carry an `httk_plugin.toml` listing its workflow
 directories, so `httk plugin install git+https://github.com/httk/workflows-vasp`
 makes all of them known on this machine at once (a workspace still installs
-the ones it runs); `[plugin] requires` then applies to every workflow it
-bundles.
+the ones it runs, and `httk workflow install --workspace WS` of the repository
+URI, without `#subdir`, installs them all there); `[plugin] requires` then
+applies to every workflow it bundles.
 
 The workflow repositories are also pip-installable from a clone:
 `pip install -e .` (or `pip install .`) installs their Python dependencies and
