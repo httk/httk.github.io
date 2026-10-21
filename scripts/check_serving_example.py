@@ -143,7 +143,8 @@ def main() -> None:
             capture_output=True,
             text=True,
         )
-        assert checked.stdout.split() == ["_httk_records", "structures"], checked
+        # Structures may reference the file they were read from, so `files` is served too.
+        assert checked.stdout.split() == ["_httk_records", "files", "structures"], checked
         with (root / "cli.log").open("w+") as log:
             server = subprocess.Popen(
                 [httk, *serve_command[1:-1], str(port)],
