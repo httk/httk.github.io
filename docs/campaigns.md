@@ -133,7 +133,9 @@ Each workspace owns its launcher and scheduler settings. A large campaign partit
 ordinary workspaces, assigns root jobs by hash, round-robin, or explicit name,
 and keeps spawned children with their parent's partition. Use
 `campaign init`, `campaign submit`, `workflow run`, and `campaign collect` to
-manage those partitions one at a time or together.
+manage those partitions one at a time or together. Children nest by default under
+`<parent placement>/<parent job key>.children`; the workspace setting
+`children.placement=flat` restores the flat layout.
 
 Author reusable workflows as packages with an `httk_workflow.toml` manifest.
 The nine-language SDK family gives the same runner surface from Python, Bash,
