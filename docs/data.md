@@ -71,7 +71,7 @@ embedding interface. For a quick development server directly from Python,
 `httk.serve.optimade.serve(adapter, port=8080)` runs the same adapter. A
 database file can be served as a production service with
 `httk serve optimade serve STORE`; the walkthrough linked below shows how.
-`httk serve combined serve STORE --files-dir DIR` adds a browsing site and file
+`httk serve combined serve STORE --data-path NAME=WORKSPACE` adds a browsing site and file
 downloads (see the [combined server](https://docs.httk.org/httk-serve/dev/main/combined/index.html)).
 
 For a complete example starting from CIF files and a JSON results table, see
