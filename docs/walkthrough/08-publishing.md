@@ -24,6 +24,12 @@ example as a `systemd` unit behind Apache, use
 `httk serve optimade serve STORE` (currently unreleased; see
 [deploying a store as an OPTIMADE service](https://docs.httk.org/httk-serve/dev/main/optimade/deployment.html)).
 
+For a collected store, `httk serve combined serve STORE --files-dir DIR` (currently unreleased) is the
+one-command way to browse and search it with provenance and file downloads: the
+site at `/`, OPTIMADE at `/optimade/`, registered files at `/data/`. `DIR` holds
+one symlink per workspace (`ln -s /path/to/workspace DIR/<workspace name>`). See
+the [combined server](https://docs.httk.org/httk-serve/dev/main/combined/index.html).
+
 A store-backed service also exposes two endpoint families beyond the
 latest-per-lineage entries. `/_httk_<entry>~revs` serves every revision of every
 lineage, each keyed by its immutable id `<id>~<n>`, while `/_httk_<entry>~alts`

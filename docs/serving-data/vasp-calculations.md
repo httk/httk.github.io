@@ -215,7 +215,21 @@ unreleased; see [deploying a store as an OPTIMADE service](https://docs.httk.org
 httk serve optimade serve vasp.sqlite --port 8080
 ```
 
-In another terminal:
+To browse and search the collected store with provenance and file downloads in
+one process, use `httk serve combined` (currently unreleased; see the
+[combined server](https://docs.httk.org/httk-serve/dev/main/combined/index.html)).
+Stored file urls are `data/<workspace name>/...`, so give it a directory with
+one symlink per workspace:
+
+```bash
+mkdir files && ln -s /path/to/workspace files/<workspace name>
+httk serve combined serve vasp.sqlite --files-dir files --port 8080
+```
+
+The site is at `/`, the OPTIMADE API at `/optimade/` and registered files at
+`/data/`.
+
+With `httk serve optimade serve` running as above, in another terminal:
 
 ```bash
 curl http://127.0.0.1:8080/v1/info
