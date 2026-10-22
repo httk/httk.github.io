@@ -22,7 +22,22 @@ For example, a relaxation package might declare:
 [workflow.postprocess.relaxation-report]
 file = "scripts/relaxation_report"
 description = "write a text and JSON relaxation summary"
+outputs = ["relaxation_report.json", "relaxation_report.txt"]
 ```
+
+To store the results, declare the files the script writes with `outputs` (for
+example `outputs = ["report.json", "figures/*.png"]`) in its manifest table,
+then collect them as provenance runs after collecting the jobs:
+
+```console
+$ httk collect WORKSPACE --into results.sqlite --id-base mydb
+$ httk workflow postprocess --workspace WORKSPACE --script relaxation-report
+$ httk collect WORKSPACE --postprocess relaxation-report --into results.sqlite --id-base mydb
+```
+
+Each job gets one postprocess run linked to the job's run, with the files as
+its outputs; `httk serve optimade serve results.sqlite` serves the runs and
+files. Without `--into` the last command previews.
 
 ```{admonition} In httk v1
 :class: note

@@ -109,7 +109,9 @@ language realization (CWL, PWD, jobflow, httk-v1). Inputs are staged to a
 required inputs are checked before it runs, it sees only the caller-supplied
 parameters, and declared parameter defaults are applied only after it
 returns; `[workflow.collect]` produces the declared outputs;
-`[workflow.postprocess.NAME]` scripts run on request afterward. A
+`[workflow.postprocess.NAME]` scripts run on request afterward; a script
+that declares `outputs` can have its files stored as runs with
+`httk collect WS --postprocess NAME --into STORE --id-base BASE`. A
 compiled package additionally declares `[workflow.build]`, built and
 registered per machine with `httk workflow build` (see {doc}`campaigns`); the
 language SDKs it builds against live under `HTTK_WORKFLOW_LANGUAGES_DIR`.
