@@ -167,9 +167,10 @@ httk job request continue --reason "child done" PARENT
 
 `httk job request continue --tree --reason TEXT PARENT` resumes the failed
 descendants deepest first and then the parent (local workspaces only). When
-`job why` reports `retry_exhausted`, raise the budget after the fact, then
-restart: the override is kept in the job's `state.json` and `job.json` stays
-untouched.
+`job why` reports `retry_exhausted`, `restart` alone suffices: revivals (`restart`, `continue`, `override_step`)
+automatically restore the declared retry allowance (`--keep-budget` opts out).
+To go beyond the declared limits, raise the budget first; the override is kept
+in the job's `state.json` and `job.json` stays untouched.
 
 ```console
 httk job request set_budget --max-attempts-per-activation 3 --reason "flaky node" JOB

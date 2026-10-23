@@ -41,8 +41,8 @@ to report missing settings, workflows that are not installed or built, and
 machine readiness.
 
 For a remote, add and configure the SSH machine, initialize its workspace, set
-that workspace's launcher and scheduler settings, install the workflow there,
-then transfer jobs and run the workspace there:
+that workspace's launcher and scheduler settings, then push jobs (the transfer
+ships the workflows they need) and run the workspace there:
 
 ```console
 httk remote add --template ssh kappa
@@ -57,14 +57,18 @@ httk workspace settings set --key manager.launch --value cluster kappa:runs
 httk workspace settings set --key slurm.partition --value batch kappa:runs
 httk workspace settings set --key manager.workers --value 8 kappa:runs
 httk workspace settings set --key vasp.command --value vasp_std kappa:runs
-httk workflow install --workspace kappa:runs 'git+https://github.com/httk/workflows-vasp#vasp-relax'
-httk job transfer --job JOB-ID default kappa:runs
+httk job push kappa:runs
 httk workflow precheck --workspace kappa:runs
 httk workflow run --workspace kappa:runs --count 1
-httk job transfer --job JOB-UUID kappa:runs default
+httk job pull kappa:runs
 ```
 
-The reverse transfer names each job by its UUID. A transfer holds the jobs on
+`job push` moves every `ready` job (created and waiting to start) and
+`job pull` brings every `succeeded` job home; `--job`, `--state` and `--step`
+replace that selection, and `httk job transfer --job JOB-UUID SRC DST` is the
+general form. Transfers also install the workflows the jobs need at an ssh or
+local destination (`--no-workflows` opts out); `httk workflow install
+--workspace kappa:runs …` installs one without jobs. A transfer holds the jobs on
 the source, copies and adopts them at the destination, and only then releases
 the hold; an interrupted transfer is finished by running it again or with
 `httk job transfer --resume`, and `httk transfer status` lists the holds.
@@ -79,12 +83,13 @@ the
 
 `ssh` runs the adapter's commands through a non-interactive shell, so
 `module load` lines and virtualenv activation your login shell sets up don't
-apply there. Put that setup in the remote's `prelude` instead of
+apply there. Put that setup in the remote's `cli_prelude` instead of
 `~/.bashrc` — it runs under `set -e` ahead of every command the adapter
-sends, including the probe `remote check` uses:
+sends, including the probe `remote check` uses (job-time environments use
+`environment.prelude`):
 
 ```console
-httk remote configure --set prelude='module load Python/3.13.5-bundle
+httk remote configure --set cli_prelude='module load Python/3.13.5-bundle
 source ~/venv/bin/activate' kappa
 ```
 

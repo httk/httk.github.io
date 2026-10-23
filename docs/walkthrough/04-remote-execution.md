@@ -28,15 +28,15 @@ httk_command="/proj/venv/bin/httk" kappa` instead.
 More often the whole environment is missing, not just the binary: `ssh` runs
 the adapter's commands through a non-interactive shell, so `module load`
 lines and virtualenv activation that your login shell sets up never run
-there. Put that setup in the remote's `prelude` instead of `~/.bashrc` — it
+there. Put that setup in the remote's `cli_prelude` instead of `~/.bashrc` — it
 runs under `set -e` ahead of every command the adapter sends, including the
 `remote check` probe above — and note it is distinct from the
-`environment.prelude` workspace setting below: the adapter `prelude`
-bootstraps the shell so `httk` can run at all, while `environment.prelude` is
+`environment.prelude` workspace setting below: the adapter `cli_prelude`
+runs before each `httk` command the CLI sends over ssh, while `environment.prelude` is
 applied later by the manager once it is already running on kappa.
 
 ```console
-httk remote configure --set prelude='module load Python/3.13.5-bundle
+httk remote configure --set cli_prelude='module load Python/3.13.5-bundle
 source ~/venv/bin/activate' kappa
 ```
 
@@ -79,7 +79,9 @@ remote:
 `slurm.gres`, and `slurm.reservation` become batch directives,
 `slurm.time_limit_max` bounds a per-start `httk workflow run --time-limit`
 (by default it may only shorten `slurm.time_limit`), and `manager.workers`
-supplies the default worker count.
+supplies the default worker count. Other `sbatch` long options go in
+`slurm.sbatch_options`, e.g. `httk launcher configure cluster --set
+'slurm.sbatch_options=--qos=high --constraint=rome'`.
 
 ```{admonition} In httk v1
 :class: note
@@ -92,15 +94,15 @@ and the remote workspace owns them.
 
 ## Transfer, run, and check
 
-`job transfer SRC DST` moves jobs whichever way the two names point. A job
-runs only a workflow installed in its workspace, and workflows never travel
-with jobs, so install the workflow on kappa first. Then send the batch up and
-run the workspace. The same commands work on the login node, through a
+`job push [SRC] DST` sends every `ready` job up, `job pull SRC [DST]` brings
+every `succeeded` job home, and `job transfer SRC DST` is the general form.
+A job runs only a workflow installed in its workspace; the transfer installs
+the workflows the jobs need on kappa (`--no-workflows` opts out). Then run the
+workspace. The same commands work on the login node, through a
 self-addressed `machine_names` name, or from the desk via the remote:
 
 ```console
-httk workflow install --workspace kappa:runs 'git+https://github.com/httk/workflows-vasp#vasp-relax'
-httk job transfer --job JOB-ID default kappa:runs
+httk job push kappa:runs
 httk workflow precheck --workspace kappa:runs
 httk workflow run --workspace kappa:runs --count 1
 httk workspace status kappa:runs

@@ -1,16 +1,17 @@
 # Fetching results back
 
 When jobs have finished on the remote (page {doc}`04-remote-execution`), bring
-them home with the same `job transfer` verb, pointed the other way. Fetching
+them home with `job pull`, the other direction of `job push`. Fetching
 survives interruption: the jobs stay held on the remote until the copy at home
 has been adopted.
 
 ```console
-httk job transfer --job JOB-UUID kappa:runs default
+httk job pull kappa:runs
 ```
 
-A remote source names each job by its UUID; `--job` is repeatable, and
-`--tree` brings a job home together with its spawned descendants. The jobs are
+`job pull` brings home every `succeeded` job; `--job` (a job UUID, repeatable),
+`--state` and `--step` replace that selection, and `httk job transfer --job
+JOB-UUID kappa:runs default` is the general form. `--tree` brings a job home together with its spawned descendants. The jobs are
 first held on the remote, out of its state trees, then copied home and adopted
 into the states they left, and only then is the remote hold released.
 

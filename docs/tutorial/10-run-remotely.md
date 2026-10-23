@@ -30,9 +30,9 @@ exercise. They are not calculated material energies.
 
 For a real cluster, configure an SSH remote once and transfer the complete
 batch. The remote is only the path to the machine; manager launch belongs to
-the workspace, and the workflow must be installed there too.
-A `--job` path below `jobs/` selects every job under it, so the page-09
-`batch` placement moves at once:
+the workspace, and the transfer ships the workflow the jobs need.
+`job push` moves every `ready` job, so the page-09 `batch` placement moves at
+once (`--job` narrows the selection):
 
 ```console
 httk remote add --template ssh kappa
@@ -49,27 +49,26 @@ httk workspace settings set --key manager.workers --value 8 kappa:runs
 httk workspace settings set --key environment.prelude --value "module load httk vasp" kappa:runs
 httk workspace settings set --key vasp.command --value vasp_std kappa:runs
 
-httk workflow install --workspace kappa:runs 'git+https://github.com/httk/workflows-vasp#vasp-relax'
-httk job transfer --job workspace/jobs/ready/batch default kappa:runs
+httk job push kappa:runs
 httk workflow run --workspace kappa:runs --count 1
 httk workspace status kappa:runs
-httk job transfer --job JOB-UUID --job JOB-UUID … kappa:runs default
+httk job pull kappa:runs
 ```
 
 `ssh` runs the adapter's commands through a non-interactive shell, so
 `module load` lines and virtualenv activation from your login shell don't
 apply there, and `httk` may not even be on `PATH`. Put that setup in the
-remote's `prelude` instead of `~/.bashrc` — it runs under `set -e` ahead of
+remote's `cli_prelude` instead of `~/.bashrc` — it runs under `set -e` ahead of
 every command the adapter sends, including the probe `remote check` uses;
 when only the `httk` binary lives somewhere nonstandard, the narrower
-`httk_command=/path/to/httk` setting is enough. This adapter `prelude` is
-distinct from the `environment.prelude` workspace setting above: the adapter
-prelude bootstraps the shell so `httk` can run at all, while
+`httk_command=/path/to/httk` setting is enough. This adapter `cli_prelude` is
+distinct from the `environment.prelude` workspace setting above: the
+`cli_prelude` runs before each `httk` command the CLI sends to kappa, while
 `environment.prelude` is applied later by the manager once it is already
 running on kappa.
 
 ```console
-httk remote configure --set prelude='module load Python/3.13.5-bundle
+httk remote configure --set cli_prelude='module load Python/3.13.5-bundle
 source ~/venv/bin/activate' kappa
 ```
 
@@ -85,8 +84,7 @@ Jobs that require a resource this manager does not have remain idle and are
 listed in its summary; in a Slurm allocation, `procs`, `gpus`, `nodes`, and
 `mem` can be derived from the allocation when not specified.
 
-The reverse transfer brings finished jobs home, named by their job UUIDs, as
-a remote source requires; run the local collector in the next step.
+`job pull` brings every finished (`succeeded`) job home; run the local collector in the next step.
 `workspace init kappa:runs` creates the named workspace on kappa, so its name
 is resolved by kappa rather than by the local machine.
 
