@@ -154,7 +154,7 @@ Three requests revive a job, each as `httk job request ACTION --reason TEXT JOB`
   current step as a new attempt, bound by the retry budget.
 - `restart`: always reruns the current step as a new attempt, bound by the
   budget. On a parent this spawns a fresh set of children; the old ones stay.
-- `override_step --step STEP`: a new activation at the named step.
+- `override_step --override-step STEP`: a new activation at the named step.
 
 To fix a failed child and let its parent proceed:
 
