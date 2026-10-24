@@ -88,11 +88,46 @@ one workflow. A running workspace daemon needs no reload: managers read the
 workspace's installed workflows when they claim jobs.
 
 Without `--workspace`, `httk workflow install` only fetches into this machine's
-cache. Workflows never travel with jobs: install them in every workspace that
-runs those jobs.
+cache. Workflows do not travel with jobs by default: install them in every
+workspace that runs those jobs, or embed the workflow in the job (next section).
 
 The complete grammar, commit pinning, and short-name resolution rules are in
 the [workflow URI guide](https://docs.httk.org/httk-workflow/dev/main/details/workflow_uris.html).
+
+## Embedding a workflow in a job
+
+A job can embed its workflow instead of naming a workspace installation. With
+`--embed-workflow`, `httk job new` copies the workflow package into the job's
+own `workflow/` directory and installs nothing in the workspace store. Use it
+for one-off jobs (a `--from-command` template, a runner file, a package under
+development) and for jobs whose code must travel and be sealed with them:
+
+```console
+httk job new --workspace WS --embed-workflow --workflow-dir ./my_relax --input structure=POSCAR
+httk job new --workspace WS --embed-workflow --from-command 'my_executable {input}' --file input=a.dat
+```
+
+It works with `--workflow`, `--workflow-dir`, `--from-runner` and
+`--from-command` (`embed_workflow=True` in Python), and is refused together with
+`--install`. The job's workflow id is `embedded:<name>@<sha12>`, and `job.json`
+pins the tree digest together with everything the manager acts on: the runner,
+steps, calls and requirements, read from the manifest when the job is created.
+
+- The embedded code runs only inside the job's sandbox. The manager, the
+  workspace daemon, launch templates and build steps never read or run anything
+  from `workflow/`, and the manager checks the tree against the pinned digest
+  before every launch.
+- `workflow/` is read-only to the running job. Collection runs the collectors
+  from a verified private copy, and children that run the parent's workflow get
+  their own verified copy.
+- Language realizations, packages with `[workflow.build]`, and calls to workflows
+  that are not installed cannot be embedded. Jobs submitted through a daemon's
+  exchange cannot embed a workflow, and `set_workflow` cannot switch an
+  embedded job.
+- To edit one job's code, `httk job unlock` it and change `workflow/`.
+
+Details are in the
+[embedded workflows reference](https://docs.httk.org/httk-workflow/dev/main/details/workflow_packages.html#embedded-workflows).
 
 ## Package essentials
 

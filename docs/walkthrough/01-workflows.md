@@ -29,6 +29,10 @@ repository and installs the workflow there first (`httk workflow install
 the resolved commit hash and that pinned URI is recorded on the job; afterward
 the short name `vasp.relax` also works wherever a workflow is accepted.
 
+For a one-off job that should not touch the workspace store, `httk job new
+--embed-workflow` keeps the workflow in the job's own `workflow/` directory
+(see {doc}`../workflows`).
+
 `vasp.command` is an application setting resolved most-specific-first: a job's
 own `vasp.command` parameter, then `HTTK_VASP_COMMAND` in the environment, then
 the workspace setting. On a real machine you would set it to the bare program,
