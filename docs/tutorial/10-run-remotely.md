@@ -84,7 +84,7 @@ Jobs that require a resource this manager does not have remain idle and are
 listed in its summary; in a Slurm allocation, `procs`, `gpus`, `nodes`, and
 `mem` can be derived from the allocation when not specified.
 
-`job pull` brings every finished (`succeeded`) job home; run the local collector in the next step.
+`job pull` brings every finished (`succeeded`) job home and replaces the `away` copies the push left (`httk job list --state away`; `httk job recover JOB` if a job was lost remotely); run the local collector in the next step.
 `workspace init kappa:runs` creates the named workspace on kappa, so its name
 is resolved by kappa rather than by the local machine.
 

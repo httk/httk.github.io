@@ -13,7 +13,10 @@ httk job pull kappa:runs
 `--state` and `--step` replace that selection, and `httk job transfer --job
 JOB-UUID kappa:runs default` is the general form. `--tree` brings a job home together with its spawned descendants. The jobs are
 first held on the remote, out of its state trees, then copied home and adopted
-into the states they left, and only then is the remote hold released.
+into the states they left, and only then is the remote hold released. The pull
+also replaces the inert `away` copies the push left at home
+(`httk job list --state away` shows those still outstanding; `httk job
+recover JOB` returns a job lost on the remote to push it again).
 
 Each move is a bundle of complete job directories, checked strictly on
 adoption: no symlink or special file in protocol positions, and every job's

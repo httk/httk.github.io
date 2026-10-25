@@ -71,7 +71,11 @@ local destination (`--no-workflows` opts out); `httk workflow install
 --workspace kappa:runs …` installs one without jobs. A transfer holds the jobs on
 the source, copies and adopts them at the destination, and only then releases
 the hold; an interrupted transfer is finished by running it again or with
-`httk job transfer --resume`, and `httk transfer status` lists the holds.
+`httk job transfer --resume`, and `httk transfer status` lists the holds. A push
+leaves `away` copies at home (`httk job list --state away`) that the pull
+replaces, and `httk job recover JOB` returns a lost job. Re-running a creation
+script with `httk job new --tag T --duplicate-tag skip` creates only the jobs
+whose tag does not exist yet in the placement, away copies included.
 
 `SRC` and `DST` may also be workspace directories instead of registered names,
 so an unregistered workspace can be addressed too. `httk job eject` moves a

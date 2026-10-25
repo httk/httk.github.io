@@ -108,6 +108,10 @@ httk workflow run --workspace kappa:runs --count 1
 httk workspace status kappa:runs
 ```
 
+A push keeps an inert *away copy* of each job at home (`--no-keep` opts out);
+`httk job list --state away` shows what you are still waiting for. If a job is
+lost on kappa, `httk job recover JOB` returns it to `ready` to push again.
+
 `precheck` reports readiness — declared-environment resolution, whether the
 workflow and its calls are installed and built, whether a live manager can
 claim the jobs, and any required staged inputs — before you start managers. `run --workspace
