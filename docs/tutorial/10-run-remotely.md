@@ -42,12 +42,11 @@ httk remote check kappa
 httk workspace init kappa:runs
 httk launcher add --template slurm --global cluster
 httk launcher check cluster
-httk workspace settings set --key manager.launch --value cluster kappa:runs
-httk workspace settings set --key slurm.partition --value batch kappa:runs
-httk workspace settings set --key slurm.time_limit --value 01:00:00 kappa:runs
-httk workspace settings set --key manager.workers --value 8 kappa:runs
-httk workspace settings set --key environment.prelude --value "module load httk vasp" kappa:runs
-httk workspace settings set --key vasp.command --value vasp_std kappa:runs
+httk workspace configure \
+    --set manager.launch=cluster --set slurm.partition=batch \
+    --set slurm.time_limit=01:00:00 --set manager.workers=8 \
+    --set 'environment.prelude=module load httk vasp' \
+    --set vasp.command=vasp_std kappa:runs
 
 httk job push kappa:runs
 httk workflow run --workspace kappa:runs --count 1

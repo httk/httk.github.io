@@ -62,15 +62,17 @@ scheduler settings on the workspace itself:
 httk workspace init kappa:/scratch/rar/httk/runs
 httk launcher add --template slurm --global cluster
 httk launcher check cluster
-httk workspace settings set --key manager.launch --value cluster kappa:runs
-httk workspace settings set --key manager.count --value 1 kappa:runs
-httk workspace settings set --key slurm.partition --value batch kappa:runs
-httk workspace settings set --key slurm.time_limit --value 01:00:00 kappa:runs
-httk workspace settings set --key manager.workers --value 8 kappa:runs
-httk workspace settings set --key environment.prelude --value "module load httk vasp" kappa:runs
-httk workspace settings set --key manager.command --value httk kappa:runs
-httk workspace settings set --key vasp.command --value vasp_std kappa:runs
+httk workspace configure \
+    --set manager.launch=cluster --set manager.count=1 \
+    --set slurm.partition=batch --set slurm.time_limit=01:00:00 \
+    --set manager.workers=8 \
+    --set 'environment.prelude=module load httk vasp' \
+    --set manager.command=httk --set vasp.command=vasp_std kappa:runs
 ```
+
+One `configure` call (or one `httk workspace settings set` with repeated
+`--key`/`--value` pairs) is one validated write and, for a remote workspace,
+one ssh command; `--unset KEY` removes settings in the same call.
 
 The launcher and scheduler settings live with the workspace, not with the
 remote:
@@ -79,7 +81,10 @@ remote:
 `slurm.gres`, and `slurm.reservation` become batch directives,
 `slurm.time_limit_max` bounds a per-start `httk workflow run --time-limit`
 (by default it may only shorten `slurm.time_limit`), and `manager.workers`
-supplies the default worker count. Other `sbatch` long options go in
+supplies the default worker count. A GPU request (`slurm.gres=gpu:N`, or
+`--gpus`, `--gpus-per-node`, `--gpus-per-task` in `slurm.sbatch_options`) is
+detected in the allocation, and the VASP launch wrapper then plans a GPU run
+(`NCORE = 1`; VASP's GPU port wants one rank per GPU). Other `sbatch` long options go in
 `slurm.sbatch_options`, e.g. `httk launcher configure cluster --set
 'slurm.sbatch_options=--qos=high --constraint=rome'`.
 

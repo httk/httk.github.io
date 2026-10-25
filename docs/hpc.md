@@ -154,8 +154,10 @@ Three requests revive a job, each as `httk job request ACTION --reason TEXT JOB`
   current step as a new attempt, bound by the retry budget.
 - `restart`: always reruns the current step as a new attempt, bound by the
   budget. On a parent the rerun step reuses the children that still exist,
-  matched by their labels, failed and cancelled ones included; delete a child
-  with `httk job delete` to have the step create a fresh one.
+  matched by their labels, so `restart` refuses (posting nothing) while the
+  parent has a failed or cancelled child: `continue --tree` it, or delete the
+  child with `httk job delete` so the step creates a fresh one; `--force`
+  restarts anyway.
 - `override_step --override-step STEP`: a new activation at the named step.
 
 To fix a failed child and let its parent proceed:
@@ -168,7 +170,8 @@ httk job request continue --reason "child done" PARENT
 ```
 
 `httk job request continue --tree --reason TEXT PARENT` resumes the failed
-descendants deepest first and then the parent (local workspaces only). When
+descendants deepest first and then the parent, also on a workspace reached
+over ssh (not through a workspace daemon). When
 `job why` reports `retry_exhausted`, `restart` alone suffices: revivals (`restart`, `continue`, `override_step`)
 automatically restore the declared retry allowance (`--keep-budget` opts out).
 To go beyond the declared limits, raise the budget first; the override is kept

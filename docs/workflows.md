@@ -91,6 +91,12 @@ Without `--workspace`, `httk workflow install` only fetches into this machine's
 cache. Workflows do not travel with jobs by default: install them in every
 workspace that runs those jobs, or embed the workflow in the job (next section).
 
+A workflow id names one workflow, so do not reinstall different sources under
+an id that unfinished jobs use. Nothing refuses it, but `httk workflow install`
+warns and names those jobs, `httk job why` shows a `workflow pin` check, and
+`httk collect` refuses a job whose installed tree changed since it ran, naming
+the remedies.
+
 The complete grammar, commit pinning, and short-name resolution rules are in
 the [workflow URI guide](https://docs.httk.org/httk-workflow/dev/main/details/workflow_uris.html).
 

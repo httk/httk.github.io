@@ -59,8 +59,10 @@ The packaged VASP runners use the `httk.codes.vasp` library of
 (`pip install httk-workflow-vasp`) wherever their jobs run. The
 `structure` input is loaded from the CIF and written as `files/POSCAR`.
 The runner's `prepare` step derives the k-point grid, assembles the POTCAR
-from the pseudopotential library, and fills in `MAGMOM` and `NBANDS`, with any
-explicit `--parameter 'incar_tags={"ENCUT": 520}'` winning over derived values. `run` executes
+from the pseudopotential library, and leaves `MAGMOM` and `NBANDS` to VASP's
+defaults unless `incar_tags` (or, for `MAGMOM`, a `[MAGMOM=...]` in the POSCAR
+comment) sets them, with any explicit `--parameter 'incar_tags={"ENCUT": 520}'`
+winning over derived values. `run` executes
 the manager until nothing is ready, driving the job through prepare, run, and
 publish; the results and logs end up in the job directory, which moves with
 the job's state, so `httk job show example` prints where it is.
