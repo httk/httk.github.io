@@ -8,7 +8,8 @@ create a job, run it, and collect its result. The `vasp.relax` workflow
 package from [httk/workflows-vasp](https://github.com/httk/workflows-vasp)
 accepts a VASP-5 POSCAR and needs no runner authoring; its runner uses the
 `httk.codes.vasp` library of *httk-workflow-vasp*, which must be installed
-(`pip install httk-workflow-vasp`) wherever the job runs. From an *httk-workflow*
+(`pip install httk-workflow-vasp`) wherever the job runs. Other codes follow the
+same pattern (`httk-workflow-<code>`; see [module directory](modules.md#simulation-code-support)). From an *httk-workflow*
 checkout, with a `POSCAR` in the current directory, this uses the supplied mock
 executable so no VASP installation or license is needed:
 
@@ -72,7 +73,9 @@ the source, copies and adopts them at the destination, and only then releases
 the hold; an interrupted transfer is finished by running it again or with
 `httk job transfer --resume`, and `httk transfer status` lists the holds. A push
 leaves `away` copies at home (`httk job list --state away`) that the pull
-replaces, and `httk job recover JOB` returns a lost job. Re-running a creation
+replaces, and `httk job recover JOB` returns a lost job. A push costs one ssh connection and
+one remote `httk` start, with no probe of the remote first; the
+[remotes page](https://docs.httk.org/httk-workflow/dev/main/details/remotes.html) has the full cost table. Re-running a creation
 script with `httk job new --tag T --duplicate-tag skip` creates only the jobs
 whose tag does not exist yet in the placement, away copies included.
 
@@ -88,7 +91,8 @@ the
 `module load` lines and virtualenv activation your login shell sets up don't
 apply there. Put that setup in the remote's `cli_prelude` instead of
 `~/.bashrc` — it runs under `set -e` ahead of every command the adapter
-sends, including the probe `remote check` uses (job-time environments use
+sends over ssh, including the `remote check` probe but not the `tar` of a pull,
+and it must not read stdin or print to stdout (job-time environments use
 `environment.prelude`):
 
 ```console

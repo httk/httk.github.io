@@ -9,11 +9,12 @@ deeper details linked from each page.
 ## Install the pieces used by the tutorial
 
 The `httk2` metapackage installs the core, atomistic (with its file I/O),
-store (with its SQL extra), serve, analysis, and workflow modules. ASE is used
-only for the two visualization/interchange steps.
+store (with its SQL extra), serve, analysis, and workflow modules; its `vasp`
+extra adds *httk-workflow-vasp*, needed by step 8. ASE is used only for the two
+visualization/interchange steps.
 
 ```console
-python -m pip install httk2 ase
+python -m pip install "httk2[vasp]" ase
 ```
 
 ## Feature map

@@ -187,8 +187,7 @@ httk serve optimade serve results.sqlite --records result_record:Result --port 8
 
 Run both in `materials/`, so that `result_record.py` can be imported. `check`
 tests every endpoint without serving and lists them; `serve` answers the same
-queries as `serve_db.py`. This command is currently unreleased; use a
-development checkout of `httk-serve`. For a public base URL, worker processes,
+queries as `serve_db.py`. For a public base URL, worker processes,
 Unix sockets, and example `systemd`, Apache and Nginx configurations, see
 [deploying a store as an OPTIMADE service](https://docs.httk.org/httk-serve/dev/main/optimade/deployment.html).
 

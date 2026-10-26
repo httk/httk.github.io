@@ -21,10 +21,10 @@ Serving straight from a store also works, and for real deployment
 `create_asgi_app(...)` returns an app you run behind any ASGI server. To run a
 store file as a production service without writing an application, for
 example as a `systemd` unit behind Apache, use
-`httk serve optimade serve STORE` (currently unreleased; see
+`httk serve optimade serve STORE` (see
 [deploying a store as an OPTIMADE service](https://docs.httk.org/httk-serve/dev/main/optimade/deployment.html)).
 
-For a collected store, `httk serve combined serve STORE --data-path NAME=WORKSPACE` (currently unreleased) is the
+For a collected store, `httk serve combined serve STORE --data-path NAME=WORKSPACE` is the
 one-command way to browse and search it with provenance and file downloads: the
 site at `/`, OPTIMADE at `/optimade/`, registered files at `/data/`. Repeat
 `--data-path` per workspace, or give one directory holding the workspaces by

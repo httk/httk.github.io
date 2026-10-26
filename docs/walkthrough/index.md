@@ -16,7 +16,8 @@ httk v1 was a single monolithic package you put on `PYTHONPATH` by sourcing
 `init.shell`. *httk₂* is a PEP 420 native namespace: `httk-core` supplies the
 shared primitives (type dispatch, datastreams, the `DatasetLoader`), and you
 add the capability modules you need — `httk-atomistic`,
-`httk-store`, `httk-serve`, `httk-analyse`, `httk-workflow`. The `httk2`
+`httk-store`, `httk-serve`, `httk-analyse`, `httk-workflow`. Support for simulation codes comes from the separate
+`httk-workflow-<code>` distributions ([module directory](../modules.md#simulation-code-support)). The `httk2`
 metapackage installs the standard set in one step, replacing the old
 `init.shell`/`PYTHONPATH` dance:
 

@@ -58,8 +58,9 @@ httk job pull kappa:runs
 `module load` lines and virtualenv activation from your login shell don't
 apply there, and `httk` may not even be on `PATH`. Put that setup in the
 remote's `cli_prelude` instead of `~/.bashrc` — it runs under `set -e` ahead of
-every command the adapter sends, including the probe `remote check` uses;
-when only the `httk` binary lives somewhere nonstandard, the narrower
+every `httk` command the adapter sends over ssh, including the `remote check`
+probe but not the `tar` of a pull; it must not read stdin or print to stdout.
+When only the `httk` binary lives somewhere nonstandard, the narrower
 `httk_command=/path/to/httk` setting is enough. This adapter `cli_prelude` is
 distinct from the `environment.prelude` workspace setting above: the
 `cli_prelude` runs before each `httk` command the CLI sends to kappa, while

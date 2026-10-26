@@ -16,11 +16,6 @@ provides the VASP collectors, and *httk-atomistic* the file readers they use:
 python -m pip install httk-workflow-vasp 'httk-atomistic[default]' 'httk-store[db]' httk-serve
 ```
 
-`httk collect` and the recognized-calculation collectors are currently
-unreleased. Use matching development checkouts of `httk-core`,
-`httk-atomistic`, `httk-store`, `httk-serve`, `httk-workflow` and
-`httk-workflow-vasp` when trying this example.
-
 The database's entry ids are allocated through an id ledger that is signed
 with your operator identity. If you have not set one up yet, do it once:
 
@@ -208,15 +203,14 @@ python serve_vasp.py
 ```
 
 The same database can also be served without a script, as a production
-service suitable for a `systemd` unit behind Apache or Nginx (currently
-unreleased; see [deploying a store as an OPTIMADE service](https://docs.httk.org/httk-serve/dev/main/optimade/deployment.html)):
+service suitable for a `systemd` unit behind Apache or Nginx (see [deploying a store as an OPTIMADE service](https://docs.httk.org/httk-serve/dev/main/optimade/deployment.html)):
 
 ```bash
 httk serve optimade serve vasp.sqlite --port 8080
 ```
 
 To browse and search the collected store with provenance and file downloads in
-one process, use `httk serve combined` (currently unreleased; see the
+one process, use `httk serve combined` (see the
 [combined server](https://docs.httk.org/httk-serve/dev/main/combined/index.html)).
 Stored file urls are `data/<workspace name>/...`, so name where each
 workspace is (repeat `--data-path` for several workspaces):

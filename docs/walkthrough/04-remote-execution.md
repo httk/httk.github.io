@@ -29,8 +29,9 @@ More often the whole environment is missing, not just the binary: `ssh` runs
 the adapter's commands through a non-interactive shell, so `module load`
 lines and virtualenv activation that your login shell sets up never run
 there. Put that setup in the remote's `cli_prelude` instead of `~/.bashrc` — it
-runs under `set -e` ahead of every command the adapter sends, including the
-`remote check` probe above — and note it is distinct from the
+runs under `set -e` ahead of every `httk` command the adapter sends over ssh, including the
+`remote check` probe above but not the `tar` of a pull; it must not read stdin
+or print to stdout — and note it is distinct from the
 `environment.prelude` workspace setting below: the adapter `cli_prelude`
 runs before each `httk` command the CLI sends over ssh, while `environment.prelude` is
 applied later by the manager once it is already running on kappa.
@@ -102,7 +103,9 @@ and the remote workspace owns them.
 `job push [SRC] DST` sends every `ready` job up, `job pull SRC [DST]` brings
 every `succeeded` job home, and `job transfer SRC DST` is the general form.
 A job runs only a workflow installed in its workspace; the transfer installs
-the workflows the jobs need on kappa (`--no-workflows` opts out). Then run the
+the workflows the jobs need on kappa (`--no-workflows` opts out). A push costs one ssh connection and one remote
+`httk` start, with no probe of the remote first; the
+[remotes page](https://docs.httk.org/httk-workflow/dev/main/details/remotes.html) has the full cost table. Then run the
 workspace. The same commands work on the login node, through a
 self-addressed `machine_names` name, or from the desk via the remote:
 

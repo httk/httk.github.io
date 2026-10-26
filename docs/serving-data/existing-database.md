@@ -11,10 +11,6 @@ metapackage):
 python -m pip install 'httk-atomistic[default]' 'httk-store[db]' httk-serve
 ```
 
-`TableStore`, `MappedSource` and `adapter_from_sources` are currently
-unreleased. Use matching development checkouts of `httk-core`, `httk-store`
-and `httk-serve` when trying this example.
-
 ## Your database
 
 You would normally point at your own database. To have something runnable, save
