@@ -63,9 +63,15 @@ together with the primitive cell its k-points refer to; running it again on
 that cell returns the same cell. Bridges expose the same data to ASE and
 pymatgen without making either library the structure model.
 
+A structure can also carry a covalent bond network, read from a CIF bond loop,
+supplied by the caller, or found from covalent radii. Classification then has two
+more levels between the Wyckoff-only prototype and the refined one: an anonymous
+protonettype and an assigned protonetstructure, whose labels add the bonding net,
+the bond shape at each site and, on molecular bonds, a torsion letter.
+
 ## Read next
 
 - [Core views](https://docs.httk.org/httk-core/dev/main/view_backend_pattern.html) and [view details](https://docs.httk.org/httk-core/dev/main/details/view_backend_pattern.html); [datastreams](https://docs.httk.org/httk-core/dev/main/datastreams.html) and [details](https://docs.httk.org/httk-core/dev/main/details/datastreams.html).
-- [Atomistic structures](https://docs.httk.org/httk-atomistic/dev/main/structures.html), [asymmetric units](https://docs.httk.org/httk-atomistic/dev/main/asu.html), [precision](https://docs.httk.org/httk-atomistic/dev/main/precision.html), [periodicity](https://docs.httk.org/httk-atomistic/dev/main/periodicity.html), [band-structure paths](https://docs.httk.org/httk-atomistic/dev/main/band-paths.html), and [material-information levels](https://docs.httk.org/httk-atomistic/dev/main/prototypes.html).
+- [Atomistic structures](https://docs.httk.org/httk-atomistic/dev/main/structures.html), [asymmetric units](https://docs.httk.org/httk-atomistic/dev/main/asu.html), [precision](https://docs.httk.org/httk-atomistic/dev/main/precision.html), [periodicity](https://docs.httk.org/httk-atomistic/dev/main/periodicity.html), [band-structure paths](https://docs.httk.org/httk-atomistic/dev/main/band-paths.html), and [material-information levels](https://docs.httk.org/httk-atomistic/dev/main/prototypes.html), including [bonding-net labels](https://docs.httk.org/httk-atomistic/dev/main/prototypes.html#bonding-net-labels).
 - [Structure details](https://docs.httk.org/httk-atomistic/dev/main/details/structures.html), [ASU details](https://docs.httk.org/httk-atomistic/dev/main/details/asu.html), [precision details](https://docs.httk.org/httk-atomistic/dev/main/details/precision.html), and [periodicity details](https://docs.httk.org/httk-atomistic/dev/main/details/periodicity.html).
 - [CIF](https://docs.httk.org/httk-atomistic/dev/main/cif.html), [POSCAR](https://docs.httk.org/httk-atomistic/dev/main/poscar.html), [VASP outputs](https://docs.httk.org/httk-atomistic/dev/main/vasp_outputs.html), and [WAVECAR](https://docs.httk.org/httk-atomistic/dev/main/wavecar.html) readers.
