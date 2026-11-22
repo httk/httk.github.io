@@ -50,19 +50,20 @@ each with its recommended `default` feature extras:
 pip install httk2
 ```
 
-Simulation-code support is separate; add it with a metapackage extra, one per
-code, or `codes` for all eight:
+Simulation-code support is separate. VASP support is a metapackage extra; the
+other codes are not yet on PyPI and install from GitHub, for example Quantum
+ESPRESSO:
 
 ```bash
 pip install "httk2[vasp]"
-pip install "httk2[codes]"
+pip install "httk-workflow-qe @ git+https://github.com/httk/httk-workflow-qe"
 ```
 
 The metapackage repository also serves the development workflow: its
 `Makefile` can check out all module repositories (on their `develop` branches
 where available, or on `main`), run `fetch`/`pull`/`push` across them, and
 editable-install them into your virtual environment in one step;
-`make install_<code>` and `make install_codes` also clone and install the
+`make install-<code>` and `make install-codes` also clone and install the
 `httk-workflow-<code>` distributions.
 See the [`httk2` README](https://github.com/httk/httk2#readme) for the details.
 

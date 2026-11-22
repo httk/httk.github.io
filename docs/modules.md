@@ -83,11 +83,12 @@ Support for each simulation code is a separate distribution (repository
 - [*httk-workflow-qe*](https://github.com/httk/httk-workflow-qe): `httk.codes.qe`, Quantum ESPRESSO `pw.x` inputs, output parsing and supervised runs.
 - [*httk-workflow-vasp*](https://github.com/httk/httk-workflow-vasp): `httk.codes.vasp`, VASP input preparation, supervised runs, diagnosis and collection.
 
-Install one with `pip install httk-workflow-<code>` or through the
-metapackage: `pip install "httk2[vasp]"` (extras `abinit`, `cp2k`, `gromacs`,
-`lammps`, `orca`, `phonopy`, `qe`, `vasp`) or `pip install "httk2[codes]"` for
-all eight. Plain `pip install httk2` installs only the six runtime modules. In
-development checkouts, `make install_<code>` and `make install_codes` in the
+*httk-workflow-vasp* is on PyPI: install it with `pip install httk-workflow-vasp`
+or through the metapackage with `pip install "httk2[vasp]"`. The others are not
+yet on PyPI; install them from GitHub, for example
+`pip install "httk-workflow-qe @ git+https://github.com/httk/httk-workflow-qe"`.
+Plain `pip install httk2` installs only the six runtime modules. In
+development checkouts, `make install-<code>` and `make install-codes` in the
 `httk2` repository clone missing `httk-workflow-<code>` checkouts and install
 them; `make checkout` does not. See the
 [code-support guide](https://docs.httk.org/httk-workflow/dev/main/code_support.html).
