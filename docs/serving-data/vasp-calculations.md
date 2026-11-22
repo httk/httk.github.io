@@ -20,7 +20,7 @@ The database's entry ids are allocated through an id ledger that is signed
 with your operator identity. If you have not set one up yet, do it once:
 
 ```bash
-httk init --name "Your Name" --email you@example.org
+httk setup --name "Your Name" --email you@example.org
 ```
 
 ## Your calculations
@@ -206,27 +206,27 @@ The same database can also be served without a script, as a production
 service suitable for a `systemd` unit behind Apache or Nginx (see [deploying a store as an OPTIMADE service](https://docs.httk.org/httk-serve/dev/main/optimade/deployment.html)):
 
 ```bash
-httk serve optimade serve vasp.sqlite --port 8080
+httk serve --no-site vasp.sqlite --port 8080
 ```
 
 To browse and search the collected store with provenance and file downloads in
-one process, use `httk serve combined` (see the
+one process, use `httk serve STORE` (see the
 [combined server](https://docs.httk.org/httk-serve/dev/main/combined/index.html)).
 Stored file urls are `data/<workspace name>/...`, so name where each
 workspace is (repeat `--data-path` for several workspaces):
 
 ```bash
-httk serve combined serve vasp.sqlite --data-path <workspace name>=/path/to/workspace --port 8080
+httk serve vasp.sqlite --data-path <workspace name>=/path/to/workspace --port 8080
 ```
 
-`httk serve optimade serve` takes the same `--data-path` to serve the file
+`httk serve --no-site` takes the same `--data-path` to serve the file
 bytes beside the API, and `--data-url URL` points file urls at an external file
 server instead.
 
 The site is at `/`, the OPTIMADE API at `/optimade/` and registered files at
 `/data/`.
 
-With `httk serve optimade serve` running as above, in another terminal:
+With `httk serve --no-site` running as above, in another terminal:
 
 ```bash
 curl http://127.0.0.1:8080/v1/info

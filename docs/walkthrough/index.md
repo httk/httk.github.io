@@ -86,7 +86,7 @@ per-queue `config.<queue>` holding the scheduler details.
 ```
 
 *httk₂* models the same machines as remotes. You add, configure, and verify one
-with `httk remote add`, `remote configure`, and `remote check`; a
+with `httk remote add`, `remote set`, and `remote check`; a
 workspace (`kappa:runs`) owns its launcher and scheduler configuration. See
 {doc}`04-remote-execution`.
 

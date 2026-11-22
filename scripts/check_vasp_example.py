@@ -112,7 +112,7 @@ def main() -> None:
                     )
                 ]
 
-        run('httk init --name "Your Name" --email you@example.org')
+        run('httk setup --name "Your Name" --email you@example.org')
         run("python make_example_calculations.py")
 
         dry = shown[0][1]

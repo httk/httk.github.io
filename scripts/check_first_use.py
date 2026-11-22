@@ -45,7 +45,7 @@ def main() -> None:
                 sys.executable,
                 "-m",
                 "httk.core.cli",
-                "init",
+                "setup",
                 "--name",
                 "Example User",
                 "--email",

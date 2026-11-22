@@ -17,10 +17,10 @@ stage and publish steps, and needs only a POSCAR and a `vasp.command` setting.
 ```console
 $ httk project init --name quickstart .
 $ httk workspace init --name default workspace
-$ httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' \
+$ httk job new 'git+https://github.com/httk/workflows-vasp#vasp-relax' \
       --install --input structure=POSCAR --tag silicon
-$ httk workspace settings set --key vasp.command --value "$PWD/examples/mock_vasp.py" default
-$ httk workflow run
+$ httk workspace set -w default vasp.command="$PWD/examples/mock_vasp.py"
+$ httk run
 ```
 
 A job runs only a workflow installed in its workspace: `--install` fetches the

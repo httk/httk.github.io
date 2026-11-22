@@ -5,14 +5,14 @@ SSHFS and control Slurm through signed files. The workspace on the cluster has
 an **exchange** directory, `WORKSPACE/exchange/`. You mount only that, never
 the workspace. The workspace's own managers serve it: they adopt the jobs you
 drop into `inbox` and return finished ones to `outbox`. An operator also runs
-`httk workspace daemon`, a small broker that starts, queries and cancels
+`httk daemon`, a small broker that starts, queries and cancels
 managers on signed requests. A start selects an operator-approved Slurm
 launcher; clients cannot attach commands, Slurm options or changed manager
 settings to it. Jobs keep running whether or not the daemon is running.
 
 This guide describes the current development implementation in *httk-workflow*.
-Check that both installations provide `httk workspace daemon --help` and
-`httk remote daemon --help`. The ordinary SSH remote and Slurm launcher
+Check that both installations provide `httk daemon --help` and
+`httk manager --help`. The ordinary SSH remote and Slurm launcher
 in {doc}`hpc` remain separate execution paths.
 
 ## What runs where
@@ -51,10 +51,10 @@ To select another existing identity, run `httk identity default SHORT`, replacin
 `SHORT` with its short name. To establish an identity when none exists:
 
 ```console
-httk init --name "Your Name" --email you@example.org
+httk setup --name "Your Name" --email you@example.org
 ```
 
-`httk init` preserves an existing default identity. To print just the selected
+`httk setup` preserves an existing default identity. To print just the selected
 public key:
 
 ```console
@@ -118,11 +118,11 @@ settings:
 
 ```console
 httk workspace init --name runs /srv/httk/example/workspace
-httk launcher add --template slurm --global small \
-  --set manager.confine=bwrap --set slurm.cpus_per_task=2 --set slurm.mem=4G \
-  --set slurm.time_limit=01:00:00 --set slurm.partition=batch \
-  --set manager.workers=2
-httk launcher configure --add-path confine.readonly_paths=/software small
+httk launcher add --kind slurm --global small \
+  manager.confine=bwrap slurm.cpus_per_task=2 slurm.mem=4G \
+  slurm.time_limit=01:00:00 slurm.partition=batch \
+  manager.workers=2
+httk launcher set small --add confine.readonly_paths=/software
 ```
 
 Replace `batch` with a partition valid at your site; add `slurm.account` if
@@ -130,25 +130,24 @@ required. You can create and approve several launchers. Every start launches
 one manager; workers share that manager's capacity. Attempts see the workspace
 read-only and their own job directory writable. Everything else they need at
 run time, such as a module tree, a conda prefix or code binaries, must be listed
-in `confine.readonly_paths`; `--add-path` extends the computed default
+in `confine.readonly_paths`; `launcher set NAME --add confine.readonly_paths=PATH` extends the computed default
 (`/usr`, `/etc`, the Python installation and where *httk* is imported from)
 without restating it. `init` ends with the broker check.
 
 Initialize, check the broker, and run it:
 
 ```console
-httk workspace daemon init /srv/httk/example/workspace \
+httk daemon init /srv/httk/example/workspace \
   --add launchers=small \
   --add authorized_keys=ed25519:REPLACE_WITH_CLIENT_PUBLIC_KEY
-httk workspace daemon check /srv/httk/example/workspace
-httk workspace daemon run /srv/httk/example/workspace
+httk daemon check /srv/httk/example/workspace
+httk daemon run /srv/httk/example/workspace
 ```
 
-`init` enables the workspace's exchange extension if needed (also available as
-`httk workspace exchange enable`), saves the daemon configuration, prints it,
+`init` enables the workspace's exchange extension if needed, saves the daemon configuration, prints it,
 and writes the public `exchange/daemon.json`. On a workspace with the exchange
 extension enabled, every manager must confine its attempts
-(`manager.confine=bwrap`). `httk workspace daemon show` prints the
+(`manager.confine=bwrap`). `httk daemon show` prints the
 configuration again. `check` tests the real broker sandbox and scheduler
 clients; it does not submit a compute job. `run` stays in the foreground; a
 site service supervisor may manage it. Within the new layout, `init` refuses an
@@ -166,12 +165,12 @@ Mount the exchange with your site's SSHFS arrangement, without
 `follow_symlinks` and outside any local workspace. Then, in your client project:
 
 ```console
-httk remote add --template mount-daemon confined
-httk remote daemon configure confined --exchange /mnt/cluster/exchange
+httk remote add --kind mount-daemon confined
+httk remote set confined exchange=/mnt/cluster/exchange
 httk remote check confined
 ```
 
-Use `--global` with `remote add` for a user-wide remote. `configure` pins the
+Use `--global` with `remote add` for a user-wide remote. `remote set` pins the
 workspace from `exchange.json` and, when `daemon.json` exists, the daemon
 identities, without sending a command; confirm them with the operator. Without
 `daemon.json` only the workspace is pinned: sending and fetching jobs and
@@ -189,7 +188,7 @@ httk job eject JOB /mnt/cluster/exchange/inbox
 
 The bundle is copied into the mount under a hidden partial name and renamed
 into `inbox/` when complete; a failed delivery returns the job to the state it
-left. Any unrestricted confined manager (no `--placement-prefix` or pool
+left. Any unrestricted confined manager (no `--placement` or pool
 restriction) of the workspace adopts it, with a fresh UUID, keeping your job
 UUID as its exchange name. The job's workflow must be installed in the
 destination workspace (`httk workflow install --workspace runs …`, an operator
@@ -199,13 +198,13 @@ refused: use the typed commands below to control managers.
 ## 4. Start, inspect and cancel a manager
 
 ```console
-httk remote daemon show confined
-httk remote daemon start confined --configuration small
-httk remote daemon status confined --handle MANAGER_HANDLE
-httk remote daemon cancel confined --handle MANAGER_HANDLE
+httk remote check confined
+httk run -w confined:runs --configuration small
+httk manager status confined --handle MANAGER_HANDLE
+httk manager cancel confined --handle MANAGER_HANDLE
 ```
 
-`show` prints the daemon's published `daemon.json`: each approved
+`remote check` prints the daemon's published `daemon.json`: each approved
 configuration with its digest and its resource settings, namely
 `manager.workers`, `slurm.partition`, `slurm.nodes`, `slurm.ntasks`,
 `slurm.ntasks_per_node`, `slurm.cpus_per_task`, `slurm.mem`, `slurm.gres`,
@@ -214,11 +213,11 @@ configuration with its digest and its resource settings, namely
 commands, confinement and account, stays private to the operator.
 
 Use the returned opaque manager handle as `MANAGER_HANDLE`. Without
-`--handle`, `httk remote daemon status confined` instead prints the
+`--handle`, `httk manager status confined` instead prints the
 passive `status.json` and `managers.json` from the exchange, which are
 informational.
 
-`start --time-limit DURATION` (Slurm `--time` syntax) gives this one manager a
+`httk run --time-limit DURATION` (Slurm `--time` syntax) gives this one manager a
 different allocation length. It may not exceed the launcher's
 `slurm.time_limit_max`, which defaults to its `slurm.time_limit`, so by default
 a start can only shorten it. The daemon refuses a longer request with
@@ -271,9 +270,9 @@ failed job, adopt it, fix it and eject it to the inbox again.
 
 The broker also follows each manager's Slurm job. `managers.json` shows its
 state, exit code and times. When a manager ends, its Slurm output is published
-as `launchers/<handle>.log` (`httk remote daemon log REMOTE --handle
+as `launchers/<handle>.log` (`httk manager log REMOTE --handle
 HANDLE`). If no manager can run your jobs, take a waiting bundle back with
-`httk remote daemon take-back REMOTE NAME [DESTINATION]`: a client-only
+`httk remote take-back REMOTE NAME [DESTINATION]`: a client-only
 rename to a dot name, copy out and remove. If the name is gone, a manager took
 it; cancel the job instead.
 
@@ -285,27 +284,27 @@ log was published leaves `managers.json`, freeing their place in the
 lifetime totals. A start answered `uncertain` without a Slurm job ID stays, and
 no request is retired before its signed lifetime plus the clock skew has passed.
 The daemon reads the setting when it starts, so restart it after changing it
-with `httk workspace policy set --key retention.daemon_history_days --value 14
-WORKSPACE`.
+with `httk workspace set -w WORKSPACE
+policy.retention.daemon_history_days=14`.
 
 ## 5. Change the configuration
 
-On the destination, edit a launcher with `httk launcher configure`,
+On the destination, edit a launcher with `httk launcher set`,
 or the daemon configuration (launchers, authorized keys, Slurm clients,
 `force` for resources above the sanity limits) with
-`httk workspace daemon configure`, then reload it:
+`httk daemon set`, then reload it:
 
 ```console
-httk workspace daemon configure /srv/httk/example/workspace \
+httk daemon set /srv/httk/example/workspace \
   --add launchers=large \
   --add authorized_keys=ed25519:ANOTHER_CLIENT_PUBLIC_KEY
-httk workspace daemon reload /srv/httk/example/workspace
+httk daemon reload /srv/httk/example/workspace
 ```
 
-`configure` validates the result before saving it. Every `reload`, `check` and
+`daemon set` validates the result before saving it. Every `reload`, `check` and
 `run` reads the listed launchers and the configuration again, and when they
 changed, activates them and rewrites `daemon.json`. A running daemon notices the
-new activation at its next poll and stops, and `httk workspace daemon run` starts
+new activation at its next poll and stops, and `httk daemon run` starts
 it again on the new configuration, so queued and running managers are never
 lost. Any number of daemon instances may run. Restarting `run` applies an
 *httk* upgrade. The workspace and cluster are
@@ -364,7 +363,7 @@ probe can decide; an owner proven alive is always refused). Attesting an owner
 that is still running can run work twice. The rules are in the
 [filesystem protocol](https://docs.httk.org/httk-workflow/dev/main/details/workflow_filesystem_api.html#launch-end-evidence).
 
-Intel MPI binaries run with `--set manager.launch_mpi=pmi2` on the launcher.
+Intel MPI binaries run with `manager.launch_mpi=pmi2` on the launcher.
 The rank helper then relays the PMI-1 traffic to Slurm and refuses
 `MPI_Comm_spawn`. Spawn blocking is the launcher setting
 `manager.confine.block_mpi_spawn` (default `on`); see

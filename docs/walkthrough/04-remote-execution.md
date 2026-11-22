@@ -12,9 +12,8 @@ httk-workflow`), then define and check the SSH remote. A remote only describes
 how to reach a machine; it is not the manager launcher:
 
 ```console
-httk remote add --template ssh kappa
-httk remote configure \
-    --set host=kappa.example.org --set username=rar kappa
+httk remote add --kind ssh kappa
+httk remote set kappa host=kappa.example.org username=rar
 httk remote check kappa
 ```
 
@@ -22,8 +21,8 @@ httk remote check kappa
 *non-interactive* shell and reports its version. This matters: a `module load`
 guarded by an interactivity test in `.bashrc` works when you log in but not in
 the shell the adapter uses. If `httk` is not on the default path there, point
-at a specific binary with `remote configure --set
-httk_command="/proj/venv/bin/httk" kappa` instead.
+at a specific binary with `remote set kappa
+httk_command="/proj/venv/bin/httk"` instead.
 
 More often the whole environment is missing, not just the binary: `ssh` runs
 the adapter's commands through a non-interactive shell, so `module load`
@@ -37,8 +36,8 @@ runs before each `httk` command the CLI sends over ssh, while `environment.prelu
 applied later by the manager once it is already running on kappa.
 
 ```console
-httk remote configure --set cli_prelude='module load Python/3.13.5-bundle
-source ~/venv/bin/activate' kappa
+httk remote set kappa cli_prelude='module load Python/3.13.5-bundle
+source ~/venv/bin/activate'
 ```
 
 ```{admonition} In httk v1
@@ -61,32 +60,30 @@ scheduler settings on the workspace itself:
 
 ```console
 httk workspace init kappa:/scratch/rar/httk/runs
-httk launcher add --template slurm --global cluster
+httk launcher add --kind slurm --global cluster
 httk launcher check cluster
-httk workspace configure \
-    --set manager.launch=cluster --set manager.count=1 \
-    --set slurm.partition=batch --set slurm.time_limit=01:00:00 \
-    --set manager.workers=8 \
-    --set 'environment.prelude=module load httk vasp' \
-    --set manager.command=httk --set vasp.command=vasp_std kappa:runs
+httk workspace set -w kappa:runs manager.launch=cluster manager.count=1 \
+    slurm.partition=batch slurm.time_limit=01:00:00 \
+    manager.workers=8 \
+    'environment.prelude=module load httk vasp' \
+    manager.command=httk vasp.command=vasp_std
 ```
 
-One `configure` call (or one `httk workspace settings set` with repeated
-`--key`/`--value` pairs) is one validated write and, for a remote workspace,
-one ssh command; `--unset KEY` removes settings in the same call.
+One `workspace set` call is one validated write and, for a remote workspace,
+one ssh command; `httk workspace unset -w WS KEY...` removes settings.
 
 The launcher and scheduler settings live with the workspace, not with the
 remote:
 `slurm.account`, `slurm.partition`, `slurm.time_limit`, `slurm.nodes`,
 `slurm.ntasks`, `slurm.ntasks_per_node`, `slurm.cpus_per_task`, `slurm.mem`,
 `slurm.gres`, and `slurm.reservation` become batch directives,
-`slurm.time_limit_max` bounds a per-start `httk workflow run --time-limit`
+`slurm.time_limit_max` bounds a per-start `httk run --time-limit`
 (by default it may only shorten `slurm.time_limit`), and `manager.workers`
 supplies the default worker count. A GPU request (`slurm.gres=gpu:N`, or
 `--gpus`, `--gpus-per-node`, `--gpus-per-task` in `slurm.sbatch_options`) is
 detected in the allocation, and the VASP launch wrapper then plans a GPU run
 (`NCORE = 1`; VASP's GPU port wants one rank per GPU). Other `sbatch` long options go in
-`slurm.sbatch_options`, e.g. `httk launcher configure cluster --set
+`slurm.sbatch_options`, e.g. `httk launcher set cluster
 'slurm.sbatch_options=--qos=high --constraint=rome'`.
 
 ```{admonition} In httk v1
@@ -100,8 +97,8 @@ and the remote workspace owns them.
 
 ## Transfer, run, and check
 
-`job push [SRC] DST` sends every `ready` job up, `job pull SRC [DST]` brings
-every `succeeded` job home, and `job transfer SRC DST` is the general form.
+`push [SRC] DST` sends every `ready` job up, `pull SRC [DST]` brings
+every `succeeded` job home, and `job move SRC DST` is the general form.
 A job runs only a workflow installed in its workspace; the transfer installs
 the workflows the jobs need on kappa (`--no-workflows` opts out). A push costs one ssh connection and one remote
 `httk` start, with no probe of the remote first; the
@@ -110,9 +107,9 @@ workspace. The same commands work on the login node, through a
 self-addressed `machine_names` name, or from the desk via the remote:
 
 ```console
-httk job push kappa:runs
-httk workflow precheck --workspace kappa:runs
-httk workflow run --workspace kappa:runs --count 1
+httk push kappa:runs
+httk job precheck --workspace kappa:runs
+httk run --workspace kappa:runs --count 1
 httk workspace status kappa:runs
 ```
 
@@ -133,7 +130,7 @@ resource capacities: use `--workers` for concurrency and repeat
 `--worker-resource` for the resources each manager can allot. For example:
 
 ```console
-httk workflow run --workers 4 \
+httk run --workers 4 \
   --worker-resource procs 32 --worker-resource mem 128000 \
   --worker-resource matlab_license_slots 2
 ```
@@ -150,7 +147,7 @@ and shown in that manager's summary.
 to assign them and rsync'd them across; `httk-tasks-start-taskmanager kappa`
 submitted `taskmanager.sh` with `sbatch`; `httk-tasks-status` counted
 directories in `ht.waitstart/`, `ht.running/`, and `ht.finished/`. Those three
-are replaced by `job transfer`, `run`, and `workspace status`.
+are replaced by `job move`, `run`, and `workspace status`.
 ```
 
 ## Read next

@@ -43,7 +43,7 @@ For a directory containing already charge-free inputs, the CLI can create the
 same kind of batch without the Python projection:
 
 ```console
-httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' --install \
+httk job new 'git+https://github.com/httk/workflows-vasp#vasp-relax' --install \
     --input-from structure charge-free-structures/ \
     --parameter kpoint_density=30.0 --placement batch
 ```

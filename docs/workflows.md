@@ -1,7 +1,7 @@
 # Finding, installing and writing workflows
 
 A *workflow* is a package: a directory with an `httk_workflow.toml` manifest
-plus the runner, hooks, and support files it names. `httk job new --workflow`
+plus the runner, hooks, and support files it names. `httk job new`
 and friends resolve one from a name, a git URI, or a local directory; this
 page is about where workflows come from and the manifest essentials, not
 about running a campaign — see {doc}`campaigns` for that.
@@ -30,7 +30,7 @@ about running a campaign — see {doc}`campaigns` for that.
   them as child jobs on one material: a shared tight relaxation, then band
   structure, elastic tensor, dielectric response and phonons in parallel, with no
   VASP calculation run twice. Every package carries `report` and `plots`
-  postprocess scripts (`httk workflow postprocess --script plots`) that write a
+  postprocess scripts (`httk postprocess plots`) that write a
   summary and the figures: relaxation steps, band structures and densities of
   states, dielectric tensors and Born charges, elastic moduli and directional
   Young's modulus, phonon dispersions and thermodynamics. Use these when you want
@@ -56,7 +56,7 @@ first, and the job records the **canonical URI** with the ref expanded to the
 full commit hash:
 
 ```console
-httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' \
+httk job new 'git+https://github.com/httk/workflows-vasp#vasp-relax' \
     --install --input structure=POSCAR
 ```
 
@@ -66,9 +66,9 @@ ambiguous between repositories. Install, list, or remove a workspace's
 workflows without creating a job:
 
 ```console
-httk workflow install --workspace default 'git+https://github.com/httk/workflows-vasp#vasp-relax'
-httk workflow list --workspace default
-httk workflow uninstall --workspace default vasp.relax
+httk workflow install -w default 'git+https://github.com/httk/workflows-vasp#vasp-relax'
+httk workflow list -w default
+httk workflow uninstall -w default vasp.relax
 ```
 
 A `git+` URI without `#subdir`, whose repository root holds an
@@ -77,17 +77,17 @@ package that manifest lists. Each is installed under its pinned member URI
 (`…@<commit>#<subdir>`), and one `ID<TAB>NAME` line is printed per workflow:
 
 ```console
-httk workflow install --workspace default 'git+https://github.com/httk/workflows-vasp-atomate2@wf-v0.2.0'
+httk workflow install -w default 'git+https://github.com/httk/workflows-vasp-atomate2@wf-v0.2.0'
 ```
 
 A call from one listed workflow to another, by name or alias, binds to the
 member at the same commit. A repository whose root holds
-`httk_workflow.toml` is a single package, as before, and `httk job new
---workflow` and `httk workflow describe` still need `#subdir`, since they name
+`httk_workflow.toml` is a single package, as before, and `httk job new`
+and `httk workflow show` still need `#subdir`, since they name
 one workflow. A running workspace daemon needs no reload: managers read the
 workspace's installed workflows when they claim jobs.
 
-Without `--workspace`, `httk workflow install` only fetches into this machine's
+`httk workflow fetch` only fetches into this machine's
 cache. Workflows do not travel with jobs by default: install them in every
 workspace that runs those jobs, or embed the workflow in the job (next section).
 
@@ -105,16 +105,16 @@ the [workflow URI guide](https://docs.httk.org/httk-workflow/dev/main/details/wo
 A job can embed its workflow instead of naming a workspace installation. With
 `--embed-workflow`, `httk job new` copies the workflow package into the job's
 own `workflow/` directory and installs nothing in the workspace store. Use it
-for one-off jobs (a `--from-command` template, a runner file, a package under
+for one-off jobs (a `--command` template, a runner file, a package under
 development) and for jobs whose code must travel and be sealed with them:
 
 ```console
-httk job new --workspace WS --embed-workflow --workflow-dir ./my_relax --input structure=POSCAR
-httk job new --workspace WS --embed-workflow --from-command 'my_executable {input}' --file input=a.dat
+httk job new --workspace WS --embed-workflow ./my_relax --input structure=POSCAR
+httk job new --workspace WS --embed-workflow --command 'my_executable {input}' --file input=a.dat
 ```
 
-It works with `--workflow`, `--workflow-dir`, `--from-runner` and
-`--from-command` (`embed_workflow=True` in Python), and is refused together with
+It works with a workflow source argument and
+`--command` (`embed_workflow=True` in Python), and is refused together with
 `--install`. The job's workflow id is `embedded:<name>@<sha12>`, and `job.json`
 pins the tree digest together with everything the manager acts on: the runner,
 steps, calls and requirements, read from the manifest when the job is created.
@@ -128,7 +128,7 @@ steps, calls and requirements, read from the manifest when the job is created.
   their own verified copy.
 - Language realizations, packages with `[workflow.build]`, and calls to workflows
   that are not installed cannot be embedded. Jobs submitted through a daemon's
-  exchange cannot embed a workflow, and `set_workflow` cannot switch an
+  exchange cannot embed a workflow, and `httk job set workflow=…` cannot switch an
   embedded job.
 - To edit one job's code, `httk job unlock` it and change `workflow/`.
 
@@ -139,7 +139,7 @@ Details are in the
 
 `[workflow] name` identifies the workflow; `requires = ["httk-workflow>=2.2.0"]`
 declares minimum distribution versions, recorded at installation and checked
-by the claiming manager (and by `httk workflow describe`), so a runner needs no
+by the claiming manager (and by `httk workflow show`), so a runner needs no
 import guard — an unmet manager simply leaves the job for another one. `[workflow.runner]`
 selects an executable `entry` (any executable package member; `run.py`/
 `run.sh` recommended, and then the package carries no plain `run` member), an

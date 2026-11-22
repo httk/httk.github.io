@@ -14,12 +14,12 @@ checkout, with a `POSCAR` in the current directory, this uses the supplied mock
 executable so no VASP installation or license is needed:
 
 ```console
-$ httk init --name "Your Name" --email you@example.org
+$ httk setup --name "Your Name" --email you@example.org
 $ httk project init --name quickstart .
 $ httk workspace init --name default workspace
-$ httk workspace settings set --key vasp.command --value "$PWD/examples/mock_vasp.py" default
-$ httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' --install --input structure=POSCAR
-$ httk workflow run
+$ httk workspace set -w default vasp.command="$PWD/examples/mock_vasp.py"
+$ httk job new 'git+https://github.com/httk/workflows-vasp#vasp-relax' --install --input structure=POSCAR
+$ httk run
 $ httk collect --into results.sqlite --id-base httk.quickstart
 ```
 
@@ -37,7 +37,7 @@ memory cost when selecting a collection sweep.
 
 The workspace holds durable state and provenance; collection is the boundary
 where finished jobs become records in *httk-store*. Re-collecting is safe and
-deduplicated. Run `httk workflow precheck --workspace WORKSPACE` before starting managers
+deduplicated. Run `httk job precheck --workspace WORKSPACE` before starting managers
 to report missing settings, workflows that are not installed or built, and
 machine readiness.
 
@@ -46,32 +46,30 @@ that workspace's launcher and scheduler settings, then push jobs (the transfer
 ships the workflows they need) and run the workspace there:
 
 ```console
-httk remote add --template ssh kappa
-httk remote configure \
-    --set host=kappa.example.org --set username=rar \
-    --set check_connectivity=yes kappa
+httk remote add --kind ssh kappa
+httk remote set kappa host=kappa.example.org username=rar \
+    check_connectivity=yes
 httk remote check kappa
 httk workspace init kappa:/scratch/rar/httk/runs
-httk launcher add --template slurm --global cluster
+httk launcher add --kind slurm --global cluster
 httk launcher check cluster
-httk workspace configure \
-    --set manager.launch=cluster --set slurm.partition=batch \
-    --set manager.workers=8 --set vasp.command=vasp_std kappa:runs
-httk job push kappa:runs
-httk workflow precheck --workspace kappa:runs
-httk workflow run --workspace kappa:runs --count 1
-httk job pull kappa:runs
+httk workspace set -w kappa:runs manager.launch=cluster slurm.partition=batch \
+    manager.workers=8 vasp.command=vasp_std
+httk push kappa:runs
+httk job precheck --workspace kappa:runs
+httk run --workspace kappa:runs --count 1
+httk pull kappa:runs
 ```
 
-`job push` moves every `ready` job (created and waiting to start) and
-`job pull` brings every `succeeded` job home; `--job`, `--state` and `--step`
-replace that selection, and `httk job transfer --job JOB-UUID SRC DST` is the
+`push` moves every `ready` job (created and waiting to start) and
+`pull` brings every `succeeded` job home; `--job`, `--state` and `--step`
+replace that selection, and `httk job move --job JOB-UUID SRC DST` is the
 general form. Transfers also install the workflows the jobs need at an ssh or
 local destination (`--no-workflows` opts out); `httk workflow install
---workspace kappa:runs …` installs one without jobs. A transfer holds the jobs on
+-w kappa:runs …` installs one without jobs. A transfer holds the jobs on
 the source, copies and adopts them at the destination, and only then releases
 the hold; an interrupted transfer is finished by running it again or with
-`httk job transfer --resume`, and `httk transfer status` lists the holds. A push
+`httk job move --resume`, and `httk workspace status` lists the holds. A push
 leaves `away` copies at home (`httk job list --state away`) that the pull
 replaces, and `httk job recover JOB` returns a lost job. A push costs one ssh connection and
 one remote `httk` start, with no probe of the remote first; the
@@ -96,8 +94,8 @@ and it must not read stdin or print to stdout (job-time environments use
 `environment.prelude`):
 
 ```console
-httk remote configure --set cli_prelude='module load Python/3.13.5-bundle
-source ~/venv/bin/activate' kappa
+httk remote set kappa cli_prelude='module load Python/3.13.5-bundle
+source ~/venv/bin/activate'
 ```
 
 Size tasks against the resources a manager advertises. For example, a manager
@@ -105,7 +103,7 @@ with four workers and the following capacities can pack tasks by their actual
 requirements:
 
 ```console
-httk workflow run --workers 4 \
+httk run --workers 4 \
   --worker-resource procs 32 --worker-resource mem 128000 \
   --worker-resource matlab_license_slots 2
 ```
@@ -144,7 +142,7 @@ The Python SDK can publish a dynamic requirement for the next activation:
 Each workspace owns its launcher and scheduler settings. A large campaign partitions
 ordinary workspaces, assigns root jobs by hash, round-robin, or explicit name,
 and keeps spawned children with their parent's partition. Use
-`campaign init`, `campaign submit`, `workflow run`, and `campaign collect` to
+`campaign init`, `job new --campaign`, `run --campaign`, and `collect --campaign` to
 manage those partitions one at a time or together. Children nest by default under
 `<parent placement>/<parent job key>.children`; the workspace setting
 `children.placement=flat` restores the flat layout.

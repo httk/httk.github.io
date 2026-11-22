@@ -20,19 +20,18 @@ allocation; `--count N` starts N allocations in parallel.
 Run this once on the cluster. No httk project is needed: the workspace is
 registered under your user, and `--global` stores the launcher under your user
 as well (`~/.config/httk/launchers/`), so it serves every workspace on this
-cluster. The repeatable `--setting KEY=VALUE` options seed application
-settings while the workspace is created.
+cluster. The `KEY=VALUE` arguments after the path seed application settings while
+the workspace is created.
 
 ```console
 cd ~
-httk launcher add --template slurm --global arrhenius \
-    --set slurm.account=<account> --set slurm.partition=<partition> \
-    --set slurm.time_limit=24:00:00 --set slurm.nodes=1 \
-    --set slurm.ntasks=10 --set slurm.cpus_per_task=1
-httk workspace init --name my_bulk_runs \
-    --setting manager.launch=arrhenius --setting manager.workers=1 \
-    --setting environment.prelude="module load my_stack" \
-    ~/my_bulk_runs     # prelude only if needed; the directory must be absent or empty
+httk launcher add --kind slurm --global arrhenius \
+    slurm.account=<account> slurm.partition=<partition> \
+    slurm.time_limit=24:00:00 slurm.nodes=1 \
+    slurm.ntasks=10 slurm.cpus_per_task=1
+httk workspace init --name my_bulk_runs ~/my_bulk_runs \
+    manager.launch=arrhenius manager.workers=1 \
+    environment.prelude="module load my_stack"   # prelude only if needed; the directory must be absent or empty
 cd ~/my_bulk_runs
 ```
 
@@ -44,7 +43,7 @@ wrapper and installs it in the workspace once:
 
 ```console
 for n in $(seq 1 1000); do
-  httk job new --from-command 'srun --ntasks=10 --cpus-per-task=1 my_executable {n}' --parameter n=$n --tag n$n
+  httk job new --command 'srun --ntasks=10 --cpus-per-task=1 my_executable {n}' --parameter n=$n --tag n$n
 done
 ```
 
@@ -55,7 +54,7 @@ into the job with `--file` and refer to it in the template by the same name.
 
 ```console
 for f in input_files/*; do
-  httk job new --from-command 'srun --ntasks=10 --cpus-per-task=1 my_executable {input}' \
+  httk job new --command 'srun --ntasks=10 --cpus-per-task=1 my_executable {input}' \
       --file input="$f" --tag "$(basename "$f" .dat)"
 done
 ```
@@ -70,7 +69,7 @@ outputs land there as before — and every `--file` input is also copied into
 that directory under its own name before the command starts (never overwriting
 a file that is already there), so a program that reads its input from the
 working directory, such as VASP reading `POSCAR`, needs no placeholder at all:
-`--from-command 'srun … vasp_std' --file POSCAR=POSCAR`. These examples use the generic `--from-command` path (like `httk_workflow_run`), which never adds a launch prefix, unlike the code run helpers, whose commands name only the program. `--file` is repeatable for several inputs, as in
+`--command 'srun … vasp_std' --file POSCAR=POSCAR`. These examples use the generic `--command` path (like `httk_workflow_run`), which never adds a launch prefix, unlike the code run helpers, whose commands name only the program. `--file` is repeatable for several inputs, as in
 `--file geometry=… --file settings=…`, and the wrapper it generates is the
 same one shown under "Writing the workflow yourself", with the path
 substituted.
@@ -83,12 +82,12 @@ once with `--files`:
 
 ```console
 for d in inputs/*/; do
-  httk job new --from-command 'srun --ntasks=10 --cpus-per-task=1 vasp_std' \
+  httk job new --command 'srun --ntasks=10 --cpus-per-task=1 vasp_std' \
       --files "$d" --tag "$(basename "$d")"
 done
 ```
 
-As above, this is the generic `--from-command` path with no automatic launch prefix, so the command carries its own `srun`.
+As above, this is the generic `--command` path with no automatic launch prefix, so the command carries its own `srun`.
 
 `--files DIR` stages every regular file directly inside `DIR` under its own
 name, exactly as one `--file NAME=DIR/NAME` per file would: the copies live in
@@ -104,13 +103,13 @@ Submit 20 manager allocations and return immediately with their SLURM job
 IDs:
 
 ```console
-httk workflow run --count 20        # submits 20 allocations; returns at once with their SLURM job ids
+httk run --count 20        # submits 20 allocations; returns at once with their SLURM job ids
 squeue -u $USER                     # the httk-manager jobs
 httk job list                       # ready / running / succeeded per job
 httk job why n17--                  # a stuck or failed job
 ```
 
-`httk workflow run --count 20 --time-limit 12:00:00` submits the same
+`httk run --count 20 --time-limit 12:00:00` submits the same
 allocations with a shorter SLURM `--time`. A longer one needs
 `slurm.time_limit_max` set on the launcher.
 
@@ -133,7 +132,7 @@ If the 24-hour limit interrupts a job, its manager drains and the attempt
 fails with `owner_lost`, which a later manager retries only when the job's
 `retry_policy.retry_on` lists it (and only while its retry budget lasts; see
 [Fix and resume a failed job](#fix-and-resume-a-failed-job) to raise it). Run
-`httk workflow run --count 20` again until `httk job list` shows no job left to
+`httk run --count 20` again until `httk job list` shows no job left to
 run. For individual records, use `httk job show` and `httk job log`.
 
 ## Fix and resume a failed job
@@ -146,44 +145,44 @@ may be edited; edit first, then post a request. A revived step reruns from its
 top, so if the step regenerates a file (for example copies an `INCAR` template),
 it overwrites your hand edit at that layer. Edit the file the step reads from.
 
-Three requests revive a job, each as `httk job request ACTION --reason TEXT JOB`:
+Three requests revive a job, each as `httk job resume`, `httk job restart` or `httk job set JOB step=STEP` (`--reason TEXT` is optional):
 
-- `continue`: a parent that failed because a child failed
+- `resume`: a parent that failed because a child failed
   (`dependency_failure`) goes back to waiting on its children, with no new
   attempt and no budget counted. Any other failed or paused job reruns its
   current step as a new attempt, bound by the retry budget.
 - `restart`: always reruns the current step as a new attempt, bound by the
   budget. On a parent the rerun step reuses the children that still exist,
   matched by their labels, so `restart` refuses (posting nothing) while the
-  parent has a failed or cancelled child: `continue --tree` it, or delete the
+  parent has a failed or cancelled child: `resume --tree` it, or delete the
   child with `httk job delete` so the step creates a fresh one; `--force`
   restarts anyway.
-- `override_step --override-step STEP`: a new activation at the named step.
+- `step=STEP` (`httk job set JOB step=STEP`): a new activation at the named step.
 
 To fix a failed child and let its parent proceed:
 
 ```console
 httk job why PARENT                                           # names the failed child
-httk job request continue --reason "fixed INCAR" CHILD       # edit its files first
+httk job resume --reason "fixed INCAR" CHILD               # edit its files first
 httk job show CHILD                                           # or: httk job log CHILD
-httk job request continue --reason "child done" PARENT
+httk job resume --reason "child done" PARENT
 ```
 
-`httk job request continue --tree --reason TEXT PARENT` resumes the failed
+`httk job resume --tree --reason TEXT PARENT` resumes the failed
 descendants deepest first and then the parent, also on a workspace reached
 over ssh (not through a workspace daemon). When
-`job why` reports `retry_exhausted`, `restart` alone suffices: revivals (`restart`, `continue`, `override_step`)
+`job why` reports `retry_exhausted`, `restart` alone suffices: revivals (`restart`, `resume`, `step=`)
 automatically restore the declared retry allowance (`--keep-budget` opts out).
 To go beyond the declared limits, raise the budget first; the override is kept
 in the job's `state.json` and `job.json` stays untouched.
 
 ```console
-httk job request set_budget --max-attempts-per-activation 3 --reason "flaky node" JOB
-httk job request restart --reason "retry" JOB
+httk job set --reason "flaky node" JOB budget.max_attempts_per_activation=3
+httk job restart --reason "retry" JOB
 ```
 
-`set_budget` also takes `--max-total-attempts` and `--max-activations`
-(a number or `unlimited`; give at least one option). Cancelled jobs cannot be
+`job set` also takes `budget.max_total_attempts=N` and `budget.max_activations=N`
+(a number or `unlimited`). Cancelled jobs cannot be
 revived, and a succeeded job is never changed. The full rules are in the
 [httk-workflow restarting jobs documentation](https://docs.httk.org/httk-workflow/dev/main/restarting_jobs.html).
 
@@ -192,7 +191,7 @@ revived, and a succeeded job is never changed. The full rules are in the
 ### Collecting results into a database
 
 `httk collect` needs the workflow to declare what its outputs are. A
-`--from-command` job has no collector, so collecting it directly would produce
+`--command` job has no collector, so collecting it directly would produce
 only generic records. To give `answer.txt` a named output, turn the one-command
 job into a small workflow package:
 
@@ -259,7 +258,7 @@ from it in the loop, then collect them after the runs finish:
 ```console
 httk workflow install --workspace my_bulk_runs ./my_executable
 for n in $(seq 1 1000); do
-  httk job new --workflow my_executable --parameter n=$n --tag n$n
+  httk job new my_executable --parameter n=$n --tag n$n
 done
 
 httk collect --into results.sqlite --id-base example
@@ -270,7 +269,7 @@ See the {doc}`database walkthrough <walkthrough/06-database>` and the
 
 ### Writing the workflow yourself
 
-The `--from-command` shortcut generates this `run.sh`, which can also be used
+The `--command` shortcut generates this `run.sh`, which can also be used
 as the package runner above:
 
 ```{code-block} bash
@@ -290,7 +289,7 @@ httk_workflow_main
 Use it directly for a job, for example:
 
 ```console
-httk job new --from-runner ./run.sh --parameter n=17
+httk job new ./run.sh --parameter n=17
 ```
 
 Full workflows can declare inputs, resources per step, spawn child jobs,

@@ -63,7 +63,7 @@ The CLI `--input-from` form accepts a file or a directory, not a store query;
 use it as the file-based alternative when the inputs are already on disk:
 
 ```console
-$ httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-relax' --install \
+$ httk job new 'git+https://github.com/httk/workflows-vasp#vasp-relax' --install \
       --input-from structure charge-free-structures/ \
       --parameter kpoint_density=30.0 --placement batch
 ```
@@ -77,7 +77,7 @@ Creation-time parameterization goes through `[workflow.parameters.*]` in the
 manifest, validated at job creation and applied by the runner's
 `@run.instantiate` hook. A `placement` string organizes the batch, and — for
 truly large sets — a *campaign* partitions the work across several workspaces
-with `campaign init`, `campaign submit`, `workflow run`, and `campaign collect`.
+with `campaign init`, `job new --campaign`, `run --campaign`, and `collect --campaign`.
 
 ```{admonition} In httk v1
 :class: note

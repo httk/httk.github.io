@@ -13,7 +13,7 @@ provider-owned executable that runs once per selected collected job. You invoke
 one by its declared name:
 
 ```console
-$ httk workflow postprocess --workspace WORKSPACE --script relaxation-report
+$ httk postprocess -w WORKSPACE relaxation-report
 ```
 
 For example, a relaxation package might declare:
@@ -31,12 +31,12 @@ then collect them as provenance runs after collecting the jobs:
 
 ```console
 $ httk collect WORKSPACE --into results.sqlite --id-base mydb
-$ httk workflow postprocess --workspace WORKSPACE --script relaxation-report
+$ httk postprocess -w WORKSPACE relaxation-report
 $ httk collect WORKSPACE --postprocess relaxation-report --into results.sqlite --id-base mydb
 ```
 
 Each job gets one postprocess run linked to the job's run, with the files as
-its outputs; `httk serve optimade serve results.sqlite` serves the runs and
+its outputs; `httk serve --no-site results.sqlite` serves the runs and
 files. Without `--into` the last command previews.
 
 ```{admonition} In httk v1

@@ -33,13 +33,13 @@ def main() -> None:
     (cli,) = [
         code
         for language, code in blocks
-        if language == "bash" and "httk serve optimade" in code
+        if language == "bash" and "httk serve" in code
     ]
     check_command, serve_command = (
         shlex.split(line) for line in cli.strip().splitlines()
     )
-    assert check_command[:4] == ["httk", "serve", "optimade", "check"]
-    assert serve_command[:4] == ["httk", "serve", "optimade", "serve"]
+    assert check_command[:4] == ["httk", "serve", "--no-site", "--check"]
+    assert serve_command[:3] == ["httk", "serve", "--no-site"]
     assert serve_command[-2:] == ["--port", "8080"]
     httk = str(Path(sys.executable).with_name("httk"))
     with TemporaryDirectory(prefix="httk-serving-example-") as directory:
@@ -158,7 +158,7 @@ def main() -> None:
                     if server.poll() is not None or time.monotonic() > deadline:
                         log.seek(0)
                         raise AssertionError(
-                            f"httk serve optimade did not start:\n{log.read()}"
+                            f"httk serve did not start:\n{log.read()}"
                         )
                     try:
                         get("/v1/info")

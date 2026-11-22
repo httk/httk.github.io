@@ -71,11 +71,11 @@ $ httk project init --name raw-data raw-data
 Initialized httk project 'raw-data' in .../raw-data/httk_project
 $ (cd raw-data && httk project export ../raw-data-export.zip)
 exported project to .../raw-data-export.zip
-$ httk project verify-export raw-data-export.zip
+$ httk project verify raw-data-export.zip
 self-consistent but UNAUTHENTICATED (trust-on-first-use)
 public_key: ed25519:Rl+4BdLm5jyGGYiz42zchS1rWewkinzz3LJSI2Tw6lc=
 fingerprint: sha256:1153e1fc042cc6f1d197e8ee5e17ee7163512aeb8bd3aa366bb846b6c448a06d
-$ httk project verify-export --expect-key sha256:1153e1fc042cc6f1d197e8ee5e17ee7163512aeb8bd3aa366bb846b6c448a06d raw-data-export.zip
+$ httk project verify --expect-key sha256:1153e1fc042cc6f1d197e8ee5e17ee7163512aeb8bd3aa366bb846b6c448a06d raw-data-export.zip
 authenticated
 ```
 
@@ -114,7 +114,7 @@ in by hand, you can also protect the finished jobs and workspace before
 exporting the project. *Sealing* signs a manifest of a job's, workspace's, or
 project's contents so any later change to a covered byte becomes a detectable
 discrepancy; `httk job seal`, `httk workspace seal`, and `httk project seal`
-seal each level in turn, and `httk seal verify` checks them. This is
+seal each level in turn, and `httk job verify` / `httk workspace verify` / `httk project verify` check them. This is
 a different concept from the `httk project export` command above — sealing
 protects a result from silent change, exporting packages it for
 distribution.

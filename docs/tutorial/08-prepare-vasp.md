@@ -34,8 +34,8 @@ directory):
 ```console
 httk project init --name tutorial .
 httk workspace init --name default workspace
-httk workspace settings set --key vasp.command --value vasp_std default
-httk workspace settings set --key vasp.pseudo_library --value /path/to/potpaw_PBE default
+httk workspace set -w default vasp.command=vasp_std
+httk workspace set -w default vasp.pseudo_library=/path/to/potpaw_PBE
 ```
 
 The workspace name `default` is registered on this machine. Commands run from
@@ -45,9 +45,9 @@ record another registered name later with `httk workspace default`.
 ## Create and run the calculation
 
 ```console
-httk job new --workflow 'git+https://github.com/httk/workflows-vasp#vasp-static' --install \
+httk job new 'git+https://github.com/httk/workflows-vasp#vasp-static' --install \
     --input structure=example.cif --parameter 'incar_tags={"ENCUT": 520}' --tag example
-httk workflow run
+httk run
 ```
 
 `job new` scaffolds and submits one job from the `vasp.static` workflow

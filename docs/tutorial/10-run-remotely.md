@@ -8,9 +8,9 @@ as the VASP command; it writes the same output-file contract as a finished
 physics.
 
 ```console
-httk workspace settings set --key vasp.command \
-    --value "$PWD/docs/tutorial/data/mock_vasp_catio3.py" default
-httk workflow run --workers 2
+httk workspace set -w default \
+    vasp.command="$PWD/docs/tutorial/data/mock_vasp_catio3.py"
+httk run --workers 2
 ```
 
 `run` is the local executor here: it prepares, runs, and publishes every job,
@@ -19,8 +19,8 @@ set the command to the bare program, for example (the parallel start comes
 from the attempt's launch prefix, not from the command):
 
 ```console
-httk workspace settings set --key vasp.command --value vasp_std default
-httk workflow run --workers 8
+httk workspace set -w default vasp.command=vasp_std
+httk run --workers 8
 ```
 
 The mock deliberately emits demonstration numbers chosen for the phase-diagram
@@ -31,27 +31,25 @@ exercise. They are not calculated material energies.
 For a real cluster, configure an SSH remote once and transfer the complete
 batch. The remote is only the path to the machine; manager launch belongs to
 the workspace, and the transfer ships the workflow the jobs need.
-`job push` moves every `ready` job, so the page-09 `batch` placement moves at
+`push` moves every `ready` job, so the page-09 `batch` placement moves at
 once (`--job` narrows the selection):
 
 ```console
-httk remote add --template ssh kappa
-httk remote configure \
-    --set host=kappa.example.org --set username=rar kappa
+httk remote add --kind ssh kappa
+httk remote set kappa host=kappa.example.org username=rar
 httk remote check kappa
 httk workspace init kappa:runs
-httk launcher add --template slurm --global cluster
+httk launcher add --kind slurm --global cluster
 httk launcher check cluster
-httk workspace configure \
-    --set manager.launch=cluster --set slurm.partition=batch \
-    --set slurm.time_limit=01:00:00 --set manager.workers=8 \
-    --set 'environment.prelude=module load httk vasp' \
-    --set vasp.command=vasp_std kappa:runs
+httk workspace set -w kappa:runs manager.launch=cluster slurm.partition=batch \
+    slurm.time_limit=01:00:00 manager.workers=8 \
+    'environment.prelude=module load httk vasp' \
+    vasp.command=vasp_std
 
-httk job push kappa:runs
-httk workflow run --workspace kappa:runs --count 1
+httk push kappa:runs
+httk run --workspace kappa:runs --count 1
 httk workspace status kappa:runs
-httk job pull kappa:runs
+httk pull kappa:runs
 ```
 
 `ssh` runs the adapter's commands through a non-interactive shell, so
@@ -68,14 +66,14 @@ distinct from the `environment.prelude` workspace setting above: the
 running on kappa.
 
 ```console
-httk remote configure --set cli_prelude='module load Python/3.13.5-bundle
-source ~/venv/bin/activate' kappa
+httk remote set kappa cli_prelude='module load Python/3.13.5-bundle
+source ~/venv/bin/activate'
 ```
 
 The manager can advertise the resources available in the cluster allocation:
 
 ```console
-httk workflow run --workspace kappa:runs --workers 4 \
+httk run --workspace kappa:runs --workers 4 \
   --worker-resource procs 32 --worker-resource mem 128000 \
   --worker-resource matlab_license_slots 2
 ```
@@ -84,7 +82,7 @@ Jobs that require a resource this manager does not have remain idle and are
 listed in its summary; in a Slurm allocation, `procs`, `gpus`, `nodes`, and
 `mem` can be derived from the allocation when not specified.
 
-`job pull` brings every finished (`succeeded`) job home and replaces the `away` copies the push left (`httk job list --state away`; `httk job recover JOB` if a job was lost remotely); run the local collector in the next step.
+`pull` brings every finished (`succeeded`) job home and replaces the `away` copies the push left (`httk job list --state away`; `httk job recover JOB` if a job was lost remotely); run the local collector in the next step.
 `workspace init kappa:runs` creates the named workspace on kappa, so its name
 is resolved by kappa rather than by the local machine.
 

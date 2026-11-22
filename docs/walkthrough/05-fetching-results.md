@@ -1,16 +1,16 @@
 # Fetching results back
 
 When jobs have finished on the remote (page {doc}`04-remote-execution`), bring
-them home with `job pull`, the other direction of `job push`. Fetching
+them home with `pull`, the other direction of `push`. Fetching
 survives interruption: the jobs stay held on the remote until the copy at home
 has been adopted.
 
 ```console
-httk job pull kappa:runs
+httk pull kappa:runs
 ```
 
-`job pull` brings home every `succeeded` job; `--job` (a job UUID, repeatable),
-`--state` and `--step` replace that selection, and `httk job transfer --job
+`pull` brings home every `succeeded` job; `--job` (a job UUID, repeatable),
+`--state` and `--step` replace that selection, and `httk job move --job
 JOB-UUID kappa:runs default` is the general form. `--tree` brings a job home together with its spawned descendants. The jobs are
 first held on the remote, out of its state trees, then copied home and adopted
 into the states they left, and only then is the remote hold released. The pull
@@ -23,8 +23,8 @@ adoption: no symlink or special file in protocol positions, and every job's
 `job.json` agreeing with the bundle manifest. A succeeded job's seal travels
 inside its payload, so the seal can still be verified at home. Delivery is at
 least once: an interrupted fetch is finished by re-running the same
-`job transfer` command or `httk job transfer --resume`, and
-`httk transfer status` lists the holds still in flight.
+`job move` command or `httk job move --resume`, and
+`httk workspace status` lists the holds still in flight.
 
 ```{admonition} In httk v1
 :class: note
