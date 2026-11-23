@@ -57,6 +57,8 @@ docs = [
   "sqlalchemy>=2.0,<3",
   # httk-serve[docs]
   "httpx2>=2.0",
+  # httk-workflow runtime (Zstandard; the stdlib compression.zstd from Python 3.14)
+  "backports.zstd>=1.0; python_version < '3.14'",
 ]
 
 # The httk distributions themselves are not listed here: CI installs all six
