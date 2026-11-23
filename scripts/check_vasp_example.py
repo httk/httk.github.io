@@ -137,7 +137,7 @@ def main() -> None:
         ]
         fe = stored["Fe/relax"]
         assert fe["stored"] == {
-            "entries": ["example-1-5", "example-1-8", "example.records-1-1"],
+            "entries": ["example-1-9", "example-1-14", "example.records-1-1"],
             "run": "example.runs-1-1",
         }
         fe_line = shown[1][1][2]
@@ -213,8 +213,8 @@ def main() -> None:
                         "data"
                     ]
                 }
-                assert sorted(sodium) == ["example-1-17", "example-1-20"]
-                initial, relaxed = sodium["example-1-20"], sodium["example-1-17"]
+                assert sorted(sodium) == ["example-1-29", "example-1-34"]
+                initial, relaxed = sodium["example-1-34"], sodium["example-1-29"]
                 assert initial["attributes"]["lattice_vectors"][0][0] == 3.99
                 assert relaxed["attributes"]["lattice_vectors"][0][0] == 4.02
                 assert related(initial) == {
@@ -232,10 +232,10 @@ def main() -> None:
                     "vasp.calculation.relax:eac3f541"
                 )
                 assert related(nacl)["_httk_has_input"] == [
-                    ("example-1-20", "initial_structure")
+                    ("example-1-34", "initial_structure")
                 ]
                 assert related(nacl)["_httk_has_output"] == [
-                    ("example-1-17", "relaxed_structure"),
+                    ("example-1-29", "relaxed_structure"),
                     ("example.records-1-3", "total_energy"),
                 ]
 
@@ -275,16 +275,16 @@ def main() -> None:
                     for entry in payload["data"]
                 }
                 assert products == {
-                    "example.records-1-1": [("example-1-5", "relaxed_structure")],
-                    "example.records-1-2": [("example-1-11", "relaxed_structure")],
-                    "example.records-1-3": [("example-1-17", "relaxed_structure")],
-                    "example.records-1-4": [("example-1-23", "initial_structure")],
+                    "example.records-1-1": [("example-1-9", "relaxed_structure")],
+                    "example.records-1-2": [("example-1-19", "relaxed_structure")],
+                    "example.records-1-3": [("example-1-29", "relaxed_structure")],
+                    "example.records-1-4": [("example-1-39", "initial_structure")],
                 }
                 assert {entry["id"] for entry in payload["included"]} == {
-                    "example-1-5",
-                    "example-1-11",
-                    "example-1-17",
-                    "example-1-23",
+                    "example-1-9",
+                    "example-1-19",
+                    "example-1-29",
+                    "example-1-39",
                 }
 
                 # Re-run NaCl/relax in place, as documented, with the server running.
@@ -314,15 +314,15 @@ def main() -> None:
                     )
                     for entry in revisions
                 ] == [
-                    ("example.records-1-3~1", -6.83, "example-1-17"),
-                    ("example.records-1-3~2", -6.85, "example-1-26"),
+                    ("example.records-1-3~1", -6.83, "example-1-29"),
+                    ("example.records-1-3~2", -6.85, "example-1-44"),
                 ]
                 runs = get("/v1/_httk_runs/example.runs-1-3/_httk_revs")["data"]
                 assert [related(entry)["_httk_has_output"][0][0] for entry in runs] == [
-                    "example-1-17",
-                    "example-1-26",
+                    "example-1-29",
+                    "example-1-44",
                 ]
-                get("/v1/structures/example-1-17")  # the old cell stays
+                get("/v1/structures/example-1-29")  # the old cell stays
 
                 # The custom collector: copy the shipped one and add the magnetization.
                 run(copy)

@@ -144,7 +144,7 @@ its failure is reported when it is collected rather than hidden.
 $ httk collect calculations --into vasp.sqlite --id-base example
 Al/md: not collected by vasp.calculation.relax: molecular dynamics (IBRION = 0) is not collected yet
 creating id ledger vasp.sqlite.ids.sqlite: entry ids for this store are now allocated through it and stay stable across rebuilds. Keep this file with the store (commit it alongside it) — deleting it re-mints every id.
-{"directory":"Fe/relax","format":"httk-workflow-collected",...,"stored":{"entries":["example-1-5","example-1-8","example.records-1-1"],"run":"example.runs-1-1"},"unfulfilled":[],"workflow":"vasp.calculation.relax"}
+{"directory":"Fe/relax","format":"httk-workflow-collected",...,"stored":{"entries":["example-1-9","example-1-14","example.records-1-1"],"run":"example.runs-1-1"},"unfulfilled":[],"workflow":"vasp.calculation.relax"}
 ...
 {"collected":4,"degraded":1,"format":"httk-workflow-collect-summary","format_version":2,"revised":0,"skipped_unreadable":0,"storage_errors":0,"unclaimed":1,"unfulfilled_roles":2}
 ```
@@ -172,7 +172,7 @@ Per calculation, the database now holds:
   the OUTCAR's echo: the magnitude of `EDIFFG` for a relaxation (or of
   `EDIFF` when `EDIFFG` is zero or absent), else of `EDIFF`; 0.001 Å when
   neither is echoed, as here. They are stored by content, so identical cells
-  share one entry. The store numbers them, as in `example-1-5`;
+  share one entry. The store numbers them, as in `example-1-9`;
 - the total energy in eV as a record, `example.records-1-1` for Fe, linked to
   the structure it was computed for by a `product_of` edge. For a relaxation
   that is the relaxed structure, for the static Si run the initial one;
@@ -261,13 +261,13 @@ returns all four from the lowest energy up: `example.records-1-2` (-11.93),
 `_httk_product_of`, and `include=structures` puts those four structures in
 `included`.
 
-The structure filter returns the two NaCl cells: `example-1-20`, the POSCAR
+The structure filter returns the two NaCl cells: `example-1-34`, the POSCAR
 cell with lattice parameter 3.99, which names the NaCl run under
-`_httk_is_input`, and `example-1-17`, the CONTCAR cell with 4.02, which names
+`_httk_is_input`, and `example-1-29`, the CONTCAR cell with 4.02, which names
 it under `_httk_is_output` and names the energy record `example.records-1-3`
 under `_httk_has_product`. The next request is that run. Its `_httk_source_id`
-is `vasp.calculation.relax:eac3f541…`, its `_httk_has_input` is `example-1-20`
-labelled `initial_structure`, and its `_httk_has_output` is `example-1-17`
+is `vasp.calculation.relax:eac3f541…`, its `_httk_has_input` is `example-1-34`
+labelled `initial_structure`, and its `_httk_has_output` is `example-1-29`
 (`relaxed_structure`) and `example.records-1-3` (`total_energy`). The last
 filter returns the one static run, `example.runs-1-4`.
 
@@ -289,9 +289,9 @@ $ curl http://127.0.0.1:8080/v1/_httk_records/example.records-1-3/_httk_revs
 One calculation was `revised`: the `NaCl/relax` line carries `"revised":true`.
 Its energy record keeps the id `example.records-1-3` and gains a second
 revision, and the revisions request lists both: `example.records-1-3~1` with
-`_httk_total_energy` -6.83 and `_httk_product_of` `example-1-17`, and
-`example.records-1-3~2` with -6.85 and `example-1-26`. The new relaxed cell is
-a new structure, `example-1-26`, and the old one stays. The run keeps the id
+`_httk_total_energy` -6.83 and `_httk_product_of` `example-1-29`, and
+`example.records-1-3~2` with -6.85 and `example-1-44`. The new relaxed cell is
+a new structure, `example-1-44`, and the old one stays. The run keeps the id
 `example.runs-1-3` and gains a second revision whose output is the new cell. A
 re-run that changes only the energy revises the record, but not the run, whose
 edges name the record by its id.
@@ -399,7 +399,7 @@ with SqliteStore("vasp.sqlite") as store:
 
 ```console
 $ python show_magnetization.py
-Fe example-1-5 example.records-1-5 2.214
+Fe example-1-9 example.records-1-5 2.214
 ```
 
 Pass `--collector` on every later collect. A collect without it uses the
